@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
 }
 
 datasource db {
@@ -34,48 +32,25 @@ model Account {
   @@index([userId])
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-// ==========================================
-// USER MANAGEMENT MODELS
-// ==========================================
-
 model User {
-  id              String            @id @default(cuid())
-  name            String?
-  email           String            @unique
-  emailVerified   DateTime?
-  image           String?
-  password        String?
-  isActive        Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
   // Relations
   accounts        Account[]
-  sessions        Session[]
   userRoles       UserRole[]
   workspaceAdmins WorkspaceAdmin[]
   teamMembers     TeamMember[]
-  createdBy       User?             @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy       User?            @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdById     String?
-  createdUsers    User[]            @relation("UserCreatedBy")
+  createdUsers    User[]           @relation("UserCreatedBy")
 
   @@index([email])
 }
@@ -86,13 +61,13 @@ model User {
 
 // Roles table for storing different types of roles like admin, team leader, developer
 model Role {
-  id          String      @id @default(cuid())
-  name        String      @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
   description String?
-  isSystem    Boolean     @default(false) // Indicates if this is a system role that shouldn't be deleted
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  
+  isSystem    Boolean  @default(false) // Indicates if this is a system role that shouldn't be deleted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Relations
   userRoles   UserRole[]
   permissions RolePermission[]
@@ -100,27 +75,27 @@ model Role {
 
 // Permissions table for storing different permissions
 model Permission {
-  id          String           @id @default(cuid())
-  name        String           @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
   description String?
-  category    String?          // Optional category for grouping permissions
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  
+  category    String? // Optional category for grouping permissions
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Relations
   rolePermissions RolePermission[]
 }
 
 // Junction table for roles and permissions (many-to-many)
 model RolePermission {
-  id           String     @id @default(cuid())
+  id           String   @id @default(cuid())
   roleId       String
   permissionId String
-  createdAt    DateTime   @default(now())
-  
+  createdAt    DateTime @default(now())
+
   // Relations
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, permissionId])
   @@index([roleId])
@@ -133,10 +108,10 @@ model UserRole {
   userId    String
   roleId    String
   createdAt DateTime @default(now())
-  
+
   // Relations
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roleId])
   @@index([userId])
@@ -149,16 +124,16 @@ model UserRole {
 
 // Workspace is the top-level entity that contains projects
 model Workspace {
-  id          String           @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  slug        String           @unique
-  isActive    Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  
+  slug        String   @unique
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Relations
-  projects       Project[]
+  projects        Project[]
   workspaceAdmins WorkspaceAdmin[]
 
   @@index([slug])
@@ -166,15 +141,15 @@ model Workspace {
 
 // Junction table for workspace admins (many-to-many)
 model WorkspaceAdmin {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   workspaceId String
   userId      String
-  isPrimary   Boolean   @default(false) // Indicates if this admin is the primary admin
-  createdAt   DateTime  @default(now())
-  
+  isPrimary   Boolean  @default(false) // Indicates if this admin is the primary admin
+  createdAt   DateTime @default(now())
+
   // Relations
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, userId])
   @@index([workspaceId])
@@ -183,15 +158,15 @@ model WorkspaceAdmin {
 
 // Project belongs to a workspace
 model Project {
-  id          String       @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   description String?
   slug        String
   workspaceId String
-  isActive    Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Relations
   workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   sections    Section[]
@@ -210,10 +185,10 @@ model TeamMember {
   isLead    Boolean  @default(false) // Indicates if this member is a team leader
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, userId])
   @@index([projectId])
@@ -222,19 +197,19 @@ model TeamMember {
 
 // Section belongs to a project
 model Section {
-  id        String   @id @default(cuid())
-  name      String
+  id          String   @id @default(cuid())
+  name        String
   description String?
-  slug      String
-  order     Int      @default(0) // For ordering sections
-  projectId String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  slug        String
+  order       Int      @default(0) // For ordering sections
+  projectId   String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Relations
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  pages     Page[]
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pages   Page[]
 
   @@unique([projectId, slug]) // Each section slug must be unique within a project
   @@index([projectId])
@@ -254,9 +229,9 @@ model Page {
   updatedAt DateTime @updatedAt
   createdBy String?
   updatedBy String?
-  
+
   // Relations
-  section   Section  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   @@unique([sectionId, slug]) // Each page slug must be unique within a section
   @@index([sectionId])

@@ -1,0 +1,137 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useActionState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
+import { useFormStatus } from "react-dom";
+import Link from "next/link";
+import { signup } from "./signupAction";
+import { signUpSchema } from "./signupSchema";
+
+export default function SignUpForm() {
+	const [message, formAction, isPending] = useActionState(signup, {
+		message: "",
+		errors: null,
+	});
+
+	const form = useForm({
+		resolver: zodResolver(signUpSchema),
+		defaultValues: {
+			username: "",
+			email: "",
+			password: "",
+		},
+	});
+
+	useEffect(() => {
+		if (message?.errors) {
+			Object.entries(message.errors).forEach(([field, messages]) => {
+				form.setError(field, {
+					type: "server",
+					message: messages[0], // Show the first error
+				});
+			});
+		}
+	}, [message?.errors, form]);
+
+	return (
+		<Form {...form}>
+			<form action={formAction} className="space-y-6">
+				<FormField
+					control={form.control}
+					name="username"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className="text-lg">Username</FormLabel>
+							<FormControl>
+								<Input
+									placeholder="username"
+									className="h-12 text-lg"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage className="text-base" />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="email"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className="text-lg">Email</FormLabel>
+							<FormControl>
+								<Input
+									type="email"
+									placeholder="your@email.com"
+									className="h-12 text-lg"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage className="text-base" />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="password"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel className="text-lg">Password</FormLabel>
+							<FormControl>
+								<Input
+									type="password"
+									placeholder="••••••••"
+									className="h-12 text-lg"
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage className="text-base" />
+						</FormItem>
+					)}
+				/>
+
+				{message?.message && !message?.errors && (
+					<div className="text-red-500 text-lg">{message.message}</div>
+				)}
+
+				<SubmitButton isPending={isPending} />
+
+				<div className="text-center pt-4">
+					<p className="text-sm text-muted-foreground">
+						Already have an account?{" "}
+						<Link href="/auth/signin" className="text-blue-600 hover:underline">
+							Sign in
+						</Link>
+					</p>
+				</div>
+			</form>
+		</Form>
+	);
+}
+
+function SubmitButton({ isPending }) {
+	return (
+		<Button
+			type="submit"
+			className="w-full h-12 text-lg font-semibold"
+			disabled={isPending}
+		>
+			{isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+			Create Account
+		</Button>
+	);
+}

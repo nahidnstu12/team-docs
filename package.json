@@ -13,8 +13,12 @@
 		"seed": "node prisma/seed.js"
 	},
 	"dependencies": {
+		"@auth/core": "^0.38.0",
 		"@auth/prisma-adapter": "^2.8.0",
+		"@hookform/resolvers": "^5.0.1",
 		"@prisma/client": "^6.6.0",
+		"@radix-ui/react-label": "^2.1.3",
+		"@radix-ui/react-slot": "^1.2.0",
 		"@tailwindcss/postcss": "^4.1.3",
 		"@tiptap/extension-collaboration": "^2.11.7",
 		"@tiptap/extension-collaboration-cursor": "^2.11.7",
@@ -29,12 +33,14 @@
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.487.0",
 		"next": "15.3.0",
-		"next-auth": "^4.24.11",
+		"next-auth": "^5.0.0-beta.25",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"react-hook-form": "^7.55.0",
 		"slugify": "^1.6.6",
 		"tailwind-merge": "^3.2.0",
 		"tailwindcss-animate": "^1.0.7",
+		"tw-animate-css": "^1.2.5",
 		"zod": "^3.24.2",
 		"zustand": "^5.0.3"
 	},

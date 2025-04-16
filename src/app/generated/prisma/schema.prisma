@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// AUTH MODELS (NextAuth.js/Auth.js compatible)
+// ==========================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts        Account[]
+  userRoles       UserRole[]
+  workspaceAdmins WorkspaceAdmin[]
+  teamMembers     TeamMember[]
+  createdBy       User?            @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById     String?
+  createdUsers    User[]           @relation("UserCreatedBy")
+
+  @@index([email])
+}
+
+// ==========================================
+// ROLE & PERMISSION MODELS
+// ==========================================
+
+// Roles table for storing different types of roles like admin, team leader, developer
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isSystem    Boolean  @default(false) // Indicates if this is a system role that shouldn't be deleted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userRoles   UserRole[]
+  permissions RolePermission[]
+}
+
+// Permissions table for storing different permissions
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  category    String? // Optional category for grouping permissions
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  rolePermissions RolePermission[]
+}
+
+// Junction table for roles and permissions (many-to-many)
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+// Junction table for users and roles (many-to-many)
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+// ==========================================
+// WORKSPACE & PROJECT MODELS
+// ==========================================
+
+// Workspace is the top-level entity that contains projects
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  slug        String   @unique
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  projects        Project[]
+  workspaceAdmins WorkspaceAdmin[]
+
+  @@index([slug])
+}
+
+// Junction table for workspace admins (many-to-many)
+model WorkspaceAdmin {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  isPrimary   Boolean  @default(false) // Indicates if this admin is the primary admin
+  createdAt   DateTime @default(now())
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+// Project belongs to a workspace
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  slug        String
+  workspaceId String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  sections    Section[]
+  teamMembers TeamMember[]
+
+  @@unique([workspaceId, slug]) // Each project slug must be unique within a workspace
+  @@index([workspaceId])
+  @@index([slug])
+}
+
+// Team member assignment to projects
+model TeamMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  isLead    Boolean  @default(false) // Indicates if this member is a team leader
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+// Section belongs to a project
+model Section {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  slug        String
+  order       Int      @default(0) // For ordering sections
+  projectId   String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pages   Page[]
+
+  @@unique([projectId, slug]) // Each section slug must be unique within a project
+  @@index([projectId])
+  @@index([slug])
+}
+
+// Page belongs to a section
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?  @db.Text
+  slug      String
+  order     Int      @default(0) // For ordering pages within a section
+  sectionId String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  // Relations
+  section Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@unique([sectionId, slug]) // Each page slug must be unique within a section
+  @@index([sectionId])
+  @@index([slug])
+}
