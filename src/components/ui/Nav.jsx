@@ -11,7 +11,7 @@ export async function Nav() {
 			<div className="text-2xl font-bold">YourLogo</div>
 			{session ? (
 				<div className="flex gap-4 items-center">
-					<p className="px-2 py-2 rounded-sm">{session.user.name}</p>
+					<p className="px-2 py-2 rounded-sm">{session.user.username}</p>
 					<form
 						action={async () => {
 							"use server";

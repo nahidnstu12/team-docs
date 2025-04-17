@@ -18,8 +18,10 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { signup } from "./signupAction";
 import { signUpSchema } from "./signupSchema";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
+	const router = useRouter();
 	const [message, formAction, isPending] = useActionState(signup, {
 		message: "",
 		errors: null,
@@ -33,15 +35,20 @@ export default function SignUpForm() {
 			password: "",
 		},
 	});
-
 	useEffect(() => {
 		if (message?.errors) {
 			Object.entries(message.errors).forEach(([field, messages]) => {
 				form.setError(field, {
 					type: "server",
-					message: messages[0], // Show the first error
+					message: Array.isArray(messages) ? messages[0] : messages,
 				});
 			});
+
+			form.setValue("password", "");
+		}
+
+		if (message?.type === "success" && message.redirectTo) {
+			router.push(message.redirectTo);
 		}
 	}, [message?.errors, form]);
 

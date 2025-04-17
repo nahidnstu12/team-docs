@@ -24,8 +24,6 @@ export async function signin(prevState, formData) {
 			redirect: false,
 		});
 
-		console.log("🔄 signIn() result:", result);
-
 		if (result?.error) {
 			return {
 				type: "error",
@@ -36,8 +34,8 @@ export async function signin(prevState, formData) {
 
 		return {
 			type: "success",
-			message: "Login successful!",
-			redirectTo: result.url || "/",
+			message: "Singin successful!",
+			redirectTo: "/",
 		};
 	} catch (error) {
 		console.error("signin error: ", error);

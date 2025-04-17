@@ -45,37 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 		async session({ session, token }) {
 			if (session.user) {
 				session.user.id = token.sub;
-
-				// Optionally enrich session with roles & permissions
-				const userWithRoles = await prisma.user.findUnique({
-					where: { id: token.sub },
-					include: {
-						userRoles: {
-							include: {
-								role: {
-									include: {
-										permissions: {
-											include: {
-												permission: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				});
-
-				if (userWithRoles) {
-					session.user.roles = userWithRoles.userRoles.map((userRole) => ({
-						id: userRole.role.id,
-						name: userRole.role.name,
-						permissions: userRole.role.permissions.map((rp) => ({
-							id: rp.permission.id,
-							name: rp.permission.name,
-						})),
-					}));
-				}
+				session.user.username = token.username;
 			}
 
 			return session;
@@ -84,13 +54,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 		async jwt({ token, user }) {
 			if (user) {
 				token.sub = user.id;
+				token.username = user.username;
 			}
 			return token;
 		},
-	},
-
-	pages: {
-		signIn: "/auth/signin",
-		error: "/auth/error",
 	},
 });

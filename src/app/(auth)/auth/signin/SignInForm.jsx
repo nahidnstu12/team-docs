@@ -17,14 +17,14 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { signin } from "./signinAction";
 import { signInSchema } from "./signinSchema";
+import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
+	const router = useRouter();
 	const [message, formAction, isPending] = useActionState(signin, {
 		message: "",
 		errors: null,
 	});
-
-	console.log("signin form action", message);
 
 	const form = useForm({
 		resolver: zodResolver(signInSchema),
@@ -33,19 +33,20 @@ export default function SignInForm() {
 			password: "",
 		},
 	});
-
 	useEffect(() => {
 		if (message?.errors) {
 			Object.entries(message.errors).forEach(([field, messages]) => {
 				form.setError(field, {
 					type: "server",
-					message: Array.isArray(messages) ? messages[0] : messages, // handle both
+					message: Array.isArray(messages) ? messages[0] : messages,
 				});
 			});
+
+			form.setValue("password", "");
 		}
 
 		if (message?.type === "success" && message.redirectTo) {
-			window.location.href = message.redirectTo;
+			router.push(message.redirectTo);
 		}
 	}, [message, form]);
 
