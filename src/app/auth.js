@@ -15,33 +15,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			},
 
 			async authorize(credentials) {
-				// We assume credentials are validated BEFORE calling signIn
-				if (!credentials?.email || !credentials?.password) return null;
+				if (!credentials?.email || !credentials?.password)
+					throw new Error("Invalid email or password");
 
 				const user = await prisma.user.findUnique({
 					where: { email: credentials.email },
 				});
 
-				if (!user || !user.password) return null;
+				if (!user || !user.password)
+					throw new Error("Invalid email or password");
 
 				const isValid = await bcrypt.compare(
 					credentials.password,
 					user.password
 				);
-				if (!isValid) return null;
 
-				return {
-					id: user.id,
-					name: user.name,
-					email: user.email,
-					image: user.image,
-				};
+				if (!isValid) throw new Error("Invalid email or password");
+
+				return user;
 			},
 		}),
 	],
 
 	session: {
-		strategy: "jwt", // Store session in JWT instead of DB
+		strategy: "jwt",
 	},
 
 	callbacks: {

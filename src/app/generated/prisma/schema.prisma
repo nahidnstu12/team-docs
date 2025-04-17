@@ -8,6 +8,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts        Account[]
+  userRoles       UserRole[]
+  workspaceAdmins WorkspaceAdmin[]
+  teamMembers     TeamMember[]
+  createdBy       User?            @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById     String?
+  createdUsers    User[]           @relation("UserCreatedBy")
+
+  @@index([email])
+}
+
 // ==========================================
 // AUTH MODELS (NextAuth.js/Auth.js compatible)
 // ==========================================
@@ -30,29 +51,6 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  accounts        Account[]
-  userRoles       UserRole[]
-  workspaceAdmins WorkspaceAdmin[]
-  teamMembers     TeamMember[]
-  createdBy       User?            @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-  createdById     String?
-  createdUsers    User[]           @relation("UserCreatedBy")
-
-  @@index([email])
 }
 
 // ==========================================

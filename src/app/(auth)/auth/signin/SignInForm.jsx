@@ -39,11 +39,15 @@ export default function SignInForm() {
 			Object.entries(message.errors).forEach(([field, messages]) => {
 				form.setError(field, {
 					type: "server",
-					message: messages[0], // Show the first error
+					message: Array.isArray(messages) ? messages[0] : messages, // handle both
 				});
 			});
 		}
-	}, [message?.errors, form]);
+
+		if (message?.type === "success" && message.redirectTo) {
+			window.location.href = message.redirectTo;
+		}
+	}, [message, form]);
 
 	return (
 		<Form {...form}>
@@ -59,6 +63,10 @@ export default function SignInForm() {
 									placeholder="your@email.com"
 									{...field}
 									className="h-12 text-lg"
+									onChange={(e) => {
+										form.clearErrors("email");
+										field.onChange(e);
+									}}
 								/>
 							</FormControl>
 							<FormMessage className="text-base" />
@@ -78,6 +86,10 @@ export default function SignInForm() {
 									placeholder="••••••••"
 									{...field}
 									className="h-12 text-lg"
+									onChange={(e) => {
+										form.clearErrors("password");
+										field.onChange(e);
+									}}
 								/>
 							</FormControl>
 							<FormMessage className="text-base" />
@@ -85,8 +97,8 @@ export default function SignInForm() {
 					)}
 				/>
 
-				{message?.message && !message?.errors && (
-					<div className="text-red-500 text-lg">{message.message}</div>
+				{message?.errors?.form && (
+					<p className="text-red-600 mb-2 text-sm">{message.errors.form}</p>
 				)}
 
 				<SubmitButton isPending={isPending} />

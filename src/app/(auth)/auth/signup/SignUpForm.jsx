@@ -59,6 +59,10 @@ export default function SignUpForm() {
 									placeholder="username"
 									className="h-12 text-lg"
 									{...field}
+									onChange={(e) => {
+										form.clearErrors("username");
+										field.onChange(e);
+									}}
 								/>
 							</FormControl>
 							<FormMessage className="text-base" />
@@ -78,6 +82,10 @@ export default function SignUpForm() {
 									placeholder="your@email.com"
 									className="h-12 text-lg"
 									{...field}
+									onChange={(e) => {
+										form.clearErrors("email");
+										field.onChange(e);
+									}}
 								/>
 							</FormControl>
 							<FormMessage className="text-base" />
@@ -97,6 +105,10 @@ export default function SignUpForm() {
 									placeholder="••••••••"
 									className="h-12 text-lg"
 									{...field}
+									onChange={(e) => {
+										form.clearErrors("password");
+										field.onChange(e);
+									}}
 								/>
 							</FormControl>
 							<FormMessage className="text-base" />
@@ -105,7 +117,7 @@ export default function SignUpForm() {
 				/>
 
 				{message?.message && !message?.errors && (
-					<div className="text-red-500 text-lg">{message.message}</div>
+					<div className="text-red-500 text-sm">{message.message}</div>
 				)}
 
 				<SubmitButton isPending={isPending} />

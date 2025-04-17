@@ -1,7 +1,6 @@
 "use server";
 
 import { signIn } from "@/app/auth";
-import { AuthError } from "@auth/core/errors";
 import { signInSchema } from "./signinSchema";
 
 export async function signin(prevState, formData) {
@@ -11,28 +10,42 @@ export async function signin(prevState, formData) {
 			password: formData.get("password"),
 		});
 
-		console.log("server action signin message", validatedFields);
-
 		if (!validatedFields.success) {
 			return {
+				type: "error",
 				message: "Invalid fields",
 				errors: validatedFields.error.flatten().fieldErrors,
 			};
 		}
 
-		await signIn("credentials", {
+		const result = await signIn("credentials", {
 			email: validatedFields.data.email,
 			password: validatedFields.data.password,
-			redirectTo: "/",
+			redirect: false,
 		});
-	} catch (error) {
-		if (error instanceof AuthError) {
-			console.log("authenticate error", error);
+
+		console.log("🔄 signIn() result:", result);
+
+		if (result?.error) {
 			return {
-				message: error.message,
-				errors: undefined,
+				type: "error",
+				message: "Invalid email or password",
+				errors: { form: result.error },
 			};
 		}
-		throw error;
+
+		return {
+			type: "success",
+			message: "Login successful!",
+			redirectTo: result.url || "/",
+		};
+	} catch (error) {
+		console.error("signin error: ", error);
+
+		return {
+			type: "error",
+			message: "Invalid email or password",
+			errors: { form: "Invalid email or password" },
+		};
 	}
 }

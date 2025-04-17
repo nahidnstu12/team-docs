@@ -1,7 +1,25 @@
 services:
-  postgres:
+  team-docs:
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://mazumder:1234@team-docs-postgres:5432/team-docs?schema=public
+      - NEXTAUTH_URL=http://localhost:3000
+      - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
+    volumes:
+      - .:/app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - team-docs-postgres
+    networks:
+      - postgres-network
+
+  team-docs-postgres:
     image: postgres:16
-    container_name: postgres
     restart: always
     ports:
       - "5432:5432"
@@ -14,21 +32,21 @@ services:
     networks:
       - postgres-network
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    restart: always
-    ports:
-      - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - postgres
-    networks:
-      - postgres-network
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   restart: always
+  #   ports:
+  #     - "5050:80"
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - postgres-network
 
 networks:
   postgres-network:
@@ -36,4 +54,4 @@ networks:
 
 volumes:
   postgres_data:
-  pgadmin_data:
+  # pgadmin_data:

@@ -1,11 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "../app/generated/prisma";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-// PrismaClient is attached to the `global` object in development to prevent
-// exhausting your database connection limit.
+// Create a global reference to reuse Prisma client
 const globalForPrisma = global;
 
-const prisma = globalForPrisma.prisma || new PrismaClient();
+// Initialize Prisma client with Accelerate extension
+const prisma =
+	globalForPrisma.prisma || new PrismaClient().$extends(withAccelerate());
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Save client globally in development to prevent re-instantiating during hot reload
+if (process.env.NODE_ENV !== "production") {
+	globalForPrisma.prisma = prisma;
+}
 
 export default prisma;

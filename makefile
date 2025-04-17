@@ -1,26 +1,26 @@
 # Run dev migration with timestamp
 migrate:
-	bunx prisma migrate dev 
+	docker compose exec team-docs bunx prisma migrate dev
 
 # Push schema directly to DB
 push:
-	bunx prisma db push 
+	docker compose exec team-docs bunx prisma db push
 
 # Generate Prisma client
 local_generate:
-	bunx prisma generate
+	docker compose exec team-docs bunx prisma generate
 
 # Reset DB (DANGEROUS)
 reset:
-	DATABASE_URL=$(DB_URL) bunx prisma migrate reset --force
+	docker compose exec team-docs bunx prisma migrate reset --force
 
 # Seed DB
 seed:
-	bunx prisma db seed
+	docker compose exec team-docs bunx prisma db seed
 
 # Apply migration in production (safe)
 deploy:
-	bunx prisma migrate deploy 
+	docker compose exec team-docs bunx prisma migrate deploy
 
 # -----------------------
 # Docker commands (for postgres)
@@ -28,15 +28,15 @@ deploy:
 
 # View Postgres logs
 logs:
-	docker logs -f postgres
+	docker logs -f team-docs-postgres
 
 # Enter Postgres container shell
 exec:
-	docker exec -it postgres sh
+	docker exec -it team-docs-postgres sh
 
 # Restart Postgres
 restart:
-	docker restart postgres
+	docker restart team-docs-postgres
 
 # Fully reset Docker volumes (DANGEROUS!)
 flush:
