@@ -29,7 +29,7 @@ export async function signup(prevState, formData) {
 			return {
 				type: "error",
 				message: "Database Error",
-				message: "User already exists with this username",
+				errors: "User already exists with this username",
 			};
 		}
 
