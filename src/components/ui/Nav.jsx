@@ -4,7 +4,6 @@ import { auth, signOut } from "@/app/auth";
 
 export async function Nav() {
 	const session = await auth();
-	console.log(session);
 
 	return (
 		<nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">

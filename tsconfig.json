@@ -1,0 +1,45 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"jsx": "preserve",
+		"strict": false,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowJs": true, // Allow JavaScript files (for JSX)
+		"checkJs": false, // Check JavaScript files for errors
+		"esModuleInterop": true,
+		"noEmit": true, // Don't emit output; used for type checking only
+		"resolveJsonModule": true,
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
+		"incremental": true,
+		"isolatedModules": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		],
+		"baseUrl": ".", // This sets the base directory for resolving paths
+		"paths": {
+			"@/*": [
+				"./*"
+			] // Maps "@/..." to the root directory
+		}
+	},
+	"include": [
+		"app/**/*",
+		"components/**/*",
+		"lib/**/*",
+		"pages/**/*",
+		"prisma/**/*",
+		".next/types/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}
