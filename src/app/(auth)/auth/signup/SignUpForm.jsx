@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { signup } from "./signupAction";
 import { signUpSchema } from "./signupSchema";

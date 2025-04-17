@@ -48,7 +48,7 @@ export default function SignInForm() {
 		if (message?.type === "success" && message.redirectTo) {
 			router.push(message.redirectTo);
 		}
-	}, [message, form]);
+	}, [message, form, router]);
 
 	return (
 		<Form {...form}>
@@ -106,7 +106,7 @@ export default function SignInForm() {
 
 				<div className="text-center pt-4">
 					<p className="text-sm text-muted-foreground">
-						Don't have an account?{" "}
+						Don&apos;t have an account?{" "}
 						<Link href="/auth/signup" className="text-blue-600 hover:underline">
 							Sign up
 						</Link>
