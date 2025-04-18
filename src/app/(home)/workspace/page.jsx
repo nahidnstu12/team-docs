@@ -90,7 +90,7 @@ export default function WorkspacePage() {
 						</DialogTitle>
 						<DialogDescription>
 							Give your workspace a clear name and a short description so your
-							team knows what it's for.
+							team knows what it&apos;s for.
 						</DialogDescription>
 					</DialogHeader>
 
