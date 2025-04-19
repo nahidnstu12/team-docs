@@ -27,8 +27,6 @@ export default function CreateForm() {
 		}
 	}, [state, reset]);
 
-	console.log(state);
-
 	return (
 		<form action={formAction} className="space-y-4">
 			<div>

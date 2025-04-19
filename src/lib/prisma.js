@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/app/generated/prisma";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
 // Create a global reference to reuse Prisma client
