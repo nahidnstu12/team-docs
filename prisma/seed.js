@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 async function main() {
 	console.log("🌱 Seeding 500 Workspaces...");
 
-	const workspaceData = Array.from({ length: 500 }).map(() => {
-		const name = faker.company.name();
+	const workspaceData = Array.from({ length: 500 }).map((_, idx) => {
+		const name = `workspace - ${idx}`;
 		const slug = faker.helpers.slugify(name.toLowerCase());
 
 		return {
