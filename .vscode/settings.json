@@ -1,17 +1,22 @@
 {
-	"eslint.format.enable": true,
-	"eslint.validate": [
-		"javascript",
-		"javascriptreact",
-		"typescript",
-		"typescriptreact",
-		"html",
-		"json"
-	],
-	"editor.formatOnSave": true,
-	"prettier.requireConfig": true,
-	"eslint.nodePath": "./node_modules/eslint",
-	"tailwindCSS.experimental.classRegex": [
-		"class:\\s*?[\"'`]([^\"'`]*).*?,"
-	],
+  "eslint.format.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "html",
+    "json"
+  ],
+  "editor.formatOnSave": true,
+  "prettier.requireConfig": true,
+  "eslint.nodePath": "./node_modules/eslint",
+  "tailwindCSS.experimental.classRegex": [
+    "class:\\s*?[\"'`]([^\"'`]*).*?,"
+  ],
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.next/**": true,
+    "**/node_modules/**": true
+  },
 }

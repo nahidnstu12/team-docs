@@ -8,9 +8,12 @@ services:
       - DATABASE_URL=postgresql://mazumder:1234@team-docs-postgres:5432/team-docs?schema=public
       - NEXTAUTH_URL=http://localhost:3000
       - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
+
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
     volumes:
-      - .:/app
-    restart: always
+      - .:/app:cached
+      - /app/.next
     ports:
       - "3000:3000"
     depends_on:
@@ -20,7 +23,7 @@ services:
 
   team-docs-postgres:
     image: postgres:16
-    restart: always
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
