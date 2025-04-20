@@ -53,4 +53,14 @@ export class BaseModel {
 	async findById(id) {
 		return await this.model.findUnique({ where: { id } });
 	}
+
+	/**
+	 * Finds all resource
+	 * @returns {Promise<Array>} Array of resources
+	 */
+	async findAll() {
+		return await this.model.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+	}
 }

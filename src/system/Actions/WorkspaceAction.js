@@ -2,7 +2,7 @@
 
 import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { BaseAction } from "./BaseAction";
-import { WorkspaceService } from "../Service/WorkspaceService";
+import { WorkspaceService } from "../Services/WorkspaceService";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
 
 /**
