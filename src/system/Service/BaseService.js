@@ -1,6 +1,7 @@
+/**
+ * Abstract base class for all services
+ * Contains common business logic methods
+ */
 export class BaseService {
-	// constructor(model) {
-	// 	this.model = model;
-	// }
-	// Add common service methods if needed
+	// Intentionally minimal - child classes implement specific logic
 }

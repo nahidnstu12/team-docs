@@ -1,21 +1,29 @@
-import slugify from "slugify";
 import { BaseService } from "./BaseService";
+import slugify from "slugify";
 
+/**
+ * Handles workspace-specific business logic
+ * @extends BaseService
+ */
 export class WorkspaceService extends BaseService {
-	// constructor(model) {
-	// 	super(model);
-	// }
-
+	/**
+	 * Processes workspace data before persistence
+	 * @param {Object} data - Raw workspace data
+	 * @returns {Promise<Object>} Processed workspace data
+	 */
 	async createWorkspace(data) {
-		// Modify data as needed (add slug, etc.)
-		const processedData = {
+		return {
 			...data,
 			slug: this.#generateSlug(data.name),
 		};
-
-		return processedData;
 	}
 
+	/**
+	 * Generates URL-friendly slug from name
+	 * @private
+	 * @param {string} name - Workspace name
+	 * @returns {string} Generated slug
+	 */
 	#generateSlug(name) {
 		return slugify(name, {
 			lower: true,
