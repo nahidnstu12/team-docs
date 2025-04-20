@@ -4,6 +4,7 @@ import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { BaseAction } from "./BaseAction";
 import { WorkspaceService } from "../Services/WorkspaceService";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
+import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 
 /**
  * Handles workspace-specific actions
@@ -42,17 +43,29 @@ class WorkspaceAction extends BaseAction {
 			const workspaceData = await this.workspaceService.createWorkspace(
 				result.data
 			);
-			await this.workspaceModel.create(workspaceData);
+			const Result = await this.workspaceModel.create(workspaceData);
+
+			console.log("db result from create workspace", Result);
 
 			return {
-				...result,
+				data: result.data,
+				success: true,
 				type: "success",
 				redirectTo: "/workspace",
 			};
 		} catch (error) {
 			console.error("Workspace creation failed:", error);
+			// Handle Prisma errors
+			if (error.code) {
+				return PrismaErrorFormatter.handle(error, result.data, [
+					"name",
+					"description",
+				]);
+			}
+
 			return {
 				success: false,
+				type: "fail",
 				errors: { _form: ["Failed to create workspace"] },
 				data: result.data,
 			};

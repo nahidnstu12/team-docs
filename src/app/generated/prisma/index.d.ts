@@ -2010,11 +2010,13 @@ export namespace Prisma {
   export type WorkspaceCountOutputType = {
     projects: number
     workspaceAdmins: number
+    User: number
   }
 
   export type WorkspaceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     projects?: boolean | WorkspaceCountOutputTypeCountProjectsArgs
     workspaceAdmins?: boolean | WorkspaceCountOutputTypeCountWorkspaceAdminsArgs
+    User?: boolean | WorkspaceCountOutputTypeCountUserArgs
   }
 
   // Custom InputTypes
@@ -2040,6 +2042,13 @@ export namespace Prisma {
    */
   export type WorkspaceCountOutputTypeCountWorkspaceAdminsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WorkspaceAdminWhereInput
+  }
+
+  /**
+   * WorkspaceCountOutputType without action
+   */
+  export type WorkspaceCountOutputTypeCountUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
 
@@ -2136,6 +2145,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     createdById: string | null
+    workspaceId: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2146,6 +2156,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     createdById: string | null
+    workspaceId: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2156,6 +2167,7 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     createdById: number
+    workspaceId: number
     _all: number
   }
 
@@ -2168,6 +2180,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     createdById?: true
+    workspaceId?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2178,6 +2191,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     createdById?: true
+    workspaceId?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2188,6 +2202,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     createdById?: true
+    workspaceId?: true
     _all?: true
   }
 
@@ -2271,6 +2286,7 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     createdById: string | null
+    workspaceId: string
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2298,6 +2314,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
+    workspaceId?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     userRoles?: boolean | User$userRolesArgs<ExtArgs>
     workspaceAdmins?: boolean | User$workspaceAdminsArgs<ExtArgs>
@@ -2315,6 +2333,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
+    workspaceId?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     createdBy?: boolean | User$createdByArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2326,6 +2346,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
+    workspaceId?: boolean
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     createdBy?: boolean | User$createdByArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2337,10 +2359,12 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     createdById?: boolean
+    workspaceId?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "createdAt" | "updatedAt" | "createdById", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "createdAt" | "updatedAt" | "createdById" | "workspaceId", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
     userRoles?: boolean | User$userRolesArgs<ExtArgs>
     workspaceAdmins?: boolean | User$workspaceAdminsArgs<ExtArgs>
@@ -2350,15 +2374,18 @@ export namespace Prisma {
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     createdBy?: boolean | User$createdByArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspace?: boolean | WorkspaceDefaultArgs<ExtArgs>
     createdBy?: boolean | User$createdByArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      workspace: Prisma.$WorkspacePayload<ExtArgs>
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       userRoles: Prisma.$UserRolePayload<ExtArgs>[]
       workspaceAdmins: Prisma.$WorkspaceAdminPayload<ExtArgs>[]
@@ -2374,6 +2401,7 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       createdById: string | null
+      workspaceId: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2768,6 +2796,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspace<T extends WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceDefaultArgs<ExtArgs>>): Prisma__WorkspaceClient<$Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userRoles<T extends User$userRolesArgs<ExtArgs> = {}>(args?: Subset<T, User$userRolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     workspaceAdmins<T extends User$workspaceAdminsArgs<ExtArgs> = {}>(args?: Subset<T, User$workspaceAdminsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceAdminPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2810,6 +2839,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly createdById: FieldRef<"User", 'String'>
+    readonly workspaceId: FieldRef<"User", 'String'>
   }
     
 
@@ -9028,6 +9058,7 @@ export namespace Prisma {
     updatedAt?: boolean
     projects?: boolean | Workspace$projectsArgs<ExtArgs>
     workspaceAdmins?: boolean | Workspace$workspaceAdminsArgs<ExtArgs>
+    User?: boolean | Workspace$UserArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workspace"]>
 
@@ -9065,6 +9096,7 @@ export namespace Prisma {
   export type WorkspaceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     projects?: boolean | Workspace$projectsArgs<ExtArgs>
     workspaceAdmins?: boolean | Workspace$workspaceAdminsArgs<ExtArgs>
+    User?: boolean | Workspace$UserArgs<ExtArgs>
     _count?: boolean | WorkspaceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type WorkspaceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -9075,6 +9107,7 @@ export namespace Prisma {
     objects: {
       projects: Prisma.$ProjectPayload<ExtArgs>[]
       workspaceAdmins: Prisma.$WorkspaceAdminPayload<ExtArgs>[]
+      User: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9480,6 +9513,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     projects<T extends Workspace$projectsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     workspaceAdmins<T extends Workspace$workspaceAdminsArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$workspaceAdminsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceAdminPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    User<T extends Workspace$UserArgs<ExtArgs> = {}>(args?: Subset<T, Workspace$UserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9949,6 +9983,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: WorkspaceAdminScalarFieldEnum | WorkspaceAdminScalarFieldEnum[]
+  }
+
+  /**
+   * Workspace.User
+   */
+  export type Workspace$UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -15635,7 +15693,8 @@ export namespace Prisma {
     password: 'password',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    createdById: 'createdById'
+    createdById: 'createdById',
+    workspaceId: 'workspaceId'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -15891,6 +15950,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     createdById?: StringNullableFilter<"User"> | string | null
+    workspaceId?: StringFilter<"User"> | string
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
     accounts?: AccountListRelationFilter
     userRoles?: UserRoleListRelationFilter
     workspaceAdmins?: WorkspaceAdminListRelationFilter
@@ -15907,6 +15968,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrderInput | SortOrder
+    workspaceId?: SortOrder
+    workspace?: WorkspaceOrderByWithRelationInput
     accounts?: AccountOrderByRelationAggregateInput
     userRoles?: UserRoleOrderByRelationAggregateInput
     workspaceAdmins?: WorkspaceAdminOrderByRelationAggregateInput
@@ -15926,6 +15989,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     createdById?: StringNullableFilter<"User"> | string | null
+    workspaceId?: StringFilter<"User"> | string
+    workspace?: XOR<WorkspaceScalarRelationFilter, WorkspaceWhereInput>
     accounts?: AccountListRelationFilter
     userRoles?: UserRoleListRelationFilter
     workspaceAdmins?: WorkspaceAdminListRelationFilter
@@ -15942,6 +16007,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrderInput | SortOrder
+    workspaceId?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -15958,6 +16024,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     createdById?: StringNullableWithAggregatesFilter<"User"> | string | null
+    workspaceId?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type AccountWhereInput = {
@@ -16297,6 +16364,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Workspace"> | Date | string
     projects?: ProjectListRelationFilter
     workspaceAdmins?: WorkspaceAdminListRelationFilter
+    User?: UserListRelationFilter
   }
 
   export type WorkspaceOrderByWithRelationInput = {
@@ -16309,6 +16377,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     projects?: ProjectOrderByRelationAggregateInput
     workspaceAdmins?: WorkspaceAdminOrderByRelationAggregateInput
+    User?: UserOrderByRelationAggregateInput
   }
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
@@ -16324,6 +16393,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Workspace"> | Date | string
     projects?: ProjectListRelationFilter
     workspaceAdmins?: WorkspaceAdminListRelationFilter
+    User?: UserListRelationFilter
   }, "id" | "slug">
 
   export type WorkspaceOrderByWithAggregationInput = {
@@ -16728,6 +16798,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     userRoles?: UserRoleCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
@@ -16744,6 +16815,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
@@ -16758,6 +16830,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
@@ -16774,6 +16847,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
@@ -16789,6 +16863,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
   }
 
   export type UserUpdateManyMutationInput = {
@@ -16808,6 +16883,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AccountCreateInput = {
@@ -17156,6 +17232,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     projects?: ProjectCreateNestedManyWithoutWorkspaceInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutWorkspaceInput
+    User?: UserCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateInput = {
@@ -17168,6 +17245,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     projects?: ProjectUncheckedCreateNestedManyWithoutWorkspaceInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutWorkspaceInput
+    User?: UserUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUpdateInput = {
@@ -17180,6 +17258,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projects?: ProjectUpdateManyWithoutWorkspaceNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutWorkspaceNestedInput
+    User?: UserUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateInput = {
@@ -17192,6 +17271,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projects?: ProjectUncheckedUpdateManyWithoutWorkspaceNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutWorkspaceNestedInput
+    User?: UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceCreateManyInput = {
@@ -17648,6 +17728,11 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type WorkspaceScalarRelationFilter = {
+    is?: WorkspaceWhereInput
+    isNot?: WorkspaceWhereInput
+  }
+
   export type AccountListRelationFilter = {
     every?: AccountWhereInput
     some?: AccountWhereInput
@@ -17716,6 +17801,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrder
+    workspaceId?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -17726,6 +17812,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrder
+    workspaceId?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -17736,6 +17823,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     createdById?: SortOrder
+    workspaceId?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -18057,11 +18145,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type WorkspaceScalarRelationFilter = {
-    is?: WorkspaceWhereInput
-    isNot?: WorkspaceWhereInput
-  }
-
   export type WorkspaceAdminWorkspaceIdUserIdCompoundUniqueInput = {
     workspaceId: string
     userId: string
@@ -18322,6 +18405,12 @@ export namespace Prisma {
     order?: SortOrder
   }
 
+  export type WorkspaceCreateNestedOneWithoutUserInput = {
+    create?: XOR<WorkspaceCreateWithoutUserInput, WorkspaceUncheckedCreateWithoutUserInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutUserInput
+    connect?: WorkspaceWhereUniqueInput
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -18404,6 +18493,14 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type WorkspaceUpdateOneRequiredWithoutUserNestedInput = {
+    create?: XOR<WorkspaceCreateWithoutUserInput, WorkspaceUncheckedCreateWithoutUserInput>
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutUserInput
+    upsert?: WorkspaceUpsertWithoutUserInput
+    connect?: WorkspaceWhereUniqueInput
+    update?: XOR<XOR<WorkspaceUpdateToOneWithWhereWithoutUserInput, WorkspaceUpdateWithoutUserInput>, WorkspaceUncheckedUpdateWithoutUserInput>
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -18782,6 +18879,13 @@ export namespace Prisma {
     connect?: WorkspaceAdminWhereUniqueInput | WorkspaceAdminWhereUniqueInput[]
   }
 
+  export type UserCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<UserCreateWithoutWorkspaceInput, UserUncheckedCreateWithoutWorkspaceInput> | UserCreateWithoutWorkspaceInput[] | UserUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutWorkspaceInput | UserCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: UserCreateManyWorkspaceInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
   export type ProjectUncheckedCreateNestedManyWithoutWorkspaceInput = {
     create?: XOR<ProjectCreateWithoutWorkspaceInput, ProjectUncheckedCreateWithoutWorkspaceInput> | ProjectCreateWithoutWorkspaceInput[] | ProjectUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutWorkspaceInput | ProjectCreateOrConnectWithoutWorkspaceInput[]
@@ -18794,6 +18898,13 @@ export namespace Prisma {
     connectOrCreate?: WorkspaceAdminCreateOrConnectWithoutWorkspaceInput | WorkspaceAdminCreateOrConnectWithoutWorkspaceInput[]
     createMany?: WorkspaceAdminCreateManyWorkspaceInputEnvelope
     connect?: WorkspaceAdminWhereUniqueInput | WorkspaceAdminWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutWorkspaceInput = {
+    create?: XOR<UserCreateWithoutWorkspaceInput, UserUncheckedCreateWithoutWorkspaceInput> | UserCreateWithoutWorkspaceInput[] | UserUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutWorkspaceInput | UserCreateOrConnectWithoutWorkspaceInput[]
+    createMany?: UserCreateManyWorkspaceInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type ProjectUpdateManyWithoutWorkspaceNestedInput = {
@@ -18824,6 +18935,20 @@ export namespace Prisma {
     deleteMany?: WorkspaceAdminScalarWhereInput | WorkspaceAdminScalarWhereInput[]
   }
 
+  export type UserUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<UserCreateWithoutWorkspaceInput, UserUncheckedCreateWithoutWorkspaceInput> | UserCreateWithoutWorkspaceInput[] | UserUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutWorkspaceInput | UserCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutWorkspaceInput | UserUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: UserCreateManyWorkspaceInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutWorkspaceInput | UserUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutWorkspaceInput | UserUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type ProjectUncheckedUpdateManyWithoutWorkspaceNestedInput = {
     create?: XOR<ProjectCreateWithoutWorkspaceInput, ProjectUncheckedCreateWithoutWorkspaceInput> | ProjectCreateWithoutWorkspaceInput[] | ProjectUncheckedCreateWithoutWorkspaceInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutWorkspaceInput | ProjectCreateOrConnectWithoutWorkspaceInput[]
@@ -18850,6 +18975,20 @@ export namespace Prisma {
     update?: WorkspaceAdminUpdateWithWhereUniqueWithoutWorkspaceInput | WorkspaceAdminUpdateWithWhereUniqueWithoutWorkspaceInput[]
     updateMany?: WorkspaceAdminUpdateManyWithWhereWithoutWorkspaceInput | WorkspaceAdminUpdateManyWithWhereWithoutWorkspaceInput[]
     deleteMany?: WorkspaceAdminScalarWhereInput | WorkspaceAdminScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutWorkspaceNestedInput = {
+    create?: XOR<UserCreateWithoutWorkspaceInput, UserUncheckedCreateWithoutWorkspaceInput> | UserCreateWithoutWorkspaceInput[] | UserUncheckedCreateWithoutWorkspaceInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutWorkspaceInput | UserCreateOrConnectWithoutWorkspaceInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutWorkspaceInput | UserUpsertWithWhereUniqueWithoutWorkspaceInput[]
+    createMany?: UserCreateManyWorkspaceInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutWorkspaceInput | UserUpdateWithWhereUniqueWithoutWorkspaceInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutWorkspaceInput | UserUpdateManyWithWhereWithoutWorkspaceInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type WorkspaceCreateNestedOneWithoutWorkspaceAdminsInput = {
@@ -19260,6 +19399,35 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type WorkspaceCreateWithoutUserInput = {
+    id?: string
+    name: string
+    description?: string | null
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projects?: ProjectCreateNestedManyWithoutWorkspaceInput
+    workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    description?: string | null
+    slug: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projects?: ProjectUncheckedCreateNestedManyWithoutWorkspaceInput
+    workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutWorkspaceInput
+  }
+
+  export type WorkspaceCreateOrConnectWithoutUserInput = {
+    where: WorkspaceWhereUniqueInput
+    create: XOR<WorkspaceCreateWithoutUserInput, WorkspaceUncheckedCreateWithoutUserInput>
+  }
+
   export type AccountCreateWithoutUserInput = {
     id?: string
     type: string
@@ -19377,6 +19545,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     userRoles?: UserRoleCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
@@ -19392,6 +19561,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
@@ -19410,6 +19580,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     userRoles?: UserRoleCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
@@ -19424,6 +19595,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspaceId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
@@ -19439,6 +19611,41 @@ export namespace Prisma {
   export type UserCreateManyCreatedByInputEnvelope = {
     data: UserCreateManyCreatedByInput | UserCreateManyCreatedByInput[]
     skipDuplicates?: boolean
+  }
+
+  export type WorkspaceUpsertWithoutUserInput = {
+    update: XOR<WorkspaceUpdateWithoutUserInput, WorkspaceUncheckedUpdateWithoutUserInput>
+    create: XOR<WorkspaceCreateWithoutUserInput, WorkspaceUncheckedCreateWithoutUserInput>
+    where?: WorkspaceWhereInput
+  }
+
+  export type WorkspaceUpdateToOneWithWhereWithoutUserInput = {
+    where?: WorkspaceWhereInput
+    data: XOR<WorkspaceUpdateWithoutUserInput, WorkspaceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type WorkspaceUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projects?: ProjectUpdateManyWithoutWorkspaceNestedInput
+    workspaceAdmins?: WorkspaceAdminUpdateManyWithoutWorkspaceNestedInput
+  }
+
+  export type WorkspaceUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    slug?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projects?: ProjectUncheckedUpdateManyWithoutWorkspaceNestedInput
+    workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -19574,6 +19781,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
@@ -19589,6 +19797,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
@@ -19622,6 +19831,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     createdById?: StringNullableFilter<"User"> | string | null
+    workspaceId?: StringFilter<"User"> | string
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -19631,6 +19841,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     userRoles?: UserRoleCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
@@ -19646,6 +19857,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
     userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
@@ -19675,6 +19887,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     userRoles?: UserRoleUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
@@ -19690,6 +19903,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
     userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -19935,6 +20149,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
@@ -19950,6 +20165,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
@@ -20004,6 +20220,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
@@ -20019,6 +20236,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -20114,6 +20332,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserCreateWithoutWorkspaceInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    userRoles?: UserRoleCreateNestedManyWithoutUserInput
+    workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
+    teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
+    createdBy?: UserCreateNestedOneWithoutCreatedUsersInput
+    createdUsers?: UserCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutWorkspaceInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
+    teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
+    createdUsers?: UserUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutWorkspaceInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutWorkspaceInput, UserUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type UserCreateManyWorkspaceInputEnvelope = {
+    data: UserCreateManyWorkspaceInput | UserCreateManyWorkspaceInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithWhereUniqueWithoutWorkspaceInput = {
     where: ProjectWhereUniqueInput
     update: XOR<ProjectUpdateWithoutWorkspaceInput, ProjectUncheckedUpdateWithoutWorkspaceInput>
@@ -20160,6 +20418,22 @@ export namespace Prisma {
     data: XOR<WorkspaceAdminUpdateManyMutationInput, WorkspaceAdminUncheckedUpdateManyWithoutWorkspaceInput>
   }
 
+  export type UserUpsertWithWhereUniqueWithoutWorkspaceInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutWorkspaceInput, UserUncheckedUpdateWithoutWorkspaceInput>
+    create: XOR<UserCreateWithoutWorkspaceInput, UserUncheckedCreateWithoutWorkspaceInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutWorkspaceInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutWorkspaceInput, UserUncheckedUpdateWithoutWorkspaceInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutWorkspaceInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutWorkspaceInput>
+  }
+
   export type WorkspaceCreateWithoutWorkspaceAdminsInput = {
     id?: string
     name: string
@@ -20169,6 +20443,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     projects?: ProjectCreateNestedManyWithoutWorkspaceInput
+    User?: UserCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutWorkspaceAdminsInput = {
@@ -20180,6 +20455,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     projects?: ProjectUncheckedCreateNestedManyWithoutWorkspaceInput
+    User?: UserUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutWorkspaceAdminsInput = {
@@ -20194,6 +20470,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     userRoles?: UserRoleCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberCreateNestedManyWithoutUserInput
@@ -20209,6 +20486,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     teamMembers?: TeamMemberUncheckedCreateNestedManyWithoutUserInput
@@ -20240,6 +20518,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projects?: ProjectUpdateManyWithoutWorkspaceNestedInput
+    User?: UserUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutWorkspaceAdminsInput = {
@@ -20251,6 +20530,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     projects?: ProjectUncheckedUpdateManyWithoutWorkspaceNestedInput
+    User?: UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type UserUpsertWithoutWorkspaceAdminsInput = {
@@ -20271,6 +20551,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
@@ -20286,6 +20567,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
@@ -20301,6 +20583,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutWorkspaceInput
+    User?: UserCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceUncheckedCreateWithoutProjectsInput = {
@@ -20312,6 +20595,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutWorkspaceInput
+    User?: UserUncheckedCreateNestedManyWithoutWorkspaceInput
   }
 
   export type WorkspaceCreateOrConnectWithoutProjectsInput = {
@@ -20399,6 +20683,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutWorkspaceNestedInput
+    User?: UserUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type WorkspaceUncheckedUpdateWithoutProjectsInput = {
@@ -20410,6 +20695,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutWorkspaceNestedInput
+    User?: UserUncheckedUpdateManyWithoutWorkspaceNestedInput
   }
 
   export type SectionUpsertWithWhereUniqueWithoutProjectInput = {
@@ -20495,6 +20781,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspace: WorkspaceCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     userRoles?: UserRoleCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminCreateNestedManyWithoutUserInput
@@ -20510,6 +20797,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     createdById?: string | null
+    workspaceId: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     userRoles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     workspaceAdmins?: WorkspaceAdminUncheckedCreateNestedManyWithoutUserInput
@@ -20574,6 +20862,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
@@ -20589,6 +20878,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
@@ -20834,6 +21124,7 @@ export namespace Prisma {
     password: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    workspaceId: string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -20948,6 +21239,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspace?: WorkspaceUpdateOneRequiredWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
@@ -20962,6 +21254,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
@@ -20976,6 +21269,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserRoleCreateManyRoleInput = {
@@ -21067,6 +21361,16 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type UserCreateManyWorkspaceInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdById?: string | null
+  }
+
   export type ProjectUpdateWithoutWorkspaceInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -21120,6 +21424,46 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    userRoles?: UserRoleUpdateManyWithoutUserNestedInput
+    workspaceAdmins?: WorkspaceAdminUpdateManyWithoutUserNestedInput
+    teamMembers?: TeamMemberUpdateManyWithoutUserNestedInput
+    createdBy?: UserUpdateOneWithoutCreatedUsersNestedInput
+    createdUsers?: UserUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    userRoles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    workspaceAdmins?: WorkspaceAdminUncheckedUpdateManyWithoutUserNestedInput
+    teamMembers?: TeamMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdUsers?: UserUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutWorkspaceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SectionCreateManyProjectInput = {

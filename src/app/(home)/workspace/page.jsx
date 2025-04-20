@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 import {
 	Dialog,
@@ -38,6 +38,8 @@ export default function WorkspacePage() {
 		},
 	});
 
+	console.log(formState);
+
 	const {
 		register,
 		setError,
@@ -55,6 +57,10 @@ export default function WorkspacePage() {
 					type: "server",
 					message: Array.isArray(messages) ? messages[0] : messages,
 				});
+
+				if (field === "_form") {
+					toast.error(messages[0]);
+				}
 			});
 
 			// Only reset with values if this is NOT coming after a success
@@ -126,6 +132,7 @@ export default function WorkspacePage() {
 								placeholder="e.g. Product Design, Marketing Team"
 								className="h-11"
 								{...register("name")}
+								aria-invalid={!!errors.name}
 							/>
 							{errors.name && (
 								<p className="text-sm text-red-500 mt-1">
@@ -143,6 +150,7 @@ export default function WorkspacePage() {
 								id="description"
 								placeholder="What is this workspace about?"
 								{...register("description")}
+								aria-invalid={!!errors.description}
 							/>
 							{errors.description && (
 								<p className="text-sm text-red-500 mt-1">
@@ -151,6 +159,12 @@ export default function WorkspacePage() {
 							)}
 						</div>
 
+						{/* General form error placeholder */}
+						{errors._form && (
+							<div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+								<p className="text-red-700">{errors._form.message}</p>
+							</div>
+						)}
 						<DialogFooter className="pt-4">
 							<Button type="submit" disabled={isPending}>
 								{isPending ? "Creating..." : "Create Workspace"}
