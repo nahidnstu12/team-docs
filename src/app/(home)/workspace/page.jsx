@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { createWorkspace } from "@/system/Actions/WorkspaceAction";
+import { toast } from "sonner";
 
 export default function WorkspacePage() {
 	const router = useRouter();
@@ -67,6 +68,14 @@ export default function WorkspacePage() {
 		if (formState.type === "success") {
 			setIsDialogOpen(false);
 			reset(); // Completely reset form
+
+			toast.success("Workspace created successfully", {
+				description: "Your new workspace is ready to use!",
+				// action: {
+				// 	label: "View Workspace",
+				// 	onClick: () => router.push(formState.redirectTo),
+				// },
+			});
 
 			if (formState.redirectTo) {
 				router.push(formState.redirectTo);
