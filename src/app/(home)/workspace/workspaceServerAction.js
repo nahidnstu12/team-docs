@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { WorkspaceSchema } from "./workspaceSchema";
+import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 
 export async function createWorkspace(prevState, formData) {
 	const rawData = Object.fromEntries(formData);

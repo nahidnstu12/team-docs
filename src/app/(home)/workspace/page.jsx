@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useEffect, useMemo } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 
 import {
 	Dialog,
@@ -17,58 +17,69 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { createWorkspace } from "./workspaceServerAction";
 import { useRouter } from "next/navigation";
-import { WorkspaceSchema } from "./workspaceSchema";
+import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
+import { createWorkspace } from "@/system/Actions/WorkspaceAction";
 
 export default function WorkspacePage() {
 	const router = useRouter();
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [formState, formAction, isPending] = useActionState(createWorkspace, {
 		errors: null,
 		data: null,
 	});
 
-	const defaultValues = useMemo(() => {
-		return (
-			formState?.data || {
-				name: "",
-				description: "",
-			}
-		);
-	}, [formState]);
-
-	console.log(formState);
-
 	const form = useForm({
 		resolver: zodResolver(WorkspaceSchema),
-		defaultValues,
+		defaultValues: {
+			name: "",
+			description: "",
+		},
 	});
 
 	const {
 		register,
+		setError,
+		reset,
 		formState: { errors },
 	} = form;
 
 	useEffect(() => {
-		if (formState?.errors) {
+		if (!formState) return;
+
+		if (formState.errors) {
 			// Set field errors
 			Object.entries(formState.errors).forEach(([field, messages]) => {
-				form.setError(field, {
+				setError(field, {
 					type: "server",
 					message: Array.isArray(messages) ? messages[0] : messages,
 				});
 			});
 
-			// Reset with values but keep errors
+			// Only reset with values if this is NOT coming after a success
 			if (formState.data) {
-				form.reset(formState.data, {
-					keepErrors: true, // ✅ keeps the just-set errors
+				reset(formState.data, {
+					keepErrors: true,
 				});
 			}
-		} else if (formState?.type === "success" && formState.redirectTo) {
-			router.push(formState.redirectTo);
 		}
-	}, [formState, form, router]);
+
+		if (formState.type === "success") {
+			setIsDialogOpen(false);
+			reset(); // Completely reset form
+
+			if (formState.redirectTo) {
+				router.push(formState.redirectTo);
+			}
+		}
+	}, [formState, setError, reset, router]);
+
+	// Reset everything when dialog opens
+	useEffect(() => {
+		if (isDialogOpen) {
+			reset();
+		}
+	}, [isDialogOpen, reset]);
 
 	return (
 		<div className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center space-y-6">
@@ -78,9 +89,11 @@ export default function WorkspacePage() {
 				your projects, tasks, and teams in one place.
 			</p>
 
-			<Dialog>
+			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 				<DialogTrigger asChild>
-					<Button size="lg">Create Your First Workspace</Button>
+					<Button size="lg" onClick={() => setIsDialogOpen(true)}>
+						Create Your First Workspace
+					</Button>
 				</DialogTrigger>
 
 				<DialogContent className="sm:max-w-[600px]">
