@@ -5,6 +5,7 @@ import { BaseAction } from "./BaseAction";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
 import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
+import { Session } from "@/lib/Session";
 
 /**
  * Handles workspace-specific actions
@@ -42,12 +43,12 @@ class WorkspaceAction extends BaseAction {
 		}
 
 		try {
-			// const workspaceData = await this.workspaceService.createWorkspace(
-			// 	result.data
-			// );
-			const Result = await this.workspaceModel.create(result.data);
+			const session = await Session.getCurrentUser();
 
-			Logger.success("db result from create workspace", Result);
+			await this.workspaceModel.create({
+				...result.data,
+				owner: { connect: { id: session.id } },
+			});
 
 			return {
 				data: result.data,
@@ -56,7 +57,7 @@ class WorkspaceAction extends BaseAction {
 				redirectTo: "/workspace",
 			};
 		} catch (error) {
-			console.error("Workspace creation failed:", error);
+			Logger.error(error, "Workspace creation failed:");
 			// Handle Prisma errors
 			if (error.code) {
 				return PrismaErrorFormatter.handle(error, result.data, [

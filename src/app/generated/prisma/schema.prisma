@@ -17,6 +17,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // 1:1 Workspace
+  workspaceId String? @unique // Ensures one workspace per user
+
   // Relations
   accounts        Account[]
   userRoles       UserRole[]
@@ -25,6 +28,7 @@ model User {
   createdBy       User?            @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdById     String?
   createdUsers    User[]           @relation("UserCreatedBy")
+  Workspace       Workspace?
 
   @@index([email])
 }
@@ -121,6 +125,7 @@ model UserRole {
 // ==========================================
 
 // Workspace is the top-level entity that contains projects
+
 model Workspace {
   id          String   @id @default(cuid())
   name        String
@@ -129,6 +134,10 @@ model Workspace {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // 1:1 Owner (User)
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @unique // Ensures this workspace is linked to only one user
 
   // Relations
   projects        Project[]

@@ -124,6 +124,7 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  workspaceId: 'workspaceId',
   createdById: 'createdById'
 };
 
@@ -181,7 +182,8 @@ exports.Prisma.WorkspaceScalarFieldEnum = {
   slug: 'slug',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.WorkspaceAdminScalarFieldEnum = {

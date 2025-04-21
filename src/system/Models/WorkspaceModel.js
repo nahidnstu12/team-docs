@@ -17,4 +17,11 @@ export class WorkspaceModel extends BaseModel {
 	async findByEmail(email) {
 		return await this.model.findUnique({ where: { email } });
 	}
+
+	// inside WorkspaceModel.js
+	async findBy(whereClause) {
+		return await this.prisma.workspace.findFirst({
+			where: whereClause,
+		});
+	}
 }

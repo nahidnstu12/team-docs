@@ -1,3 +1,4 @@
+import { Session } from "@/lib/Session";
 import { WorkspaceDTO } from "../DTOs/WorkspaceDto";
 import { Helpers } from "../Helpers";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
@@ -31,5 +32,20 @@ export class WorkspaceService extends BaseService {
 	async getAllWorkspaces() {
 		const workspaces = await this.model.findAll();
 		return WorkspaceDTO.toCollection(workspaces);
+	}
+
+	/**
+	 * Checks if the logged-in user already has a workspace
+	 * @param {Object} session - The session object containing user data
+	 * @returns {Promise<Boolean>} True if user has a workspace, else false
+	 */
+	async hasWorkspace(id) {
+		if (!id) throw new Error("Session is missing user ID");
+
+		const workspace = await this.model.findBy({
+			ownerId: id,
+		});
+
+		return !!workspace;
 	}
 }
