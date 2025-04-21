@@ -19,9 +19,9 @@ export class WorkspaceModel extends BaseModel {
 	}
 
 	// inside WorkspaceModel.js
-	async findBy(whereClause) {
-		return await this.prisma.workspace.findFirst({
-			where: whereClause,
-		});
-	}
+	// async findBy(whereClause) {
+	// 	return await this.prisma.workspace.findFirst({
+	// 		where: whereClause,
+	// 	});
+	// }
 }

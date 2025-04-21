@@ -6,6 +6,7 @@ import { WorkspaceModel } from "../Models/WorkspaceModel";
 import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
+import { WorkspaceService } from "../Services/WorkspaceService";
 
 /**
  * Handles workspace-specific actions
@@ -36,19 +37,21 @@ class WorkspaceAction extends BaseAction {
 	async create(formData) {
 		const result = await this.execute(formData);
 
-		Logger.info(result, "result");
-
-		if (!result.success) {
-			return result;
-		}
+		if (!result.success) return result;
 
 		try {
 			const session = await Session.getCurrentUser();
 
-			await this.workspaceModel.create({
+			const createdWorkspace = await this.workspaceModel.create({
 				...result.data,
 				owner: { connect: { id: session.id } },
 			});
+
+			const workspaceService = new WorkspaceService();
+			await workspaceService.assignWorkspaceToUser(
+				createdWorkspace.id,
+				session.id
+			);
 
 			return {
 				data: result.data,
