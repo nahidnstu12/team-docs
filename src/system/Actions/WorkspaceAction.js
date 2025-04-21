@@ -2,9 +2,9 @@
 
 import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { BaseAction } from "./BaseAction";
-import { WorkspaceService } from "../Services/WorkspaceService";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
 import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
+import Logger from "@/lib/Logger";
 
 /**
  * Handles workspace-specific actions
@@ -17,7 +17,7 @@ class WorkspaceAction extends BaseAction {
 	 */
 	constructor() {
 		super(WorkspaceSchema);
-		this.workspaceService = new WorkspaceService();
+		// this.workspaceService = new WorkspaceService();
 		this.workspaceModel = new WorkspaceModel();
 	}
 
@@ -35,17 +35,19 @@ class WorkspaceAction extends BaseAction {
 	async create(formData) {
 		const result = await this.execute(formData);
 
+		Logger.info(result, "result");
+
 		if (!result.success) {
 			return result;
 		}
 
 		try {
-			const workspaceData = await this.workspaceService.createWorkspace(
-				result.data
-			);
-			const Result = await this.workspaceModel.create(workspaceData);
+			// const workspaceData = await this.workspaceService.createWorkspace(
+			// 	result.data
+			// );
+			const Result = await this.workspaceModel.create(result.data);
 
-			console.log("db result from create workspace", Result);
+			Logger.success("db result from create workspace", Result);
 
 			return {
 				data: result.data,
@@ -60,6 +62,7 @@ class WorkspaceAction extends BaseAction {
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
 					"description",
+					"slug",
 				]);
 			}
 

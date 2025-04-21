@@ -18,7 +18,6 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  workspace       Workspace        @relation(fields: [workspaceId], references: [id])
   accounts        Account[]
   userRoles       UserRole[]
   workspaceAdmins WorkspaceAdmin[]
@@ -26,7 +25,6 @@ model User {
   createdBy       User?            @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   createdById     String?
   createdUsers    User[]           @relation("UserCreatedBy")
-  workspaceId     String
 
   @@index([email])
 }
@@ -135,7 +133,6 @@ model Workspace {
   // Relations
   projects        Project[]
   workspaceAdmins WorkspaceAdmin[]
-  User            User[]
 
   @@index([slug])
 }

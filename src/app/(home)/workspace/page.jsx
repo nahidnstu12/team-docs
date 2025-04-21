@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { createWorkspace } from "@/system/Actions/WorkspaceAction";
 import { toast } from "sonner";
+import slugify from "slugify";
 
 export default function WorkspacePage() {
 	const router = useRouter();
@@ -34,6 +35,7 @@ export default function WorkspacePage() {
 		resolver: zodResolver(WorkspaceSchema),
 		defaultValues: {
 			name: "",
+			slug: "",
 			description: "",
 		},
 	});
@@ -46,6 +48,24 @@ export default function WorkspacePage() {
 		reset,
 		formState: { errors },
 	} = form;
+
+	// Watch name field and update slug
+	const nameValue = form.watch("name");
+	useEffect(() => {
+		if (nameValue) {
+			const slug = slugify(nameValue, {
+				lower: true,
+				strict: true,
+				remove: /[*+~.()'"!:@]/g,
+			});
+			form.setValue("slug", slug);
+		} else {
+			form.setValue("slug", "");
+		}
+	}, [nameValue, form]);
+
+	// watch slug value
+	const slugValue = form.watch("slug");
 
 	useEffect(() => {
 		if (!formState) return;
@@ -142,6 +162,27 @@ export default function WorkspacePage() {
 						</div>
 
 						<div>
+							<Label htmlFor="slug" className="mb-1 block text-left">
+								Workspace URL
+							</Label>
+							<Input
+								id="slug"
+								className="h-11 bg-muted"
+								readOnly
+								{...register("slug")}
+								aria-invalid={!!errors.slug}
+							/>
+							<p className="text-xs text-muted-foreground mt-1">
+								This will be your workspace&apos;s unique URL
+							</p>
+							{errors.slug && (
+								<p className="text-sm text-red-500 mt-1">
+									{errors.slug.message}
+								</p>
+							)}
+						</div>
+
+						<div>
 							<Label htmlFor="description" className="mb-1 block text-left">
 								Description{" "}
 								<span className="text-muted-foreground">(optional)</span>
@@ -166,7 +207,7 @@ export default function WorkspacePage() {
 							</div>
 						)}
 						<DialogFooter className="pt-4">
-							<Button type="submit" disabled={isPending}>
+							<Button type="submit" disabled={!slugValue || isPending}>
 								{isPending ? "Creating..." : "Create Workspace"}
 							</Button>
 						</DialogFooter>
