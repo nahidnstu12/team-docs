@@ -62,8 +62,8 @@ class WorkspaceAction extends BaseAction {
 			if (error.code) {
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
-					"description",
 					"slug",
+					"description",
 				]);
 			}
 

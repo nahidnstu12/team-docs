@@ -46,6 +46,6 @@ export class WorkspaceService extends BaseService {
 			ownerId: id,
 		});
 
-		return !!workspace;
+		return workspace;
 	}
 }

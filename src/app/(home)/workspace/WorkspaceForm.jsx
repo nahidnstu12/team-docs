@@ -40,17 +40,17 @@ export default function WorkspaceForm() {
 		},
 	});
 
-	console.log(formState);
-
 	const {
 		register,
 		setError,
 		reset,
+		watch,
+		setValue,
 		formState: { errors },
 	} = form;
 
 	// Watch name field and update slug
-	const nameValue = form.watch("name");
+	const nameValue = watch("name");
 	useEffect(() => {
 		if (nameValue) {
 			const slug = slugify(nameValue, {
@@ -58,14 +58,14 @@ export default function WorkspaceForm() {
 				strict: true,
 				remove: /[*+~.()'"!:@]/g,
 			});
-			form.setValue("slug", slug);
+			setValue("slug", slug);
 		} else {
-			form.setValue("slug", "");
+			setValue("slug", "");
 		}
-	}, [nameValue, form]);
+	}, [nameValue, setValue]);
 
 	// watch slug value
-	const slugValue = form.watch("slug");
+	const slugValue = watch("slug");
 
 	useEffect(() => {
 		if (!formState) return;
@@ -93,14 +93,10 @@ export default function WorkspaceForm() {
 
 		if (formState.type === "success") {
 			setIsDialogOpen(false);
-			reset(); // Completely reset form
+			reset();
 
 			toast.success("Workspace created successfully", {
 				description: "Your new workspace is ready to use!",
-				// action: {
-				// 	label: "View Workspace",
-				// 	onClick: () => router.push(formState.redirectTo),
-				// },
 			});
 
 			if (formState.redirectTo) {
@@ -118,7 +114,7 @@ export default function WorkspaceForm() {
 	return (
 		<div className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center space-y-6">
 			<h1 className="text-4xl font-bold tracking-tight">No workspace found</h1>
-			<p className="text-muted-foreground max-w-md">
+			<p className="max-w-md text-muted-foreground">
 				You haven’t created any workspaces yet. Workspaces help you organize
 				your projects, tasks, and teams in one place.
 			</p>
@@ -141,9 +137,9 @@ export default function WorkspaceForm() {
 						</DialogDescription>
 					</DialogHeader>
 
-					<form action={formAction} className="space-y-5 mt-6">
+					<form action={formAction} className="mt-6 space-y-5">
 						<div>
-							<Label htmlFor="name" className="mb-1 block text-left">
+							<Label htmlFor="name" className="block mb-1 text-left">
 								Workspace Name
 							</Label>
 							<Input
@@ -154,14 +150,14 @@ export default function WorkspaceForm() {
 								aria-invalid={!!errors.name}
 							/>
 							{errors.name && (
-								<p className="text-sm text-red-500 mt-1">
+								<p className="mt-1 text-sm text-red-500">
 									{errors.name.message}
 								</p>
 							)}
 						</div>
 
 						<div>
-							<Label htmlFor="slug" className="mb-1 block text-left">
+							<Label htmlFor="slug" className="block mb-1 text-left">
 								Workspace URL
 							</Label>
 							<Input
@@ -171,18 +167,18 @@ export default function WorkspaceForm() {
 								{...register("slug")}
 								aria-invalid={!!errors.slug}
 							/>
-							<p className="text-xs text-muted-foreground mt-1">
+							<p className="mt-1 text-xs text-muted-foreground">
 								This will be your workspace&apos;s unique URL
 							</p>
 							{errors.slug && (
-								<p className="text-sm text-red-500 mt-1">
+								<p className="mt-1 text-sm text-red-500">
 									{errors.slug.message}
 								</p>
 							)}
 						</div>
 
 						<div>
-							<Label htmlFor="description" className="mb-1 block text-left">
+							<Label htmlFor="description" className="block mb-1 text-left">
 								Description{" "}
 								<span className="text-muted-foreground">(optional)</span>
 							</Label>
@@ -193,7 +189,7 @@ export default function WorkspaceForm() {
 								aria-invalid={!!errors.description}
 							/>
 							{errors.description && (
-								<p className="text-sm text-red-500 mt-1">
+								<p className="mt-1 text-sm text-red-500">
 									{errors.description.message}
 								</p>
 							)}
@@ -201,7 +197,7 @@ export default function WorkspaceForm() {
 
 						{/* General form error placeholder */}
 						{errors._form && (
-							<div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+							<div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
 								<p className="text-red-700">{errors._form.message}</p>
 							</div>
 						)}

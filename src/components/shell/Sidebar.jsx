@@ -5,7 +5,14 @@ import { useSidebarToggle } from "@/hook/useSidebarToggle";
 import { useSession } from "next-auth/react";
 import { signout } from "@/lib/actions/auth/signout";
 
-import { LayoutDashboard, ShieldCheck, User, LogOut, Mail } from "lucide-react";
+import {
+	LayoutDashboard,
+	ShieldCheck,
+	User,
+	LogOut,
+	Mail,
+	Box,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import SidebarItem from "./NavItems";
@@ -30,6 +37,11 @@ export default function Sidebar() {
 							href="/workspace"
 							icon={<LayoutDashboard className="h-4 w-4" />}
 							label="Workspace"
+						/>
+						<SidebarItem
+							href="/projects"
+							icon={<Box className="h-4 w-4" />}
+							label="Projects"
 						/>
 						<SidebarItem
 							href="/roles"
