@@ -8,7 +8,7 @@ export class ProjectService extends BaseService {
 	}
 
 	async hasProjects(id) {
-		if (!id) throw new Error("workspaceId is missing");
+		if (!id) return false;
 
 		const projects = await this.model.findFirst({
 			workspaceId: id,

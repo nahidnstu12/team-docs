@@ -57,7 +57,7 @@ class WorkspaceAction extends BaseAction {
 				data: result.data,
 				success: true,
 				type: "success",
-				redirectTo: "/workspace",
+				redirectTo: "/projects",
 			};
 		} catch (error) {
 			Logger.error(error, "Workspace creation failed:");

@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import { useSidebarToggle } from "@/hook/useSidebarToggle";
-import { useSession } from "next-auth/react";
 import { signout } from "@/lib/actions/auth/signout";
 
 import {
@@ -15,17 +14,20 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import SidebarItem from "./NavItems";
+import SidebarItem from "../abstracts/SidebarItem";
 
-export default function Sidebar() {
+export default function Sidebar({
+	session,
+	hasWorkspace = false,
+	hasProjects = false,
+}) {
 	const { isOpen } = useSidebarToggle();
-	const { data: session } = useSession();
 
 	return (
 		<aside
 			className={cn(
 				"transition-all duration-300 bg-background text-foreground h-full flex flex-col border-r shadow-sm",
-				isOpen ? "w-64" : "w-0",
+				isOpen ? "w-52" : "w-0",
 				"relative z-50"
 			)}
 		>
@@ -33,21 +35,31 @@ export default function Sidebar() {
 				<>
 					{/* NAVIGATION SECTION */}
 					<nav className="flex-1 pt-20 px-4 space-y-1">
-						<SidebarItem
-							href="/workspace"
-							icon={<LayoutDashboard className="h-4 w-4" />}
-							label="Workspace"
-						/>
-						<SidebarItem
-							href="/projects"
-							icon={<Box className="h-4 w-4" />}
-							label="Projects"
-						/>
-						<SidebarItem
-							href="/roles"
-							icon={<ShieldCheck className="h-4 w-4" />}
-							label="Role & Permission"
-						/>
+						{/* Show Workspace nav only if user doesn't have one */}
+						{!hasWorkspace && (
+							<SidebarItem
+								href="/workspace"
+								icon={<LayoutDashboard className="h-4 w-4" />}
+								label="Create Workspace"
+							/>
+						)}
+
+						{/* Show Project nav only if user already has a workspace */}
+						{hasWorkspace && (
+							<SidebarItem
+								href="/projects"
+								icon={<Box className="h-4 w-4" />}
+								label="Projects"
+							/>
+						)}
+
+						{hasProjects && (
+							<SidebarItem
+								href="/roles"
+								icon={<ShieldCheck className="h-4 w-4" />}
+								label="Role & Permission"
+							/>
+						)}
 					</nav>
 
 					{/* AUTH SECTION */}
@@ -58,11 +70,11 @@ export default function Sidebar() {
 								<div className="text-sm flex flex-col gap-1">
 									<p className="font-medium flex items-center gap-2">
 										<User className="w-4 h-4 text-muted-foreground" />
-										{session.user?.username}
+										{session.username}
 									</p>
 									<p className="text-muted-foreground truncate flex items-center gap-2">
 										<Mail className="w-4 h-4 text-muted-foreground" />
-										{session.user?.email}
+										{session.email}
 									</p>
 								</div>
 

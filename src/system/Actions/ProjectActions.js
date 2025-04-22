@@ -54,7 +54,7 @@ class ProjectAction extends BaseAction {
 			return {
 				success: false,
 				type: "fail",
-				errors: { _form: ["Failed to create workspace"] },
+				errors: { _form: ["Failed to create project"] },
 				data: result.data,
 			};
 		}

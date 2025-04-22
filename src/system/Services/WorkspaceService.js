@@ -13,6 +13,12 @@ export class WorkspaceService extends BaseService {
 		this.model = new WorkspaceModel();
 	}
 
+	async getWorkspace(id) {
+		if (!id) throw new Error("Session is missing user ID");
+		const workspace = await this.model.findFirst({ ownerId: id });
+		return workspace;
+	}
+
 	async assignWorkspaceToUser(workspaceId, userId) {
 		try {
 			await prisma.user.update({
