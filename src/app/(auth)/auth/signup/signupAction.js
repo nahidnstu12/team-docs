@@ -4,6 +4,7 @@ import { signIn } from "@/app/auth";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signUpSchema } from "./signupSchema";
+import Logger from "@/lib/Logger";
 
 export async function signup(prevState, formData) {
 	try {
@@ -13,32 +14,32 @@ export async function signup(prevState, formData) {
 			password: formData.get("password"),
 		});
 
-		if (!validatedFields.success) {
+		if (!validatedFields.success)
 			return {
+				type: "error",
 				message: "Invalid fields",
 				errors: validatedFields.error.flatten().fieldErrors,
 			};
-		}
 
 		const { username, email, password } = validatedFields.data;
 
 		const existingUserName = await prisma.user.findUnique({
 			where: { username },
 		});
-		if (existingUserName) {
+		if (existingUserName)
 			return {
 				type: "error",
-				message: "Database Error",
-				errors: "User already exists with this username",
+				errors: { _form: ["User already exists with this username"] },
 			};
-		}
 
 		const existingUserEmail = await prisma.user.findUnique({
 			where: { email },
 		});
-		if (existingUserEmail) {
-			return { message: "User already exists with this email" };
-		}
+		if (existingUserEmail)
+			return {
+				type: "error",
+				errors: { _form: ["User already exists with this email"] },
+			};
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -52,9 +53,9 @@ export async function signup(prevState, formData) {
 
 		if (!userCreate)
 			return {
-				type: "error",
-				message: "Database Error",
-				errors: "Something went wrong while creating the user",
+				type: "fail",
+				success: false,
+				errors: { _form: ["Something went wrong while creating the user"] },
 			};
 
 		const result = await signIn("credentials", {
@@ -65,9 +66,9 @@ export async function signup(prevState, formData) {
 
 		if (result?.error) {
 			return {
-				type: "error",
-				message: "Signin Error",
-				errors: { form: "signin error" },
+				type: "fail",
+				success: false,
+				errors: { _form: ["signin error"] },
 			};
 		}
 
@@ -80,9 +81,9 @@ export async function signup(prevState, formData) {
 		console.error("signup error: ", error);
 
 		return {
-			type: "error",
-			message: "Something went wrong",
-			errors: { form: "Something went wrong" },
+			success: false,
+			type: "fail",
+			errors: { _form: ["Something went wrong"] },
 		};
 	}
 }

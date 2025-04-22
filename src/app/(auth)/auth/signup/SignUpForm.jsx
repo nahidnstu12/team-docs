@@ -18,11 +18,13 @@ import Link from "next/link";
 import { signup } from "./signupAction";
 import { signUpSchema } from "./signupSchema";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 
 export default function SignUpForm() {
 	const router = useRouter();
-	const [message, formAction, isPending] = useActionState(signup, {
-		message: "",
+	const [formState, formAction, isPending] = useActionState(signup, {
+		message: null,
 		errors: null,
 	});
 
@@ -34,110 +36,157 @@ export default function SignUpForm() {
 			password: "",
 		},
 	});
+
+	console.log(formState);
+
 	useEffect(() => {
-		if (message?.errors) {
-			Object.entries(message.errors).forEach(([field, messages]) => {
+		if (!formState) return;
+
+		if (formState?.errors) {
+			Object.entries(formState.errors).forEach(([field, message]) => {
 				form.setError(field, {
 					type: "server",
-					message: Array.isArray(messages) ? messages[0] : messages,
+					message: Array.isArray(message) ? message[0] : message,
 				});
+
+				if (field === "_form") toast.error(message[0]);
 			});
 
-			form.setValue("password", "");
+			if (formState.data) {
+				form.reset(formState.data, { keepErrors: true });
+			}
 		}
 
-		if (message?.type === "success" && message.redirectTo) {
-			router.push(message.redirectTo);
+		if (formState?.type === "success") {
+			router.push(formState.redirectTo);
 		}
-	}, [message?.errors, form]);
+	}, [
+		formState.errors,
+		form,
+		formState.redirectTo,
+		formState?.type,
+		router,
+		formState,
+	]);
 
 	return (
-		<Form {...form}>
-			<form action={formAction} className="space-y-6">
-				<FormField
-					control={form.control}
-					name="username"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-lg">Username</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="username"
-									className="h-12 text-lg"
-									{...field}
-									onChange={(e) => {
-										form.clearErrors("username");
-										field.onChange(e);
-									}}
-								/>
-							</FormControl>
-							<FormMessage className="text-base" />
-						</FormItem>
-					)}
-				/>
+		<div className="max-w-md w-full mx-auto">
+			{formState?.type === "success" ? (
+				<Card className="animate-pulse shadow-xl border-blue-200">
+					<CardHeader className="text-center">
+						<h1 className="text-xl font-semibold text-blue-600">
+							Creating your account...
+						</h1>
+					</CardHeader>
+					<CardBody className="flex flex-col items-center justify-center space-y-4 py-6">
+						<Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+						<p className="text-sm text-gray-600">
+							Redirecting to your dashboard. Please wait...
+						</p>
+					</CardBody>
+				</Card>
+			) : (
+				<Form {...form}>
+					<form action={formAction} className="space-y-6">
+						{/* Username Field */}
+						<FormField
+							control={form.control}
+							name="username"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-lg">Username</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="username"
+											className="h-12 text-lg"
+											{...field}
+											onChange={(e) => {
+												form.clearErrors("username");
+												field.onChange(e);
+											}}
+										/>
+									</FormControl>
+									<FormMessage className="text-base" />
+								</FormItem>
+							)}
+						/>
 
-				<FormField
-					control={form.control}
-					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-lg">Email</FormLabel>
-							<FormControl>
-								<Input
-									type="email"
-									placeholder="your@email.com"
-									className="h-12 text-lg"
-									{...field}
-									onChange={(e) => {
-										form.clearErrors("email");
-										field.onChange(e);
-									}}
-								/>
-							</FormControl>
-							<FormMessage className="text-base" />
-						</FormItem>
-					)}
-				/>
+						{/* Email Field */}
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-lg">Email</FormLabel>
+									<FormControl>
+										<Input
+											type="email"
+											placeholder="your@email.com"
+											className="h-12 text-lg"
+											{...field}
+											onChange={(e) => {
+												form.clearErrors("email");
+												field.onChange(e);
+											}}
+										/>
+									</FormControl>
+									<FormMessage className="text-base" />
+								</FormItem>
+							)}
+						/>
 
-				<FormField
-					control={form.control}
-					name="password"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-lg">Password</FormLabel>
-							<FormControl>
-								<Input
-									type="password"
-									placeholder="••••••••"
-									className="h-12 text-lg"
-									{...field}
-									onChange={(e) => {
-										form.clearErrors("password");
-										field.onChange(e);
-									}}
-								/>
-							</FormControl>
-							<FormMessage className="text-base" />
-						</FormItem>
-					)}
-				/>
+						{/* Password Field */}
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-lg">Password</FormLabel>
+									<FormControl>
+										<Input
+											type="password"
+											placeholder="••••••••"
+											className="h-12 text-lg"
+											{...field}
+											onChange={(e) => {
+												form.clearErrors("password");
+												field.onChange(e);
+											}}
+										/>
+									</FormControl>
+									<FormMessage className="text-base" />
+								</FormItem>
+							)}
+						/>
 
-				{message?.message && !message?.errors && (
-					<div className="text-red-500 text-sm">{message.message}</div>
-				)}
+						{/* Form-wide Errors */}
+						{formState?.errors?._form && (
+							<div className="text-red-500 text-sm space-y-1">
+								{formState.errors._form.map((msg, index) => (
+									<p key={index}>{msg}</p>
+								))}
+							</div>
+						)}
 
-				<SubmitButton isPending={isPending} />
+						{/* Submit */}
+						<SubmitButton isPending={isPending} />
 
-				<div className="text-center pt-4">
-					<p className="text-sm text-muted-foreground">
-						Already have an account?{" "}
-						<Link href="/auth/signin" className="text-blue-600 hover:underline">
-							Sign in
-						</Link>
-					</p>
-				</div>
-			</form>
-		</Form>
+						{/* Link to Sign In */}
+						<div className="text-center pt-4">
+							<p className="text-sm text-muted-foreground">
+								Already have an account?{" "}
+								<Link
+									href="/auth/signin"
+									className="text-blue-600 hover:underline"
+								>
+									Sign in
+								</Link>
+							</p>
+						</div>
+					</form>
+				</Form>
+			)}
+		</div>
 	);
 }
 
