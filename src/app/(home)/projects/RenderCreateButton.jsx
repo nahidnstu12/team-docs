@@ -9,7 +9,9 @@ export default function CreateProjectButton() {
 
 	return (
 		<>
-			<Button onClick={() => onOpenChange(true)}>Create Project</Button>
+			<Button onClick={() => onOpenChange(true)} className="cursor-pointer">
+				Create Project
+			</Button>
 			<ProjectDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
 		</>
 	);

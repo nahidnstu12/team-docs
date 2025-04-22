@@ -16,7 +16,9 @@ export default function MainLayout({ children }) {
 							<div className="flex flex-col flex-1 overflow-hidden">
 								<Header />
 								<Toaster position="top-right" richColors />
-								<main className="flex-1 overflow-auto p-4">{children}</main>
+								<main className="flex-1 overflow-auto p-4 min-h-[80vh] flex flex-col items-center justify-center px-4">
+									{children}
+								</main>
 							</div>
 						</div>
 					</SidebarToggleProvider>
