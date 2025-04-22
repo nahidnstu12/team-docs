@@ -45,14 +45,14 @@ export default function ProjectListings({ projects }) {
 								<Button
 									variant="outline"
 									size="sm"
-									className="flex items-center gap-1"
+									className="flex items-center gap-1 cursor-pointer"
 								>
 									<Edit className="w-4 h-4" /> Edit
 								</Button>
 								<Button
 									variant="destructive"
 									size="sm"
-									className="flex items-center gap-1"
+									className="flex items-center gap-1 cursor-pointer"
 								>
 									<Trash className="w-4 h-4" /> Delete
 								</Button>

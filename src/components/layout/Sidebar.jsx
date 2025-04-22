@@ -11,6 +11,7 @@ import {
 	LogOut,
 	Mail,
 	Box,
+	House,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,11 @@ export default function Sidebar({
 				<>
 					{/* NAVIGATION SECTION */}
 					<nav className="flex-1 px-4 pt-20 space-y-1">
+						<SidebarItem
+							href="/home"
+							icon={<House className="w-4 h-4" />}
+							label="Home"
+						/>
 						{/* Show Workspace nav only if user doesn't have one */}
 						{!hasWorkspace && (
 							<SidebarItem
