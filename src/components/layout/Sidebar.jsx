@@ -27,19 +27,19 @@ export default function Sidebar({
 		<aside
 			className={cn(
 				"transition-all duration-300 bg-background text-foreground h-full flex flex-col border-r shadow-sm",
-				isOpen ? "w-52" : "w-0",
+				isOpen ? "w-60" : "w-0",
 				"relative z-50"
 			)}
 		>
 			{isOpen && (
 				<>
 					{/* NAVIGATION SECTION */}
-					<nav className="flex-1 pt-20 px-4 space-y-1">
+					<nav className="flex-1 px-4 pt-20 space-y-1">
 						{/* Show Workspace nav only if user doesn't have one */}
 						{!hasWorkspace && (
 							<SidebarItem
 								href="/workspace"
-								icon={<LayoutDashboard className="h-4 w-4" />}
+								icon={<LayoutDashboard className="w-4 h-4" />}
 								label="Create Workspace"
 							/>
 						)}
@@ -48,7 +48,7 @@ export default function Sidebar({
 						{hasWorkspace && (
 							<SidebarItem
 								href="/projects"
-								icon={<Box className="h-4 w-4" />}
+								icon={<Box className="w-4 h-4" />}
 								label="Projects"
 							/>
 						)}
@@ -56,7 +56,7 @@ export default function Sidebar({
 						{hasProjects && (
 							<SidebarItem
 								href="/roles"
-								icon={<ShieldCheck className="h-4 w-4" />}
+								icon={<ShieldCheck className="w-4 h-4" />}
 								label="Role & Permission"
 							/>
 						)}
@@ -67,12 +67,12 @@ export default function Sidebar({
 						{session && (
 							<div className="space-y-6">
 								{/* User Info */}
-								<div className="text-sm flex flex-col gap-1">
-									<p className="font-medium flex items-center gap-2">
+								<div className="flex flex-col gap-1 text-sm">
+									<p className="flex items-center gap-2 font-medium">
 										<User className="w-4 h-4 text-muted-foreground" />
 										{session.username}
 									</p>
-									<p className="text-muted-foreground truncate flex items-center gap-2">
+									<p className="flex items-center gap-2 truncate text-muted-foreground">
 										<Mail className="w-4 h-4 text-muted-foreground" />
 										{session.email}
 									</p>
@@ -83,7 +83,7 @@ export default function Sidebar({
 									<Button
 										type="submit"
 										variant="destructive"
-										className="w-full flex items-center gap-2 cursor-pointer"
+										className="flex items-center w-full gap-2 cursor-pointer"
 									>
 										<LogOut className="w-4 h-4" />
 										Sign Out

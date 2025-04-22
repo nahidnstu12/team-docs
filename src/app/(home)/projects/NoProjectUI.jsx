@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
-import CreateProjectButton from "./RenderCreateButton";
 import { Sparkles } from "lucide-react";
+import RenderCreateButton from "./RenderCreateButton";
 
 export default function NoProjectUI() {
 	return (
-		<div className="flex items-center justify-center mt-10 px-4 bg-muted">
+		<div className="flex items-center justify-center px-4 mt-10 bg-muted">
 			<Card className="w-full max-w-2xl h-[320px] border-none shadow-xl rounded-2xl bg-background flex flex-col">
 				<CardBody className="flex flex-col justify-between flex-1 px-8 py-5 overflow-hidden">
 					{/* Content Section */}
@@ -21,7 +21,7 @@ export default function NoProjectUI() {
 						</CardHeader>
 
 						<CardBody className="p-0">
-							<p className="text-center text-base sm:text-lg text-muted-foreground max-w-xl">
+							<p className="max-w-xl text-base text-center sm:text-lg text-muted-foreground">
 								Great! You’ve created a workspace. Now, create one or more
 								projects to organize your documents, users, and access control
 								with ease and clarity.
@@ -31,7 +31,7 @@ export default function NoProjectUI() {
 
 					{/* Button pinned at bottom */}
 					<CardFooter className="flex justify-center pt-18">
-						<CreateProjectButton />
+						<RenderCreateButton />
 					</CardFooter>
 				</CardBody>
 			</Card>

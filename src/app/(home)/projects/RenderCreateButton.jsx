@@ -4,7 +4,7 @@ import { useDisclosure } from "@heroui/use-disclosure";
 import { Button } from "@/components/ui/button";
 import ProjectDrawer from "./ProjectDrawer";
 
-export default function CreateProjectButton() {
+export default function RenderCreateButton() {
 	const { isOpen, onOpenChange } = useDisclosure();
 
 	return (

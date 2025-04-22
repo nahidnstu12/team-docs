@@ -1,7 +1,7 @@
-import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
 import NoProjectUI from "./NoProjectUI";
 import { ProjectService } from "@/system/Services/ProjectServices";
+import ProjectListings from "./ProjectListings";
 
 export default async function ProjectPage() {
 	const session = await Session.getCurrentUser();
@@ -17,5 +17,7 @@ export default async function ProjectPage() {
 
 	if (!hasNoProjects) return <NoProjectUI />;
 
-	return <div className="">project page</div>;
+	const projects = await projectService.getAllProjets(workspaceId);
+
+	return <ProjectListings projects={projects} />;
 }

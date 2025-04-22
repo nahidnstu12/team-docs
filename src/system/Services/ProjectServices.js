@@ -22,7 +22,7 @@ export class ProjectService extends BaseService {
 		if (!workspaceId) throw new Error("workspaceId is missing");
 
 		return await this.model.findMany({
-			where: { id: workspaceId },
+			workspaceId,
 		});
 	}
 }
