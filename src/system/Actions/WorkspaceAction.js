@@ -44,7 +44,7 @@ class WorkspaceAction extends BaseAction {
 
 			const createdWorkspace = await this.workspaceModel.create({
 				...result.data,
-				owner: { connect: { id: session.id } },
+				ownerId: session.id,
 			});
 
 			const workspaceService = new WorkspaceService();
