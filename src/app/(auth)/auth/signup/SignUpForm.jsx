@@ -18,7 +18,6 @@ import Link from "next/link";
 import { signup } from "./signupAction";
 import { signUpSchema } from "./signupSchema";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 
 export default function SignUpForm() {
@@ -48,8 +47,6 @@ export default function SignUpForm() {
 					type: "server",
 					message: Array.isArray(message) ? message[0] : message,
 				});
-
-				if (field === "_form") toast.error(message[0]);
 			});
 
 			if (formState.data) {
@@ -81,7 +78,7 @@ export default function SignUpForm() {
 					<CardBody className="flex flex-col items-center justify-center space-y-4 py-6">
 						<Loader2 className="h-8 w-8 animate-spin text-blue-500" />
 						<p className="text-sm text-gray-600">
-							Redirecting to your dashboard. Please wait...
+							Redirecting to your Homepage. Please wait...
 						</p>
 					</CardBody>
 				</Card>

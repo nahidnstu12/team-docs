@@ -4,7 +4,6 @@ import { signIn } from "@/app/auth";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signUpSchema } from "./signupSchema";
-import Logger from "@/lib/Logger";
 
 export async function signup(prevState, formData) {
 	try {
@@ -74,6 +73,7 @@ export async function signup(prevState, formData) {
 
 		return {
 			type: "success",
+			success: true,
 			message: "Signup successful!",
 			redirectTo: "/",
 		};
@@ -83,7 +83,7 @@ export async function signup(prevState, formData) {
 		return {
 			success: false,
 			type: "fail",
-			errors: { _form: ["Something went wrong"] },
+			errors: { _form: ["Something went wrong on our side"] },
 		};
 	}
 }
