@@ -12,6 +12,7 @@ import {
 	Mail,
 	Box,
 	House,
+	KeyRound,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,14 @@ export default function Sidebar({
 							<SidebarItem
 								href="/roles"
 								icon={<ShieldCheck className="w-4 h-4" />}
-								label="Role & Permission"
+								label="Role"
+							/>
+						)}
+						{hasProjects && (
+							<SidebarItem
+								href="/permissions"
+								icon={<KeyRound className="w-4 h-4" />}
+								label="Permissions"
 							/>
 						)}
 					</nav>
