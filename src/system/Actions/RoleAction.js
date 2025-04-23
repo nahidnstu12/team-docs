@@ -1,26 +1,23 @@
 "use server";
 
-import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { BaseAction } from "./BaseAction";
-import { WorkspaceModel } from "../Models/WorkspaceModel";
 import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
-import { Session } from "@/lib/Session";
-import { WorkspaceService } from "../Services/WorkspaceService";
+import { RoleSchema } from "@/lib/schemas/RoleSchema";
+import { RoleModel } from "../Models/RoleModel";
 
 /**
  * Handles workspace-specific actions
  * @extends BaseAction
  */
-class WorkspaceAction extends BaseAction {
+class RoleAction extends BaseAction {
 	/**
 	 * Creates a WorkspaceAction instance
 	 * Initializes service and model dependencies
 	 */
 	constructor() {
-		super(WorkspaceSchema);
-		// this.workspaceService = new WorkspaceService();
-		this.workspaceModel = new WorkspaceModel();
+		super(RoleSchema);
+		this.roleModel = new RoleModel();
 	}
 
 	/**
@@ -40,32 +37,24 @@ class WorkspaceAction extends BaseAction {
 		if (!result.success) return result;
 
 		try {
-			const session = await Session.getCurrentUser();
-
-			const createdWorkspace = await this.workspaceModel.create({
+			Logger.debug(result, "before db");
+			//  model or service communication
+			await this.roleModel.create({
 				...result.data,
-				ownerId: session.id,
 			});
 
-			const workspaceService = new WorkspaceService();
-			await workspaceService.assignWorkspaceToUser(
-				createdWorkspace.id,
-				session.id
-			);
-
+			Logger.debug(result, "after db");
 			return {
 				data: result.data,
 				success: true,
 				type: "success",
-				redirectTo: "/projects",
+				redirectTo: "/roles",
 			};
 		} catch (error) {
-			Logger.error(error.message, "Workspace creation failed:");
-			// Handle Prisma errors
+			Logger.error(error.message, `Role Create fail`);
 			if (error.code) {
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
-					"slug",
 					"description",
 				]);
 			}
@@ -73,7 +62,7 @@ class WorkspaceAction extends BaseAction {
 			return {
 				success: false,
 				type: "fail",
-				errors: { _form: ["Failed to create workspace"] },
+				errors: { _form: ["Failed to create Role"] },
 				data: result.data,
 			};
 		}
@@ -86,7 +75,7 @@ class WorkspaceAction extends BaseAction {
  * @param {FormData} formData - Form data
  * @returns {Promise<Object>} Action result
  */
-export async function createWorkspace(prevState, formData) {
-	const action = new WorkspaceAction();
+export async function createRole(prevState, formData) {
+	const action = new RoleAction();
 	return await action.create(formData);
 }
