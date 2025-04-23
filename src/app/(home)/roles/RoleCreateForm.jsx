@@ -44,29 +44,27 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 		},
 	});
 
-	// Always reset with blank on open
-	useEffect(() => {
-		if (isOpen) {
-			reset({ name: "", description: "" });
-		}
-	}, [isOpen, reset]);
-
 	useEffect(() => {
 		if (!formState) return;
 
-		if (formState.errors) {
-			Object.entries(formState.errors).forEach(([field, message]) => {
+		if (formState.success === false && formState.data) {
+			// Repopulate form fields from server-provided values
+			reset(formState.data);
+			Object.entries(formState.errors || {}).forEach(([field, message]) => {
 				setError(field, {
 					type: "server",
 					message: Array.isArray(message) ? message[0] : message,
 				});
-				if (field === "_form") toast.error(message[0]);
 			});
+			if (formState.errors?._form) {
+				toast.error(formState.errors._form[0]);
+			}
+			return;
 		}
 
 		if (formState.type === "success") {
 			onOpenChange(false);
-			reset();
+			reset({ name: "", description: "" });
 			toast.success("Role created successfully", {
 				description: "Your new role is ready to use!",
 			});

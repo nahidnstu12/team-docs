@@ -12,14 +12,14 @@ import {
 } from "@heroui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import { toast } from "sonner";
 
 export default function ProjectDrawer({ isOpen, onOpenChange }) {
 	const router = useRouter();
-
+	const hasShownToastRef = useRef(false);
 	// ✅ Prevent multiple toast re-fires after a successful form submit
 	const [hasHandledSuccess, setHasHandledSuccess] = useState(false);
 
@@ -50,6 +50,8 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 		createProjectAction,
 		{ data: null, errors: null }
 	);
+
+	console.log(formState);
 
 	// 👀 Watch fields for dynamic behavior
 	const nameValue = watch("name");
@@ -101,7 +103,10 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 
 		// ✅ On success: show toast, reset form, close drawer, clean state
 		if (localFormState?.type === "success") {
+			if (hasHandledSuccess || hasShownToastRef.current) return;
+
 			setHasHandledSuccess(true);
+			hasShownToastRef.current = true;
 
 			toast.success("Project created successfully", {
 				description: "Your new project is ready to use!",
@@ -110,6 +115,7 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 			reset(); // Clear form fields
 			setTimeout(() => {
 				setLocalFormState(null); // 🔄 Destroy local state so toast doesn't show again
+				hasShownToastRef.current = false; // 🔄 Reset for future submits
 			}, 500);
 
 			onOpenChange(false); // ❌ Close drawer
@@ -125,18 +131,42 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 		router,
 	]);
 
+	useEffect(() => {
+		if (isOpen && localFormState?.success === false) {
+			// 1. Repopulate form values
+			reset(localFormState.data || {}, { keepErrors: true });
+
+			// 2. Re-set field errors from server
+			Object.entries(localFormState.errors || {}).forEach(
+				([field, message]) => {
+					setError(field, {
+						type: "server",
+						message: Array.isArray(message) ? message[0] : message,
+					});
+				}
+			);
+		}
+	}, [isOpen, localFormState, reset, setError]);
+
 	// 🔁 When drawer opens: reset everything for a clean slate
 	useEffect(() => {
 		if (isOpen) {
-			reset({
-				name: "",
-				slug: "",
-				description: "",
-			}); // Clear form
+			// reset({
+			// 	name: "",
+			// 	slug: "",
+			// 	description: "",
+			// }); // Clear form
+			if (!localFormState || localFormState?.success === true) {
+				reset({
+					name: "",
+					slug: "",
+					description: "",
+				});
+			}
 			setHasHandledSuccess(false); // Allow new success
-			setLocalFormState(null); // Clear any lingering success
+			// setLocalFormState(null); // Clear any lingering success
 		}
-	}, [isOpen, reset]);
+	}, [isOpen, reset, localFormState]);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen px-4 space-y-6 text-center">
