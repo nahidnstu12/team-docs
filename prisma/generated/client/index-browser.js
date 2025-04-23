@@ -147,10 +147,12 @@ exports.Prisma.PermissionScalarFieldEnum = {
   ownerId: 'ownerId'
 };
 
-exports.Prisma.RolePermissionScalarFieldEnum = {
+exports.Prisma.RolePermissionAssignmentScalarFieldEnum = {
   id: 'id',
   roleId: 'roleId',
-  permissionId: 'permissionId'
+  permissionId: 'permissionId',
+  createdAt: 'createdAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.WorkspaceScalarFieldEnum = {
@@ -305,7 +307,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   Role: 'Role',
   Permission: 'Permission',
-  RolePermission: 'RolePermission',
+  RolePermissionAssignment: 'RolePermissionAssignment',
   Workspace: 'Workspace',
   WorkspaceMember: 'WorkspaceMember',
   Project: 'Project',

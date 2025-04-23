@@ -11,8 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
 import RenderCreateButton from "./RenderCreateButton";
+import { useState } from "react";
+import RolePermissionDialog from "../role-permission-assign/RolePermissionDialog";
 
 export default function RoleLisitngs({ roles, onCreateClick }) {
+	// for role permission assignment
+	const [openDialog, setOpenDialog] = useState(false);
+	const [selectedRoleId, setSelectedRoleId] = useState(null);
 	return (
 		<>
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
@@ -66,6 +71,10 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
 										{/* Assign – primary outline with green accent */}
 										<Button
+											onClick={() => {
+												setSelectedRoleId(role.id);
+												setOpenDialog(true);
+											}}
 											size="sm"
 											variant="outline"
 											className="text-green-700 hover:text-green-500 border-green-500 hover:bg-green-100 hover:border-green-600 px-5 py-2.5 text-base cursor-pointer"
@@ -74,6 +83,12 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 											Assign
 										</Button>
 
+										{/* role permission assignment component */}
+										<RolePermissionDialog
+											isOpen={openDialog}
+											onOpenChange={setOpenDialog}
+											roleId={selectedRoleId}
+										/>
 										{/* Edit – secondary with neutral accent */}
 										<Button
 											size="sm"
