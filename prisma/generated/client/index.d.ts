@@ -2152,6 +2152,7 @@ export namespace Prisma {
     updatedPages: number
     annotations: number
     notifications: number
+    Role: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2164,6 +2165,7 @@ export namespace Prisma {
     updatedPages?: boolean | UserCountOutputTypeCountUpdatedPagesArgs
     annotations?: boolean | UserCountOutputTypeCountAnnotationsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    Role?: boolean | UserCountOutputTypeCountRoleArgs
   }
 
   // Custom InputTypes
@@ -2238,6 +2240,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRoleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RoleWhereInput
   }
 
 
@@ -2690,6 +2699,7 @@ export namespace Prisma {
     updatedPages?: boolean | User$updatedPagesArgs<ExtArgs>
     annotations?: boolean | User$annotationsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    Role?: boolean | User$RoleArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2740,6 +2750,7 @@ export namespace Prisma {
     updatedPages?: boolean | User$updatedPagesArgs<ExtArgs>
     annotations?: boolean | User$annotationsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    Role?: boolean | User$RoleArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2757,6 +2768,7 @@ export namespace Prisma {
       updatedPages: Prisma.$PagePayload<ExtArgs>[]
       annotations: Prisma.$AnnotationPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      Role: Prisma.$RolePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3171,6 +3183,7 @@ export namespace Prisma {
     updatedPages<T extends User$updatedPagesArgs<ExtArgs> = {}>(args?: Subset<T, User$updatedPagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     annotations<T extends User$annotationsArgs<ExtArgs> = {}>(args?: Subset<T, User$annotationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnnotationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    Role<T extends User$RoleArgs<ExtArgs> = {}>(args?: Subset<T, User$RoleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3813,6 +3826,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.Role
+   */
+  export type User$RoleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Role
+     */
+    select?: RoleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Role
+     */
+    omit?: RoleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleInclude<ExtArgs> | null
+    where?: RoleWhereInput
+    orderBy?: RoleOrderByWithRelationInput | RoleOrderByWithRelationInput[]
+    cursor?: RoleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3847,6 +3884,7 @@ export namespace Prisma {
     description: string | null
     isSystem: boolean | null
     createdAt: Date | null
+    ownerId: string | null
   }
 
   export type RoleMaxAggregateOutputType = {
@@ -3855,6 +3893,7 @@ export namespace Prisma {
     description: string | null
     isSystem: boolean | null
     createdAt: Date | null
+    ownerId: string | null
   }
 
   export type RoleCountAggregateOutputType = {
@@ -3863,6 +3902,7 @@ export namespace Prisma {
     description: number
     isSystem: number
     createdAt: number
+    ownerId: number
     _all: number
   }
 
@@ -3873,6 +3913,7 @@ export namespace Prisma {
     description?: true
     isSystem?: true
     createdAt?: true
+    ownerId?: true
   }
 
   export type RoleMaxAggregateInputType = {
@@ -3881,6 +3922,7 @@ export namespace Prisma {
     description?: true
     isSystem?: true
     createdAt?: true
+    ownerId?: true
   }
 
   export type RoleCountAggregateInputType = {
@@ -3889,6 +3931,7 @@ export namespace Prisma {
     description?: true
     isSystem?: true
     createdAt?: true
+    ownerId?: true
     _all?: true
   }
 
@@ -3970,6 +4013,7 @@ export namespace Prisma {
     description: string | null
     isSystem: boolean
     createdAt: Date
+    ownerId: string | null
     _count: RoleCountAggregateOutputType | null
     _min: RoleMinAggregateOutputType | null
     _max: RoleMaxAggregateOutputType | null
@@ -3995,6 +4039,8 @@ export namespace Prisma {
     description?: boolean
     isSystem?: boolean
     createdAt?: boolean
+    ownerId?: boolean
+    createdBy?: boolean | Role$createdByArgs<ExtArgs>
     permissions?: boolean | Role$permissionsArgs<ExtArgs>
     workspaceMembers?: boolean | Role$workspaceMembersArgs<ExtArgs>
     projectMembers?: boolean | Role$projectMembersArgs<ExtArgs>
@@ -4007,6 +4053,8 @@ export namespace Prisma {
     description?: boolean
     isSystem?: boolean
     createdAt?: boolean
+    ownerId?: boolean
+    createdBy?: boolean | Role$createdByArgs<ExtArgs>
   }, ExtArgs["result"]["role"]>
 
   export type RoleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4015,6 +4063,8 @@ export namespace Prisma {
     description?: boolean
     isSystem?: boolean
     createdAt?: boolean
+    ownerId?: boolean
+    createdBy?: boolean | Role$createdByArgs<ExtArgs>
   }, ExtArgs["result"]["role"]>
 
   export type RoleSelectScalar = {
@@ -4023,21 +4073,28 @@ export namespace Prisma {
     description?: boolean
     isSystem?: boolean
     createdAt?: boolean
+    ownerId?: boolean
   }
 
-  export type RoleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "isSystem" | "createdAt", ExtArgs["result"]["role"]>
+  export type RoleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "isSystem" | "createdAt" | "ownerId", ExtArgs["result"]["role"]>
   export type RoleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Role$createdByArgs<ExtArgs>
     permissions?: boolean | Role$permissionsArgs<ExtArgs>
     workspaceMembers?: boolean | Role$workspaceMembersArgs<ExtArgs>
     projectMembers?: boolean | Role$projectMembersArgs<ExtArgs>
     _count?: boolean | RoleCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type RoleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type RoleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type RoleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Role$createdByArgs<ExtArgs>
+  }
+  export type RoleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Role$createdByArgs<ExtArgs>
+  }
 
   export type $RolePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Role"
     objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs> | null
       permissions: Prisma.$RolePermissionPayload<ExtArgs>[]
       workspaceMembers: Prisma.$WorkspaceMemberPayload<ExtArgs>[]
       projectMembers: Prisma.$ProjectMemberPayload<ExtArgs>[]
@@ -4048,6 +4105,7 @@ export namespace Prisma {
       description: string | null
       isSystem: boolean
       createdAt: Date
+      ownerId: string | null
     }, ExtArgs["result"]["role"]>
     composites: {}
   }
@@ -4442,6 +4500,7 @@ export namespace Prisma {
    */
   export interface Prisma__RoleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends Role$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Role$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     permissions<T extends Role$permissionsArgs<ExtArgs> = {}>(args?: Subset<T, Role$permissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     workspaceMembers<T extends Role$workspaceMembersArgs<ExtArgs> = {}>(args?: Subset<T, Role$workspaceMembersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     projectMembers<T extends Role$projectMembersArgs<ExtArgs> = {}>(args?: Subset<T, Role$projectMembersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4479,6 +4538,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Role", 'String'>
     readonly isSystem: FieldRef<"Role", 'Boolean'>
     readonly createdAt: FieldRef<"Role", 'DateTime'>
+    readonly ownerId: FieldRef<"Role", 'String'>
   }
     
 
@@ -4728,6 +4788,10 @@ export namespace Prisma {
      */
     data: RoleCreateManyInput | RoleCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4798,6 +4862,10 @@ export namespace Prisma {
      * Limit how many Roles to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RoleIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4864,6 +4932,25 @@ export namespace Prisma {
      * Limit how many Roles to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Role.createdBy
+   */
+  export type Role$createdByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -19411,7 +19498,8 @@ export namespace Prisma {
     name: 'name',
     description: 'description',
     isSystem: 'isSystem',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    ownerId: 'ownerId'
   };
 
   export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
@@ -19741,6 +19829,7 @@ export namespace Prisma {
     updatedPages?: PageListRelationFilter
     annotations?: AnnotationListRelationFilter
     notifications?: NotificationListRelationFilter
+    Role?: RoleListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -19762,6 +19851,7 @@ export namespace Prisma {
     updatedPages?: PageOrderByRelationAggregateInput
     annotations?: AnnotationOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
+    Role?: RoleOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -19786,6 +19876,7 @@ export namespace Prisma {
     updatedPages?: PageListRelationFilter
     annotations?: AnnotationListRelationFilter
     notifications?: NotificationListRelationFilter
+    Role?: RoleListRelationFilter
   }, "id" | "username" | "email" | "workspaceId">
 
   export type UserOrderByWithAggregationInput = {
@@ -19827,6 +19918,8 @@ export namespace Prisma {
     description?: StringNullableFilter<"Role"> | string | null
     isSystem?: BoolFilter<"Role"> | boolean
     createdAt?: DateTimeFilter<"Role"> | Date | string
+    ownerId?: StringNullableFilter<"Role"> | string | null
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     permissions?: RolePermissionListRelationFilter
     workspaceMembers?: WorkspaceMemberListRelationFilter
     projectMembers?: ProjectMemberListRelationFilter
@@ -19838,6 +19931,8 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
+    createdBy?: UserOrderByWithRelationInput
     permissions?: RolePermissionOrderByRelationAggregateInput
     workspaceMembers?: WorkspaceMemberOrderByRelationAggregateInput
     projectMembers?: ProjectMemberOrderByRelationAggregateInput
@@ -19852,6 +19947,8 @@ export namespace Prisma {
     description?: StringNullableFilter<"Role"> | string | null
     isSystem?: BoolFilter<"Role"> | boolean
     createdAt?: DateTimeFilter<"Role"> | Date | string
+    ownerId?: StringNullableFilter<"Role"> | string | null
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     permissions?: RolePermissionListRelationFilter
     workspaceMembers?: WorkspaceMemberListRelationFilter
     projectMembers?: ProjectMemberListRelationFilter
@@ -19863,6 +19960,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
     _count?: RoleCountOrderByAggregateInput
     _max?: RoleMaxOrderByAggregateInput
     _min?: RoleMinOrderByAggregateInput
@@ -19877,6 +19975,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Role"> | string | null
     isSystem?: BoolWithAggregatesFilter<"Role"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Role"> | Date | string
+    ownerId?: StringNullableWithAggregatesFilter<"Role"> | string | null
   }
 
   export type PermissionWhereInput = {
@@ -20801,6 +20900,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -20822,6 +20922,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -20843,6 +20944,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -20864,6 +20966,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -20908,6 +21011,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutRoleInput
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
     workspaceMembers?: WorkspaceMemberCreateNestedManyWithoutRoleInput
     projectMembers?: ProjectMemberCreateNestedManyWithoutRoleInput
@@ -20919,6 +21023,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    ownerId?: string | null
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
     workspaceMembers?: WorkspaceMemberUncheckedCreateNestedManyWithoutRoleInput
     projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutRoleInput
@@ -20930,6 +21035,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutRoleNestedInput
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
     workspaceMembers?: WorkspaceMemberUpdateManyWithoutRoleNestedInput
     projectMembers?: ProjectMemberUpdateManyWithoutRoleNestedInput
@@ -20941,6 +21047,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
     workspaceMembers?: WorkspaceMemberUncheckedUpdateManyWithoutRoleNestedInput
     projectMembers?: ProjectMemberUncheckedUpdateManyWithoutRoleNestedInput
@@ -20952,6 +21059,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    ownerId?: string | null
   }
 
   export type RoleUpdateManyMutationInput = {
@@ -20968,6 +21076,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PermissionCreateInput = {
@@ -21989,6 +22098,12 @@ export namespace Prisma {
     none?: NotificationWhereInput
   }
 
+  export type RoleListRelationFilter = {
+    every?: RoleWhereInput
+    some?: RoleWhereInput
+    none?: RoleWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -22023,6 +22138,10 @@ export namespace Prisma {
   }
 
   export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RoleOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22120,6 +22239,11 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type RolePermissionListRelationFilter = {
     every?: RolePermissionWhereInput
     some?: RolePermissionWhereInput
@@ -22136,6 +22260,7 @@ export namespace Prisma {
     description?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type RoleMaxOrderByAggregateInput = {
@@ -22144,6 +22269,7 @@ export namespace Prisma {
     description?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type RoleMinOrderByAggregateInput = {
@@ -22152,6 +22278,7 @@ export namespace Prisma {
     description?: SortOrder
     isSystem?: SortOrder
     createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type PermissionCountOrderByAggregateInput = {
@@ -22477,11 +22604,6 @@ export namespace Prisma {
   export type SectionScalarRelationFilter = {
     is?: SectionWhereInput
     isNot?: SectionWhereInput
-  }
-
-  export type UserNullableScalarRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
   }
 
   export type PageVersionListRelationFilter = {
@@ -22838,6 +22960,13 @@ export namespace Prisma {
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
+  export type RoleCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<RoleCreateWithoutCreatedByInput, RoleUncheckedCreateWithoutCreatedByInput> | RoleCreateWithoutCreatedByInput[] | RoleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutCreatedByInput | RoleCreateOrConnectWithoutCreatedByInput[]
+    createMany?: RoleCreateManyCreatedByInputEnvelope
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+  }
+
   export type WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<WorkspaceMemberCreateWithoutUserInput, WorkspaceMemberUncheckedCreateWithoutUserInput> | WorkspaceMemberCreateWithoutUserInput[] | WorkspaceMemberUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput | WorkspaceMemberCreateOrConnectWithoutUserInput[]
@@ -22899,6 +23028,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type RoleUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<RoleCreateWithoutCreatedByInput, RoleUncheckedCreateWithoutCreatedByInput> | RoleCreateWithoutCreatedByInput[] | RoleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutCreatedByInput | RoleCreateOrConnectWithoutCreatedByInput[]
+    createMany?: RoleCreateManyCreatedByInputEnvelope
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -23043,6 +23179,20 @@ export namespace Prisma {
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
+  export type RoleUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<RoleCreateWithoutCreatedByInput, RoleUncheckedCreateWithoutCreatedByInput> | RoleCreateWithoutCreatedByInput[] | RoleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutCreatedByInput | RoleCreateOrConnectWithoutCreatedByInput[]
+    upsert?: RoleUpsertWithWhereUniqueWithoutCreatedByInput | RoleUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: RoleCreateManyCreatedByInputEnvelope
+    set?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    disconnect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    delete?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    update?: RoleUpdateWithWhereUniqueWithoutCreatedByInput | RoleUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: RoleUpdateManyWithWhereWithoutCreatedByInput | RoleUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: RoleScalarWhereInput | RoleScalarWhereInput[]
+  }
+
   export type WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<WorkspaceMemberCreateWithoutUserInput, WorkspaceMemberUncheckedCreateWithoutUserInput> | WorkspaceMemberCreateWithoutUserInput[] | WorkspaceMemberUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput | WorkspaceMemberCreateOrConnectWithoutUserInput[]
@@ -23169,6 +23319,26 @@ export namespace Prisma {
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
+  export type RoleUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<RoleCreateWithoutCreatedByInput, RoleUncheckedCreateWithoutCreatedByInput> | RoleCreateWithoutCreatedByInput[] | RoleUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: RoleCreateOrConnectWithoutCreatedByInput | RoleCreateOrConnectWithoutCreatedByInput[]
+    upsert?: RoleUpsertWithWhereUniqueWithoutCreatedByInput | RoleUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: RoleCreateManyCreatedByInputEnvelope
+    set?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    disconnect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    delete?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+    update?: RoleUpdateWithWhereUniqueWithoutCreatedByInput | RoleUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: RoleUpdateManyWithWhereWithoutCreatedByInput | RoleUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: RoleScalarWhereInput | RoleScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutRoleInput = {
+    create?: XOR<UserCreateWithoutRoleInput, UserUncheckedCreateWithoutRoleInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRoleInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type RolePermissionCreateNestedManyWithoutRoleInput = {
     create?: XOR<RolePermissionCreateWithoutRoleInput, RolePermissionUncheckedCreateWithoutRoleInput> | RolePermissionCreateWithoutRoleInput[] | RolePermissionUncheckedCreateWithoutRoleInput[]
     connectOrCreate?: RolePermissionCreateOrConnectWithoutRoleInput | RolePermissionCreateOrConnectWithoutRoleInput[]
@@ -23209,6 +23379,16 @@ export namespace Prisma {
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutRoleInput | ProjectMemberCreateOrConnectWithoutRoleInput[]
     createMany?: ProjectMemberCreateManyRoleInputEnvelope
     connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneWithoutRoleNestedInput = {
+    create?: XOR<UserCreateWithoutRoleInput, UserUncheckedCreateWithoutRoleInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRoleInput
+    upsert?: UserUpsertWithoutRoleInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRoleInput, UserUpdateWithoutRoleInput>, UserUncheckedUpdateWithoutRoleInput>
   }
 
   export type RolePermissionUpdateManyWithoutRoleNestedInput = {
@@ -24497,6 +24677,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RoleCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isSystem?: boolean
+    createdAt?: Date | string
+    permissions?: RolePermissionCreateNestedManyWithoutRoleInput
+    workspaceMembers?: WorkspaceMemberCreateNestedManyWithoutRoleInput
+    projectMembers?: ProjectMemberCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isSystem?: boolean
+    createdAt?: Date | string
+    permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
+    workspaceMembers?: WorkspaceMemberUncheckedCreateNestedManyWithoutRoleInput
+    projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutRoleInput
+  }
+
+  export type RoleCreateOrConnectWithoutCreatedByInput = {
+    where: RoleWhereUniqueInput
+    create: XOR<RoleCreateWithoutCreatedByInput, RoleUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type RoleCreateManyCreatedByInputEnvelope = {
+    data: RoleCreateManyCreatedByInput | RoleCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WorkspaceMemberUpsertWithWhereUniqueWithoutUserInput = {
     where: WorkspaceMemberWhereUniqueInput
     update: XOR<WorkspaceMemberUpdateWithoutUserInput, WorkspaceMemberUncheckedUpdateWithoutUserInput>
@@ -24752,6 +24964,81 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Notification"> | Date | string
   }
 
+  export type RoleUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: RoleWhereUniqueInput
+    update: XOR<RoleUpdateWithoutCreatedByInput, RoleUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<RoleCreateWithoutCreatedByInput, RoleUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type RoleUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: RoleWhereUniqueInput
+    data: XOR<RoleUpdateWithoutCreatedByInput, RoleUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type RoleUpdateManyWithWhereWithoutCreatedByInput = {
+    where: RoleScalarWhereInput
+    data: XOR<RoleUpdateManyMutationInput, RoleUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type RoleScalarWhereInput = {
+    AND?: RoleScalarWhereInput | RoleScalarWhereInput[]
+    OR?: RoleScalarWhereInput[]
+    NOT?: RoleScalarWhereInput | RoleScalarWhereInput[]
+    id?: StringFilter<"Role"> | string
+    name?: StringFilter<"Role"> | string
+    description?: StringNullableFilter<"Role"> | string | null
+    isSystem?: BoolFilter<"Role"> | boolean
+    createdAt?: DateTimeFilter<"Role"> | Date | string
+    ownerId?: StringNullableFilter<"Role"> | string | null
+  }
+
+  export type UserCreateWithoutRoleInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceId?: string | null
+    isSuperAdmin?: boolean
+    workspaces?: WorkspaceMemberCreateNestedManyWithoutUserInput
+    projects?: ProjectMemberCreateNestedManyWithoutUserInput
+    createdWorkspaces?: WorkspaceCreateNestedManyWithoutOwnerInput
+    createdProjects?: ProjectCreateNestedManyWithoutOwnerInput
+    createdSections?: SectionCreateNestedManyWithoutCreatorInput
+    createdPages?: PageCreateNestedManyWithoutCreatorInput
+    updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
+    annotations?: AnnotationCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutRoleInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceId?: string | null
+    isSuperAdmin?: boolean
+    workspaces?: WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+    projects?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    createdWorkspaces?: WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+    createdProjects?: ProjectUncheckedCreateNestedManyWithoutOwnerInput
+    createdSections?: SectionUncheckedCreateNestedManyWithoutCreatorInput
+    createdPages?: PageUncheckedCreateNestedManyWithoutCreatorInput
+    updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
+    annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutRoleInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRoleInput, UserUncheckedCreateWithoutRoleInput>
+  }
+
   export type RolePermissionCreateWithoutRoleInput = {
     id?: string
     permission: PermissionCreateNestedOneWithoutRolesInput
@@ -24818,6 +25105,59 @@ export namespace Prisma {
   export type ProjectMemberCreateManyRoleInputEnvelope = {
     data: ProjectMemberCreateManyRoleInput | ProjectMemberCreateManyRoleInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutRoleInput = {
+    update: XOR<UserUpdateWithoutRoleInput, UserUncheckedUpdateWithoutRoleInput>
+    create: XOR<UserCreateWithoutRoleInput, UserUncheckedCreateWithoutRoleInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRoleInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRoleInput, UserUncheckedUpdateWithoutRoleInput>
+  }
+
+  export type UserUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: NullableStringFieldUpdateOperationsInput | string | null
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
+    workspaces?: WorkspaceMemberUpdateManyWithoutUserNestedInput
+    projects?: ProjectMemberUpdateManyWithoutUserNestedInput
+    createdWorkspaces?: WorkspaceUpdateManyWithoutOwnerNestedInput
+    createdProjects?: ProjectUpdateManyWithoutOwnerNestedInput
+    createdSections?: SectionUpdateManyWithoutCreatorNestedInput
+    createdPages?: PageUpdateManyWithoutCreatorNestedInput
+    updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
+    annotations?: AnnotationUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRoleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: NullableStringFieldUpdateOperationsInput | string | null
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
+    workspaces?: WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+    projects?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdWorkspaces?: WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+    createdProjects?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+    createdSections?: SectionUncheckedUpdateManyWithoutCreatorNestedInput
+    createdPages?: PageUncheckedUpdateManyWithoutCreatorNestedInput
+    updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
+    annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RolePermissionUpsertWithWhereUniqueWithoutRoleInput = {
@@ -24919,6 +25259,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutRoleInput
     workspaceMembers?: WorkspaceMemberCreateNestedManyWithoutRoleInput
     projectMembers?: ProjectMemberCreateNestedManyWithoutRoleInput
   }
@@ -24929,6 +25270,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    ownerId?: string | null
     workspaceMembers?: WorkspaceMemberUncheckedCreateNestedManyWithoutRoleInput
     projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutRoleInput
   }
@@ -24974,6 +25316,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutRoleNestedInput
     workspaceMembers?: WorkspaceMemberUpdateManyWithoutRoleNestedInput
     projectMembers?: ProjectMemberUpdateManyWithoutRoleNestedInput
   }
@@ -24984,6 +25327,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     workspaceMembers?: WorkspaceMemberUncheckedUpdateManyWithoutRoleNestedInput
     projectMembers?: ProjectMemberUncheckedUpdateManyWithoutRoleNestedInput
   }
@@ -25031,6 +25375,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedWorkspacesInput = {
@@ -25051,6 +25396,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedWorkspacesInput = {
@@ -25151,6 +25497,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedWorkspacesInput = {
@@ -25171,6 +25518,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
@@ -25254,6 +25602,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWorkspacesInput = {
@@ -25274,6 +25623,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWorkspacesInput = {
@@ -25287,6 +25637,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutRoleInput
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
     projectMembers?: ProjectMemberCreateNestedManyWithoutRoleInput
   }
@@ -25297,6 +25648,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    ownerId?: string | null
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
     projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutRoleInput
   }
@@ -25372,6 +25724,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkspacesInput = {
@@ -25392,6 +25745,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type RoleUpsertWithoutWorkspaceMembersInput = {
@@ -25411,6 +25765,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutRoleNestedInput
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
     projectMembers?: ProjectMemberUpdateManyWithoutRoleNestedInput
   }
@@ -25421,6 +25776,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
     projectMembers?: ProjectMemberUncheckedUpdateManyWithoutRoleNestedInput
   }
@@ -25474,6 +25830,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedProjectsInput = {
@@ -25494,6 +25851,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedProjectsInput = {
@@ -25623,6 +25981,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedProjectsInput = {
@@ -25643,6 +26002,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectMemberUpsertWithWhereUniqueWithoutProjectInput = {
@@ -25730,6 +26090,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -25750,6 +26111,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -25763,6 +26125,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutRoleInput
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
     workspaceMembers?: WorkspaceMemberCreateNestedManyWithoutRoleInput
   }
@@ -25773,6 +26136,7 @@ export namespace Prisma {
     description?: string | null
     isSystem?: boolean
     createdAt?: Date | string
+    ownerId?: string | null
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
     workspaceMembers?: WorkspaceMemberUncheckedCreateNestedManyWithoutRoleInput
   }
@@ -25852,6 +26216,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -25872,6 +26237,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type RoleUpsertWithoutProjectMembersInput = {
@@ -25891,6 +26257,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutRoleNestedInput
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
     workspaceMembers?: WorkspaceMemberUpdateManyWithoutRoleNestedInput
   }
@@ -25901,6 +26268,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
     workspaceMembers?: WorkspaceMemberUncheckedUpdateManyWithoutRoleNestedInput
   }
@@ -25958,6 +26326,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedSectionsInput = {
@@ -25978,6 +26347,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedSectionsInput = {
@@ -26097,6 +26467,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedSectionsInput = {
@@ -26117,6 +26488,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PageUpsertWithWhereUniqueWithoutSectionInput = {
@@ -26180,6 +26552,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedPagesInput = {
@@ -26200,6 +26573,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedPagesInput = {
@@ -26225,6 +26599,7 @@ export namespace Prisma {
     createdPages?: PageCreateNestedManyWithoutCreatorInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutUpdatedPagesInput = {
@@ -26245,6 +26620,7 @@ export namespace Prisma {
     createdPages?: PageUncheckedCreateNestedManyWithoutCreatorInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutUpdatedPagesInput = {
@@ -26394,6 +26770,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedPagesInput = {
@@ -26414,6 +26791,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutUpdatedPagesInput = {
@@ -26445,6 +26823,7 @@ export namespace Prisma {
     createdPages?: PageUpdateManyWithoutCreatorNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUpdatedPagesInput = {
@@ -26465,6 +26844,7 @@ export namespace Prisma {
     createdPages?: PageUncheckedUpdateManyWithoutCreatorNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type AnnotationUpsertWithWhereUniqueWithoutPageInput = {
@@ -26753,6 +27133,7 @@ export namespace Prisma {
     createdPages?: PageCreateNestedManyWithoutCreatorInput
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAnnotationsInput = {
@@ -26773,6 +27154,7 @@ export namespace Prisma {
     createdPages?: PageUncheckedCreateNestedManyWithoutCreatorInput
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAnnotationsInput = {
@@ -26852,6 +27234,7 @@ export namespace Prisma {
     createdPages?: PageUpdateManyWithoutCreatorNestedInput
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAnnotationsInput = {
@@ -26872,6 +27255,7 @@ export namespace Prisma {
     createdPages?: PageUncheckedUpdateManyWithoutCreatorNestedInput
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -26892,6 +27276,7 @@ export namespace Prisma {
     createdPages?: PageCreateNestedManyWithoutCreatorInput
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -26912,6 +27297,7 @@ export namespace Prisma {
     createdPages?: PageUncheckedCreateNestedManyWithoutCreatorInput
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -26948,6 +27334,7 @@ export namespace Prisma {
     createdPages?: PageUpdateManyWithoutCreatorNestedInput
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -26968,6 +27355,7 @@ export namespace Prisma {
     createdPages?: PageUncheckedUpdateManyWithoutCreatorNestedInput
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WorkspaceMemberCreateManyUserInput = {
@@ -27059,6 +27447,14 @@ export namespace Prisma {
     type: string
     content: JsonNullValueInput | InputJsonValue
     isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RoleCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isSystem?: boolean
     createdAt?: Date | string
   }
 
@@ -27357,6 +27753,36 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     content?: JsonNullValueInput | InputJsonValue
     isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RoleUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
+    workspaceMembers?: WorkspaceMemberUpdateManyWithoutRoleNestedInput
+    projectMembers?: ProjectMemberUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
+    workspaceMembers?: WorkspaceMemberUncheckedUpdateManyWithoutRoleNestedInput
+    projectMembers?: ProjectMemberUncheckedUpdateManyWithoutRoleNestedInput
+  }
+
+  export type RoleUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

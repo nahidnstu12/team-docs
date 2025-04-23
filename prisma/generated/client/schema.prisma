@@ -36,6 +36,7 @@ model User {
 
   // Optional relationships for admin use case
   isSuperAdmin Boolean @default(false) // For SaaS phase-2
+  Role         Role[]
 
   @@index([email])
 }
@@ -49,6 +50,10 @@ model Role {
   description String?
   isSystem    Boolean  @default(false) // True for default roles (Admin, Developer, Viewer)
   createdAt   DateTime @default(now())
+
+  // ✅ Optional reference to User
+  ownerId   String?
+  createdBy User?   @relation(fields: [ownerId], references: [id])
 
   // Relationships
   permissions      RolePermission[]

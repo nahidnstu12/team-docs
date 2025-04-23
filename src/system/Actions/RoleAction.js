@@ -5,6 +5,7 @@ import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
 import { RoleSchema } from "@/lib/schemas/RoleSchema";
 import { RoleModel } from "../Models/RoleModel";
+import { Session } from "@/lib/Session";
 
 /**
  * Handles workspace-specific actions
@@ -37,13 +38,12 @@ class RoleAction extends BaseAction {
 		if (!result.success) return result;
 
 		try {
-			Logger.debug(result, "before db");
-			//  model or service communication
+			const session = await Session.getCurrentUser();
 			await this.roleModel.create({
 				...result.data,
+				ownerId: session.id,
 			});
 
-			Logger.debug(result, "after db");
 			return {
 				data: result.data,
 				success: true,

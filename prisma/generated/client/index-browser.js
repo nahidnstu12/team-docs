@@ -134,7 +134,8 @@ exports.Prisma.RoleScalarFieldEnum = {
   name: 'name',
   description: 'description',
   isSystem: 'isSystem',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.PermissionScalarFieldEnum = {
