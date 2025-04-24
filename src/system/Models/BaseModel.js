@@ -58,9 +58,16 @@ export class BaseModel {
 	 * Finds all resource
 	 * @returns {Promise<Array>} Array of resources
 	 */
-	async findAll() {
+	async findMany(whereClause) {
 		return await this.model.findMany({
+			where: whereClause,
 			orderBy: { createdAt: "desc" },
+		});
+	}
+
+	async findFirst(whereClause) {
+		return await this.model.findFirst({
+			where: whereClause,
 		});
 	}
 }

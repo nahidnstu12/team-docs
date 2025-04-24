@@ -1,10 +1,11 @@
+// src/auth.js or wherever your NextAuth config lives
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions = {
 	adapter: PrismaAdapter(prisma),
 
 	providers: [
@@ -46,17 +47,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			if (session.user) {
 				session.user.id = token.sub;
 				session.user.username = token.username;
+				session.user.workspaceId = token.workspaceId ?? null;
 			}
-
 			return session;
 		},
 
 		async jwt({ token, user }) {
 			if (user) {
-				token.sub = user.id;
-				token.username = user.username;
+				const dbUser = await prisma.user.findUnique({
+					where: { id: user.id },
+					select: {
+						id: true,
+						username: true,
+						workspaceId: true,
+					},
+				});
+
+				if (dbUser) {
+					token.sub = dbUser.id;
+					token.username = dbUser.username;
+					token.workspaceId = dbUser.workspaceId ?? null;
+				}
 			}
 			return token;
 		},
 	},
-});
+};
+
+// Export individual handlers
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);

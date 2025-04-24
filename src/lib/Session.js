@@ -2,6 +2,7 @@
 
 import { auth } from "@/app/auth";
 import { forbidden } from "next/navigation";
+import prisma from "./prisma";
 
 export class Session {
 	static async getCurrentUser() {
@@ -37,6 +38,25 @@ export class Session {
 		if (!hasRole) {
 			// This will trigger the unauthorized page
 			throw new Error("Unauthorized");
+		}
+	}
+
+	/**
+	 * Optionally, get the actual workspaceId
+	 * @param {string} userId
+	 * @returns {Promise<string|null>}
+	 */
+	static async getWorkspaceId(userId) {
+		try {
+			const user = await prisma.user.findUnique({
+				where: { id: userId },
+				select: { workspaceId: true },
+			});
+
+			return user?.workspaceId ?? null;
+		} catch (error) {
+			console.error("[Session.getWorkspaceId] Error:", error);
+			return null;
 		}
 	}
 }

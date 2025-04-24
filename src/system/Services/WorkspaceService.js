@@ -1,6 +1,5 @@
-import { Session } from "@/lib/Session";
+import prisma from "@/lib/prisma";
 import { WorkspaceDTO } from "../DTOs/WorkspaceDto";
-import { Helpers } from "../Helpers";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
 import { BaseService } from "./BaseService";
 
@@ -13,16 +12,23 @@ export class WorkspaceService extends BaseService {
 		super("workspace");
 		this.model = new WorkspaceModel();
 	}
-	/**
-	 * Processes workspace data before persistence
-	 * @param {Object} data - Raw workspace data
-	 * @returns {Promise<Object>} Processed workspace data
-	 */
-	async createWorkspace(data) {
-		return {
-			...data,
-			slug: Helpers.generateSlug(data.name),
-		};
+
+	async getWorkspace(id) {
+		if (!id) throw new Error("Session is missing user ID");
+		const workspace = await this.model.findFirst({ ownerId: id });
+		return workspace;
+	}
+
+	async assignWorkspaceToUser(workspaceId, userId) {
+		try {
+			await prisma.user.update({
+				where: { id: userId },
+				data: { workspaceId },
+			});
+		} catch (error) {
+			console.error("Error assigning workspace to user:", error);
+			throw new Error("Failed to assign workspace to user");
+		}
 	}
 
 	/**
@@ -42,10 +48,10 @@ export class WorkspaceService extends BaseService {
 	async hasWorkspace(id) {
 		if (!id) throw new Error("Session is missing user ID");
 
-		const workspace = await this.model.findBy({
+		const workspace = await this.model.findFirst({
 			ownerId: id,
 		});
 
-		return !!workspace;
+		return workspace;
 	}
 }

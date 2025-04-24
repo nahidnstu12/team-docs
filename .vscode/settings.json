@@ -19,4 +19,9 @@
     "**/.next/**": true,
     "**/node_modules/**": true
   },
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  }
 }
