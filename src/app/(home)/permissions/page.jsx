@@ -5,13 +5,12 @@ import Logger from "@/lib/Logger";
 
 export default async function PermissionsPage() {
 	const session = await Session.getCurrentUser();
-	const permissionService = new PermissionServices();
 
-	const hasPermissionResouces = await permissionService.hasPermissionResouces(
+	const hasPermissionResouces = await PermissionServices.hasPermissionResouces(
 		session.id
 	);
 
-	const permissions = await permissionService.getAllPermissions({
+	const permissions = await PermissionServices.getAllPermissions({
 		ownerId: session.id,
 	});
 

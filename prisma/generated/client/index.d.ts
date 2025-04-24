@@ -20206,16 +20206,16 @@ export namespace Prisma {
   export type PermissionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     name?: string
+    scope?: string
     AND?: PermissionWhereInput | PermissionWhereInput[]
     OR?: PermissionWhereInput[]
     NOT?: PermissionWhereInput | PermissionWhereInput[]
     description?: StringNullableFilter<"Permission"> | string | null
-    scope?: StringFilter<"Permission"> | string
     createdAt?: DateTimeFilter<"Permission"> | Date | string
     ownerId?: StringNullableFilter<"Permission"> | string | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     roles?: RolePermissionAssignmentListRelationFilter
-  }, "id" | "name">
+  }, "id" | "name" | "scope">
 
   export type PermissionOrderByWithAggregationInput = {
     id?: SortOrder

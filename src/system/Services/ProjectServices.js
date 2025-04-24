@@ -1,28 +1,35 @@
+import Logger from "@/lib/Logger";
 import { ProjectModel } from "../Models/ProjectModel";
 import { BaseService } from "./BaseService";
 
 export class ProjectService extends BaseService {
 	constructor() {
 		super("project");
-		this.model = new ProjectModel();
 	}
 
-	async hasProjects(id) {
+	static async hasProjects(id) {
 		if (!id) return false;
 
-		const projects = await this.model.findFirst({
-			workspaceId: id,
-		});
+		try {
+			const projects = await ProjectModel.findFirst({
+				workspaceId: id,
+			});
 
-		return !!projects;
+			return !!projects;
+		} catch (error) {
+			Logger.error(error.message, `has projects fail`);
+		}
 	}
 
-	// List all projects for a workspace
-	async getAllProjets(workspaceId) {
+	static async getAllProjets(workspaceId) {
 		if (!workspaceId) throw new Error("workspaceId is missing");
 
-		return await this.model.findMany({
-			workspaceId,
-		});
+		try {
+			return await ProjectModel.findMany({
+				workspaceId,
+			});
+		} catch (error) {
+			Logger.error(error.message, `Get all projects failed`);
+		}
 	}
 }

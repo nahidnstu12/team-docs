@@ -1,5 +1,4 @@
 "use server";
-import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
 import { RolePermissionAssignDTO } from "@/system/DTOs/RolePermissionAssignDTO";
 import { PermissionServices } from "@/system/Services/PermissionServices";
@@ -7,16 +6,13 @@ import { RolePermissionAssignServices } from "@/system/Services/RolePermissionAs
 
 export async function getAllPermissions(roleId) {
 	const session = await Session.getCurrentUser();
-	const permissionServices = new PermissionServices();
 
-	const allPermissions = await permissionServices.getAllPermissions({
+	const allPermissions = await PermissionServices.getAllPermissions({
 		ownerId: session.id,
 	});
 
-	const rolePermissionServices = new RolePermissionAssignServices();
-
 	const preSelectPermissions =
-		await rolePermissionServices.getSelectedPermissionsForRole({
+		await RolePermissionAssignServices.getSelectedPermissionsForRole({
 			roleId,
 			ownerId: session.id,
 		});

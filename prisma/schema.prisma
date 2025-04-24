@@ -68,7 +68,7 @@ model Permission {
   id          String   @id @default(cuid())
   name        String   @unique // e.g., "create:page", "update:project", etc.
   description String?
-  scope       String // e.g., "workspace", "project", "page", "user"
+  scope       String   @unique // e.g., "workspace", "project", "page", "user"
   createdAt   DateTime @default(now())
 
   // ✅ Optional reference to User

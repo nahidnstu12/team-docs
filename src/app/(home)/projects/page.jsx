@@ -13,12 +13,11 @@ export default async function ProjectPage() {
 
 	if (!workspaceId) return <NoProjectUI />;
 
-	const projectService = new ProjectService();
-	const hasNoProjects = await projectService.hasProjects(workspaceId);
+	const hasNoProjects = await ProjectService.hasProjects(workspaceId);
 
 	if (!hasNoProjects) return <NoProjectUI />;
 
-	const projects = await projectService.getAllProjets(workspaceId);
+	const projects = await ProjectService.getAllProjets(workspaceId);
 
 	return <ProjectListings projects={projects} />;
 }

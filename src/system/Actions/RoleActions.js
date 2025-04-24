@@ -7,39 +7,20 @@ import { RoleSchema } from "@/lib/schemas/RoleSchema";
 import { RoleModel } from "../Models/RoleModel";
 import { Session } from "@/lib/Session";
 
-/**
- * Handles workspace-specific actions
- * @extends BaseAction
- */
 class RoleActions extends BaseAction {
-	/**
-	 * Creates a WorkspaceAction instance
-	 * Initializes service and model dependencies
-	 */
-	constructor() {
-		super(RoleSchema);
-		this.roleModel = new RoleModel();
+	static get schema() {
+		return RoleSchema;
 	}
 
-	/**
-	 * Creates a new workspace
-	 * @param {FormData|Object} formData - Workspace data
-	 * @returns {Promise<{
-	 *   success: boolean,
-	 *   type?: string,
-	 *   redirectTo?: string,
-	 *   errors?: Object,
-	 *   data?: Object
-	 * }>} Creation result
-	 */
-	async create(formData) {
+	static async create(formData) {
 		const result = await this.execute(formData);
 
 		if (!result.success) return result;
 
 		try {
 			const session = await Session.getCurrentUser();
-			await this.roleModel.create({
+
+			await RoleModel.create({
 				...result.data,
 				ownerId: session.id,
 			});
@@ -52,12 +33,11 @@ class RoleActions extends BaseAction {
 			};
 		} catch (error) {
 			Logger.error(error.message, `Role Create fail`);
-			if (error.code) {
+			if (error.code)
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
 					"description",
 				]);
-			}
 
 			return {
 				success: false,
@@ -69,13 +49,6 @@ class RoleActions extends BaseAction {
 	}
 }
 
-/**
- * Server action for workspace creation
- * @param {Object} prevState - Previous form state
- * @param {FormData} formData - Form data
- * @returns {Promise<Object>} Action result
- */
 export async function createRole(prevState, formData) {
-	const action = new RoleActions();
-	return await action.create(formData);
+	return await RoleActions.create(formData);
 }

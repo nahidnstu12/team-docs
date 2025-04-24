@@ -7,13 +7,10 @@ export default async function SidebarLayout() {
 	await Session.requireAuth();
 	const session = await Session.getCurrentUser();
 
-	const workspaceService = new WorkspaceService();
-	const projectService = new ProjectService();
-
-	const workspace = await workspaceService.getWorkspace(session.id);
+	const workspace = await WorkspaceService.getWorkspace(session.id);
 	const hasWorkspace = !!workspace;
 	const hasProjects = workspace
-		? await projectService.hasProjects(workspace.id)
+		? await ProjectService.hasProjects(workspace.id)
 		: false;
 
 	return (

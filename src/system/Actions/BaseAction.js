@@ -1,39 +1,15 @@
-/**
- * Abstract base class for all application actions
- * Handles common form processing and validation logic
- *
- * @class
- * @abstract
- */
 export class BaseAction {
-	/**
-	 * Creates a BaseAction instance
-	 * @param {zod.Schema} schema - Zod schema for validation
-	 * @throws {Error} If no schema is provided
-	 */
-	constructor(schema) {
-		if (!schema) {
-			throw new Error("Child class must define a schema");
-		}
-		this.schema = schema;
+	static get schema() {
+		throw new Error("Child class must override `schema` getter");
 	}
 
-	/**
-	 * Executes the action with form validation
-	 * @param {FormData|Object} formData - Input data to process
-	 * @returns {Promise<{
-	 *   success: boolean,
-	 *   errors?: Object,
-	 *   data?: Object
-	 * }>} Execution result
-	 */
-	async execute(formData) {
+	static async execute(formData) {
 		try {
-			const rawData = this.#parseFormData(formData);
-			const result = this.schema.safeParse(rawData);
+			const rawData = BaseAction.#parseFormData(formData);
+			const result = this.schema.safeParse(rawData); // <- will use child's getter
 
 			if (!result.success) {
-				return this.#formatValidationErrors(result.error, rawData);
+				return BaseAction.#formatValidationErrors(result.error, rawData);
 			}
 
 			return { success: true, data: result.data };
@@ -42,19 +18,12 @@ export class BaseAction {
 			return {
 				success: false,
 				errors: { _form: ["An unexpected error occurred"] },
-				data: this.#parseFormData(formData),
+				data: BaseAction.#parseFormData(formData),
 			};
 		}
 	}
 
-	/**
-	 * Parses FormData into a plain object
-	 * @private
-	 * @param {FormData|Object} formData - Input to parse
-	 * @returns {Object} Parsed data
-	 * @throws {Error} If input is invalid
-	 */
-	#parseFormData(formData) {
+	static #parseFormData(formData) {
 		if (typeof formData?.entries === "function") {
 			const data = {};
 			for (const [key, value] of formData.entries()) {
@@ -78,14 +47,7 @@ export class BaseAction {
 		throw new Error("Invalid formData passed to execute method");
 	}
 
-	/**
-	 * Formats Zod validation errors
-	 * @private
-	 * @param {zod.ZodError} error - Zod error object
-	 * @param {Object} rawData - Original form data
-	 * @returns {Object} Formatted error response
-	 */
-	#formatValidationErrors(error, rawData) {
+	static #formatValidationErrors(error, rawData) {
 		const formatted = error.format();
 		const errors = {};
 

@@ -1,34 +1,32 @@
 import Logger from "@/lib/Logger";
 import { BaseModel } from "./BaseModel";
 
-/**
- * Handles workspace-specific database operations
- * @extends BaseModel
- */
 export class RolePermissionAssignModel extends BaseModel {
-	constructor() {
-		super("rolePermissionAssignment");
-	}
+	static modelName = "rolePermissionAssignment";
 
-	async findByRoleId(roleId) {
-		return await this.model.findMany({
-			where: { roleId },
-			select: { permissionId: true },
-		});
-	}
-
-	async upsert({ where, create, update }) {
+	static async findByRoleId(roleId) {
 		try {
-			return await this.model.upsert({ where, create, update });
+			return await super.findMany({
+				where: { roleId },
+				select: { permissionId: true },
+			});
+		} catch (error) {
+			Logger.error(error.message, `Find by roleid fail`);
+		}
+	}
+
+	static async upsert({ where, create, update }) {
+		try {
+			return await super.upsert({ where, create, update });
 		} catch (error) {
 			Logger.error(error.message, `Upsert failed`);
 			throw error;
 		}
 	}
 
-	async delete({ roleId, permissionId }) {
+	static async delete({ roleId, permissionId }) {
 		try {
-			return await this.model.delete({
+			return await super.delete({
 				where: {
 					roleId_permissionId: { roleId, permissionId },
 				},
