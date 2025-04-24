@@ -11,7 +11,7 @@ import { Session } from "@/lib/Session";
  * Handles workspace-specific actions
  * @extends BaseAction
  */
-class RoleAction extends BaseAction {
+class RoleActions extends BaseAction {
 	/**
 	 * Creates a WorkspaceAction instance
 	 * Initializes service and model dependencies
@@ -76,6 +76,6 @@ class RoleAction extends BaseAction {
  * @returns {Promise<Object>} Action result
  */
 export async function createRole(prevState, formData) {
-	const action = new RoleAction();
+	const action = new RoleActions();
 	return await action.create(formData);
 }

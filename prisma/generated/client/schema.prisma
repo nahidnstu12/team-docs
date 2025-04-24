@@ -35,8 +35,9 @@ model User {
   notifications     Notification[]
 
   // Optional relationships for admin use case
-  isSuperAdmin Boolean @default(false) // For SaaS phase-2
+  isSuperAdmin Boolean      @default(false) // For SaaS phase-2
   Role         Role[]
+  Permission   Permission[]
 
   @@index([email])
 }
@@ -63,10 +64,15 @@ model Role {
 
 // Permission definitions
 model Permission {
-  id          String  @id @default(cuid())
-  name        String  @unique // e.g., "create:page", "update:project", etc.
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "create:page", "update:project", etc.
   description String?
-  category    String // e.g., "workspace", "project", "page", "user"
+  scope       String // e.g., "workspace", "project", "page", "user"
+  createdAt   DateTime @default(now())
+
+  // ✅ Optional reference to User
+  ownerId   String?
+  createdBy User?   @relation(fields: [ownerId], references: [id])
 
   // Relationships
   roles RolePermission[]

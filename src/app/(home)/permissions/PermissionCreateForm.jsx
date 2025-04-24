@@ -20,13 +20,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useActionState } from "react"; // Next.js form action hook
-import { createRole } from "@/system/Actions/RoleActions";
-import { RoleSchema } from "@/lib/schemas/RoleSchema";
+import { createPermissions } from "@/system/Actions/PermissionActions";
+import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 
-export default function RoleCreateForm({ isOpen, onOpenChange }) {
+export default function PermissionCreateForm({ isOpen, onOpenChange }) {
 	const router = useRouter();
 
-	const [formState, formAction, isPending] = useActionState(createRole, {
+	const [formState, formAction, isPending] = useActionState(createPermissions, {
 		errors: null,
 		data: null,
 	});
@@ -37,10 +37,11 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 		reset,
 		formState: { errors },
 	} = useForm({
-		resolver: zodResolver(RoleSchema),
+		resolver: zodResolver(PermissionSchema),
 		defaultValues: {
 			name: "",
 			description: "",
+			scope: "",
 		},
 	});
 
@@ -64,9 +65,9 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 
 		if (formState.type === "success") {
 			onOpenChange(false);
-			reset({ name: "", description: "" });
-			toast.success("Role created successfully", {
-				description: "Your new role is ready to use!",
+			reset({ name: "", description: "", scope: "" });
+			toast.success("Permission created successfully", {
+				description: "Your new permission is ready to use!",
 			});
 			if (formState.redirectTo) {
 				return router.push(formState.redirectTo);
@@ -84,20 +85,35 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 				<DialogContent className="sm:max-w-[600px]">
 					<DialogHeader>
 						<DialogTitle className="text-2xl font-semibold">
-							Create a New Role
+							Create a New Permission
 						</DialogTitle>
 						<DialogDescription>
-							Provide a name and optional description for the new role in your
-							system.
+							Provide a name and optional description for the new permission in
+							your system.
 						</DialogDescription>
 					</DialogHeader>
 
 					<form action={formAction} className="mt-6 space-y-5">
 						<div className="space-y-1.5">
-							<Label htmlFor="name">Role Name</Label>
+							<Label htmlFor="scope">Permission Scope</Label>
+							<Input
+								id="scope"
+								placeholder="e.g. workspace, project, page"
+								className="h-11"
+								{...register("scope")}
+							/>
+							{errors.scope && (
+								<p className="mt-1 text-sm text-red-500">
+									{errors.scope.message}
+								</p>
+							)}
+						</div>
+
+						<div className="space-y-1.5">
+							<Label htmlFor="name">Permission Name</Label>
 							<Input
 								id="name"
-								placeholder="e.g. Admin, Editor, Moderator"
+								placeholder="e.g. create, update, delete, view"
 								className="h-11"
 								{...register("name")}
 							/>
@@ -115,7 +131,7 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 							</Label>
 							<Textarea
 								id="description"
-								placeholder="What is this role about?"
+								placeholder="What is this permission about?"
 								{...register("description")}
 							/>
 							{errors.description && (

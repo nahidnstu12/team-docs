@@ -50,6 +50,8 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 	const nameValue = watch("name");
 	const slugValue = watch("slug");
 
+	console.log(formState);
+
 	// Slug auto-generation
 	useEffect(() => {
 		if (nameValue) {
@@ -83,9 +85,7 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 				});
 				if (field === "_form") toast.error(message[0]);
 			});
-			if (formState.data) {
-				reset(formState.data, { keepErrors: true });
-			}
+			reset(formState.data, { keepErrors: true });
 		}
 
 		if (formState.type === "success") {
@@ -99,6 +99,22 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 			}
 		}
 	}, [formState, setError, reset, router, onOpenChange]);
+
+	// 🩹 When dialog opens and form had errors: repopulate values and restore error messages
+	useEffect(() => {
+		if (!isOpen || !formState?.errors || formState?.type === "success") return;
+
+		// Step 1: Reset values to last attempted input
+		reset(formState.data || {}, { keepErrors: true });
+
+		// Step 2: Re-apply server errors
+		Object.entries(formState.errors).forEach(([field, message]) => {
+			setError(field, {
+				type: "server",
+				message: Array.isArray(message) ? message[0] : message,
+			});
+		});
+	}, [isOpen, formState, reset, setError]);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onOpenChange}>

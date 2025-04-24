@@ -2153,6 +2153,7 @@ export namespace Prisma {
     annotations: number
     notifications: number
     Role: number
+    Permission: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2166,6 +2167,7 @@ export namespace Prisma {
     annotations?: boolean | UserCountOutputTypeCountAnnotationsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
     Role?: boolean | UserCountOutputTypeCountRoleArgs
+    Permission?: boolean | UserCountOutputTypeCountPermissionArgs
   }
 
   // Custom InputTypes
@@ -2247,6 +2249,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRoleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RoleWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPermissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PermissionWhereInput
   }
 
 
@@ -2700,6 +2709,7 @@ export namespace Prisma {
     annotations?: boolean | User$annotationsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     Role?: boolean | User$RoleArgs<ExtArgs>
+    Permission?: boolean | User$PermissionArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2751,6 +2761,7 @@ export namespace Prisma {
     annotations?: boolean | User$annotationsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     Role?: boolean | User$RoleArgs<ExtArgs>
+    Permission?: boolean | User$PermissionArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2769,6 +2780,7 @@ export namespace Prisma {
       annotations: Prisma.$AnnotationPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       Role: Prisma.$RolePayload<ExtArgs>[]
+      Permission: Prisma.$PermissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3184,6 +3196,7 @@ export namespace Prisma {
     annotations<T extends User$annotationsArgs<ExtArgs> = {}>(args?: Subset<T, User$annotationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AnnotationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Role<T extends User$RoleArgs<ExtArgs> = {}>(args?: Subset<T, User$RoleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    Permission<T extends User$PermissionArgs<ExtArgs> = {}>(args?: Subset<T, User$PermissionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3847,6 +3860,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RoleScalarFieldEnum | RoleScalarFieldEnum[]
+  }
+
+  /**
+   * User.Permission
+   */
+  export type User$PermissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Permission
+     */
+    select?: PermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Permission
+     */
+    omit?: PermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PermissionInclude<ExtArgs> | null
+    where?: PermissionWhereInput
+    orderBy?: PermissionOrderByWithRelationInput | PermissionOrderByWithRelationInput[]
+    cursor?: PermissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PermissionScalarFieldEnum | PermissionScalarFieldEnum[]
   }
 
   /**
@@ -5058,21 +5095,27 @@ export namespace Prisma {
     id: string | null
     name: string | null
     description: string | null
-    category: string | null
+    scope: string | null
+    createdAt: Date | null
+    ownerId: string | null
   }
 
   export type PermissionMaxAggregateOutputType = {
     id: string | null
     name: string | null
     description: string | null
-    category: string | null
+    scope: string | null
+    createdAt: Date | null
+    ownerId: string | null
   }
 
   export type PermissionCountAggregateOutputType = {
     id: number
     name: number
     description: number
-    category: number
+    scope: number
+    createdAt: number
+    ownerId: number
     _all: number
   }
 
@@ -5081,21 +5124,27 @@ export namespace Prisma {
     id?: true
     name?: true
     description?: true
-    category?: true
+    scope?: true
+    createdAt?: true
+    ownerId?: true
   }
 
   export type PermissionMaxAggregateInputType = {
     id?: true
     name?: true
     description?: true
-    category?: true
+    scope?: true
+    createdAt?: true
+    ownerId?: true
   }
 
   export type PermissionCountAggregateInputType = {
     id?: true
     name?: true
     description?: true
-    category?: true
+    scope?: true
+    createdAt?: true
+    ownerId?: true
     _all?: true
   }
 
@@ -5175,7 +5224,9 @@ export namespace Prisma {
     id: string
     name: string
     description: string | null
-    category: string
+    scope: string
+    createdAt: Date
+    ownerId: string | null
     _count: PermissionCountAggregateOutputType | null
     _min: PermissionMinAggregateOutputType | null
     _max: PermissionMaxAggregateOutputType | null
@@ -5199,7 +5250,10 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
-    category?: boolean
+    scope?: boolean
+    createdAt?: boolean
+    ownerId?: boolean
+    createdBy?: boolean | Permission$createdByArgs<ExtArgs>
     roles?: boolean | Permission$rolesArgs<ExtArgs>
     _count?: boolean | PermissionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["permission"]>
@@ -5208,41 +5262,57 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
-    category?: boolean
+    scope?: boolean
+    createdAt?: boolean
+    ownerId?: boolean
+    createdBy?: boolean | Permission$createdByArgs<ExtArgs>
   }, ExtArgs["result"]["permission"]>
 
   export type PermissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
     description?: boolean
-    category?: boolean
+    scope?: boolean
+    createdAt?: boolean
+    ownerId?: boolean
+    createdBy?: boolean | Permission$createdByArgs<ExtArgs>
   }, ExtArgs["result"]["permission"]>
 
   export type PermissionSelectScalar = {
     id?: boolean
     name?: boolean
     description?: boolean
-    category?: boolean
+    scope?: boolean
+    createdAt?: boolean
+    ownerId?: boolean
   }
 
-  export type PermissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "category", ExtArgs["result"]["permission"]>
+  export type PermissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "scope" | "createdAt" | "ownerId", ExtArgs["result"]["permission"]>
   export type PermissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Permission$createdByArgs<ExtArgs>
     roles?: boolean | Permission$rolesArgs<ExtArgs>
     _count?: boolean | PermissionCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type PermissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type PermissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type PermissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Permission$createdByArgs<ExtArgs>
+  }
+  export type PermissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | Permission$createdByArgs<ExtArgs>
+  }
 
   export type $PermissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Permission"
     objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs> | null
       roles: Prisma.$RolePermissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
       description: string | null
-      category: string
+      scope: string
+      createdAt: Date
+      ownerId: string | null
     }, ExtArgs["result"]["permission"]>
     composites: {}
   }
@@ -5637,6 +5707,7 @@ export namespace Prisma {
    */
   export interface Prisma__PermissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends Permission$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Permission$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     roles<T extends Permission$rolesArgs<ExtArgs> = {}>(args?: Subset<T, Permission$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5670,7 +5741,9 @@ export namespace Prisma {
     readonly id: FieldRef<"Permission", 'String'>
     readonly name: FieldRef<"Permission", 'String'>
     readonly description: FieldRef<"Permission", 'String'>
-    readonly category: FieldRef<"Permission", 'String'>
+    readonly scope: FieldRef<"Permission", 'String'>
+    readonly createdAt: FieldRef<"Permission", 'DateTime'>
+    readonly ownerId: FieldRef<"Permission", 'String'>
   }
     
 
@@ -5920,6 +5993,10 @@ export namespace Prisma {
      */
     data: PermissionCreateManyInput | PermissionCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PermissionIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5990,6 +6067,10 @@ export namespace Prisma {
      * Limit how many Permissions to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PermissionIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -6056,6 +6137,25 @@ export namespace Prisma {
      * Limit how many Permissions to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Permission.createdBy
+   */
+  export type Permission$createdByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -19509,7 +19609,9 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     description: 'description',
-    category: 'category'
+    scope: 'scope',
+    createdAt: 'createdAt',
+    ownerId: 'ownerId'
   };
 
   export type PermissionScalarFieldEnum = (typeof PermissionScalarFieldEnum)[keyof typeof PermissionScalarFieldEnum]
@@ -19830,6 +19932,7 @@ export namespace Prisma {
     annotations?: AnnotationListRelationFilter
     notifications?: NotificationListRelationFilter
     Role?: RoleListRelationFilter
+    Permission?: PermissionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -19852,6 +19955,7 @@ export namespace Prisma {
     annotations?: AnnotationOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
     Role?: RoleOrderByRelationAggregateInput
+    Permission?: PermissionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -19877,6 +19981,7 @@ export namespace Prisma {
     annotations?: AnnotationListRelationFilter
     notifications?: NotificationListRelationFilter
     Role?: RoleListRelationFilter
+    Permission?: PermissionListRelationFilter
   }, "id" | "username" | "email" | "workspaceId">
 
   export type UserOrderByWithAggregationInput = {
@@ -19985,7 +20090,10 @@ export namespace Prisma {
     id?: StringFilter<"Permission"> | string
     name?: StringFilter<"Permission"> | string
     description?: StringNullableFilter<"Permission"> | string | null
-    category?: StringFilter<"Permission"> | string
+    scope?: StringFilter<"Permission"> | string
+    createdAt?: DateTimeFilter<"Permission"> | Date | string
+    ownerId?: StringNullableFilter<"Permission"> | string | null
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     roles?: RolePermissionListRelationFilter
   }
 
@@ -19993,7 +20101,10 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
-    category?: SortOrder
+    scope?: SortOrder
+    createdAt?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
+    createdBy?: UserOrderByWithRelationInput
     roles?: RolePermissionOrderByRelationAggregateInput
   }
 
@@ -20004,7 +20115,10 @@ export namespace Prisma {
     OR?: PermissionWhereInput[]
     NOT?: PermissionWhereInput | PermissionWhereInput[]
     description?: StringNullableFilter<"Permission"> | string | null
-    category?: StringFilter<"Permission"> | string
+    scope?: StringFilter<"Permission"> | string
+    createdAt?: DateTimeFilter<"Permission"> | Date | string
+    ownerId?: StringNullableFilter<"Permission"> | string | null
+    createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     roles?: RolePermissionListRelationFilter
   }, "id" | "name">
 
@@ -20012,7 +20126,9 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
-    category?: SortOrder
+    scope?: SortOrder
+    createdAt?: SortOrder
+    ownerId?: SortOrderInput | SortOrder
     _count?: PermissionCountOrderByAggregateInput
     _max?: PermissionMaxOrderByAggregateInput
     _min?: PermissionMinOrderByAggregateInput
@@ -20025,7 +20141,9 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Permission"> | string
     name?: StringWithAggregatesFilter<"Permission"> | string
     description?: StringNullableWithAggregatesFilter<"Permission"> | string | null
-    category?: StringWithAggregatesFilter<"Permission"> | string
+    scope?: StringWithAggregatesFilter<"Permission"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Permission"> | Date | string
+    ownerId?: StringNullableWithAggregatesFilter<"Permission"> | string | null
   }
 
   export type RolePermissionWhereInput = {
@@ -20901,6 +21019,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -20923,6 +21042,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -20945,6 +21065,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -20967,6 +21088,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -21083,7 +21205,9 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
-    category: string
+    scope: string
+    createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutPermissionInput
     roles?: RolePermissionCreateNestedManyWithoutPermissionInput
   }
 
@@ -21091,7 +21215,9 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
-    category: string
+    scope: string
+    createdAt?: Date | string
+    ownerId?: string | null
     roles?: RolePermissionUncheckedCreateNestedManyWithoutPermissionInput
   }
 
@@ -21099,7 +21225,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutPermissionNestedInput
     roles?: RolePermissionUpdateManyWithoutPermissionNestedInput
   }
 
@@ -21107,7 +21235,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     roles?: RolePermissionUncheckedUpdateManyWithoutPermissionNestedInput
   }
 
@@ -21115,21 +21245,26 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
-    category: string
+    scope: string
+    createdAt?: Date | string
+    ownerId?: string | null
   }
 
   export type PermissionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PermissionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type RolePermissionCreateInput = {
@@ -22104,6 +22239,12 @@ export namespace Prisma {
     none?: RoleWhereInput
   }
 
+  export type PermissionListRelationFilter = {
+    every?: PermissionWhereInput
+    some?: PermissionWhereInput
+    none?: PermissionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -22142,6 +22283,10 @@ export namespace Prisma {
   }
 
   export type RoleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PermissionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22285,21 +22430,27 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
-    category?: SortOrder
+    scope?: SortOrder
+    createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type PermissionMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
-    category?: SortOrder
+    scope?: SortOrder
+    createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type PermissionMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
-    category?: SortOrder
+    scope?: SortOrder
+    createdAt?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type RoleScalarRelationFilter = {
@@ -22967,6 +23118,13 @@ export namespace Prisma {
     connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
   }
 
+  export type PermissionCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<PermissionCreateWithoutCreatedByInput, PermissionUncheckedCreateWithoutCreatedByInput> | PermissionCreateWithoutCreatedByInput[] | PermissionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PermissionCreateOrConnectWithoutCreatedByInput | PermissionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: PermissionCreateManyCreatedByInputEnvelope
+    connect?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+  }
+
   export type WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<WorkspaceMemberCreateWithoutUserInput, WorkspaceMemberUncheckedCreateWithoutUserInput> | WorkspaceMemberCreateWithoutUserInput[] | WorkspaceMemberUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput | WorkspaceMemberCreateOrConnectWithoutUserInput[]
@@ -23035,6 +23193,13 @@ export namespace Prisma {
     connectOrCreate?: RoleCreateOrConnectWithoutCreatedByInput | RoleCreateOrConnectWithoutCreatedByInput[]
     createMany?: RoleCreateManyCreatedByInputEnvelope
     connect?: RoleWhereUniqueInput | RoleWhereUniqueInput[]
+  }
+
+  export type PermissionUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<PermissionCreateWithoutCreatedByInput, PermissionUncheckedCreateWithoutCreatedByInput> | PermissionCreateWithoutCreatedByInput[] | PermissionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PermissionCreateOrConnectWithoutCreatedByInput | PermissionCreateOrConnectWithoutCreatedByInput[]
+    createMany?: PermissionCreateManyCreatedByInputEnvelope
+    connect?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -23193,6 +23358,20 @@ export namespace Prisma {
     deleteMany?: RoleScalarWhereInput | RoleScalarWhereInput[]
   }
 
+  export type PermissionUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<PermissionCreateWithoutCreatedByInput, PermissionUncheckedCreateWithoutCreatedByInput> | PermissionCreateWithoutCreatedByInput[] | PermissionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PermissionCreateOrConnectWithoutCreatedByInput | PermissionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: PermissionUpsertWithWhereUniqueWithoutCreatedByInput | PermissionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: PermissionCreateManyCreatedByInputEnvelope
+    set?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    disconnect?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    delete?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    connect?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    update?: PermissionUpdateWithWhereUniqueWithoutCreatedByInput | PermissionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: PermissionUpdateManyWithWhereWithoutCreatedByInput | PermissionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: PermissionScalarWhereInput | PermissionScalarWhereInput[]
+  }
+
   export type WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<WorkspaceMemberCreateWithoutUserInput, WorkspaceMemberUncheckedCreateWithoutUserInput> | WorkspaceMemberCreateWithoutUserInput[] | WorkspaceMemberUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput | WorkspaceMemberCreateOrConnectWithoutUserInput[]
@@ -23331,6 +23510,20 @@ export namespace Prisma {
     update?: RoleUpdateWithWhereUniqueWithoutCreatedByInput | RoleUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: RoleUpdateManyWithWhereWithoutCreatedByInput | RoleUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: RoleScalarWhereInput | RoleScalarWhereInput[]
+  }
+
+  export type PermissionUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<PermissionCreateWithoutCreatedByInput, PermissionUncheckedCreateWithoutCreatedByInput> | PermissionCreateWithoutCreatedByInput[] | PermissionUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: PermissionCreateOrConnectWithoutCreatedByInput | PermissionCreateOrConnectWithoutCreatedByInput[]
+    upsert?: PermissionUpsertWithWhereUniqueWithoutCreatedByInput | PermissionUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: PermissionCreateManyCreatedByInputEnvelope
+    set?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    disconnect?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    delete?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    connect?: PermissionWhereUniqueInput | PermissionWhereUniqueInput[]
+    update?: PermissionUpdateWithWhereUniqueWithoutCreatedByInput | PermissionUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: PermissionUpdateManyWithWhereWithoutCreatedByInput | PermissionUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: PermissionScalarWhereInput | PermissionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutRoleInput = {
@@ -23475,6 +23668,12 @@ export namespace Prisma {
     deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutPermissionInput = {
+    create?: XOR<UserCreateWithoutPermissionInput, UserUncheckedCreateWithoutPermissionInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPermissionInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type RolePermissionCreateNestedManyWithoutPermissionInput = {
     create?: XOR<RolePermissionCreateWithoutPermissionInput, RolePermissionUncheckedCreateWithoutPermissionInput> | RolePermissionCreateWithoutPermissionInput[] | RolePermissionUncheckedCreateWithoutPermissionInput[]
     connectOrCreate?: RolePermissionCreateOrConnectWithoutPermissionInput | RolePermissionCreateOrConnectWithoutPermissionInput[]
@@ -23487,6 +23686,16 @@ export namespace Prisma {
     connectOrCreate?: RolePermissionCreateOrConnectWithoutPermissionInput | RolePermissionCreateOrConnectWithoutPermissionInput[]
     createMany?: RolePermissionCreateManyPermissionInputEnvelope
     connect?: RolePermissionWhereUniqueInput | RolePermissionWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneWithoutPermissionNestedInput = {
+    create?: XOR<UserCreateWithoutPermissionInput, UserUncheckedCreateWithoutPermissionInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPermissionInput
+    upsert?: UserUpsertWithoutPermissionInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPermissionInput, UserUpdateWithoutPermissionInput>, UserUncheckedUpdateWithoutPermissionInput>
   }
 
   export type RolePermissionUpdateManyWithoutPermissionNestedInput = {
@@ -24709,6 +24918,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PermissionCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    scope: string
+    createdAt?: Date | string
+    roles?: RolePermissionCreateNestedManyWithoutPermissionInput
+  }
+
+  export type PermissionUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    scope: string
+    createdAt?: Date | string
+    roles?: RolePermissionUncheckedCreateNestedManyWithoutPermissionInput
+  }
+
+  export type PermissionCreateOrConnectWithoutCreatedByInput = {
+    where: PermissionWhereUniqueInput
+    create: XOR<PermissionCreateWithoutCreatedByInput, PermissionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type PermissionCreateManyCreatedByInputEnvelope = {
+    data: PermissionCreateManyCreatedByInput | PermissionCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WorkspaceMemberUpsertWithWhereUniqueWithoutUserInput = {
     where: WorkspaceMemberWhereUniqueInput
     update: XOR<WorkspaceMemberUpdateWithoutUserInput, WorkspaceMemberUncheckedUpdateWithoutUserInput>
@@ -24992,6 +25229,34 @@ export namespace Prisma {
     ownerId?: StringNullableFilter<"Role"> | string | null
   }
 
+  export type PermissionUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: PermissionWhereUniqueInput
+    update: XOR<PermissionUpdateWithoutCreatedByInput, PermissionUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<PermissionCreateWithoutCreatedByInput, PermissionUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type PermissionUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: PermissionWhereUniqueInput
+    data: XOR<PermissionUpdateWithoutCreatedByInput, PermissionUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type PermissionUpdateManyWithWhereWithoutCreatedByInput = {
+    where: PermissionScalarWhereInput
+    data: XOR<PermissionUpdateManyMutationInput, PermissionUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type PermissionScalarWhereInput = {
+    AND?: PermissionScalarWhereInput | PermissionScalarWhereInput[]
+    OR?: PermissionScalarWhereInput[]
+    NOT?: PermissionScalarWhereInput | PermissionScalarWhereInput[]
+    id?: StringFilter<"Permission"> | string
+    name?: StringFilter<"Permission"> | string
+    description?: StringNullableFilter<"Permission"> | string | null
+    scope?: StringFilter<"Permission"> | string
+    createdAt?: DateTimeFilter<"Permission"> | Date | string
+    ownerId?: StringNullableFilter<"Permission"> | string | null
+  }
+
   export type UserCreateWithoutRoleInput = {
     id?: string
     username: string
@@ -25011,6 +25276,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -25032,6 +25298,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -25137,6 +25404,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -25158,6 +25426,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type RolePermissionUpsertWithWhereUniqueWithoutRoleInput = {
@@ -25217,6 +25486,55 @@ export namespace Prisma {
     data: XOR<ProjectMemberUpdateManyMutationInput, ProjectMemberUncheckedUpdateManyWithoutRoleInput>
   }
 
+  export type UserCreateWithoutPermissionInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceId?: string | null
+    isSuperAdmin?: boolean
+    workspaces?: WorkspaceMemberCreateNestedManyWithoutUserInput
+    projects?: ProjectMemberCreateNestedManyWithoutUserInput
+    createdWorkspaces?: WorkspaceCreateNestedManyWithoutOwnerInput
+    createdProjects?: ProjectCreateNestedManyWithoutOwnerInput
+    createdSections?: SectionCreateNestedManyWithoutCreatorInput
+    createdPages?: PageCreateNestedManyWithoutCreatorInput
+    updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
+    annotations?: AnnotationCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutPermissionInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceId?: string | null
+    isSuperAdmin?: boolean
+    workspaces?: WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+    projects?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    createdWorkspaces?: WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+    createdProjects?: ProjectUncheckedCreateNestedManyWithoutOwnerInput
+    createdSections?: SectionUncheckedCreateNestedManyWithoutCreatorInput
+    createdPages?: PageUncheckedCreateNestedManyWithoutCreatorInput
+    updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
+    annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutPermissionInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPermissionInput, UserUncheckedCreateWithoutPermissionInput>
+  }
+
   export type RolePermissionCreateWithoutPermissionInput = {
     id?: string
     role: RoleCreateNestedOneWithoutPermissionsInput
@@ -25235,6 +25553,61 @@ export namespace Prisma {
   export type RolePermissionCreateManyPermissionInputEnvelope = {
     data: RolePermissionCreateManyPermissionInput | RolePermissionCreateManyPermissionInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutPermissionInput = {
+    update: XOR<UserUpdateWithoutPermissionInput, UserUncheckedUpdateWithoutPermissionInput>
+    create: XOR<UserCreateWithoutPermissionInput, UserUncheckedCreateWithoutPermissionInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPermissionInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPermissionInput, UserUncheckedUpdateWithoutPermissionInput>
+  }
+
+  export type UserUpdateWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: NullableStringFieldUpdateOperationsInput | string | null
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
+    workspaces?: WorkspaceMemberUpdateManyWithoutUserNestedInput
+    projects?: ProjectMemberUpdateManyWithoutUserNestedInput
+    createdWorkspaces?: WorkspaceUpdateManyWithoutOwnerNestedInput
+    createdProjects?: ProjectUpdateManyWithoutOwnerNestedInput
+    createdSections?: SectionUpdateManyWithoutCreatorNestedInput
+    createdPages?: PageUpdateManyWithoutCreatorNestedInput
+    updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
+    annotations?: AnnotationUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: NullableStringFieldUpdateOperationsInput | string | null
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
+    workspaces?: WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+    projects?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdWorkspaces?: WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+    createdProjects?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+    createdSections?: SectionUncheckedUpdateManyWithoutCreatorNestedInput
+    createdPages?: PageUncheckedUpdateManyWithoutCreatorNestedInput
+    updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
+    annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type RolePermissionUpsertWithWhereUniqueWithoutPermissionInput = {
@@ -25284,14 +25657,18 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
-    category: string
+    scope: string
+    createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutPermissionInput
   }
 
   export type PermissionUncheckedCreateWithoutRolesInput = {
     id?: string
     name: string
     description?: string | null
-    category: string
+    scope: string
+    createdAt?: Date | string
+    ownerId?: string | null
   }
 
   export type PermissionCreateOrConnectWithoutRolesInput = {
@@ -25347,14 +25724,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutPermissionNestedInput
   }
 
   export type PermissionUncheckedUpdateWithoutRolesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: StringFieldUpdateOperationsInput | string
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateWithoutCreatedWorkspacesInput = {
@@ -25376,6 +25757,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedWorkspacesInput = {
@@ -25397,6 +25779,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedWorkspacesInput = {
@@ -25498,6 +25881,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedWorkspacesInput = {
@@ -25519,6 +25903,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
@@ -25603,6 +25988,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWorkspacesInput = {
@@ -25624,6 +26010,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWorkspacesInput = {
@@ -25725,6 +26112,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkspacesInput = {
@@ -25746,6 +26134,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type RoleUpsertWithoutWorkspaceMembersInput = {
@@ -25831,6 +26220,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedProjectsInput = {
@@ -25852,6 +26242,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedProjectsInput = {
@@ -25982,6 +26373,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedProjectsInput = {
@@ -26003,6 +26395,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectMemberUpsertWithWhereUniqueWithoutProjectInput = {
@@ -26091,6 +26484,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -26112,6 +26506,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -26217,6 +26612,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -26238,6 +26634,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type RoleUpsertWithoutProjectMembersInput = {
@@ -26327,6 +26724,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedSectionsInput = {
@@ -26348,6 +26746,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedSectionsInput = {
@@ -26468,6 +26867,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedSectionsInput = {
@@ -26489,6 +26889,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PageUpsertWithWhereUniqueWithoutSectionInput = {
@@ -26553,6 +26954,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedPagesInput = {
@@ -26574,6 +26976,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedPagesInput = {
@@ -26600,6 +27003,7 @@ export namespace Prisma {
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutUpdatedPagesInput = {
@@ -26621,6 +27025,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutUpdatedPagesInput = {
@@ -26771,6 +27176,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedPagesInput = {
@@ -26792,6 +27198,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutUpdatedPagesInput = {
@@ -26824,6 +27231,7 @@ export namespace Prisma {
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUpdatedPagesInput = {
@@ -26845,6 +27253,7 @@ export namespace Prisma {
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type AnnotationUpsertWithWhereUniqueWithoutPageInput = {
@@ -27134,6 +27543,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAnnotationsInput = {
@@ -27155,6 +27565,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAnnotationsInput = {
@@ -27235,6 +27646,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAnnotationsInput = {
@@ -27256,6 +27668,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -27277,6 +27690,7 @@ export namespace Prisma {
     updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -27298,6 +27712,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
     annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -27335,6 +27750,7 @@ export namespace Prisma {
     updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -27356,6 +27772,7 @@ export namespace Prisma {
     updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
     annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WorkspaceMemberCreateManyUserInput = {
@@ -27455,6 +27872,14 @@ export namespace Prisma {
     name: string
     description?: string | null
     isSystem?: boolean
+    createdAt?: Date | string
+  }
+
+  export type PermissionCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    description?: string | null
+    scope: string
     createdAt?: Date | string
   }
 
@@ -27783,6 +28208,32 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isSystem?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PermissionUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roles?: RolePermissionUpdateManyWithoutPermissionNestedInput
+  }
+
+  export type PermissionUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    roles?: RolePermissionUncheckedUpdateManyWithoutPermissionNestedInput
+  }
+
+  export type PermissionUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
