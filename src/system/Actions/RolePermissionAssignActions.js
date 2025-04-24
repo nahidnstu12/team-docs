@@ -12,42 +12,61 @@ import { RolePermissionAssignModel } from "../Models/RolePermissionAssignModel";
  * @extends BaseAction
  */
 class RolePermissionAssignActions extends BaseAction {
-	/**
-	 * Creates a WorkspaceAction instance
-	 * Initializes service and model dependencies
-	 */
 	constructor() {
 		super(RolePermissionAssignSchema);
 		this.rolePermissionAssignModel = new RolePermissionAssignModel();
 	}
 
-	/**
-	 * Creates a new workspace
-	 * @param {FormData|Object} formData - Workspace data
-	 * @returns {Promise<{
-	 *   success: boolean,
-	 *   type?: string,
-	 *   redirectTo?: string,
-	 *   errors?: Object,
-	 *   data?: Object
-	 * }>} Creation result
-	 */
 	async create(formData) {
 		const result = await this.execute(formData);
-
 		Logger.info(result);
 		if (!result.success) return result;
 
 		try {
+			Logger.success(result.data);
 			const { roleId, permissions } = result.data;
 			const session = await Session.getCurrentUser();
 
+			// ✅ Fetch current assignments from DB
+			const existing = await this.rolePermissionAssignModel.findByRoleId(
+				roleId
+			);
+			const existingIds = new Set(existing.map((p) => p.permissionId));
+			const newIds = new Set(permissions);
+
+			// ✅ Calculate new to add
+			const toAdd = permissions.filter((id) => !existingIds.has(id));
+			// ✅ Calculate which to delete
+			const toRemove = [...existingIds].filter((id) => !newIds.has(id));
+
+			// ✅ Upsert new permissions
 			await Promise.all(
-				permissions.map((permissionId) =>
-					this.rolePermissionAssignModel.create({
+				toAdd.map((permissionId) =>
+					this.rolePermissionAssignModel.upsert({
+						where: {
+							roleId_permissionId: {
+								roleId,
+								permissionId,
+							},
+						},
+						create: {
+							roleId,
+							permissionId,
+							ownerId: session.id,
+						},
+						update: {
+							ownerId: session.id,
+						},
+					})
+				)
+			);
+
+			// ✅ Delete removed permissions
+			await Promise.all(
+				toRemove.map((permissionId) =>
+					this.rolePermissionAssignModel.delete({
 						roleId,
 						permissionId,
-						ownerId: session.id,
 					})
 				)
 			);
@@ -67,7 +86,6 @@ class RolePermissionAssignActions extends BaseAction {
 					"scope",
 				]);
 			}
-
 			return {
 				success: false,
 				type: "fail",

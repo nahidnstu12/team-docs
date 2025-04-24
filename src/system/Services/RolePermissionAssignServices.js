@@ -9,7 +9,7 @@ import { BaseService } from "./BaseService";
  */
 export class RolePermissionAssignServices extends BaseService {
 	constructor() {
-		super("permission");
+		super("RolePermissionAssignment");
 		this.model = new RolePermissionAssignModel();
 	}
 
@@ -21,5 +21,13 @@ export class RolePermissionAssignServices extends BaseService {
 		const permissionModel = new PermissionModel();
 		const permissions = await permissionModel.findMany(whereClause);
 		return RolePermissionAssignDTO.toCollection(permissions);
+	}
+
+	// Inside your service layer
+	async getSelectedPermissionsForRole({ roleId, ownerId }) {
+		return this.model.findMany({
+			where: { roleId, ownerId },
+			select: { permissionId: true },
+		});
 	}
 }

@@ -11,13 +11,45 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
 import RenderCreateButton from "./RenderCreateButton";
-import { useState } from "react";
-import RolePermissionDialog from "../role-permission-assign/RolePermissionDialog";
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { getAllPermissions } from "../role-permission-assign/loader/getAllPermissions";
+
+const LoadRolePermissionDialogLazy = dynamic(
+	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
+	{ ssr: false }
+);
 
 export default function RoleLisitngs({ roles, onCreateClick }) {
-	// for role permission assignment
+	// State to manage dialog open/close
 	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
+	// State to hold the permissions data
+	const [permissions, setPermissions] = useState([]);
+
+	// Fetch permissions for a selected role
+	useEffect(() => {
+		if (selectedRoleId && permissions.length === 0) {
+			// Fetch permissions when a role is selected
+			const fetchPermissions = async () => {
+				try {
+					const perms = await getAllPermissions(selectedRoleId);
+					setPermissions(perms);
+				} catch (error) {
+					console.error("Failed to fetch permissions", error);
+				}
+			};
+			fetchPermissions();
+		}
+	}, [selectedRoleId, permissions.length]);
+
+	useEffect(() => {
+		if (!openDialog) {
+			setPermissions([]);
+			setSelectedRoleId(null);
+		}
+	}, [openDialog]);
+
 	return (
 		<>
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
@@ -31,7 +63,7 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 					<TableHeader className="sticky top-0 z-10 bg-muted">
 						<TableRow className="text-lg font-semibold tracking-wide">
 							<TableHead className="w-[160px] px-6 py-4">Name</TableHead>
-							<TableHead className="w-[480px] px-6 py-4">Description</TableHead>
+							<TableHead className="w-[400px] px-6 py-4">Description</TableHead>
 							<TableHead className="w-[120px] text-center px-6 py-4">
 								System?
 							</TableHead>
@@ -69,11 +101,10 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										{/* Assign – primary outline with green accent */}
 										<Button
 											onClick={() => {
-												setSelectedRoleId(role.id);
-												setOpenDialog(true);
+												setSelectedRoleId(role.id); // Set selected role ID
+												setOpenDialog(true); // Open dialog
 											}}
 											size="sm"
 											variant="outline"
@@ -83,13 +114,17 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 											Assign
 										</Button>
 
-										{/* role permission assignment component */}
-										<RolePermissionDialog
-											isOpen={openDialog}
-											onOpenChange={setOpenDialog}
-											roleId={selectedRoleId}
-										/>
-										{/* Edit – secondary with neutral accent */}
+										{/* Render dialog with permissions data */}
+										{openDialog && selectedRoleId === role.id && (
+											<LoadRolePermissionDialogLazy
+												isOpen={openDialog}
+												onOpenChange={setOpenDialog}
+												roleId={selectedRoleId}
+												permissions={permissions} // Pass fetched permissions here
+											/>
+										)}
+
+										{/* Edit and Delete buttons */}
 										<Button
 											size="sm"
 											variant="secondary"
@@ -99,7 +134,6 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 											Edit
 										</Button>
 
-										{/* Delete – strong red signal for danger */}
 										<Button
 											size="sm"
 											variant="destructive"

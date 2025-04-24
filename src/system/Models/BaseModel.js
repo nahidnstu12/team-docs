@@ -1,4 +1,5 @@
-import { PrismaClient } from "prisma/generated/client";
+import Logger from "@/lib/Logger";
+import prisma from "@/lib/prisma";
 
 /**
  * Abstract base class for all models
@@ -10,7 +11,7 @@ export class BaseModel {
 	 * @param {string} modelName - Prisma model name
 	 */
 	constructor(modelName) {
-		this.prisma = new PrismaClient();
+		this.prisma = prisma;
 		this.model = this.prisma[modelName];
 	}
 
@@ -21,6 +22,19 @@ export class BaseModel {
 	 */
 	async create(data) {
 		return await this.model.create({ data });
+	}
+
+	async upsert({ where, create, update }) {
+		try {
+			return await this.model.upsert({
+				where,
+				create,
+				update,
+			});
+		} catch (error) {
+			Logger.error(error.message, `Upsert failed`);
+			throw error;
+		}
 	}
 
 	/**
@@ -58,10 +72,11 @@ export class BaseModel {
 	 * Finds all resource
 	 * @returns {Promise<Array>} Array of resources
 	 */
-	async findMany(whereClause) {
+	async findMany({ where, select, orderBy = { createdAt: "desc" } }) {
 		return await this.model.findMany({
-			...(whereClause && { where: whereClause }),
-			orderBy: { createdAt: "desc" },
+			...(where && { where }),
+			...(select && { select }),
+			orderBy,
 		});
 	}
 
