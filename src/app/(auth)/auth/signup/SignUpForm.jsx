@@ -67,17 +67,17 @@ export default function SignUpForm() {
 	]);
 
 	return (
-		<div className="max-w-md w-full mx-auto">
+		<div className="w-full max-w-md mx-auto">
 			{formState?.type === "success" ? (
-				<Card className="animate-pulse shadow-xl border-blue-200">
+				<Card className="border-blue-200 shadow-xl animate-pulse">
 					<CardHeader className="text-center">
 						<h1 className="text-xl font-semibold text-blue-600">
 							Creating your account...
 						</h1>
 					</CardHeader>
-					<CardBody className="flex flex-col items-center justify-center space-y-4 py-6">
-						<Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-						<p className="text-sm text-gray-600">
+					<CardBody className="flex flex-col items-center justify-center py-6 space-y-4">
+						<Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+						<p className="text-sm text-center text-gray-600">
 							Redirecting to your Homepage. Please wait...
 						</p>
 					</CardBody>
@@ -158,7 +158,7 @@ export default function SignUpForm() {
 
 						{/* Form-wide Errors */}
 						{formState?.errors?._form && (
-							<div className="text-red-500 text-sm space-y-1">
+							<div className="space-y-1 text-sm text-red-500">
 								{formState.errors._form.map((msg, index) => (
 									<p key={index}>{msg}</p>
 								))}
@@ -169,7 +169,7 @@ export default function SignUpForm() {
 						<SubmitButton isPending={isPending} />
 
 						{/* Link to Sign In */}
-						<div className="text-center pt-4">
+						<div className="pt-4 text-center">
 							<p className="text-sm text-muted-foreground">
 								Already have an account?{" "}
 								<Link
@@ -194,7 +194,7 @@ function SubmitButton({ isPending }) {
 			className="w-full h-12 text-lg font-semibold"
 			disabled={isPending}
 		>
-			{isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+			{isPending ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
 			Create Account
 		</Button>
 	);
