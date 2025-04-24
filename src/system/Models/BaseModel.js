@@ -36,8 +36,8 @@ export class BaseModel {
 		return await this.model.delete({ where: { id } });
 	}
 
-	static async findById(id) {
-		return await this.model.findUnique({ where: { id } });
+	static async findUnique({ where, select }) {
+		return await this.model.findUnique({ where, ...(select && { select }) });
 	}
 
 	static async findMany({ where, select, orderBy = { createdAt: "desc" } }) {

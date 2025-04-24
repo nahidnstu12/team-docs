@@ -20491,6 +20491,7 @@ export namespace Prisma {
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    slug_name_ownerId?: ProjectSlugNameOwnerIdCompoundUniqueInput
     AND?: ProjectWhereInput | ProjectWhereInput[]
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
@@ -20508,7 +20509,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ProjectMemberListRelationFilter
     sections?: SectionListRelationFilter
-  }, "id">
+  }, "id" | "slug_name_ownerId">
 
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
@@ -22761,6 +22762,12 @@ export namespace Prisma {
     userId?: SortOrder
     roleId?: SortOrder
     joinedAt?: SortOrder
+  }
+
+  export type ProjectSlugNameOwnerIdCompoundUniqueInput = {
+    slug: string
+    name: string
+    ownerId: string
   }
 
   export type ProjectCountOrderByAggregateInput = {

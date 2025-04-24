@@ -1,6 +1,8 @@
 import { auth } from "@/app/auth";
 import { forbidden } from "next/navigation";
 import prisma from "./prisma";
+import { UserModel } from "@/system/Models/UserModel";
+import Logger from "./Logger";
 
 export class Session {
 	static async getCurrentUser() {
@@ -44,14 +46,14 @@ export class Session {
 	 * @param {string} userId
 	 * @returns {Promise<string|null>}
 	 */
-	static async getWorkspaceId(userId) {
+	static async getWorkspaceId(id) {
 		try {
-			const user = await prisma.user.findUnique({
-				where: { id: userId },
+			const user = await UserModel.findUnique({
+				where: { id },
 				select: { workspaceId: true },
 			});
 
-			return user?.workspaceId ?? null;
+			return user?.workspaceId;
 		} catch (error) {
 			console.error("[Session.getWorkspaceId] Error:", error);
 			return null;

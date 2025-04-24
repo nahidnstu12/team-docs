@@ -56,10 +56,7 @@ class RolePermissionAssignActions extends BaseAction {
 			// ✅ Delete removed permissions
 			await Promise.all(
 				toRemove.map((permissionId) =>
-					RolePermissionAssignModel.delete({
-						roleId,
-						permissionId,
-					})
+					RolePermissionAssignModel.delete(roleId, permissionId)
 				)
 			);
 

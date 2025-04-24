@@ -1,10 +1,15 @@
 import { Session } from "@/lib/Session";
 import { PermissionServices } from "@/system/Services/PermissionServices";
 import PermissionShell from "./PermissionShell";
-import Logger from "@/lib/Logger";
+import { RoleService } from "@/system/Services/RoleServices";
+import { redirect } from "next/navigation";
 
 export default async function PermissionsPage() {
 	const session = await Session.getCurrentUser();
+
+	const hasRoles = await RoleService.hasRoles(session.id);
+
+	if (!hasRoles) redirect("/roles");
 
 	const hasPermissionResouces = await PermissionServices.hasPermissionResouces(
 		session.id
@@ -13,8 +18,6 @@ export default async function PermissionsPage() {
 	const permissions = await PermissionServices.getAllPermissions({
 		ownerId: session.id,
 	});
-
-	Logger.debug(hasPermissionResouces);
 
 	return (
 		<PermissionShell

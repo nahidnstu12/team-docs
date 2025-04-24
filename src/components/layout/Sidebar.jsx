@@ -22,6 +22,8 @@ export default function Sidebar({
 	session,
 	hasWorkspace = false,
 	hasProjects = false,
+	hasRoles = false,
+	hasPermissions = false,
 }) {
 	const { isOpen } = useSidebarToggle();
 
@@ -67,7 +69,7 @@ export default function Sidebar({
 								label="Role"
 							/>
 						)}
-						{hasProjects && (
+						{hasProjects && hasRoles && (
 							<SidebarItem
 								href="/permissions"
 								icon={<KeyRound className="w-4 h-4" />}
