@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/app/generated/prisma";
+import { PrismaClient } from "prisma/generated/client";
 
 /**
  * Abstract base class for all models
@@ -60,7 +60,7 @@ export class BaseModel {
 	 */
 	async findMany(whereClause) {
 		return await this.model.findMany({
-			where: whereClause,
+			...(whereClause && { where: whereClause }),
 			orderBy: { createdAt: "desc" },
 		});
 	}

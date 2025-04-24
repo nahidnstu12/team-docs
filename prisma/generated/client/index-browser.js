@@ -122,25 +122,11 @@ exports.Prisma.UserScalarFieldEnum = {
   username: 'username',
   email: 'email',
   password: 'password',
+  isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   workspaceId: 'workspaceId',
-  createdById: 'createdById'
-};
-
-exports.Prisma.AccountScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  refresh_token: 'refresh_token',
-  access_token: 'access_token',
-  expires_at: 'expires_at',
-  token_type: 'token_type',
-  scope: 'scope',
-  id_token: 'id_token',
-  session_state: 'session_state'
+  isSuperAdmin: 'isSuperAdmin'
 };
 
 exports.Prisma.RoleScalarFieldEnum = {
@@ -149,100 +135,151 @@ exports.Prisma.RoleScalarFieldEnum = {
   description: 'description',
   isSystem: 'isSystem',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.PermissionScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  category: 'category',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  category: 'category'
 };
 
 exports.Prisma.RolePermissionScalarFieldEnum = {
   id: 'id',
   roleId: 'roleId',
-  permissionId: 'permissionId',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.UserRoleScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  roleId: 'roleId',
-  createdAt: 'createdAt'
+  permissionId: 'permissionId'
 };
 
 exports.Prisma.WorkspaceScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  description: 'description',
   slug: 'slug',
-  isActive: 'isActive',
+  description: 'description',
+  logo: 'logo',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  ownerId: 'ownerId'
+  ownerId: 'ownerId',
+  settings: 'settings'
 };
 
-exports.Prisma.WorkspaceAdminScalarFieldEnum = {
+exports.Prisma.WorkspaceMemberScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
   userId: 'userId',
-  isPrimary: 'isPrimary',
-  createdAt: 'createdAt'
+  roleId: 'roleId',
+  joinedAt: 'joinedAt'
 };
 
 exports.Prisma.ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  description: 'description',
   slug: 'slug',
+  description: 'description',
+  icon: 'icon',
+  color: 'color',
   workspaceId: 'workspaceId',
-  isActive: 'isActive',
+  ownerId: 'ownerId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isArchived: 'isArchived'
 };
 
-exports.Prisma.TeamMemberScalarFieldEnum = {
+exports.Prisma.ProjectMemberScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   userId: 'userId',
-  isLead: 'isLead',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  roleId: 'roleId',
+  joinedAt: 'joinedAt'
 };
 
 exports.Prisma.SectionScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  slug: 'slug',
-  order: 'order',
   projectId: 'projectId',
-  isActive: 'isActive',
+  creatorId: 'creatorId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  sortOrder: 'sortOrder'
 };
 
 exports.Prisma.PageScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  slug: 'slug',
-  order: 'order',
   sectionId: 'sectionId',
-  isActive: 'isActive',
+  creatorId: 'creatorId',
+  lastUpdatedBy: 'lastUpdatedBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
+  sortOrder: 'sortOrder',
+  isPublic: 'isPublic',
+  password: 'password'
+};
+
+exports.Prisma.PageVersionScalarFieldEnum = {
+  id: 'id',
+  pageId: 'pageId',
+  content: 'content',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy'
+};
+
+exports.Prisma.PageShareScalarFieldEnum = {
+  id: 'id',
+  pageId: 'pageId',
+  userId: 'userId',
+  token: 'token',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt'
+};
+
+exports.Prisma.AnnotationScalarFieldEnum = {
+  id: 'id',
+  pageId: 'pageId',
+  userId: 'userId',
+  content: 'content',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isResolved: 'isResolved'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  content: 'content',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.InvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token',
+  workspaceId: 'workspaceId',
+  roleId: 'roleId',
+  invitedBy: 'invitedBy',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt',
+  isAccepted: 'isAccepted',
+  projectId: 'projectId'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -255,20 +292,29 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Account: 'Account',
   Role: 'Role',
   Permission: 'Permission',
   RolePermission: 'RolePermission',
-  UserRole: 'UserRole',
   Workspace: 'Workspace',
-  WorkspaceAdmin: 'WorkspaceAdmin',
+  WorkspaceMember: 'WorkspaceMember',
   Project: 'Project',
-  TeamMember: 'TeamMember',
+  ProjectMember: 'ProjectMember',
   Section: 'Section',
-  Page: 'Page'
+  Page: 'Page',
+  PageVersion: 'PageVersion',
+  PageShare: 'PageShare',
+  Annotation: 'Annotation',
+  Notification: 'Notification',
+  Invitation: 'Invitation'
 };
 
 /**

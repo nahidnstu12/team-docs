@@ -128,7 +128,11 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 	// 🔁 When drawer opens: reset everything for a clean slate
 	useEffect(() => {
 		if (isOpen) {
-			reset(); // Clear form
+			reset({
+				name: "",
+				slug: "",
+				description: "",
+			}); // Clear form
 			setHasHandledSuccess(false); // Allow new success
 			setLocalFormState(null); // Clear any lingering success
 		}

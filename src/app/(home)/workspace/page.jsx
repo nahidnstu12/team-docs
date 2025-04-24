@@ -1,6 +1,6 @@
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
-import WorkspaceFormShell from "./WorkspaceFormShell";
+import WorkspaceShell from "./WorkspaceShell";
 
 export default async function WorkspacePage() {
 	await Session.requireAuth();
@@ -10,7 +10,7 @@ export default async function WorkspacePage() {
 	const hasWorkspace = await workspaceService.hasWorkspace(user.id);
 
 	if (!hasWorkspace) {
-		return <WorkspaceFormShell />;
+		return <WorkspaceShell />;
 	}
 
 	return <div className="">workspace</div>;

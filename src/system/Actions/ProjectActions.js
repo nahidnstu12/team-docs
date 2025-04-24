@@ -32,6 +32,9 @@ class ProjectAction extends BaseAction {
 				workspace: {
 					connect: { id: workspace.id },
 				},
+				owner: {
+					connect: { id: session.id },
+				},
 			});
 
 			return {
@@ -41,7 +44,7 @@ class ProjectAction extends BaseAction {
 				redirectTo: "/projects",
 			};
 		} catch (error) {
-			// Logger.error(error, "project creation failed:");
+			Logger.error(error.message, "project creation failed:");
 			// Handle Prisma errors
 			if (error.code) {
 				return PrismaErrorFormatter.handle(error, result.data, [

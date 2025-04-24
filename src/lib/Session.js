@@ -1,5 +1,3 @@
-// src/lib/Session.js
-
 import { auth } from "@/app/auth";
 import { forbidden } from "next/navigation";
 import prisma from "./prisma";
