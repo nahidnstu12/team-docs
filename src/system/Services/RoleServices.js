@@ -10,7 +10,7 @@ export class RoleService extends BaseService {
 
 	static async getAllRoles(whereClause) {
 		try {
-			const roles = await RoleModel.findMany(whereClause);
+			const roles = await RoleModel.findMany({ where: whereClause });
 			return RoleDTO.toCollection(roles);
 		} catch (error) {
 			Logger.error(error.message, `Get all roles failed`);

@@ -26,7 +26,7 @@ export class ProjectService extends BaseService {
 
 		try {
 			return await ProjectModel.findMany({
-				workspaceId,
+				where: { workspaceId },
 			});
 		} catch (error) {
 			Logger.error(error.message, `Get all projects failed`);

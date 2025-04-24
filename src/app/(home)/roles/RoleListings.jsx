@@ -20,7 +20,7 @@ const LoadRolePermissionDialogLazy = dynamic(
 	{ ssr: false }
 );
 
-export default function RoleLisitngs({ roles, onCreateClick }) {
+export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
 	// State to manage dialog open/close
 	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
@@ -63,8 +63,8 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 					<TableHeader className="sticky top-0 z-10 bg-muted">
 						<TableRow className="text-lg font-semibold tracking-wide">
 							<TableHead className="w-[160px] px-6 py-4">Name</TableHead>
-							<TableHead className="w-[400px] px-6 py-4">Description</TableHead>
-							<TableHead className="w-[120px] text-center px-6 py-4">
+							<TableHead className="w-[300px] px-6 py-4">Description</TableHead>
+							<TableHead className="w-[100px] text-center px-6 py-4">
 								System?
 							</TableHead>
 							<TableHead className="w-[320px] text-center px-6 py-4">
@@ -101,27 +101,31 @@ export default function RoleLisitngs({ roles, onCreateClick }) {
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										<Button
-											onClick={() => {
-												setSelectedRoleId(role.id); // Set selected role ID
-												setOpenDialog(true); // Open dialog
-											}}
-											size="sm"
-											variant="outline"
-											className="text-green-700 hover:text-green-500 border-green-500 hover:bg-green-100 hover:border-green-600 px-5 py-2.5 text-base cursor-pointer"
-										>
-											<ShieldCheck className="w-5 h-5 mr-2 text-green-600" />
-											Assign
-										</Button>
+										{hasPermissions && (
+											<>
+												<Button
+													onClick={() => {
+														setSelectedRoleId(role.id); // Set selected role ID
+														setOpenDialog(true); // Open dialog
+													}}
+													size="sm"
+													variant="outline"
+													className="text-green-700 hover:text-green-500 border-green-500 hover:bg-green-100 hover:border-green-600 px-5 py-2.5 text-base cursor-pointer"
+												>
+													<ShieldCheck className="w-5 h-5 mr-2 text-green-600" />
+													Assign
+												</Button>
 
-										{/* Render dialog with permissions data */}
-										{openDialog && selectedRoleId === role.id && (
-											<LoadRolePermissionDialogLazy
-												isOpen={openDialog}
-												onOpenChange={setOpenDialog}
-												roleId={selectedRoleId}
-												permissions={permissions} // Pass fetched permissions here
-											/>
+												{/* Render dialog with permissions data */}
+												{openDialog && selectedRoleId === role.id && (
+													<LoadRolePermissionDialogLazy
+														isOpen={openDialog}
+														onOpenChange={setOpenDialog}
+														roleId={selectedRoleId}
+														permissions={permissions} // Pass fetched permissions here
+													/>
+												)}
+											</>
 										)}
 
 										{/* Edit and Delete buttons */}

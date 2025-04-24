@@ -10,19 +10,21 @@ export class PermissionServices extends BaseService {
 
 	static async getAllPermissions(whereClause) {
 		try {
-			const permissions = await PermissionModel.findMany(whereClause);
+			const permissions = await PermissionModel.findMany({
+				where: whereClause,
+			});
 			return PermissionDTO.toCollection(permissions);
 		} catch (error) {
 			Logger.error(error.message, `Get all permissions failed`);
 		}
 	}
 
-	static async hasPermissionResouces(id) {
-		if (!id) throw new Error("Session is missing user ID");
+	static async hasPermissionResouces(ownerId) {
+		if (!ownerId) throw new Error("Session is missing user ID");
 
 		try {
 			const permissionResources = await PermissionModel.findFirst({
-				ownerId: id,
+				where: ownerId,
 			});
 
 			return !!permissionResources;

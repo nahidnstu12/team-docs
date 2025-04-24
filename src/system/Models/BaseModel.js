@@ -48,9 +48,7 @@ export class BaseModel {
 		});
 	}
 
-	static async findFirst(whereClause) {
-		return await this.model.findFirst({
-			where: whereClause,
-		});
+	static async findFirst({ where }) {
+		return await this.model.findFirst({ where });
 	}
 }

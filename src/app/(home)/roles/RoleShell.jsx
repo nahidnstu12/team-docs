@@ -5,7 +5,7 @@ import RoleCreateForm from "./RoleCreateForm";
 import RoleLisitngs from "./RoleListings";
 import NoRolesUI from "./NoRolesUI";
 
-export default function RoleShell({ hasRoles, roles }) {
+export default function RoleShell({ hasRoles, roles, hasPermissions }) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleOpen = () => setIsOpen(true);
@@ -17,7 +17,11 @@ export default function RoleShell({ hasRoles, roles }) {
 
 			{/* Conditional content */}
 			{hasRoles ? (
-				<RoleLisitngs roles={roles} onCreateClick={handleOpen} />
+				<RoleLisitngs
+					roles={roles}
+					onCreateClick={handleOpen}
+					hasPermissions={hasPermissions}
+				/>
 			) : (
 				<NoRolesUI onCreateClick={handleOpen} />
 			)}

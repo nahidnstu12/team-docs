@@ -1,6 +1,8 @@
 import { RoleService } from "@/system/Services/RoleServices";
 import { Session } from "@/lib/Session";
 import RoleShell from "./RoleShell";
+import { PermissionServices } from "@/system/Services/PermissionServices";
+import Logger from "@/lib/Logger";
 
 export default async function RolePage() {
 	const session = await Session.getCurrentUser();
@@ -10,5 +12,15 @@ export default async function RolePage() {
 		OR: [{ isSystem: true }, { ownerId: session.id }],
 	});
 
-	return <RoleShell roles={roles} hasRoles={hasRoles} />;
+	const hasPermissions = await PermissionServices.hasPermissionResouces(
+		session.id
+	);
+
+	return (
+		<RoleShell
+			roles={roles}
+			hasRoles={hasRoles}
+			hasPermissions={hasPermissions}
+		/>
+	);
 }
