@@ -26,27 +26,19 @@ const RoleListingsLazy = dynamic(
 	}
 );
 
-export default function RoleShell({ hasRoles, roles, hasPermissions }) {
+export default function RoleShell({ hasRoles }) {
 	const [isOpen, setIsOpen] = useState(false);
-
-	const handleOpen = () => setIsOpen(true);
 
 	return (
 		<>
-			{/* Shared dialog at top */}
 			{isOpen && (
 				<RoleCreateFormLazy isOpen={isOpen} onOpenChange={setIsOpen} />
 			)}
 
-			{/* Conditional content */}
 			{hasRoles ? (
-				<RoleListingsLazy
-					roles={roles}
-					onCreateClick={handleOpen}
-					hasPermissions={hasPermissions}
-				/>
+				<RoleListingsLazy setIsOpen={setIsOpen} />
 			) : (
-				<NoRolesUI onCreateClick={handleOpen} />
+				<NoRolesUI setIsOpen={setIsOpen} />
 			)}
 		</>
 	);

@@ -4,7 +4,7 @@ import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { ShieldCheck } from "lucide-react";
 import RenderCreateButton from "./RenderCreateButton";
 
-export default function NoRolesUI({ onCreateClick }) {
+export default function NoRolesUI({ setIsOpen }) {
 	return (
 		<div className="flex items-center justify-center w-full px-4 mt-10 rounded-lg bg-muted">
 			<Card className="w-full max-w-2xl h-[320px] border-none shadow-xl rounded-2xl bg-background flex flex-col">
@@ -31,7 +31,7 @@ export default function NoRolesUI({ onCreateClick }) {
 
 					{/* Footer CTA Button */}
 					<CardFooter className="flex justify-center pt-18">
-						<RenderCreateButton onClick={onCreateClick} />
+						<RenderCreateButton onClick={() => setIsOpen(true)} />
 					</CardFooter>
 				</CardBody>
 			</Card>

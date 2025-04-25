@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useSidebarToggle } from "@/hook/useSidebarToggle";
-import { signout } from "@/lib/actions/auth/signout";
+import { signout } from "@/lib/auth/signout";
 
 import {
 	LayoutDashboard,

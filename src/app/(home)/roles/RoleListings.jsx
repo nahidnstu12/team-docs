@@ -11,10 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
 import RenderCreateButton from "./RenderCreateButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import dynamic from "next/dynamic";
 import { getAllPermissions } from "../role-permission-assign/loader/getAllPermissions";
 import { Spinner } from "@/components/ui/spinner";
+import { hasPermissionsFn } from "./actions/hasPermissions";
+import { getAllRolesFn } from "./actions/getAllRoles";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
@@ -30,12 +33,42 @@ const LoadRolePermissionDialogLazy = dynamic(
 	}
 );
 
-export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
-	// State to manage dialog open/close
+export default function RoleLisitngs({ setIsOpen }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
-	// State to hold the permissions data
+
+	const [hasFetchedRoles, setHasFetchedRoles] = useState(false);
+	const [allRoles, setAllRoles] = useState([]);
+	const [fetchAllRolesPending, startAllRolesTransition] = useTransition();
 	const [permissions, setPermissions] = useState([]);
+	const [hasPermissions, setHasPermissions] = useState(false);
+	const [fetchingHasPermissionsPending, startHasPermissionTransitions] =
+		useTransition();
+
+	useEffect(() => {
+		async function fetchHasPermissions() {
+			const res = await hasPermissionsFn();
+			startHasPermissionTransitions(() => setHasPermissions(res));
+		}
+
+		if (!hasPermissions) {
+			fetchHasPermissions();
+		}
+	}, [hasPermissions]);
+
+	useEffect(() => {
+		const fetchAllRoles = async () => {
+			const roles = await getAllRolesFn();
+			startAllRolesTransition(() => {
+				setAllRoles(roles);
+				setHasFetchedRoles(true);
+			});
+		};
+
+		if (!hasFetchedRoles) {
+			fetchAllRoles();
+		}
+	}, [hasFetchedRoles]);
 
 	// Fetch permissions for a selected role
 	useEffect(() => {
@@ -65,7 +98,7 @@ export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
 				<h1 className="text-3xl font-bold">Roles</h1>
 				<div className="ml-auto">
-					<RenderCreateButton onClick={onCreateClick} />
+					<RenderCreateButton onClick={() => setIsOpen(true)} />
 				</div>
 			</section>
 			<div className="overflow-auto border shadow-lg rounded-2xl bg-background">
@@ -84,8 +117,25 @@ export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
 					</TableHeader>
 
 					<TableBody>
-						{roles?.length > 0 ? (
-							roles.map((role) => (
+						{!hasFetchedRoles || fetchAllRolesPending ? (
+							[...Array(5)].map((_, i) => (
+								<TableRow key={`skeleton-${i}`} className="animate-pulse">
+									<TableCell className="px-6 py-5">
+										<Skeleton className="w-3/4 h-4 rounded-md" />
+									</TableCell>
+									<TableCell className="px-6 py-5">
+										<Skeleton className="w-5/6 h-4 rounded-md" />
+									</TableCell>
+									<TableCell className="px-6 py-5 text-center">
+										<Skeleton className="w-10 h-4 mx-auto rounded-md" />
+									</TableCell>
+									<TableCell className="px-6 py-5 text-center">
+										<Skeleton className="w-1/2 h-10 mx-auto rounded-md" />
+									</TableCell>
+								</TableRow>
+							))
+						) : allRoles?.length > 0 ? (
+							allRoles.map((role) => (
 								<TableRow
 									key={role.id}
 									className="transition-colors duration-200 hover:bg-muted"
@@ -111,12 +161,17 @@ export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										{hasPermissions && (
+										{!hasPermissions && fetchingHasPermissionsPending && (
+											<Spinner size="medium">
+												Loading has permission state...
+											</Spinner>
+										)}
+										{hasPermissions && !fetchingHasPermissionsPending && (
 											<>
 												<Button
 													onClick={() => {
-														setSelectedRoleId(role.id); // Set selected role ID
-														setOpenDialog(true); // Open dialog
+														setSelectedRoleId(role.id);
+														setOpenDialog(true);
 													}}
 													size="sm"
 													variant="outline"
@@ -126,19 +181,17 @@ export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
 													Assign
 												</Button>
 
-												{/* Render dialog with permissions data */}
 												{openDialog && selectedRoleId === role.id && (
 													<LoadRolePermissionDialogLazy
 														isOpen={openDialog}
 														onOpenChange={setOpenDialog}
 														roleId={selectedRoleId}
-														permissions={permissions} // Pass fetched permissions here
+														permissions={permissions}
 													/>
 												)}
 											</>
 										)}
 
-										{/* Edit and Delete buttons */}
 										<Button
 											size="sm"
 											variant="secondary"
