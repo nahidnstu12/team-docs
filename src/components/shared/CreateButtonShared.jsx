@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 
-export default function RenderCreateButton({ onClick }) {
+export default function CreateButtonShared({ onClick }) {
 	return (
 		<>
 			<Button onClick={onClick} className="cursor-pointer">
-				Create Permission
+				Create Role
 			</Button>
 		</>
 	);

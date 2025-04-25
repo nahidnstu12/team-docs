@@ -1,37 +1,37 @@
 "use client";
 
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
-import { ShieldCheck } from "lucide-react";
-import RenderCreateButton from "./RenderCreateButton";
+import { Sparkles } from "lucide-react";
+import CreateButtonShared from "@/components/shared/CreateButtonShared";
 
-export default function NoRolesUI({ setIsOpen }) {
+export default function NoProjectUI({ setIsDrawerOpen }) {
 	return (
-		<div className="flex items-center justify-center w-full px-4 mt-10 rounded-lg bg-muted">
+		<div className="flex items-center justify-center px-4 mt-10">
 			<Card className="w-full max-w-2xl h-[320px] border-none shadow-xl rounded-2xl bg-background flex flex-col">
 				<CardBody className="flex flex-col justify-between flex-1 px-8 py-5 overflow-hidden">
-					{/* Header & Text */}
+					{/* Content Section */}
 					<div className="flex flex-col items-center space-y-4 text-center">
 						<CardHeader className="flex flex-col items-center space-y-2">
 							<div className="flex items-center gap-2 text-primary">
-								<ShieldCheck className="w-6 h-6" />
+								<Sparkles className="w-6 h-6" />
 								<h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
-									No Roles Found
+									Start Your Project
 								</h1>
 							</div>
 						</CardHeader>
 
 						<CardBody className="p-0">
 							<p className="max-w-xl text-base text-center sm:text-lg text-muted-foreground">
-								Roles allow you to manage permissions and access control within
-								your system. Create a role to get started organizing your team
-								or users.
+								Great! You’ve created a workspace. Now, create one or more
+								projects to organize your documents, users, and access control
+								with ease and clarity.
 							</p>
 						</CardBody>
 					</div>
 
-					{/* Footer CTA Button */}
+					{/* Button pinned at bottom */}
 					<CardFooter className="flex justify-center pt-18">
-						<RenderCreateButton onClick={() => setIsOpen(true)} />
+						<CreateButtonShared onClick={() => setIsDrawerOpen(true)} />
 					</CardFooter>
 				</CardBody>
 			</Card>

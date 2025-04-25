@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function WorkspaceForm({ isOpen, onOpenChange }) {
+export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 	const router = useRouter();
 
 	const [formState, formAction, isPending] = useActionState(createWorkspace, {
@@ -70,8 +70,8 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 
 	// Reset on open
 	useEffect(() => {
-		if (isOpen) reset();
-	}, [isOpen, reset]);
+		if (isDrawerOpen) reset();
+	}, [isDrawerOpen, reset]);
 
 	// Handle form state & success
 	useEffect(() => {
@@ -89,7 +89,7 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 		}
 
 		if (formState.type === "success") {
-			onOpenChange(false);
+			setIsDrawerOpen(false);
 			reset();
 			toast.success("Workspace created successfully", {
 				description: "Your new workspace is ready to use!",
@@ -98,11 +98,12 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 				router.push(formState.redirectTo);
 			}
 		}
-	}, [formState, setError, reset, router, onOpenChange]);
+	}, [formState, setError, reset, router, setIsDrawerOpen]);
 
 	// 🩹 When dialog opens and form had errors: repopulate values and restore error messages
 	useEffect(() => {
-		if (!isOpen || !formState?.errors || formState?.type === "success") return;
+		if (!isDrawerOpen || !formState?.errors || formState?.type === "success")
+			return;
 
 		// Step 1: Reset values to last attempted input
 		reset(formState.data || {}, { keepErrors: true });
@@ -114,10 +115,10 @@ export default function WorkspaceForm({ isOpen, onOpenChange }) {
 				message: Array.isArray(message) ? message[0] : message,
 			});
 		});
-	}, [isOpen, formState, reset, setError]);
+	}, [isDrawerOpen, formState, reset, setError]);
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onOpenChange}>
+		<Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
 			<DialogTrigger asChild>
 				{/* Hidden trigger: triggered by card manually */}
 				<div id="create-workspace-drawer-trigger" />

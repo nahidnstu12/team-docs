@@ -70,8 +70,8 @@ export default function SignUpForm() {
 		<div className="w-full max-w-md mx-auto">
 			{formState?.type === "success" ? (
 				<Card className="border-blue-200 shadow-xl animate-pulse">
-					<CardHeader className="text-center">
-						<h1 className="text-xl font-semibold text-center text-blue-600">
+					<CardHeader className="w-full text-center">
+						<h1 className="w-full mb-8 text-xl font-semibold text-center text-blue-600">
 							Creating your account...
 						</h1>
 					</CardHeader>

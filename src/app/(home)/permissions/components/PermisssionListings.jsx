@@ -10,15 +10,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import RenderCreateButton from "./RenderCreateButton";
+import CreateButtonShared from "@/components/shared/CreateButtonShared";
 
-export default function PermissionLisitngs({ permissions, onCreateClick }) {
+export default function PermissionLisitngs({ permissions, setIsDialogOpen }) {
 	return (
 		<>
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
 				<h1 className="text-3xl font-bold">Permissions</h1>
 				<div className="ml-auto">
-					<RenderCreateButton onClick={onCreateClick} />
+					<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
 				</div>
 			</section>
 			<div className="overflow-auto border shadow-lg rounded-2xl bg-background">

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import NoRolesUI from "./NoRolesUI";
+import NoRolesUI from "./components/NoRolesUI";
 import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
 
 const RoleCreateFormLazy = dynamic(
-	() => import("@/app/(home)/roles/RoleCreateForm"),
+	() => import("@/app/(home)/roles/components/RoleCreateForm"),
 	{
 		ssr: false,
 		loading: () => (
@@ -20,25 +20,28 @@ const RoleCreateFormLazy = dynamic(
 );
 
 const RoleListingsLazy = dynamic(
-	() => import("@/app/(home)/roles/RoleListings"),
+	() => import("@/app/(home)/roles/components/RoleListings"),
 	{
 		loading: () => <Spinner size="large">Loading roles...</Spinner>,
 	}
 );
 
 export default function RoleShell({ hasRoles }) {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	return (
 		<>
-			{isOpen && (
-				<RoleCreateFormLazy isOpen={isOpen} onOpenChange={setIsOpen} />
+			{isDialogOpen && (
+				<RoleCreateFormLazy
+					isDialogOpen={isDialogOpen}
+					setIsDialogOpen={setIsDialogOpen}
+				/>
 			)}
 
 			{hasRoles ? (
-				<RoleListingsLazy setIsOpen={setIsOpen} />
+				<RoleListingsLazy setIsDialogOpen={setIsDialogOpen} />
 			) : (
-				<NoRolesUI setIsOpen={setIsOpen} />
+				<NoRolesUI setIsDialogOpen={setIsDialogOpen} />
 			)}
 		</>
 	);

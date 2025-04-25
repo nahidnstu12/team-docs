@@ -23,7 +23,10 @@ import { useActionState } from "react"; // Next.js form action hook
 import { createPermissions } from "@/system/Actions/PermissionActions";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 
-export default function PermissionCreateForm({ isOpen, onOpenChange }) {
+export default function PermissionCreateForm({
+	isDialogOpen,
+	setIsDialogOpen,
+}) {
 	const router = useRouter();
 
 	const [formState, formAction, isPending] = useActionState(createPermissions, {
@@ -64,7 +67,7 @@ export default function PermissionCreateForm({ isOpen, onOpenChange }) {
 		}
 
 		if (formState.type === "success") {
-			onOpenChange(false);
+			setIsDialogOpen(false);
 			reset({ name: "", description: "", scope: "" });
 			toast.success("Permission created successfully", {
 				description: "Your new permission is ready to use!",
@@ -73,11 +76,11 @@ export default function PermissionCreateForm({ isOpen, onOpenChange }) {
 				return router.push(formState.redirectTo);
 			}
 		}
-	}, [formState, setError, reset, router, onOpenChange]);
+	}, [formState, setError, reset, router, setIsDialogOpen]);
 
 	return (
 		<>
-			<Dialog open={isOpen} onOpenChange={onOpenChange}>
+			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 				<DialogTrigger asChild>
 					<div id="create-role-drawer-trigger" />
 				</DialogTrigger>

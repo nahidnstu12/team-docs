@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import { toast } from "sonner";
 
-export default function ProjectDrawer({ isOpen, onOpenChange }) {
+export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen }) {
 	const router = useRouter();
 	const hasShownToastRef = useRef(false);
 	// ✅ Prevent multiple toast re-fires after a successful form submit
@@ -59,7 +59,7 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 
 	// 🧠 Auto-generate slug when name changes (only when drawer is open)
 	useEffect(() => {
-		if (!isOpen) return;
+		if (!isDrawerOpen) return;
 
 		if (nameValue) {
 			const slug = slugify(nameValue, {
@@ -71,7 +71,7 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 		} else {
 			setValue("slug", "");
 		}
-	}, [nameValue, setValue, isOpen]);
+	}, [nameValue, setValue, isDrawerOpen]);
 
 	// 🧼 Copy the result from the server action into local state to control behavior
 	useEffect(() => {
@@ -118,21 +118,21 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 				hasShownToastRef.current = false; // 🔄 Reset for future submits
 			}, 500);
 
-			onOpenChange(false); // ❌ Close drawer
+			setIsDrawerOpen(false); // ❌ Close drawer
 		}
 
 		router.refresh(); // 🔃 Refresh router state if needed (ex. for server components)
 	}, [
 		localFormState,
 		reset,
-		onOpenChange,
+		setIsDrawerOpen,
 		setError,
 		hasHandledSuccess,
 		router,
 	]);
 
 	useEffect(() => {
-		if (isOpen && localFormState?.success === false) {
+		if (isDrawerOpen && localFormState?.success === false) {
 			// 1. Repopulate form values
 			reset(localFormState.data || {}, { keepErrors: true });
 
@@ -146,11 +146,11 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 				}
 			);
 		}
-	}, [isOpen, localFormState, reset, setError]);
+	}, [isDrawerOpen, localFormState, reset, setError]);
 
 	// 🔁 When drawer opens: reset everything for a clean slate
 	useEffect(() => {
-		if (isOpen) {
+		if (isDrawerOpen) {
 			// reset({
 			// 	name: "",
 			// 	slug: "",
@@ -166,13 +166,13 @@ export default function ProjectDrawer({ isOpen, onOpenChange }) {
 			setHasHandledSuccess(false); // Allow new success
 			// setLocalFormState(null); // Clear any lingering success
 		}
-	}, [isOpen, reset, localFormState]);
+	}, [isDrawerOpen, reset, localFormState]);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen px-4 space-y-6 text-center">
 			<Drawer
-				isOpen={isOpen}
-				onOpenChange={onOpenChange}
+				isOpen={isDrawerOpen}
+				onOpenChange={setIsDrawerOpen}
 				backdrop="opaque"
 				isDismissable
 			>

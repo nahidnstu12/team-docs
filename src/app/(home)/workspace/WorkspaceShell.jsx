@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import NoWorkspaceUI from "./NoWorkspaceUI";
-import WorkspaceForm from "./WorkspaceForm";
+import NoWorkspaceUI from "./components/NoWorkspaceUI";
+import WorkspaceForm from "./components/WorkspaceForm";
 
 export default function WorkspaceShell() {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
 	return (
 		<>
-			<NoWorkspaceUI onOpenChange={setIsOpen} />
-			<WorkspaceForm isOpen={isOpen} onOpenChange={setIsOpen} />
+			<NoWorkspaceUI setIsDrawerOpen={setIsDrawerOpen} />
+			<WorkspaceForm
+				isDrawerOpen={isDrawerOpen}
+				setIsDrawerOpen={setIsDrawerOpen}
+			/>
 		</>
 	);
 }

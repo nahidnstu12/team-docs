@@ -104,7 +104,7 @@ export default function Sidebar({
 										className="flex items-center w-full gap-2 cursor-pointer"
 									>
 										<LogOut className="w-4 h-4" />
-										{isPending ? "Signing out..." : "Sign Out"}
+										{isPending ? "Please wait a moment" : "Sign Out"}
 									</Button>
 								</form>
 							</div>

@@ -23,7 +23,7 @@ import { useActionState } from "react"; // Next.js form action hook
 import { createRole } from "@/system/Actions/RoleActions";
 import { RoleSchema } from "@/lib/schemas/RoleSchema";
 
-export default function RoleCreateForm({ isOpen, onOpenChange }) {
+export default function RoleCreateForm({ isDialogOpen, setIsDialogOpen }) {
 	const router = useRouter();
 
 	const [formState, formAction, isPending] = useActionState(createRole, {
@@ -63,7 +63,7 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 		}
 
 		if (formState.type === "success") {
-			onOpenChange(false);
+			setIsDialogOpen(false);
 			reset({ name: "", description: "" });
 			toast.success("Role created successfully", {
 				description: "Your new role is ready to use!",
@@ -72,11 +72,11 @@ export default function RoleCreateForm({ isOpen, onOpenChange }) {
 				return router.push(formState.redirectTo);
 			}
 		}
-	}, [formState, setError, reset, router, onOpenChange]);
+	}, [formState, setError, reset, router, setIsDialogOpen]);
 
 	return (
 		<>
-			<Dialog open={isOpen} onOpenChange={onOpenChange}>
+			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 				<DialogTrigger asChild>
 					<div id="create-role-drawer-trigger" />
 				</DialogTrigger>

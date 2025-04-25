@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
-import RenderCreateButton from "./RenderCreateButton";
 import { useState, useEffect, useTransition } from "react";
 import dynamic from "next/dynamic";
-import { getAllPermissions } from "../role-permission-assign/loader/getAllPermissions";
+import { getAllPermissions } from "../../role-permission-assign/loader/getAllPermissions";
 import { Spinner } from "@/components/ui/spinner";
-import { hasPermissionsFn } from "./actions/hasPermissions";
-import { getAllRolesFn } from "./actions/getAllRoles";
+import { hasPermissionsFn } from "../actions/hasPermissions";
+import { getAllRolesFn } from "../actions/getAllRoles";
 import { Skeleton } from "@/components/ui/skeleton";
+import CreateButtonShared from "@/components/shared/CreateButtonShared";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
@@ -33,7 +33,7 @@ const LoadRolePermissionDialogLazy = dynamic(
 	}
 );
 
-export default function RoleLisitngs({ setIsOpen }) {
+export default function RoleLisitngs({ setIsDialogOpen }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
 
@@ -98,7 +98,7 @@ export default function RoleLisitngs({ setIsOpen }) {
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
 				<h1 className="text-3xl font-bold">Roles</h1>
 				<div className="ml-auto">
-					<RenderCreateButton onClick={() => setIsOpen(true)} />
+					<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
 				</div>
 			</section>
 			<div className="overflow-auto border shadow-lg rounded-2xl bg-background">

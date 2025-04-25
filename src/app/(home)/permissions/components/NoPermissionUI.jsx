@@ -1,12 +1,12 @@
 "use client";
 
+import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { ShieldCheck } from "lucide-react";
-import RenderCreateButton from "./RenderCreateButton";
 
-export default function NoPermissionUI({ onCreateClick }) {
+export default function NoPermissionUI({ setIsDialogOpen }) {
 	return (
-		<div className="flex items-center justify-center w-full px-4 mt-10 rounded-lg bg-muted">
+		<div className="flex items-center justify-center w-full px-4 mt-10 rounded-lg">
 			<Card className="w-full max-w-2xl h-[320px] border-none shadow-xl rounded-2xl bg-background flex flex-col">
 				<CardBody className="flex flex-col justify-between flex-1 px-8 py-5 overflow-hidden">
 					{/* Header & Text */}
@@ -30,7 +30,7 @@ export default function NoPermissionUI({ onCreateClick }) {
 
 					{/* Footer CTA Button */}
 					<CardFooter className="flex justify-center pt-18">
-						<RenderCreateButton onClick={onCreateClick} />
+						<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
 					</CardFooter>
 				</CardBody>
 			</Card>

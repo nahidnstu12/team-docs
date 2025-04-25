@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import PermissionLisitngs from "./PermisssionListings";
-import NoPermissionUI from "./NoPermissionUI";
+import PermissionLisitngs from "./components/PermisssionListings";
+import NoPermissionUI from "./components/NoPermissionUI";
 import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
 
 const PermissionCreateFormLazy = dynamic(
-	() => import("@/app/(home)/permissions/PermissionCreateForm"),
+	() => import("@/app/(home)/permissions/components/PermissionCreateForm"),
 	{
 		ssr: false,
 		loading: () => (
@@ -24,25 +24,24 @@ export default function PermissionShell({
 	permissions,
 	hasPermissionResouces,
 }) {
-	const [isOpen, setIsOpen] = useState(false);
-
-	const handleOpen = () => setIsOpen(true);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	return (
 		<>
-			{/* Shared dialog at top */}
-			{isOpen && (
-				<PermissionCreateFormLazy isOpen={isOpen} onOpenChange={setIsOpen} />
+			{isDialogOpen && (
+				<PermissionCreateFormLazy
+					isDialogOpen={isDialogOpen}
+					setIsDialogOpen={setIsDialogOpen}
+				/>
 			)}
 
-			{/* Conditional content */}
 			{hasPermissionResouces ? (
 				<PermissionLisitngs
 					permissions={permissions}
-					onCreateClick={handleOpen}
+					setIsDialogOpen={setIsDialogOpen}
 				/>
 			) : (
-				<NoPermissionUI onCreateClick={handleOpen} />
+				<NoPermissionUI setIsDialogOpen={setIsDialogOpen} />
 			)}
 		</>
 	);

@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Sparkles } from "lucide-react";
 
-export default function NoWorkspaceUI({ onOpenChange }) {
+export default function NoWorkspaceUI({ setIsDrawerOpen }) {
 	return (
-		<div className="flex items-center justify-center mt-10 px-4 bg-muted">
+		<div className="flex items-center justify-center px-4 mt-10">
 			<Card className="w-full max-w-2xl h-[320px] border-none shadow-xl rounded-2xl bg-background flex flex-col">
 				<CardBody className="flex flex-col justify-between flex-1 px-8 py-5 overflow-hidden">
 					{/* Header & Text */}
@@ -21,7 +21,7 @@ export default function NoWorkspaceUI({ onOpenChange }) {
 						</CardHeader>
 
 						<CardBody className="p-0">
-							<p className="text-center text-base sm:text-lg text-muted-foreground max-w-xl">
+							<p className="max-w-xl text-base text-center sm:text-lg text-muted-foreground">
 								You haven’t created any workspaces yet. Workspaces help you
 								organize your projects, tasks, and teams in one centralized
 								place.
@@ -31,7 +31,7 @@ export default function NoWorkspaceUI({ onOpenChange }) {
 
 					{/* Footer CTA Button */}
 					<CardFooter className="flex justify-center pt-18">
-						<Button size="lg" onClick={() => onOpenChange(true)}>
+						<Button size="lg" onClick={() => setIsDrawerOpen(true)}>
 							Create Your First Workspace
 						</Button>
 					</CardFooter>

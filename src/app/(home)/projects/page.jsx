@@ -1,8 +1,7 @@
 import { Session } from "@/lib/Session";
-import NoProjectUI from "./NoProjectUI";
 import { ProjectService } from "@/system/Services/ProjectServices";
-import ProjectListings from "./ProjectListings";
 import { redirect } from "next/navigation";
+import ProjectShell from "./ProjectShell";
 
 export default async function ProjectPage() {
 	const session = await Session.getCurrentUser();
@@ -14,11 +13,7 @@ export default async function ProjectPage() {
 
 	if (!workspaceId) return redirect("/workspace");
 
-	const hasNoProjects = await ProjectService.hasProjects(workspaceId);
+	const hasProjects = await ProjectService.hasProjects(workspaceId);
 
-	if (!hasNoProjects) return <NoProjectUI />;
-
-	const projects = await ProjectService.getAllProjets(workspaceId);
-
-	return <ProjectListings projects={projects} />;
+	return <ProjectShell hasProjects={hasProjects} />;
 }
