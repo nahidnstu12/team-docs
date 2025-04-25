@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
 
 const RoleCreateFormLazy = dynamic(
-	() => import("@/app/(home)/roles/components/RoleCreateForm"),
+	() => import("@/app/(home)/roles/components/RoleCreateDrawer"),
 	{
 		ssr: false,
 		loading: () => (

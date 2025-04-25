@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
 
 const PermissionCreateFormLazy = dynamic(
-	() => import("@/app/(home)/permissions/components/PermissionCreateForm"),
+	() => import("@/app/(home)/permissions/components/PermissionCreateDialog"),
 	{
 		ssr: false,
 		loading: () => (

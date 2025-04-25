@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import NoWorkspaceUI from "./components/NoWorkspaceUI";
-import WorkspaceForm from "./components/WorkspaceForm";
+import WorkspaceForm from "./components/WorkspaceCreateDialog";
 
 export default function WorkspaceShell() {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
