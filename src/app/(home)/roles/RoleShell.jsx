@@ -28,18 +28,24 @@ const RoleListingsLazy = dynamic(
 
 export default function RoleShell({ hasRoles }) {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [startFetchRoles, setStartFetchRoles] = useState(false);
 
 	return (
 		<>
 			{isDialogOpen && (
 				<RoleCreateFormLazy
+					setStartFetchRoles={setStartFetchRoles}
 					isDialogOpen={isDialogOpen}
 					setIsDialogOpen={setIsDialogOpen}
 				/>
 			)}
 
 			{hasRoles ? (
-				<RoleListingsLazy setIsDialogOpen={setIsDialogOpen} />
+				<RoleListingsLazy
+					setIsDialogOpen={setIsDialogOpen}
+					startFetchRoles={startFetchRoles}
+					setStartFetchRoles={setStartFetchRoles}
+				/>
 			) : (
 				<NoRolesUI setIsDialogOpen={setIsDialogOpen} />
 			)}

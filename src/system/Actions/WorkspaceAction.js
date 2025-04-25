@@ -7,6 +7,7 @@ import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "../Services/WorkspaceService";
+import { revalidatePath } from "next/cache";
 
 class WorkspaceAction extends BaseAction {
 	static get schema() {
@@ -31,6 +32,7 @@ class WorkspaceAction extends BaseAction {
 				session.id
 			);
 
+			revalidatePath("(home)/", "layout");
 			return {
 				data: result.data,
 				success: true,

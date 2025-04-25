@@ -31,7 +31,9 @@ export default function NoProjectUI({ setIsDrawerOpen }) {
 
 					{/* Button pinned at bottom */}
 					<CardFooter className="flex justify-center pt-18">
-						<CreateButtonShared onClick={() => setIsDrawerOpen(true)} />
+						<CreateButtonShared onClick={() => setIsDrawerOpen(true)}>
+							Create Project
+						</CreateButtonShared>
 					</CardFooter>
 				</CardBody>
 			</Card>

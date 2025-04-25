@@ -2,7 +2,7 @@ import { Session } from "@/lib/Session";
 import Sidebar from "./Sidebar";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 import { ProjectService } from "@/system/Services/ProjectServices";
-import { PermissionServices } from "@/system/Services/PermissionServices";
+// import { PermissionServices } from "@/system/Services/PermissionServices";
 import { RoleService } from "@/system/Services/RoleServices";
 
 export default async function SidebarLayout() {
@@ -18,6 +18,8 @@ export default async function SidebarLayout() {
 	// const hasPermissions = await PermissionServices.hasPermissionResouces(
 	// 	session.id
 	// );
+
+	console.log("has-project", hasProjects);
 
 	return (
 		<Sidebar

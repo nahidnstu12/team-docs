@@ -18,7 +18,9 @@ export default function PermissionLisitngs({ permissions, setIsDialogOpen }) {
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
 				<h1 className="text-3xl font-bold">Permissions</h1>
 				<div className="ml-auto">
-					<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
+					<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
+						Create Permission
+					</CreateButtonShared>
 				</div>
 			</section>
 			<div className="overflow-auto border shadow-lg rounded-2xl bg-background">

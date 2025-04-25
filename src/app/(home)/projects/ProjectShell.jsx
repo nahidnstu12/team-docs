@@ -7,6 +7,7 @@ import ProjectListings from "./components/ProjectListings";
 
 export default function ProjectShell({ hasProjects }) {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+	const [startFetchProjects, setStartFetchProjects] = useState(false);
 
 	return (
 		<>
@@ -14,11 +15,16 @@ export default function ProjectShell({ hasProjects }) {
 				<ProjectDrawer
 					isDrawerOpen={isDrawerOpen}
 					setIsDrawerOpen={setIsDrawerOpen}
+					setStartFetchProjects={setStartFetchProjects}
 				/>
 			)}
 
 			{hasProjects ? (
-				<ProjectListings setIsDrawerOpen={setIsDrawerOpen} />
+				<ProjectListings
+					setIsDrawerOpen={setIsDrawerOpen}
+					startFetchProjects={startFetchProjects}
+					setStartFetchProjects={setStartFetchProjects}
+				/>
 			) : (
 				<NoProjectUI setIsDrawerOpen={setIsDrawerOpen} />
 			)}

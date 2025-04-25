@@ -30,7 +30,9 @@ export default function NoPermissionUI({ setIsDialogOpen }) {
 
 					{/* Footer CTA Button */}
 					<CardFooter className="flex justify-center pt-18">
-						<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
+						<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
+							Create Permission
+						</CreateButtonShared>
 					</CardFooter>
 				</CardBody>
 			</Card>

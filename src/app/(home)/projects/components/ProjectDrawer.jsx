@@ -17,7 +17,11 @@ import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import { toast } from "sonner";
 
-export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen }) {
+export default function ProjectDrawer({
+	isDrawerOpen,
+	setIsDrawerOpen,
+	setStartFetchProjects,
+}) {
 	const router = useRouter();
 	const hasShownToastRef = useRef(false);
 	// ✅ Prevent multiple toast re-fires after a successful form submit
@@ -121,6 +125,7 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen }) {
 			setIsDrawerOpen(false); // ❌ Close drawer
 		}
 
+		setStartFetchProjects(true);
 		router.refresh(); // 🔃 Refresh router state if needed (ex. for server components)
 	}, [
 		localFormState,
@@ -129,6 +134,7 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen }) {
 		setError,
 		hasHandledSuccess,
 		router,
+		setStartFetchProjects,
 	]);
 
 	useEffect(() => {

@@ -33,11 +33,14 @@ const LoadRolePermissionDialogLazy = dynamic(
 	}
 );
 
-export default function RoleLisitngs({ setIsDialogOpen }) {
+export default function RoleLisitngs({
+	setIsDialogOpen,
+	startFetchRoles,
+	setStartFetchRoles,
+}) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedRoleId, setSelectedRoleId] = useState(null);
 
-	const [hasFetchedRoles, setHasFetchedRoles] = useState(false);
 	const [allRoles, setAllRoles] = useState([]);
 	const [fetchAllRolesPending, startAllRolesTransition] = useTransition();
 	const [permissions, setPermissions] = useState([]);
@@ -59,16 +62,14 @@ export default function RoleLisitngs({ setIsDialogOpen }) {
 	useEffect(() => {
 		const fetchAllRoles = async () => {
 			const roles = await getAllRolesFn();
-			startAllRolesTransition(() => {
-				setAllRoles(roles);
-				setHasFetchedRoles(true);
-			});
+			startAllRolesTransition(() => setAllRoles(roles));
 		};
 
-		if (!hasFetchedRoles) {
+		if (startFetchRoles) {
 			fetchAllRoles();
+			setStartFetchRoles(false);
 		}
-	}, [hasFetchedRoles]);
+	}, [startFetchRoles, setStartFetchRoles]);
 
 	// Fetch permissions for a selected role
 	useEffect(() => {
@@ -98,7 +99,9 @@ export default function RoleLisitngs({ setIsDialogOpen }) {
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
 				<h1 className="text-3xl font-bold">Roles</h1>
 				<div className="ml-auto">
-					<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
+					<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
+						Create Role
+					</CreateButtonShared>
 				</div>
 			</section>
 			<div className="overflow-auto border shadow-lg rounded-2xl bg-background">
@@ -117,7 +120,7 @@ export default function RoleLisitngs({ setIsDialogOpen }) {
 					</TableHeader>
 
 					<TableBody>
-						{!hasFetchedRoles || fetchAllRolesPending ? (
+						{fetchAllRolesPending ? (
 							[...Array(5)].map((_, i) => (
 								<TableRow key={`skeleton-${i}`} className="animate-pulse">
 									<TableCell className="px-6 py-5">

@@ -23,7 +23,11 @@ import { useActionState } from "react"; // Next.js form action hook
 import { createRole } from "@/system/Actions/RoleActions";
 import { RoleSchema } from "@/lib/schemas/RoleSchema";
 
-export default function RoleCreateForm({ isDialogOpen, setIsDialogOpen }) {
+export default function RoleCreateForm({
+	isDialogOpen,
+	setIsDialogOpen,
+	setStartFetchRoles,
+}) {
 	const router = useRouter();
 
 	const [formState, formAction, isPending] = useActionState(createRole, {
@@ -69,10 +73,11 @@ export default function RoleCreateForm({ isDialogOpen, setIsDialogOpen }) {
 				description: "Your new role is ready to use!",
 			});
 			if (formState.redirectTo) {
+				setStartFetchRoles(true);
 				return router.push(formState.redirectTo);
 			}
 		}
-	}, [formState, setError, reset, router, setIsDialogOpen]);
+	}, [formState, setError, reset, router, setIsDialogOpen, setStartFetchRoles]);
 
 	return (
 		<>

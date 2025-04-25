@@ -31,7 +31,9 @@ export default function NoRolesUI({ setIsDialogOpen }) {
 
 					{/* Footer CTA Button */}
 					<CardFooter className="flex justify-center pt-18">
-						<CreateButtonShared onClick={() => setIsDialogOpen(true)} />
+						<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
+							Create Role
+						</CreateButtonShared>
 					</CardFooter>
 				</CardBody>
 			</Card>

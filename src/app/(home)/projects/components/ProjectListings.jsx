@@ -9,7 +9,11 @@ import { useEffect, useState, useTransition } from "react";
 import { fetchAllProjectsFn } from "../actions/getAllProjects";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ProjectListings({ setIsDrawerOpen }) {
+export default function ProjectListings({
+	setIsDrawerOpen,
+	startFetchProjects,
+	setStartFetchProjects,
+}) {
 	const [projects, setProjects] = useState([]);
 	const [fetchAllProjectsPending, startFetchAllProjectTransition] =
 		useTransition();
@@ -22,10 +26,11 @@ export default function ProjectListings({ setIsDrawerOpen }) {
 			});
 		}
 
-		if (projects.length === 0) {
+		if (startFetchProjects) {
 			fetchAllProjects();
+			setStartFetchProjects(false);
 		}
-	}, [projects]);
+	}, [startFetchProjects, setStartFetchProjects]);
 
 	return (
 		<section className="space-y-8">
@@ -33,7 +38,9 @@ export default function ProjectListings({ setIsDrawerOpen }) {
 			<section className="flex items-start justify-between w-full pb-4 border-b max-h-14">
 				<h1 className="text-3xl font-bold tracking-tight">Your Projects</h1>
 				<div className="ml-auto">
-					<CreateButtonShared onClick={() => setIsDrawerOpen(true)} />
+					<CreateButtonShared onClick={() => setIsDrawerOpen(true)}>
+						Create project
+					</CreateButtonShared>
 				</div>
 			</section>
 

@@ -6,6 +6,7 @@ import Logger from "@/lib/Logger";
 import { RoleSchema } from "@/lib/schemas/RoleSchema";
 import { RoleModel } from "../Models/RoleModel";
 import { Session } from "@/lib/Session";
+import { revalidatePath } from "next/cache";
 
 class RoleActions extends BaseAction {
 	static get schema() {
@@ -25,6 +26,7 @@ class RoleActions extends BaseAction {
 				ownerId: session.id,
 			});
 
+			revalidatePath("/roles", "page");
 			return {
 				data: result.data,
 				success: true,
