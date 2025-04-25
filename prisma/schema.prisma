@@ -35,9 +35,10 @@ model User {
   notifications     Notification[]
 
   // Optional relationships for admin use case
-  isSuperAdmin Boolean      @default(false) // For SaaS phase-2
-  Role         Role[]
-  Permission   Permission[]
+  isSuperAdmin             Boolean                    @default(false) // For SaaS phase-2
+  Role                     Role[]
+  Permission               Permission[]
+  RolePermissionAssignment RolePermissionAssignment[]
 
   @@index([email])
 }
@@ -57,7 +58,7 @@ model Role {
   createdBy User?   @relation(fields: [ownerId], references: [id])
 
   // Relationships
-  permissions      RolePermission[]
+  permissions      RolePermissionAssignment[]
   workspaceMembers WorkspaceMember[] // Users with this role at workspace level
   projectMembers   ProjectMember[] // Users with this role at project level
 }
@@ -75,14 +76,18 @@ model Permission {
   createdBy User?   @relation(fields: [ownerId], references: [id])
 
   // Relationships
-  roles RolePermission[]
+  roles RolePermissionAssignment[]
 }
 
 // Many-to-many relationship between Role and Permission
-model RolePermission {
-  id           String @id @default(cuid())
+model RolePermissionAssignment {
+  id           String   @id @default(cuid())
   roleId       String
   permissionId String
+  createdAt    DateTime @default(now())
+
+  ownerId   String?
+  createdBy User?   @relation(fields: [ownerId], references: [id])
 
   // Relationships
   role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
