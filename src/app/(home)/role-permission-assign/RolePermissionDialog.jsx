@@ -82,7 +82,7 @@ export default function RolePermissionDialog({
 				</DialogHeader>
 
 				{permissions.length === 0 ? (
-					<div className="h-[300px] p-4 border rounded-xl flex flex-col items-center justify-center space-y-4">
+					<div className="h-[410px] p-4 border rounded-xl flex flex-col items-center justify-center space-y-4">
 						<Loader2 className="w-10 h-10 animate-spin text-muted-foreground" />
 						<p className="text-xl font-medium text-muted-foreground">
 							Fetching permissions...
@@ -91,7 +91,7 @@ export default function RolePermissionDialog({
 				) : (
 					// <form key={roleId} action={formAction} className="space-y-8">
 					<form action={formAction} className="space-y-8">
-						<div className="flex content-start flex-wrap gap-4 h-[300px] max-h-[500px] overflow-y-auto p-4 border rounded-xl">
+						<div className="flex content-start flex-wrap gap-4 h-[300px] overflow-y-auto p-4 border rounded-xl">
 							<input type="hidden" name="roleId" value={roleId} />
 							{permissions.map((perm) => (
 								<Controller

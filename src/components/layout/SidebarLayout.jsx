@@ -15,9 +15,9 @@ export default async function SidebarLayout() {
 		? await ProjectService.hasProjects(workspace.id)
 		: false;
 	const hasRoles = await RoleService.hasRoles(session.id);
-	const hasPermissions = await PermissionServices.hasPermissionResouces(
-		session.id
-	);
+	// const hasPermissions = await PermissionServices.hasPermissionResouces(
+	// 	session.id
+	// );
 
 	return (
 		<Sidebar
@@ -25,7 +25,6 @@ export default async function SidebarLayout() {
 			hasWorkspace={hasWorkspace}
 			hasProjects={hasProjects}
 			hasRoles={hasRoles}
-			hasPermissions={hasPermissions}
 		/>
 	);
 }

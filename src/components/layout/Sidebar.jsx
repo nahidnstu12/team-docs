@@ -17,15 +17,16 @@ import {
 
 import { Button } from "@/components/ui/button";
 import SidebarItem from "../abstracts/SidebarItem";
+import { useActionState } from "react";
 
 export default function Sidebar({
 	session,
 	hasWorkspace = false,
 	hasProjects = false,
 	hasRoles = false,
-	hasPermissions = false,
 }) {
 	const { isOpen } = useSidebarToggle();
+	const [state, formAction, isPending] = useActionState(signout, {});
 
 	return (
 		<aside
@@ -95,14 +96,15 @@ export default function Sidebar({
 								</div>
 
 								{/* Sign Out Button */}
-								<form action={signout}>
+								<form action={formAction}>
 									<Button
+										disabled={isPending}
 										type="submit"
 										variant="destructive"
 										className="flex items-center w-full gap-2 cursor-pointer"
 									>
 										<LogOut className="w-4 h-4" />
-										Sign Out
+										{isPending ? "Signing out..." : "Sign Out"}
 									</Button>
 								</form>
 							</div>

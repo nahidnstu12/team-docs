@@ -71,7 +71,7 @@ export default function SignUpForm() {
 			{formState?.type === "success" ? (
 				<Card className="border-blue-200 shadow-xl animate-pulse">
 					<CardHeader className="text-center">
-						<h1 className="text-xl font-semibold text-blue-600">
+						<h1 className="text-xl font-semibold text-center text-blue-600">
 							Creating your account...
 						</h1>
 					</CardHeader>

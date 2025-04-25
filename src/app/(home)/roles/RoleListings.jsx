@@ -14,10 +14,20 @@ import RenderCreateButton from "./RenderCreateButton";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { getAllPermissions } from "../role-permission-assign/loader/getAllPermissions";
+import { Spinner } from "@/components/ui/spinner";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
-	{ ssr: false }
+	{
+		ssr: false,
+		loading: () => (
+			<div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
+				<div className="relative w-[900px] h-[580px] bg-muted border rounded-lg shadow-lg flex items-center justify-center">
+					<Spinner size="medium">Opening drawer...</Spinner>
+				</div>
+			</div>
+		),
+	}
 );
 
 export default function RoleLisitngs({ roles, onCreateClick, hasPermissions }) {
