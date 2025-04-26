@@ -15,14 +15,5 @@ export default async function PermissionsPage() {
 		session.id
 	);
 
-	const permissions = await PermissionServices.getAllPermissions({
-		ownerId: session.id,
-	});
-
-	return (
-		<PermissionShell
-			permissions={permissions}
-			hasPermissionResouces={hasPermissionResouces}
-		/>
-	);
+	return <PermissionShell hasPermissionResouces={hasPermissionResouces} />;
 }

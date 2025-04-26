@@ -1,10 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,65 +15,50 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useActionState } from "react"; // Next.js form action hook
 import { createRole } from "@/system/Actions/RoleActions";
 import { RoleSchema } from "@/lib/schemas/RoleSchema";
+import { useServerFormAction } from "@/hook/useServerFormAction";
+import { useCallback, useMemo } from "react";
 
-export default function RoleCreateForm({
+export default function RoleCreateDrawer({
 	isDialogOpen,
 	setIsDialogOpen,
-	setStartFetchRoles,
+	setShouldStartFetchRoles,
 }) {
 	const router = useRouter();
 
-	const [formState, formAction, isPending] = useActionState(createRole, {
-		errors: null,
-		data: null,
-	});
-
-	const {
-		register,
-		setError,
-		reset,
-		formState: { errors },
-	} = useForm({
-		resolver: zodResolver(RoleSchema),
-		defaultValues: {
+	const defaultValues = useMemo(
+		() => ({
 			name: "",
 			description: "",
-		},
-	});
+		}),
+		[]
+	);
 
-	useEffect(() => {
-		if (!formState) return;
+	const successToast = useMemo(
+		() => ({
+			title: "Role created successfully",
+			description: "Your new role is ready to use!",
+		}),
+		[]
+	);
 
-		if (formState.success === false && formState.data) {
-			// Repopulate form fields from server-provided values
-			reset(formState.data);
-			Object.entries(formState.errors || {}).forEach(([field, message]) => {
-				setError(field, {
-					type: "server",
-					message: Array.isArray(message) ? message[0] : message,
-				});
-			});
-			if (formState.errors?._form) {
-				toast.error(formState.errors._form[0]);
-			}
-			return;
-		}
-
-		if (formState.type === "success") {
+	const handleSuccess = useCallback(
+		(redirectTo) => {
 			setIsDialogOpen(false);
-			reset({ name: "", description: "" });
-			toast.success("Role created successfully", {
-				description: "Your new role is ready to use!",
-			});
-			if (formState.redirectTo) {
-				setStartFetchRoles(true);
-				return router.push(formState.redirectTo);
-			}
-		}
-	}, [formState, setError, reset, router, setIsDialogOpen, setStartFetchRoles]);
+			setShouldStartFetchRoles(true);
+			if (redirectTo) router.push(redirectTo);
+		},
+		[router, setIsDialogOpen, setShouldStartFetchRoles]
+	);
+
+	const { register, errors, formAction, isPending } = useServerFormAction({
+		schema: RoleSchema,
+		actionFn: createRole,
+		defaultValues,
+		successToast,
+		onSuccess: handleSuccess,
+	});
 
 	return (
 		<>

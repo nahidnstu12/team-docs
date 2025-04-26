@@ -5,7 +5,7 @@ import NoRolesUI from "./components/NoRolesUI";
 import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
 
-const RoleCreateFormLazy = dynamic(
+const RoleCreateDrawerLazy = dynamic(
 	() => import("@/app/(home)/roles/components/RoleCreateDrawer"),
 	{
 		ssr: false,
@@ -28,13 +28,15 @@ const RoleListingsLazy = dynamic(
 
 export default function RoleShell({ hasRoles }) {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [startFetchRoles, setStartFetchRoles] = useState(false);
+	const [shouldStartFetchRoles, setShouldStartFetchRoles] = useState(
+		hasRoles ? true : false
+	);
 
 	return (
 		<>
 			{isDialogOpen && (
-				<RoleCreateFormLazy
-					setStartFetchRoles={setStartFetchRoles}
+				<RoleCreateDrawerLazy
+					setShouldStartFetchRoles={setShouldStartFetchRoles}
 					isDialogOpen={isDialogOpen}
 					setIsDialogOpen={setIsDialogOpen}
 				/>
@@ -42,9 +44,10 @@ export default function RoleShell({ hasRoles }) {
 
 			{hasRoles ? (
 				<RoleListingsLazy
+					hasRoles={hasRoles}
 					setIsDialogOpen={setIsDialogOpen}
-					startFetchRoles={startFetchRoles}
-					setStartFetchRoles={setStartFetchRoles}
+					shouldStartFetchRoles={shouldStartFetchRoles}
+					setShouldStartFetchRoles={setShouldStartFetchRoles}
 				/>
 			) : (
 				<NoRolesUI setIsDialogOpen={setIsDialogOpen} />

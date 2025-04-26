@@ -4,7 +4,6 @@ import RoleShell from "./RoleShell";
 import { ProjectService } from "@/system/Services/ProjectServices";
 import { redirect } from "next/navigation";
 import { UserModel } from "@/system/Models/UserModel";
-import Logger from "@/lib/Logger";
 
 export default async function RolePage() {
 	const session = await Session.getCurrentUser();
@@ -14,8 +13,6 @@ export default async function RolePage() {
 	if (!hasProject) redirect("/workspace");
 
 	const hasRoles = await RoleService.hasRoles(session.id);
-
-	Logger.success(hasRoles, "role page hit");
 
 	return <RoleShell hasRoles={hasRoles} />;
 }

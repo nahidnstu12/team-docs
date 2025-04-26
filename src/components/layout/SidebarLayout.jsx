@@ -19,8 +19,6 @@ export default async function SidebarLayout() {
 	// 	session.id
 	// );
 
-	console.log("has-project", hasProjects);
-
 	return (
 		<Sidebar
 			session={session}

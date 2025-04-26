@@ -11,8 +11,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
+import { useEffect, useState, useTransition } from "react";
+import { getAllPermissionsFn } from "../actions/getAllPermissions";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function PermissionLisitngs({ permissions, setIsDialogOpen }) {
+export default function PermissionLisitngs({
+	setIsDialogOpen,
+	shouldStartFetchPermissions,
+}) {
+	const [permissions, setPermissions] = useState([]);
+	const [fetchingPermissionsPending, startPermissionTransitions] =
+		useTransition();
+
+	useEffect(() => {
+		const fetchAllPermissions = async () => {
+			const permissions = await getAllPermissionsFn();
+			startPermissionTransitions(() => setPermissions(permissions));
+			shouldStartFetchPermissions.current = false;
+		};
+
+		if (shouldStartFetchPermissions.current) {
+			fetchAllPermissions();
+		}
+	}, [shouldStartFetchPermissions]);
 	return (
 		<>
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
@@ -37,7 +58,24 @@ export default function PermissionLisitngs({ permissions, setIsDialogOpen }) {
 					</TableHeader>
 
 					<TableBody>
-						{permissions?.length > 0 ? (
+						{fetchingPermissionsPending ? (
+							[...Array(5)].map((_, i) => (
+								<TableRow key={`skeleton-${i}`} className="animate-pulse">
+									<TableCell className="px-6 py-5">
+										<Skeleton className="w-3/4 h-4 rounded-md" />
+									</TableCell>
+									<TableCell className="px-6 py-5">
+										<Skeleton className="w-5/6 h-4 rounded-md" />
+									</TableCell>
+									<TableCell className="px-6 py-5 text-center">
+										<Skeleton className="w-10 h-4 mx-auto rounded-md" />
+									</TableCell>
+									<TableCell className="px-6 py-5 text-center">
+										<Skeleton className="w-1/2 h-10 mx-auto rounded-md" />
+									</TableCell>
+								</TableRow>
+							))
+						) : permissions?.length > 0 ? (
 							permissions.map((permission) => (
 								<TableRow
 									key={permission.id}

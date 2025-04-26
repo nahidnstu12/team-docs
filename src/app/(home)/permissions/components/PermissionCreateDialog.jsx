@@ -23,9 +23,10 @@ import { useActionState } from "react"; // Next.js form action hook
 import { createPermissions } from "@/system/Actions/PermissionActions";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 
-export default function PermissionCreateForm({
+export default function PermissionCreateDialog({
 	isDialogOpen,
 	setIsDialogOpen,
+	shouldStartFetchPermissions,
 }) {
 	const router = useRouter();
 
@@ -73,10 +74,18 @@ export default function PermissionCreateForm({
 				description: "Your new permission is ready to use!",
 			});
 			if (formState.redirectTo) {
+				shouldStartFetchPermissions.current = true;
 				return router.push(formState.redirectTo);
 			}
 		}
-	}, [formState, setError, reset, router, setIsDialogOpen]);
+	}, [
+		formState,
+		setError,
+		reset,
+		router,
+		setIsDialogOpen,
+		shouldStartFetchPermissions,
+	]);
 
 	return (
 		<>

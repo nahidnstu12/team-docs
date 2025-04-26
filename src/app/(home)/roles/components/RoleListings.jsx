@@ -10,14 +10,11 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
-import { useState, useEffect, useTransition } from "react";
 import dynamic from "next/dynamic";
-import { getAllPermissions } from "../../role-permission-assign/loader/getAllPermissions";
 import { Spinner } from "@/components/ui/spinner";
-import { hasPermissionsFn } from "../actions/hasPermissions";
-import { getAllRolesFn } from "../actions/getAllRoles";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
+import { useRoles } from "../hooks/useRoles";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
@@ -33,66 +30,22 @@ const LoadRolePermissionDialogLazy = dynamic(
 	}
 );
 
-export default function RoleLisitngs({
+export default function RoleListings({
+	hasRoles,
 	setIsDialogOpen,
-	startFetchRoles,
-	setStartFetchRoles,
+	shouldStartFetchRoles,
+	setShouldStartFetchRoles,
 }) {
-	const [openDialog, setOpenDialog] = useState(false);
-	const [selectedRoleId, setSelectedRoleId] = useState(null);
-
-	const [allRoles, setAllRoles] = useState([]);
-	const [fetchAllRolesPending, startAllRolesTransition] = useTransition();
-	const [permissions, setPermissions] = useState([]);
-	const [hasPermissions, setHasPermissions] = useState(false);
-	const [fetchingHasPermissionsPending, startHasPermissionTransitions] =
-		useTransition();
-
-	useEffect(() => {
-		async function fetchHasPermissions() {
-			const res = await hasPermissionsFn();
-			startHasPermissionTransitions(() => setHasPermissions(res));
-		}
-
-		if (!hasPermissions) {
-			fetchHasPermissions();
-		}
-	}, [hasPermissions]);
-
-	useEffect(() => {
-		const fetchAllRoles = async () => {
-			const roles = await getAllRolesFn();
-			startAllRolesTransition(() => setAllRoles(roles));
-		};
-
-		if (startFetchRoles) {
-			fetchAllRoles();
-			setStartFetchRoles(false);
-		}
-	}, [startFetchRoles, setStartFetchRoles]);
-
-	// Fetch permissions for a selected role
-	useEffect(() => {
-		if (selectedRoleId && permissions.length === 0) {
-			// Fetch permissions when a role is selected
-			const fetchPermissions = async () => {
-				try {
-					const perms = await getAllPermissions(selectedRoleId);
-					setPermissions(perms);
-				} catch (error) {
-					console.error("Failed to fetch permissions", error);
-				}
-			};
-			fetchPermissions();
-		}
-	}, [selectedRoleId, permissions.length]);
-
-	useEffect(() => {
-		if (!openDialog) {
-			setPermissions([]);
-			setSelectedRoleId(null);
-		}
-	}, [openDialog]);
+	const {
+		allRoles,
+		permissionsPending,
+		permissions,
+		showSkeleton,
+		selectedRoleId,
+		setSelectedRoleId,
+		openPermissionAssignDialog,
+		setOpenPermissionAssignDialog,
+	} = useRoles(shouldStartFetchRoles, setShouldStartFetchRoles);
 
 	return (
 		<>
@@ -120,7 +73,18 @@ export default function RoleLisitngs({
 					</TableHeader>
 
 					<TableBody>
-						{fetchAllRolesPending ? (
+						{/* If no roles exist */}
+						{!hasRoles ? (
+							<TableRow>
+								<TableCell
+									colSpan={4}
+									className="py-10 text-lg text-center text-muted-foreground"
+								>
+									No roles found.
+								</TableCell>
+							</TableRow>
+						) : showSkeleton || allRoles.length === 0 ? (
+							/* If still loading */
 							[...Array(5)].map((_, i) => (
 								<TableRow key={`skeleton-${i}`} className="animate-pulse">
 									<TableCell className="px-6 py-5">
@@ -137,16 +101,17 @@ export default function RoleLisitngs({
 									</TableCell>
 								</TableRow>
 							))
-						) : allRoles?.length > 0 ? (
+						) : (
+							/* If roles are loaded */
 							allRoles.map((role) => (
 								<TableRow
 									key={role.id}
 									className="transition-colors duration-200 hover:bg-muted"
 								>
+									{/* Your table cells content */}
 									<TableCell className="px-6 py-5 text-base font-semibold">
 										{role.name}
 									</TableCell>
-
 									<TableCell className="px-6 py-5 text-base text-muted-foreground">
 										{role.description || (
 											<span className="text-sm italic text-gray-400">
@@ -154,7 +119,6 @@ export default function RoleLisitngs({
 											</span>
 										)}
 									</TableCell>
-
 									<TableCell className="px-6 py-5 text-center">
 										{role.isSystem ? (
 											<span className="font-medium text-green-600">Yes</span>
@@ -162,19 +126,18 @@ export default function RoleLisitngs({
 											<span className="text-gray-500">No</span>
 										)}
 									</TableCell>
-
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										{!hasPermissions && fetchingHasPermissionsPending && (
+										{permissionsPending && (
 											<Spinner size="medium">
 												Loading has permission state...
 											</Spinner>
 										)}
-										{hasPermissions && !fetchingHasPermissionsPending && (
+										{!permissionsPending && (
 											<>
 												<Button
 													onClick={() => {
 														setSelectedRoleId(role.id);
-														setOpenDialog(true);
+														setOpenPermissionAssignDialog(true);
 													}}
 													size="sm"
 													variant="outline"
@@ -184,14 +147,15 @@ export default function RoleLisitngs({
 													Assign
 												</Button>
 
-												{openDialog && selectedRoleId === role.id && (
-													<LoadRolePermissionDialogLazy
-														isOpen={openDialog}
-														onOpenChange={setOpenDialog}
-														roleId={selectedRoleId}
-														permissions={permissions}
-													/>
-												)}
+												{openPermissionAssignDialog &&
+													selectedRoleId === role.id && (
+														<LoadRolePermissionDialogLazy
+															isOpen={openPermissionAssignDialog}
+															onOpenChange={setOpenPermissionAssignDialog}
+															roleId={selectedRoleId}
+															permissions={permissions}
+														/>
+													)}
 											</>
 										)}
 
@@ -215,15 +179,6 @@ export default function RoleLisitngs({
 									</TableCell>
 								</TableRow>
 							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={4}
-									className="py-10 text-lg text-center text-muted-foreground"
-								>
-									No roles found.
-								</TableCell>
-							</TableRow>
 						)}
 					</TableBody>
 				</Table>
