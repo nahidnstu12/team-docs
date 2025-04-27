@@ -94,5 +94,6 @@ export function useServerFormAction({
 		reset,
 		watch,
 		setValue,
+		formState,
 	};
 }

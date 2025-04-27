@@ -12,7 +12,7 @@ import {
 	DrawerHeader,
 } from "@heroui/drawer";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import slugify from "slugify";
 
 export default function ProjectDrawer({
@@ -23,16 +23,20 @@ export default function ProjectDrawer({
 	const router = useRouter();
 	const hasShownToastRef = useRef(false);
 
+	const defaultValues = useMemo(() => {
+		({
+			name: "",
+			slug: "",
+			description: "",
+		});
+	}, []);
+
 	// ✅ Use your custom server form action hook
 	const { register, watch, setValue, reset, errors, formAction, isPending } =
 		useServerFormAction({
 			schema: ProjectSchema,
 			actionFn: createProjectAction,
-			defaultValues: {
-				name: "",
-				slug: "",
-				description: "",
-			},
+			defaultValues,
 			onSuccess: () => {
 				if (hasShownToastRef.current) return;
 				hasShownToastRef.current = true;
@@ -72,13 +76,9 @@ export default function ProjectDrawer({
 	// ✅ Reset form cleanly when drawer opens
 	useEffect(() => {
 		if (isDrawerOpen) {
-			reset({
-				name: "",
-				slug: "",
-				description: "",
-			});
+			reset(defaultValues);
 		}
-	}, [isDrawerOpen, reset]);
+	}, [isDrawerOpen, reset, defaultValues]);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen px-4 space-y-6 text-center">

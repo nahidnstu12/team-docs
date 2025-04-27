@@ -1,12 +1,9 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { WorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { createWorkspace } from "@/system/Actions/WorkspaceAction";
-import { toast } from "sonner";
 import slugify from "slugify";
 
 import {
@@ -22,35 +19,48 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useServerFormAction } from "@/hook/useServerFormAction";
 
 export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 	const router = useRouter();
 
-	const [formState, formAction, isPending] = useActionState(createWorkspace, {
-		errors: null,
-		data: null,
-	});
-
-	const {
-		register,
-		setError,
-		reset,
-		watch,
-		setValue,
-		formState: { errors },
-	} = useForm({
-		resolver: zodResolver(WorkspaceSchema),
-		defaultValues: {
+	const defaultValues = useMemo(
+		() => ({
 			name: "",
 			slug: "",
 			description: "",
-		},
-	});
+		}),
+		[]
+	);
+
+	const successToast = useMemo(
+		() => ({
+			title: "Workspace created successfully",
+			description: "Your new workspace is ready to use!",
+		}),
+		[]
+	);
+
+	// Use the custom server form action hook
+	const { register, reset, watch, setValue, formAction, isPending, errors } =
+		useServerFormAction({
+			schema: WorkspaceSchema,
+			actionFn: createWorkspace,
+			defaultValues,
+			successToast,
+			onSuccess: (redirectTo) => {
+				// Handle form submission success
+				setIsDrawerOpen(false);
+				reset(); // Reset form fields
+				router.push(redirectTo); // Redirect after success
+			},
+			onError: () => {
+				// Handle error if needed (formState will display server errors automatically)
+			},
+		});
 
 	const nameValue = watch("name");
 	const slugValue = watch("slug");
-
-	console.log(formState);
 
 	// Slug auto-generation
 	useEffect(() => {
@@ -73,54 +83,26 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 		if (isDrawerOpen) reset();
 	}, [isDrawerOpen, reset]);
 
-	// Handle form state & success
-	useEffect(() => {
-		if (!formState) return;
-
-		if (formState.errors) {
-			Object.entries(formState.errors).forEach(([field, message]) => {
-				setError(field, {
-					type: "server",
-					message: Array.isArray(message) ? message[0] : message,
-				});
-				if (field === "_form") toast.error(message[0]);
-			});
-			reset(formState.data, { keepErrors: true });
-		}
-
-		if (formState.type === "success") {
-			setIsDrawerOpen(false);
-			reset();
-			toast.success("Workspace created successfully", {
-				description: "Your new workspace is ready to use!",
-			});
-			if (formState.redirectTo) {
-				router.push(formState.redirectTo);
-			}
-		}
-	}, [formState, setError, reset, router, setIsDrawerOpen]);
-
 	// 🩹 When dialog opens and form had errors: repopulate values and restore error messages
-	useEffect(() => {
-		if (!isDrawerOpen || !formState?.errors || formState?.type === "success")
-			return;
+	// useEffect(() => {
+	// 	if (!isDrawerOpen || formState?.type === "success") return;
 
-		// Step 1: Reset values to last attempted input
-		reset(formState.data || {}, { keepErrors: true });
+	// 	// Step 1: Reset values to last attempted input
+	// 	reset(formState.data || {}, { keepErrors: true });
 
-		// Step 2: Re-apply server errors
-		Object.entries(formState.errors).forEach(([field, message]) => {
-			setError(field, {
-				type: "server",
-				message: Array.isArray(message) ? message[0] : message,
-			});
-		});
-	}, [isDrawerOpen, formState, reset, setError]);
+	// 	// Step 2: Re-apply server errors
+	// 	Object.entries(formState.errors).forEach(([field, message]) => {
+	// 		setError(field, {
+	// 			type: "server",
+	// 			message: Array.isArray(message) ? message[0] : message,
+	// 		});
+	// 	});
+	// }, [isDrawerOpen, formState, reset, setError]);
 
 	return (
 		<Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
 			<DialogTrigger asChild>
-				{/* Hidden trigger: triggered by card manually */}
+				{/* Hidden trigger */}
 				<div id="create-workspace-drawer-trigger" />
 			</DialogTrigger>
 
@@ -136,6 +118,7 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 				</DialogHeader>
 
 				<form action={formAction} className="mt-6 space-y-5">
+					{/* Workspace Name */}
 					<div className="space-y-1.5">
 						<Label htmlFor="name">Workspace Name</Label>
 						<Input
@@ -149,6 +132,7 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 						)}
 					</div>
 
+					{/* Workspace Slug */}
 					<div className="space-y-1.5">
 						<Label htmlFor="slug">Workspace URL</Label>
 						<Input
@@ -165,6 +149,7 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 						)}
 					</div>
 
+					{/* Workspace Description */}
 					<div className="space-y-1.5">
 						<Label htmlFor="description">
 							Description{" "}
@@ -182,6 +167,7 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 						)}
 					</div>
 
+					{/* Global Error */}
 					{errors._form && (
 						<div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
 							<p className="text-red-700">{errors._form.message}</p>

@@ -47,7 +47,7 @@ export default function RolePermissionDialog({ isOpen, onOpenChange, roleId }) {
 		onSuccess: handleSuccess,
 	});
 
-	const { permissionsPending, permissions, showSkeleton } = useRolePermissions(
+	const { permissions, showSkeleton } = useRolePermissions(
 		roleId,
 		isOpen,
 		reset
