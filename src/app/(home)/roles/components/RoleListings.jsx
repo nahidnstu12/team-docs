@@ -11,22 +11,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
-import { Spinner } from "@/components/ui/spinner";
-import { Skeleton } from "@/components/ui/skeleton";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { useRoles } from "../hooks/useRoles";
+import TableLoading from "@/components/laoding/TableLoading";
+import DrawerLoading from "@/components/laoding/DawerLoading";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
 	{
 		ssr: false,
-		loading: () => (
-			<div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
-				<div className="relative w-[900px] h-[580px] bg-muted border rounded-lg shadow-lg flex items-center justify-center">
-					<Spinner size="medium">Opening drawer...</Spinner>
-				</div>
-			</div>
-		),
+		loading: () => <DrawerLoading />,
 	}
 );
 
@@ -82,22 +76,7 @@ export default function RoleListings({
 							</TableRow>
 						) : showSkeleton || allRoles.length === 0 ? (
 							/* If still loading */
-							[...Array(5)].map((_, i) => (
-								<TableRow key={`skeleton-${i}`} className="animate-pulse">
-									<TableCell className="px-6 py-5">
-										<Skeleton className="w-3/4 h-4 rounded-md" />
-									</TableCell>
-									<TableCell className="px-6 py-5">
-										<Skeleton className="w-5/6 h-4 rounded-md" />
-									</TableCell>
-									<TableCell className="px-6 py-5 text-center">
-										<Skeleton className="w-10 h-4 mx-auto rounded-md" />
-									</TableCell>
-									<TableCell className="px-6 py-5 text-center">
-										<Skeleton className="w-1/2 h-10 mx-auto rounded-md" />
-									</TableCell>
-								</TableRow>
-							))
+							<TableLoading />
 						) : (
 							/* If roles are loaded */
 							allRoles.map((role) => (

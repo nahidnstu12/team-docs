@@ -3,26 +3,21 @@
 import { useState } from "react";
 import NoRolesUI from "./components/NoRolesUI";
 import dynamic from "next/dynamic";
-import { Spinner } from "@/components/ui/spinner";
+import DrawerLoading from "@/components/laoding/DawerLoading";
+import LazyPageLoading from "@/components/laoding/LazyPageLoading";
 
 const RoleCreateDrawerLazy = dynamic(
 	() => import("@/app/(home)/roles/components/RoleCreateDrawer"),
 	{
 		ssr: false,
-		loading: () => (
-			<div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
-				<div className="relative w-[600px] h-[500px] bg-muted border rounded-lg shadow-lg flex items-center justify-center">
-					<Spinner size="medium">Opening drawer...</Spinner>
-				</div>
-			</div>
-		),
+		loading: () => <DrawerLoading />,
 	}
 );
 
 const RoleListingsLazy = dynamic(
 	() => import("@/app/(home)/roles/components/RoleListings"),
 	{
-		loading: () => <Spinner size="large">Loading roles...</Spinner>,
+		loading: () => <LazyPageLoading>Loading Roles...</LazyPageLoading>,
 	}
 );
 

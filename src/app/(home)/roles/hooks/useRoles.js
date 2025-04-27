@@ -7,7 +7,6 @@ export function useRoles(shouldStartFetchRoles, setShouldStartFetchRoles) {
 	const [allRoles, setAllRoles] = useState([]);
 	const [_, startRolesTransition] = useTransition();
 	const [showSkeleton, setShowSkeleton] = useState(true);
-	// const [selectedRoleId, setSelectedRoleId] = useState(null);
 	const selectedRoleId = useRef(null);
 
 	useEffect(() => {

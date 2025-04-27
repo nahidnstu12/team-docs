@@ -8,86 +8,50 @@ import {
 	DialogDescription,
 	DialogFooter,
 } from "@/components/ui/dialog";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useActionState } from "react";
-import { toast } from "sonner";
+import { useCallback, useMemo } from "react";
+import { Controller } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { assignPermissionsToRole } from "@/system/Actions/RolePermissionAssignActions";
 import { Loader2 } from "lucide-react";
-import { getAllPermissions } from "./action/getAllPermissions";
+import { useServerFormAction } from "@/hook/useServerFormAction";
+import { RolePermissionAssignSchema } from "@/lib/schemas/RolePermissionAssignSchema";
+import { useRolePermissions } from "./hooks/useRolePermissions";
 
 export default function RolePermissionDialog({ isOpen, onOpenChange, roleId }) {
-	// State management
-	const [permissions, setPermissions] = useState([]);
-	const [permissionsPending, startPermissionsTransition] = useTransition();
-	const hasFetchedPermissions = useRef(false);
-
-	// Form management with React Hook Form
-	const { reset, control, setError } = useForm({
-		defaultValues: { permissions: [] },
-	});
-
-	// Form submission action
-	const [formState, formAction, isSubmitting] = useActionState(
-		assignPermissionsToRole,
-		{
-			errors: null,
-			data: null,
-		}
+	const defaultValues = useMemo(
+		() => ({
+			permissions: [],
+		}),
+		[]
 	);
 
-	// Handle form state changes (success, error)
-	useEffect(() => {
-		if (formState?.success === false) {
-			if (formState.errors?._form) toast.error(formState.errors._form[0]);
-			formState.errors?.permissions?.forEach((msg) =>
-				setError("permissions", { message: msg })
-			);
-		}
+	const successToast = useMemo(
+		() => ({
+			title: "Permissions assigned successfully.",
+			description: "",
+		}),
+		[]
+	);
 
-		if (formState?.type === "success") {
-			toast.success("Permissions assigned successfully.");
-			onOpenChange(false);
-			reset();
-		}
-	}, [formState, reset, setError, onOpenChange]);
+	const handleSuccess = useCallback(() => {
+		onOpenChange(false);
+	}, [onOpenChange]);
 
-	// Fetch permissions only when dialog opens and not already fetched
-	useEffect(() => {
-		console.log(hasFetchedPermissions.current);
-		const fetchPermissions = async () => {
-			try {
-				const perms = await getAllPermissions(roleId);
-				startPermissionsTransition(() => setPermissions(perms));
-			} catch (error) {
-				console.error("Failed to fetch permissions:", error);
-			}
-		};
+	const { control, reset, formAction, isPending } = useServerFormAction({
+		schema: RolePermissionAssignSchema,
+		actionFn: assignPermissionsToRole,
+		defaultValues,
+		successToast,
+		onSuccess: handleSuccess,
+	});
 
-		if (!hasFetchedPermissions.current) {
-			hasFetchedPermissions.current = true; // 🛡️ Lock fetching immediately
-			fetchPermissions();
-		}
-
-		// Reset when dialog closes
-		if (!isOpen) {
-			setPermissions([]);
-			reset({ permissions: [] });
-			hasFetchedPermissions.current = false; // 🔓 Unlock fetch permission
-		}
-	}, [roleId, isOpen, reset]);
-
-	// Update form permissions if permissions data changes
-	useEffect(() => {
-		reset({
-			permissions: permissions
-				.filter((perm) => perm.checked)
-				.map((perm) => perm.id),
-		});
-	}, [permissions, reset]);
+	const { permissionsPending, permissions } = useRolePermissions(
+		roleId,
+		isOpen,
+		reset
+	);
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -155,10 +119,10 @@ export default function RolePermissionDialog({ isOpen, onOpenChange, roleId }) {
 						<DialogFooter className="pt-6">
 							<Button
 								type="submit"
-								disabled={isSubmitting}
+								disabled={isPending}
 								className="px-8 text-lg font-semibold h-14"
 							>
-								{isSubmitting ? "Assigning..." : "Assign Selected Permissions"}
+								{isPending ? "Assigning..." : "Assign Selected Permissions"}
 							</Button>
 						</DialogFooter>
 					</form>
