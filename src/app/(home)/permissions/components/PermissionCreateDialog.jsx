@@ -26,7 +26,7 @@ import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 export default function PermissionCreateDialog({
 	isDialogOpen,
 	setIsDialogOpen,
-	shouldStartFetchPermissions,
+	setStartFetchPermissions,
 }) {
 	const router = useRouter();
 
@@ -74,7 +74,7 @@ export default function PermissionCreateDialog({
 				description: "Your new permission is ready to use!",
 			});
 			if (formState.redirectTo) {
-				shouldStartFetchPermissions.current = true;
+				setStartFetchPermissions(true);
 				return router.push(formState.redirectTo);
 			}
 		}
@@ -84,7 +84,7 @@ export default function PermissionCreateDialog({
 		reset,
 		router,
 		setIsDialogOpen,
-		shouldStartFetchPermissions,
+		setStartFetchPermissions,
 	]);
 
 	return (

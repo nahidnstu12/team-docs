@@ -1,29 +1,24 @@
 import { useState, useEffect, useTransition, useRef } from "react";
 import { getAllRolesFn } from "../actions/getAllRoles";
+import { useStartFetch } from "@/hook/useStartFetch";
 
 export function useRoles(shouldStartFetchRoles, setShouldStartFetchRoles) {
 	const [openPermissionAssignDialog, setOpenPermissionAssignDialog] =
 		useState(false);
-	const [allRoles, setAllRoles] = useState([]);
-	const [_, startRolesTransition] = useTransition();
-	const [showSkeleton, setShowSkeleton] = useState(true);
+	// const [allRoles, setAllRoles] = useState([]);
+	// const [_, startRolesTransition] = useTransition();
+	// const [showSkeleton, setShowSkeleton] = useState(true);
 	const selectedRoleId = useRef(null);
 
-	useEffect(() => {
-		async function fetchRoles() {
-			const roles = await getAllRolesFn();
-			startRolesTransition(() => setAllRoles(roles));
-			setShowSkeleton(false);
-			setShouldStartFetchRoles(false);
-		}
-
-		if (shouldStartFetchRoles) {
-			fetchRoles();
-		}
-	}, [shouldStartFetchRoles, setShouldStartFetchRoles]);
+	const { data, fetchError, showSkeleton } = useStartFetch(
+		getAllRolesFn,
+		shouldStartFetchRoles,
+		setShouldStartFetchRoles
+	);
 
 	return {
-		allRoles,
+		data,
+		fetchError,
 		showSkeleton,
 		selectedRoleId,
 		openPermissionAssignDialog,

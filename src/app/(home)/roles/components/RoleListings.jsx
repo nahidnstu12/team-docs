@@ -15,6 +15,7 @@ import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { useRoles } from "../hooks/useRoles";
 import TableLoading from "@/components/laoding/TableLoading";
 import DrawerLoading from "@/components/laoding/DawerLoading";
+import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
@@ -31,12 +32,21 @@ export default function RoleListings({
 	setShouldStartFetchRoles,
 }) {
 	const {
-		allRoles,
+		data: allRoles,
+		fetchError,
 		showSkeleton,
 		selectedRoleId,
 		openPermissionAssignDialog,
 		setOpenPermissionAssignDialog,
 	} = useRoles(shouldStartFetchRoles, setShouldStartFetchRoles);
+
+	if (fetchError)
+		return (
+			<ClientErrorUI
+				errorMessage={fetchError}
+				retry={setShouldStartFetchRoles}
+			/>
+		);
 
 	return (
 		<>

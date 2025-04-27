@@ -11,9 +11,9 @@ export default async function PermissionsPage() {
 
 	if (!hasRoles) redirect("/roles");
 
-	const hasPermissionResouces = await PermissionServices.hasPermissionResouces(
+	const hasPermission = await PermissionServices.hasPermissionResouces(
 		session.id
 	);
 
-	return <PermissionShell hasPermissionResouces={hasPermissionResouces} />;
+	return <PermissionShell hasPermission={hasPermission} />;
 }

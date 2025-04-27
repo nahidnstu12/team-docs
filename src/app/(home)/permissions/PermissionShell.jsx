@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import PermissionLisitngs from "./components/PermisssionListings";
 import NoPermissionUI from "./components/NoPermissionUI";
 import dynamic from "next/dynamic";
@@ -20,10 +20,10 @@ const PermissionCreateDrawerLazy = dynamic(
 	}
 );
 
-export default function PermissionShell({ hasPermissionResouces }) {
+export default function PermissionShell({ hasPermission }) {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const shouldStartFetchPermissions = useRef(
-		hasPermissionResouces ? true : false
+	const [startFetchPermissions, setStartFetchPermissions] = useState(
+		hasPermission ? true : false
 	);
 
 	return (
@@ -32,15 +32,16 @@ export default function PermissionShell({ hasPermissionResouces }) {
 				<PermissionCreateDrawerLazy
 					isDialogOpen={isDialogOpen}
 					setIsDialogOpen={setIsDialogOpen}
-					shouldStartFetchPermissions={shouldStartFetchPermissions}
+					setStartFetchPermissions={setStartFetchPermissions}
 				/>
 			)}
 
-			{hasPermissionResouces ? (
+			{hasPermission ? (
 				<PermissionLisitngs
-					// permissions={permissions}
+					hasPermission={hasPermission}
 					setIsDialogOpen={setIsDialogOpen}
-					shouldStartFetchPermissions={shouldStartFetchPermissions}
+					startFetchPermissions={startFetchPermissions}
+					setStartFetchPermissions={setStartFetchPermissions}
 				/>
 			) : (
 				<NoPermissionUI setIsDialogOpen={setIsDialogOpen} />
