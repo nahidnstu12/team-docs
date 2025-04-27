@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -19,9 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useActionState } from "react"; // Next.js form action hook
 import { createPermissions } from "@/system/Actions/PermissionActions";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
+import { useServerFormAction } from "@/hook/useServerFormAction";
 
 export default function PermissionCreateDialog({
 	isDialogOpen,
@@ -30,62 +26,38 @@ export default function PermissionCreateDialog({
 }) {
 	const router = useRouter();
 
-	const [formState, formAction, isPending] = useActionState(createPermissions, {
-		errors: null,
-		data: null,
-	});
-
-	const {
-		register,
-		setError,
-		reset,
-		formState: { errors },
-	} = useForm({
-		resolver: zodResolver(PermissionSchema),
-		defaultValues: {
+	const defaultValues = useMemo(() => {
+		({
 			name: "",
 			description: "",
 			scope: "",
-		},
-	});
+		});
+	}, []);
 
-	useEffect(() => {
-		if (!formState) return;
+	const successToast = useMemo(
+		() => ({
+			title: "Permission created successfully",
+			description: "Your new Permission is ready to use!",
+		}),
+		[]
+	);
 
-		if (formState.success === false && formState.data) {
-			// Repopulate form fields from server-provided values
-			reset(formState.data);
-			Object.entries(formState.errors || {}).forEach(([field, message]) => {
-				setError(field, {
-					type: "server",
-					message: Array.isArray(message) ? message[0] : message,
-				});
-			});
-			if (formState.errors?._form) {
-				toast.error(formState.errors._form[0]);
-			}
-			return;
-		}
-
-		if (formState.type === "success") {
+	const handleSuccess = useCallback(
+		(redirectTo) => {
 			setIsDialogOpen(false);
-			reset({ name: "", description: "", scope: "" });
-			toast.success("Permission created successfully", {
-				description: "Your new permission is ready to use!",
-			});
-			if (formState.redirectTo) {
-				setStartFetchPermissions(true);
-				return router.push(formState.redirectTo);
-			}
-		}
-	}, [
-		formState,
-		setError,
-		reset,
-		router,
-		setIsDialogOpen,
-		setStartFetchPermissions,
-	]);
+			setStartFetchPermissions(true);
+			if (redirectTo) router.push(redirectTo);
+		},
+		[router, setIsDialogOpen, setStartFetchPermissions]
+	);
+
+	const { register, errors, formAction, isPending } = useServerFormAction({
+		schema: PermissionSchema,
+		actionFn: createPermissions,
+		defaultValues,
+		successToast,
+		onSuccess: handleSuccess,
+	});
 
 	return (
 		<>
@@ -161,7 +133,7 @@ export default function PermissionCreateDialog({
 
 						<DialogFooter className="pt-4">
 							<Button type="submit" disabled={isPending}>
-								{isPending ? "Creating..." : "Create Role"}
+								{isPending ? "Creating..." : "Create Permission"}
 							</Button>
 						</DialogFooter>
 					</form>

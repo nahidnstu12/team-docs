@@ -47,7 +47,7 @@ export default function RolePermissionDialog({ isOpen, onOpenChange, roleId }) {
 		onSuccess: handleSuccess,
 	});
 
-	const { permissionsPending, permissions } = useRolePermissions(
+	const { permissionsPending, permissions, showSkeleton } = useRolePermissions(
 		roleId,
 		isOpen,
 		reset
@@ -65,14 +65,25 @@ export default function RolePermissionDialog({ isOpen, onOpenChange, roleId }) {
 					</DialogDescription>
 				</DialogHeader>
 
-				{permissionsPending ? (
+				{showSkeleton ? (
+					// 🔵 Loading UI
 					<div className="h-[410px] flex flex-col items-center justify-center space-y-4 p-4 border rounded-xl">
 						<Loader2 className="w-10 h-10 animate-spin text-muted-foreground" />
 						<p className="text-xl font-medium text-muted-foreground">
 							Fetching permissions...
 						</p>
 					</div>
+				) : permissions.length === 0 ? (
+					// 🔴 No permissions found UI
+					<div className="h-[410px] flex flex-col items-center justify-start space-y-4 p-4 border-2 border-dashed rounded-xl text-center ">
+						<div className="flex flex-col items-center justify-center w-full gap-3 h-1/2">
+							<h2 className="text-2xl font-bold text-muted-foreground">
+								No Permissions Found
+							</h2>
+						</div>
+					</div>
 				) : (
+					// 🟢 Normal form when permissions exist
 					<form action={formAction} className="space-y-2">
 						{/* Hidden input to pass roleId */}
 						<input type="hidden" name="roleId" value={roleId} />

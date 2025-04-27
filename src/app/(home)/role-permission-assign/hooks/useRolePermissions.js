@@ -5,6 +5,7 @@ export function useRolePermissions(roleId, isOpen, reset) {
 	const [permissions, setPermissions] = useState([]);
 	const [permissionsPending, startPermissionsTransition] = useTransition();
 	const hasFetchedPermissions = useRef(false);
+	const [showSkeleton, setShowSkeleton] = useState(true);
 
 	useEffect(() => {
 		const fetchedPermissions = async () => {
@@ -13,6 +14,8 @@ export function useRolePermissions(roleId, isOpen, reset) {
 				startPermissionsTransition(() => setPermissions(perms));
 			} catch (error) {
 				console.error("Failed to fetch permissions:", error);
+			} finally {
+				setShowSkeleton(false);
 			}
 		};
 
@@ -39,5 +42,5 @@ export function useRolePermissions(roleId, isOpen, reset) {
 		}
 	}, [permissions, reset]);
 
-	return { permissionsPending, permissions };
+	return { permissionsPending, permissions, showSkeleton };
 }
