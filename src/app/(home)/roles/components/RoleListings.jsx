@@ -38,11 +38,8 @@ export default function RoleListings({
 }) {
 	const {
 		allRoles,
-		permissionsPending,
-		permissions,
 		showSkeleton,
 		selectedRoleId,
-		setSelectedRoleId,
 		openPermissionAssignDialog,
 		setOpenPermissionAssignDialog,
 	} = useRoles(shouldStartFetchRoles, setShouldStartFetchRoles);
@@ -127,37 +124,27 @@ export default function RoleListings({
 										)}
 									</TableCell>
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										{permissionsPending && (
-											<Spinner size="medium">
-												Loading has permission state...
-											</Spinner>
-										)}
-										{!permissionsPending && (
-											<>
-												<Button
-													onClick={() => {
-														setSelectedRoleId(role.id);
-														setOpenPermissionAssignDialog(true);
-													}}
-													size="sm"
-													variant="outline"
-													className="text-green-700 hover:text-green-500 border-green-500 hover:bg-green-100 hover:border-green-600 px-5 py-2.5 text-base cursor-pointer"
-												>
-													<ShieldCheck className="w-5 h-5 mr-2 text-green-600" />
-													Assign
-												</Button>
+										<Button
+											onClick={() => {
+												setOpenPermissionAssignDialog(true);
+												selectedRoleId.current = role.id;
+											}}
+											size="sm"
+											variant="outline"
+											className="text-green-700 hover:text-green-500 border-green-500 hover:bg-green-100 hover:border-green-600 px-5 py-2.5 text-base cursor-pointer"
+										>
+											<ShieldCheck className="w-5 h-5 mr-2 text-green-600" />
+											Assign
+										</Button>
 
-												{openPermissionAssignDialog &&
-													selectedRoleId === role.id && (
-														<LoadRolePermissionDialogLazy
-															isOpen={openPermissionAssignDialog}
-															onOpenChange={setOpenPermissionAssignDialog}
-															roleId={selectedRoleId}
-															permissions={permissions}
-														/>
-													)}
-											</>
-										)}
+										{openPermissionAssignDialog &&
+											selectedRoleId.current === role.id && (
+												<LoadRolePermissionDialogLazy
+													isOpen={openPermissionAssignDialog}
+													onOpenChange={setOpenPermissionAssignDialog}
+													roleId={selectedRoleId.current}
+												/>
+											)}
 
 										<Button
 											size="sm"
