@@ -31,6 +31,8 @@ export function useServerFormAction({
 		register,
 		setError,
 		reset,
+		watch,
+		setValue,
 		formState: { errors },
 	} = useForm({
 		resolver: zodResolver(schema),
@@ -90,5 +92,7 @@ export function useServerFormAction({
 		formAction,
 		isPending,
 		reset,
+		watch,
+		setValue,
 	};
 }

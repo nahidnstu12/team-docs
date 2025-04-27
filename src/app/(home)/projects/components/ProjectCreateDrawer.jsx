@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useServerFormAction } from "@/hook/useServerFormAction";
 import { ProjectSchema } from "@/lib/schemas/ProjectSchema";
 import { createProjectAction } from "@/system/Actions/ProjectActions";
 import {
@@ -10,12 +11,9 @@ import {
 	DrawerFooter,
 	DrawerHeader,
 } from "@heroui/drawer";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import slugify from "slugify";
-import { toast } from "sonner";
 
 export default function ProjectDrawer({
 	isDrawerOpen,
@@ -24,155 +22,63 @@ export default function ProjectDrawer({
 }) {
 	const router = useRouter();
 	const hasShownToastRef = useRef(false);
-	// ✅ Prevent multiple toast re-fires after a successful form submit
-	const [hasHandledSuccess, setHasHandledSuccess] = useState(false);
 
-	// 🔄 Holds a *snapshot* of the form action result so we can manage lifecycle
-	const [localFormState, setLocalFormState] = useState(null);
+	// ✅ Use your custom server form action hook
+	const { register, watch, setValue, reset, errors, formAction, isPending } =
+		useServerFormAction({
+			schema: ProjectSchema,
+			actionFn: createProjectAction,
+			defaultValues: {
+				name: "",
+				slug: "",
+				description: "",
+			},
+			onSuccess: () => {
+				if (hasShownToastRef.current) return;
+				hasShownToastRef.current = true;
 
-	// 📦 React Hook Form + Zod validation schema setup
-	const form = useForm({
-		resolver: zodResolver(ProjectSchema),
-		defaultValues: {
-			name: "",
-			slug: "",
-			description: "",
-		},
-	});
+				reset(); // Clear form fields
+				setIsDrawerOpen(false); // Close drawer
+				setStartFetchProjects(true); // Tell parent to refetch projects
+				router.refresh(); // Refresh router
+				setTimeout(() => {
+					hasShownToastRef.current = false;
+				}, 500);
+			},
+			onError: () => {
+				// No need to do anything special here; the hook already displays server errors
+			},
+			onSettled: () => {
+				// Can be used for extra cleanup if needed
+			},
+		});
 
-	const {
-		register,
-		watch,
-		setValue,
-		reset,
-		setError,
-		formState: { errors },
-	} = form;
-
-	// 🔁 Server action with form submission state tracking
-	const [formState, formAction, isPending] = useActionState(
-		createProjectAction,
-		{ data: null, errors: null }
-	);
-
-	console.log(formState);
-
-	// 👀 Watch fields for dynamic behavior
 	const nameValue = watch("name");
 	const slugValue = watch("slug");
 
-	// 🧠 Auto-generate slug when name changes (only when drawer is open)
+	// ✅ Auto-generate slug
 	useEffect(() => {
-		if (!isDrawerOpen) return;
-
-		if (nameValue) {
-			const slug = slugify(nameValue, {
+		if (!isDrawerOpen || !nameValue) return;
+		setValue(
+			"slug",
+			slugify(nameValue, {
 				lower: true,
 				strict: true,
 				remove: /[*+~.()'"!:@]/g,
-			});
-			setValue("slug", slug);
-		} else {
-			setValue("slug", "");
-		}
+			})
+		);
 	}, [nameValue, setValue, isDrawerOpen]);
 
-	// 🧼 Copy the result from the server action into local state to control behavior
-	useEffect(() => {
-		if (formState) {
-			setLocalFormState(formState);
-		}
-	}, [formState]);
-
-	// 🔄 Handle server response (success or error)
-	useEffect(() => {
-		if (!localFormState || hasHandledSuccess) return;
-
-		// 💥 Handle validation/server errors
-		if (localFormState?.errors) {
-			Object.entries(localFormState.errors).forEach(([field, message]) => {
-				setError(field, {
-					type: "server",
-					message: Array.isArray(message) ? message[0] : message,
-				});
-				if (field === "_form") {
-					toast.error(message[0]);
-				}
-			});
-
-			if (localFormState.data) {
-				reset(localFormState.data, { keepErrors: true });
-			}
-		}
-
-		// ✅ On success: show toast, reset form, close drawer, clean state
-		if (localFormState?.type === "success") {
-			if (hasHandledSuccess || hasShownToastRef.current) return;
-
-			setHasHandledSuccess(true);
-			hasShownToastRef.current = true;
-
-			toast.success("Project created successfully", {
-				description: "Your new project is ready to use!",
-			});
-
-			reset(); // Clear form fields
-			setTimeout(() => {
-				setLocalFormState(null); // 🔄 Destroy local state so toast doesn't show again
-				hasShownToastRef.current = false; // 🔄 Reset for future submits
-			}, 500);
-
-			setIsDrawerOpen(false); // ❌ Close drawer
-		}
-
-		setStartFetchProjects(true);
-		router.refresh(); // 🔃 Refresh router state if needed (ex. for server components)
-	}, [
-		localFormState,
-		reset,
-		setIsDrawerOpen,
-		setError,
-		hasHandledSuccess,
-		router,
-		setStartFetchProjects,
-	]);
-
-	useEffect(() => {
-		if (isDrawerOpen && localFormState?.success === false) {
-			// 1. Repopulate form values
-			reset(localFormState.data || {}, { keepErrors: true });
-
-			// 2. Re-set field errors from server
-			Object.entries(localFormState.errors || {}).forEach(
-				([field, message]) => {
-					setError(field, {
-						type: "server",
-						message: Array.isArray(message) ? message[0] : message,
-					});
-				}
-			);
-		}
-	}, [isDrawerOpen, localFormState, reset, setError]);
-
-	// 🔁 When drawer opens: reset everything for a clean slate
+	// ✅ Reset form cleanly when drawer opens
 	useEffect(() => {
 		if (isDrawerOpen) {
-			// reset({
-			// 	name: "",
-			// 	slug: "",
-			// 	description: "",
-			// }); // Clear form
-			if (!localFormState || localFormState?.success === true) {
-				reset({
-					name: "",
-					slug: "",
-					description: "",
-				});
-			}
-			setHasHandledSuccess(false); // Allow new success
-			// setLocalFormState(null); // Clear any lingering success
+			reset({
+				name: "",
+				slug: "",
+				description: "",
+			});
 		}
-	}, [isDrawerOpen, reset, localFormState]);
+	}, [isDrawerOpen, reset]);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen px-4 space-y-6 text-center">
