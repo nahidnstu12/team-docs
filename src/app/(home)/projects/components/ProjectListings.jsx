@@ -1,36 +1,36 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardBody } from "@heroui/card";
-import Link from "next/link";
 import { Edit, Trash } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
-import { useEffect, useState, useTransition } from "react";
-import { fetchAllProjectsFn } from "../actions/getAllProjects";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import TableLoading from "@/components/laoding/TableLoading";
+import { useProjects } from "../hooks/useProjects";
+import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 
 export default function ProjectListings({
+	hasProjects,
 	setIsDrawerOpen,
 	startFetchProjects,
 	setStartFetchProjects,
 }) {
-	const [projects, setProjects] = useState([]);
-	const [fetchAllProjectsPending, startFetchAllProjectTransition] =
-		useTransition();
+	const {
+		data: projects,
+		fetchError,
+		showSkeleton,
+	} = useProjects(startFetchProjects, setStartFetchProjects);
 
-	useEffect(() => {
-		async function fetchAllProjects() {
-			const res = await fetchAllProjectsFn();
-			startFetchAllProjectTransition(() => {
-				setProjects(res);
-			});
-		}
-
-		if (startFetchProjects) {
-			fetchAllProjects();
-			setStartFetchProjects(false);
-		}
-	}, [startFetchProjects, setStartFetchProjects]);
+	if (fetchError)
+		return (
+			<ClientErrorUI errorMessage={fetchError} retry={setStartFetchProjects} />
+		);
 
 	return (
 		<section className="space-y-8">
@@ -46,48 +46,51 @@ export default function ProjectListings({
 
 			{/* Project List */}
 			<section className="mt-8 space-y-4">
-				{fetchAllProjectsPending
-					? [...Array(5)].map((_, i) => (
-							<Card
-								key={`skeleton-project-${i}`}
-								className="p-6 transition-all border shadow-md rounded-xl bg-background hover:shadow-lg"
-							>
-								<CardBody className="flex flex-row items-start justify-between gap-4 p-0">
-									{/* Left Skeleton: Project Info */}
-									<div className="flex flex-col max-w-xl gap-3">
-										<Skeleton className="w-64 h-5 rounded-md " />
-									</div>
+				<Table>
+					<TableHeader className="sticky top-0 z-10 bg-muted">
+						<TableRow className="text-lg font-semibold tracking-wide">
+							<TableHead className="w-[160px] px-6 py-4">Name</TableHead>
+							<TableHead className="w-[300px] px-6 py-4">Description</TableHead>
+							<TableHead className="w-[320px] text-center px-6 py-4">
+								Actions
+							</TableHead>
+						</TableRow>
+					</TableHeader>
 
-									{/* Right Skeleton: Actions */}
-									<div className="flex items-center gap-2">
-										<Skeleton className="w-20 h-8 rounded-md bg-muted/30" />
-									</div>
-								</CardBody>
-							</Card>
-					  ))
-					: projects.map((project) => (
-							<Card
-								key={project.id}
-								className="p-6 transition-all border shadow-md rounded-xl bg-background hover:shadow-lg"
-							>
-								<CardBody className="flex flex-row items-start justify-between gap-4 p-0">
-									{/* Left: Project Info */}
-									<div className="flex flex-col max-w-xl gap-1">
-										<Link
-											href={`/projects/${project.slug}`}
-											className="text-xl font-semibold text-primary hover:underline"
-										>
-											{project.name}
-										</Link>
-										{project.description && (
-											<p className="pt-2 text-sm font-light leading-normal text-muted-foreground">
-												{project.description}
-											</p>
+					<TableBody>
+						{/* If no roles exist */}
+						{!hasProjects ? (
+							<TableRow>
+								<TableCell
+									colSpan={4}
+									className="py-10 text-lg text-center text-muted-foreground"
+								>
+									No projects found.
+								</TableCell>
+							</TableRow>
+						) : showSkeleton || projects.length === 0 ? (
+							/* If still loading */
+							<TableLoading />
+						) : (
+							/* If roles are loaded */
+							projects.map((project) => (
+								<TableRow
+									key={project.id}
+									className="transition-colors duration-200 hover:bg-muted"
+								>
+									{/* Your table cells content */}
+									<TableCell className="px-6 py-5 text-base font-semibold">
+										{project.name}
+									</TableCell>
+									<TableCell className="px-6 py-5 text-base text-muted-foreground">
+										{project.description || (
+											<span className="text-sm italic text-gray-400">
+												No description
+											</span>
 										)}
-									</div>
+									</TableCell>
 
-									{/* Right: Actions */}
-									<div className="flex items-center gap-2">
+									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
 										<Button
 											variant="outline"
 											size="sm"
@@ -102,10 +105,12 @@ export default function ProjectListings({
 										>
 											<Trash className="w-4 h-4" /> Delete
 										</Button>
-									</div>
-								</CardBody>
-							</Card>
-					  ))}
+									</TableCell>
+								</TableRow>
+							))
+						)}
+					</TableBody>
+				</Table>
 			</section>
 		</section>
 	);

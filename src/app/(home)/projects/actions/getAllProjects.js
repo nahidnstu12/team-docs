@@ -3,7 +3,7 @@
 import { Session } from "@/lib/Session";
 import { ProjectService } from "@/system/Services/ProjectServices";
 
-export async function fetchAllProjectsFn() {
+export async function getAllProjectsFn() {
 	const session = await Session.getCurrentUser();
 
 	let workspaceId = session.workspaceId;

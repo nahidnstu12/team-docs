@@ -1,18 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import ProjectDrawer from "./components/ProjectCreateDrawer";
 import NoProjectUI from "./components/NoProjectUI";
-import ProjectListings from "./components/ProjectListings";
+import dynamic from "next/dynamic";
+import DrawerLoading from "@/components/laoding/DawerLoading";
+import LazyPageLoading from "@/components/laoding/LazyPageLoading";
+
+const ProjectCreateDrawerLazy = dynamic(
+	() => import("@/app/(home)/projects/components/ProjectCreateDrawer"),
+	{
+		ssr: false,
+		loading: () => <DrawerLoading />,
+	}
+);
+
+const ProjectListingsLazy = dynamic(
+	() => import("@/app/(home)/projects/components/ProjectListings"),
+	{
+		loading: () => <LazyPageLoading>Loading Projects...</LazyPageLoading>,
+	}
+);
 
 export default function ProjectShell({ hasProjects }) {
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-	const [startFetchProjects, setStartFetchProjects] = useState(false);
+	const [startFetchProjects, setStartFetchProjects] = useState(
+		hasProjects ? true : false
+	);
 
 	return (
 		<>
 			{isDrawerOpen && (
-				<ProjectDrawer
+				<ProjectCreateDrawerLazy
 					isDrawerOpen={isDrawerOpen}
 					setIsDrawerOpen={setIsDrawerOpen}
 					setStartFetchProjects={setStartFetchProjects}
@@ -20,7 +38,8 @@ export default function ProjectShell({ hasProjects }) {
 			)}
 
 			{hasProjects ? (
-				<ProjectListings
+				<ProjectListingsLazy
+					hasProjects={hasProjects}
 					setIsDrawerOpen={setIsDrawerOpen}
 					startFetchProjects={startFetchProjects}
 					setStartFetchProjects={setStartFetchProjects}

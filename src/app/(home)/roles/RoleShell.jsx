@@ -31,9 +31,9 @@ export default function RoleShell({ hasRoles }) {
 		<>
 			{isDialogOpen && (
 				<RoleCreateDrawerLazy
-					setShouldStartFetchRoles={setShouldStartFetchRoles}
 					isDialogOpen={isDialogOpen}
 					setIsDialogOpen={setIsDialogOpen}
+					setShouldStartFetchRoles={setShouldStartFetchRoles}
 				/>
 			)}
 
