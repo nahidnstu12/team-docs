@@ -173,11 +173,13 @@ export default function MainSidebar() {
 									<SidebarMenuSubItem>
 										<SidebarMenuButton
 											className={
-												isActive("/profile") ? "bg-muted font-semibold" : ""
+												isActive("/settings/profile")
+													? "bg-muted font-semibold"
+													: ""
 											}
 											asChild
 										>
-											<Link href="/profile">
+											<Link href="/settings/profile">
 												<UserPen />
 												<span className="">Profile</span>
 											</Link>
