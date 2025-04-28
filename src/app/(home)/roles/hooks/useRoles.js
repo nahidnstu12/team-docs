@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { getAllRolesFn } from "../actions/getAllRoles";
-import { useStartFetch } from "@/hook/useStartFetch";
+import { useStartFetch } from "@/hooks/useStartFetch";
 
 export function useRoles(shouldStartFetchRoles, setShouldStartFetchRoles) {
 	const [openPermissionAssignDialog, setOpenPermissionAssignDialog] =

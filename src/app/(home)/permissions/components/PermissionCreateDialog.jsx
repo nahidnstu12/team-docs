@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createPermissions } from "@/system/Actions/PermissionActions";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
-import { useServerFormAction } from "@/hook/useServerFormAction";
+import { useServerFormAction } from "@/hooks/useServerFormAction";
 
 export default function PermissionCreateDialog({
 	isDialogOpen,

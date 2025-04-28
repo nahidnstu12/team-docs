@@ -1,4 +1,4 @@
-import { useStartFetch } from "@/hook/useStartFetch";
+import { useStartFetch } from "@/hooks/useStartFetch";
 import { getAllProjectsFn } from "../actions/getAllProjects";
 
 export function useProjects(
