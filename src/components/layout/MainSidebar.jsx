@@ -37,9 +37,17 @@ import {
 } from "../ui/collapsible";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useActionState } from "react";
+import { signout } from "@/lib/auth/signout";
+import { Button } from "../ui/button";
 
 export default function MainSidebar() {
+	const [_, formAction, isPending] = useActionState(signout, {});
+	const { data: session } = useSession();
 	const pathname = usePathname();
+
+	console.log(session);
 
 	// Helper to determine if a link is active
 	const isActive = (href) => pathname === href;
@@ -197,27 +205,38 @@ export default function MainSidebar() {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<SidebarMenuButton className="flex items-center gap-2 p-3">
+							<DropdownMenuTrigger asChild className="p-0">
+								<SidebarMenuButton className="flex items-center gap-2">
 									{/* Avatar */}
 									<div className="flex items-center justify-center w-8 h-8 overflow-hidden rounded-full bg-muted">
 										<User2 className="w-4 h-4 text-muted-foreground" />
 									</div>
+									{/* User Info */}
 									<div className="flex flex-col items-start text-left">
-										<span className="text-sm font-semibold">Username</span>
+										<span className="text-sm font-semibold">
+											{session?.user.username}
+										</span>
 										<span className="text-xs text-muted-foreground">
-											user@email.com
+											{session?.user.email}
 										</span>
 									</div>
 									<ChevronUp className="ml-auto" />
 								</SidebarMenuButton>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent side="top" className="mb-3 w-52">
-								<DropdownMenuItem>
-									<LogOut />
 
-									<span className="">Sign out</span>
-								</DropdownMenuItem>
+							<DropdownMenuContent side="top" className="mb-3 w-52">
+								<form action={formAction}>
+									<DropdownMenuItem asChild>
+										<button
+											type="submit"
+											disabled={isPending}
+											className="flex items-center w-full gap-2 text-sm text-left focus:outline-none disabled:opacity-50"
+										>
+											<LogOut className="w-4 h-4" />
+											{isPending ? "Please wait..." : "Sign Out"}
+										</button>
+									</DropdownMenuItem>
+								</form>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</SidebarMenuItem>
