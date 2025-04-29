@@ -15,6 +15,7 @@ import TableLoading from "@/components/laoding/TableLoading";
 import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProjectListings({
 	hasProjects,
@@ -22,6 +23,7 @@ export default function ProjectListings({
 	startFetchProjects,
 	setStartFetchProjects,
 }) {
+	const router = useRouter();
 	const {
 		data: projects,
 		fetchError,
@@ -92,15 +94,17 @@ export default function ProjectListings({
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										<Link href={`/projects/${project.slug}/editor`}>
-											<Button
-												variant="outline"
-												size="sm"
-												className="flex items-center gap-1 cursor-pointer"
-											>
-												<LayoutTemplate className="w-4 h-4" /> View
-											</Button>
-										</Link>
+										<Button
+											variant="outline"
+											size="sm"
+											className="flex items-center gap-1 cursor-pointer"
+											onClick={() => {
+												router.push(`/projects/${project.slug}/editor`);
+												router.refresh();
+											}}
+										>
+											<LayoutTemplate className="w-4 h-4" /> View
+										</Button>
 										<Button
 											size="sm"
 											variant="outline"

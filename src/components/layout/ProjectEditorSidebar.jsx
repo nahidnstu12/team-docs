@@ -2,6 +2,7 @@
 import {
 	FileText,
 	FolderKanban,
+	Home,
 	MoreHorizontal,
 	Pencil,
 	Plus,
@@ -26,8 +27,8 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 /**
  * when  we fetch section from the db, we will update the state & its render logic like this
@@ -59,6 +60,7 @@ import { Button } from "../ui/button";
  */
 
 export default function ProjectEditorSidebar() {
+	const router = useRouter();
 	const [openSection, setOpenSection] = useState({
 		section1: true,
 		section2: false,
@@ -71,11 +73,15 @@ export default function ProjectEditorSidebar() {
 		<Sidebar className="border-r">
 			<SidebarContent>
 				<Button
-					variant="link"
-					className="justify-start mx-2 my-2 text-gray-600"
-					asChild
+					variant="outline"
+					className="justify-start mx-2 my-2 text-gray-600 cursor-pointer"
+					onClick={() => {
+						router.push("/home");
+						router.refresh();
+					}}
 				>
-					<Link href="/home">go to home</Link>
+					<Home className="mx-1" />
+					go to home
 				</Button>
 
 				<SidebarMenu className="px-2 mt-6 space-y-2">
