@@ -108,13 +108,15 @@ export default function ProjectListings({
 										>
 											<Edit className="w-4 h-4" /> Edit
 										</Button>
-										<Button
-											variant="outline"
-											size="sm"
-											className="flex items-center gap-1 bg-green-100 cursor-pointer"
-										>
-											<UsersRound className="w-4 h-4" /> Assign Devs
-										</Button>
+										<Link href={`/projects/${project.slug}/assign-dev`}>
+											<Button
+												variant="outline"
+												size="sm"
+												className="flex items-center gap-1 bg-green-100 cursor-pointer"
+											>
+												<UsersRound className="w-4 h-4" /> Assign Dev
+											</Button>
+										</Link>
 										<Button
 											variant="destructive"
 											size="sm"

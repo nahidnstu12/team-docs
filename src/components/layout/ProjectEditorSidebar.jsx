@@ -26,6 +26,8 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useState } from "react";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 /**
  * when  we fetch section from the db, we will update the state & its render logic like this
@@ -68,7 +70,15 @@ export default function ProjectEditorSidebar() {
 	return (
 		<Sidebar className="border-r">
 			<SidebarContent>
-				<SidebarMenu className="px-2 space-y-2 mt-25">
+				<Button
+					variant="link"
+					className="justify-start mx-2 my-2 text-gray-600"
+					asChild
+				>
+					<Link href="/home">go to home</Link>
+				</Button>
+
+				<SidebarMenu className="px-2 mt-6 space-y-2">
 					{/* SECTION 1 */}
 					<SidebarMenuItem className="relative group">
 						{/* Section Button */}

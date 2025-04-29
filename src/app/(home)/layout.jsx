@@ -6,6 +6,9 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import MainSidebar from "@/components/layout/MainSidebar";
 import { cookies, headers } from "next/headers";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function HomeLayout({ children }) {
 	const cookieStore = await cookies();
 	const headersList = await headers();
