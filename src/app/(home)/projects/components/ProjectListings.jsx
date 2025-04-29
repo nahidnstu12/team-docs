@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, LayoutTemplate, Trash, UsersRound } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import {
 	Table,
@@ -14,6 +14,7 @@ import {
 import TableLoading from "@/components/laoding/TableLoading";
 import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
+import Link from "next/link";
 
 export default function ProjectListings({
 	hasProjects,
@@ -91,12 +92,28 @@ export default function ProjectListings({
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
+										<Link href={`/projects/${project.slug}/editor`}>
+											<Button
+												variant="outline"
+												size="sm"
+												className="flex items-center gap-1 cursor-pointer"
+											>
+												<LayoutTemplate className="w-4 h-4" /> View
+											</Button>
+										</Link>
+										<Button
+											size="sm"
+											variant="outline"
+											className="flex items-center gap-1 bg-yellow-100 cursor-pointer"
+										>
+											<Edit className="w-4 h-4" /> Edit
+										</Button>
 										<Button
 											variant="outline"
 											size="sm"
-											className="flex items-center gap-1 cursor-pointer"
+											className="flex items-center gap-1 bg-green-100 cursor-pointer"
 										>
-											<Edit className="w-4 h-4" /> Edit
+											<UsersRound className="w-4 h-4" /> Assign Devs
 										</Button>
 										<Button
 											variant="destructive"

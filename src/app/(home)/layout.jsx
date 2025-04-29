@@ -4,11 +4,19 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import MainSidebar from "@/components/layout/MainSidebar";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export default async function HomeLayout({ children }) {
 	const cookieStore = await cookies();
+	const headersList = await headers();
+	const pathname = headersList.get("x-pathname");
 	const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+	const isEditorPage =
+		pathname?.includes("/projects/") && pathname?.includes("/editor");
+
+	if (isEditorPage) {
+		return children; // Skip layout for editor
+	}
 
 	return (
 		<SessionProvider>

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import {
+	Building2,
 	ChevronDown,
 	ChevronUp,
 	FolderKanban,
@@ -40,7 +41,6 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useActionState } from "react";
 import { signout } from "@/lib/auth/signout";
-import { Button } from "../ui/button";
 
 export default function MainSidebar() {
 	const [_, formAction, isPending] = useActionState(signout, {});
@@ -67,6 +67,55 @@ export default function MainSidebar() {
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
+				</SidebarMenu>
+
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							className={isActive("/workspace") ? "bg-muted font-semibold" : ""}
+							asChild
+						>
+							<Link href="/workspace">
+								<Building2 height={35} width={35} className="mr-4" />
+								<span>workspace create</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
+				</SidebarMenu>
+
+				{/* Project Manage */}
+				<SidebarMenu>
+					<Collapsible className="group/collapsible">
+						<SidebarMenuItem className="mb-2">
+							<CollapsibleTrigger asChild>
+								<SidebarMenuButton className="justify-between">
+									<span className="flex items-center gap-2">
+										<FolderKanban height={20} width={20} className="mr-2" />
+										Project Manage
+									</span>
+									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
+								</SidebarMenuButton>
+							</CollapsibleTrigger>
+
+							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
+									<SidebarMenuSubItem>
+										<SidebarMenuButton
+											className={
+												isActive("/projects") ? "bg-muted font-semibold" : ""
+											}
+											asChild
+										>
+											<Link href="/projects">
+												<FolderOpenDot />
+												<span className="">Projects</span>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuSubItem>
+								</SidebarMenuSub>
+							</CollapsibleContent>
+						</SidebarMenuItem>
+					</Collapsible>
 				</SidebarMenu>
 
 				{/* User Manage */}
@@ -129,41 +178,10 @@ export default function MainSidebar() {
 							</CollapsibleContent>
 						</SidebarMenuItem>
 					</Collapsible>
+				</SidebarMenu>
 
-					{/* Project Manage */}
-					<Collapsible className="group/collapsible">
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
-									<span className="flex items-center gap-2">
-										<FolderKanban height={20} width={20} className="mr-2" />
-										Project Manage
-									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											className={
-												isActive("/projects") ? "bg-muted font-semibold" : ""
-											}
-											asChild
-										>
-											<Link href="/projects">
-												<FolderOpenDot />
-												<span className="">Projects</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-
-					{/* Settings */}
+				{/* Settings */}
+				<SidebarMenu>
 					<Collapsible className="group/collapsible">
 						<SidebarMenuItem className="mb-2">
 							<CollapsibleTrigger asChild>
