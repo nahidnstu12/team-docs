@@ -29,8 +29,8 @@ model User {
   createdWorkspaces Workspace[]       @relation("workspaceCreator")
   createdProjects   Project[]         @relation("projectCreator")
   createdSections   Section[]         @relation("sectionCreator")
-  createdPages      Page[]            @relation("pageCreator")
-  updatedPages      Page[]            @relation("pageUpdater")
+  createdPages      Page[]            @relation("UserCreatedPages") // ← Relation name
+  updatedPages      Page[]            @relation("UserUpdatedPages") // ← Different name
   annotations       Annotation[]
   notifications     Notification[]
 
@@ -215,9 +215,10 @@ model Section {
 model Page {
   id            String   @id @default(cuid())
   title         String
+  description   String?
   content       Json? // Rich text content as JSON (Tiptap compatible)
   sectionId     String
-  creatorId     String
+  ownerId       String
   lastUpdatedBy String? // ID of the user who last updated the page
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -228,15 +229,16 @@ model Page {
   password String? // Optional password for protected pages
 
   // Relationships
-  section     Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  creator     User          @relation("pageCreator", fields: [creatorId], references: [id])
-  updatedBy   User?         @relation("pageUpdater", fields: [lastUpdatedBy], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id])
+  creator   User    @relation("UserCreatedPages", fields: [ownerId], references: [id]) // ← Match the name
+  updatedBy User?   @relation("UserUpdatedPages", fields: [lastUpdatedBy], references: [id]) // ← Match the name
+
   annotations Annotation[]
   versions    PageVersion[]
   pageShares  PageShare[]
 
   @@index([sectionId])
-  @@index([creatorId])
+  @@index([ownerId])
   @@index([lastUpdatedBy])
 }
 

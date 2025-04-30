@@ -14,12 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
-import { SectionSchema } from "@/lib/schemas/SectionSchema";
-import { createSection } from "@/system/Actions/SectionActions";
+import { PageSchema } from "@/lib/schemas/PageSchema";
+import { createPage } from "@/system/Actions/PageSections";
 import { useCallback, useMemo } from "react";
 
-export default function CreateSectionDialog({
-	project,
+export default function CreatePageDialog({
+	sectionId,
 	isDialogOpen,
 	setIsDialogOpen,
 }) {
@@ -33,8 +33,8 @@ export default function CreateSectionDialog({
 
 	const successToast = useMemo(
 		() => ({
-			title: "Section created successfully",
-			description: "Your new section is ready to use!",
+			title: "Page created successfully",
+			description: "Your new Page is ready to use!",
 		}),
 		[]
 	);
@@ -44,8 +44,8 @@ export default function CreateSectionDialog({
 	}, [setIsDialogOpen]);
 
 	const { register, errors, formAction, isPending } = useServerFormAction({
-		schema: SectionSchema,
-		actionFn: createSection,
+		schema: PageSchema,
+		actionFn: createPage,
 		defaultValues,
 		successToast,
 		onSuccess: handleSuccess,
@@ -59,26 +59,28 @@ export default function CreateSectionDialog({
 			<DialogContent className="sm:max-w-[600px]">
 				<DialogHeader>
 					<DialogTitle className="text-2xl font-semibold">
-						Create a New Section
+						Create a New Page
 					</DialogTitle>
 					<DialogDescription>
-						Provide a name and optional description for the new section in your
-						project.
+						Provide a title and optional description for the new page for this
+						section.
 					</DialogDescription>
 				</DialogHeader>
 
 				<form action={formAction} className="mt-6 space-y-5">
-					<input type="hidden" name="projectId" value={project.id} />
+					<input type="hidden" name="sectionId" value={sectionId} />
 					<div className="space-y-1.5">
-						<Label htmlFor="name">Section Name</Label>
+						<Label htmlFor="name">Page Title</Label>
 						<Input
 							id="name"
-							placeholder="e.g. Introductions, Getting Started etc"
+							placeholder="e.g. Getting Started, Advanced Usage etc."
 							className="h-11"
-							{...register("name")}
+							{...register("title")}
 						/>
-						{errors.name && (
-							<p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+						{errors.title && (
+							<p className="mt-1 text-sm text-red-500">
+								{errors.title.message}
+							</p>
 						)}
 					</div>
 
@@ -89,7 +91,7 @@ export default function CreateSectionDialog({
 						</Label>
 						<Textarea
 							id="description"
-							placeholder="What is this section about?"
+							placeholder="What is this page about?"
 							{...register("description")}
 						/>
 						{errors.description && (

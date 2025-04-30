@@ -40,10 +40,16 @@ export class BaseModel {
 		return await this.model.findUnique({ where, ...(select && { select }) });
 	}
 
-	static async findMany({ where, select, orderBy = { createdAt: "desc" } }) {
+	static async findMany({
+		where,
+		select,
+		orderBy = { createdAt: "desc" },
+		include,
+	}) {
 		return await this.model.findMany({
 			...(where && { where }),
 			...(select && { select }),
+			...(include && { include }),
 			orderBy,
 		});
 	}

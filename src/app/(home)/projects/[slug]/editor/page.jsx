@@ -6,7 +6,7 @@ export default async function ProjectEditorPage({ params }) {
 	const { slug } = await params;
 	const project = await ProjectService.getProject({ slug });
 	const hasSection = await SectionServices.hasSection(project.id);
-	const getAllSections = await SectionServices.getAllSections({
+	const getAllSections = await SectionServices.getAllSectionWithPages({
 		projectId: project.id,
 	});
 

@@ -5,15 +5,20 @@ import { useEffect, useState } from "react";
 import CreateSectionDialog from "./components/CreateSectionDialog";
 import NoSectionUI from "./components/NoSectionUI";
 import { useProjectStore } from "../../store/useProjectStore";
-import Logger from "@/lib/Logger";
+import CreatePageDialog from "./components/createPageDialog";
+import { usePageDialogStore } from "../../store/usePageDialogStore";
 
 export default function ProjectEditorShell({ hasSection, project, sections }) {
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [isSectionDialogOpen, setIsSectionDialogOpen] = useState(false);
+
+	const isPageDialogOpen = usePageDialogStore(
+		(state) => state.isPageDialogOpen
+	);
+	const closePageDialog = usePageDialogStore((state) => state.closePageDialog);
+
+	const selectedSectionId = useProjectStore((state) => state.selectedSection);
 	const setProject = useProjectStore((state) => state.setProject);
 	const setSections = useProjectStore((state) => state.setSections);
-	const sectionListings = useProjectStore((state) => state.sections);
-
-	Logger.success(sectionListings, "from  zustand");
 
 	useEffect(() => {
 		setProject(project);
@@ -24,18 +29,28 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 		<>
 			<ProjectEditorHeader
 				hasSection={hasSection}
-				setIsDialogOpen={setIsDialogOpen}
+				setIsDialogOpen={setIsSectionDialogOpen}
 			/>
 
-			{isDialogOpen && (
+			{/* section dialog */}
+			{isSectionDialogOpen && (
 				<CreateSectionDialog
 					project={project}
-					isDialogOpen={isDialogOpen}
-					setIsDialogOpen={setIsDialogOpen}
+					isDialogOpen={isSectionDialogOpen}
+					setIsDialogOpen={setIsSectionDialogOpen}
 				/>
 			)}
 
-			{!hasSection && <NoSectionUI setIsDialogOpen={setIsDialogOpen} />}
+			{/* page dialog */}
+			{isPageDialogOpen && (
+				<CreatePageDialog
+					sectionId={selectedSectionId}
+					isDialogOpen={isPageDialogOpen}
+					setIsDialogOpen={closePageDialog}
+				/>
+			)}
+
+			{!hasSection && <NoSectionUI setIsDialogOpen={setIsSectionDialogOpen} />}
 		</>
 	);
 }

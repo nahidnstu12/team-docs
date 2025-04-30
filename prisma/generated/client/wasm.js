@@ -211,9 +211,10 @@ exports.Prisma.SectionScalarFieldEnum = {
 exports.Prisma.PageScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  description: 'description',
   content: 'content',
   sectionId: 'sectionId',
-  creatorId: 'creatorId',
+  ownerId: 'ownerId',
   lastUpdatedBy: 'lastUpdatedBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
