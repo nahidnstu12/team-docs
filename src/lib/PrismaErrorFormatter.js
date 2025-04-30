@@ -11,7 +11,7 @@ export class PrismaErrorFormatter {
 			// Unique constraint violations
 			P2002: {
 				getMessage: (meta) => {
-					const field = meta?.target?.[0] || "field";
+					const field = meta?.target?.[1] || meta?.target?.[0] || "field";
 					return `This ${field} already exists. Please choose a different one.`;
 				},
 				getField: (meta, fields) => {

@@ -7,34 +7,14 @@ import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "../Services/WorkspaceService";
+import { revalidatePath } from "next/cache";
 
-/**
- * Handles workspace-specific actions
- * @extends BaseAction
- */
 class WorkspaceAction extends BaseAction {
-	/**
-	 * Creates a WorkspaceAction instance
-	 * Initializes service and model dependencies
-	 */
-	constructor() {
-		super(WorkspaceSchema);
-		// this.workspaceService = new WorkspaceService();
-		this.workspaceModel = new WorkspaceModel();
+	static get schema() {
+		return WorkspaceSchema;
 	}
 
-	/**
-	 * Creates a new workspace
-	 * @param {FormData|Object} formData - Workspace data
-	 * @returns {Promise<{
-	 *   success: boolean,
-	 *   type?: string,
-	 *   redirectTo?: string,
-	 *   errors?: Object,
-	 *   data?: Object
-	 * }>} Creation result
-	 */
-	async create(formData) {
+	static async create(formData) {
 		const result = await this.execute(formData);
 
 		if (!result.success) return result;
@@ -42,17 +22,17 @@ class WorkspaceAction extends BaseAction {
 		try {
 			const session = await Session.getCurrentUser();
 
-			const createdWorkspace = await this.workspaceModel.create({
+			const createdWorkspace = await WorkspaceModel.create({
 				...result.data,
 				ownerId: session.id,
 			});
 
-			const workspaceService = new WorkspaceService();
-			await workspaceService.assignWorkspaceToUser(
+			await WorkspaceService.assignWorkspaceToUser(
 				createdWorkspace.id,
 				session.id
 			);
 
+			revalidatePath("(home)/", "layout");
 			return {
 				data: result.data,
 				success: true,
@@ -61,14 +41,12 @@ class WorkspaceAction extends BaseAction {
 			};
 		} catch (error) {
 			Logger.error(error.message, "Workspace creation failed:");
-			// Handle Prisma errors
-			if (error.code) {
+			if (error.code)
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
 					"slug",
 					"description",
 				]);
-			}
 
 			return {
 				success: false,
@@ -80,13 +58,6 @@ class WorkspaceAction extends BaseAction {
 	}
 }
 
-/**
- * Server action for workspace creation
- * @param {Object} prevState - Previous form state
- * @param {FormData} formData - Form data
- * @returns {Promise<Object>} Action result
- */
 export async function createWorkspace(prevState, formData) {
-	const action = new WorkspaceAction();
-	return await action.create(formData);
+	return await WorkspaceAction.create(formData);
 }

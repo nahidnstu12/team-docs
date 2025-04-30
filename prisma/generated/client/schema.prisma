@@ -48,7 +48,7 @@ model User {
 // Global roles that define sets of permissions
 model Role {
   id          String   @id @default(cuid())
-  name        String   @unique
+  name        String
   description String?
   isSystem    Boolean  @default(false) // True for default roles (Admin, Developer, Viewer)
   createdAt   DateTime @default(now())
@@ -61,12 +61,14 @@ model Role {
   permissions      RolePermissionAssignment[]
   workspaceMembers WorkspaceMember[] // Users with this role at workspace level
   projectMembers   ProjectMember[] // Users with this role at project level
+
+  @@unique([ownerId, name]) // ✅ name must be unique only within same user
 }
 
 // Permission definitions
 model Permission {
   id          String   @id @default(cuid())
-  name        String   @unique // e.g., "create:page", "update:project", etc.
+  name        String // e.g., "create:page", "update:project", etc.
   description String?
   scope       String // e.g., "workspace", "project", "page", "user"
   createdAt   DateTime @default(now())
@@ -77,6 +79,9 @@ model Permission {
 
   // Relationships
   roles RolePermissionAssignment[]
+
+  @@unique([ownerId, name])
+  @@unique([ownerId, scope])
 }
 
 // Many-to-many relationship between Role and Permission
@@ -103,7 +108,7 @@ model RolePermissionAssignment {
 model Workspace {
   id          String   @id @default(cuid())
   name        String
-  slug        String   @unique // URL-friendly identifier
+  slug        String // URL-friendly identifier
   description String?
   logo        String? // URL to logo image
   createdAt   DateTime @default(now())
@@ -118,6 +123,7 @@ model Workspace {
   // Settings and configurations
   settings Json? // Workspace-level settings (JSON)
 
+  @@unique([ownerId, slug]) // ✅ slug must be unique only within this owner
   @@index([ownerId])
 }
 
@@ -145,7 +151,7 @@ model WorkspaceMember {
 model Project {
   id          String   @id @default(cuid())
   name        String
-  slug        String   @unique
+  slug        String
   description String?
   icon        String? // Icon identifier or URL
   color       String? // Theme color for the project
@@ -161,6 +167,7 @@ model Project {
   members   ProjectMember[]
   sections  Section[]
 
+  @@unique([slug, name, ownerId]) // ✅ slug must be unique only within this owner
   @@index([workspaceId])
   @@index([ownerId])
 }

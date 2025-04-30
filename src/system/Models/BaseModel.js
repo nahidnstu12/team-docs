@@ -1,30 +1,18 @@
 import Logger from "@/lib/Logger";
 import prisma from "@/lib/prisma";
 
-/**
- * Abstract base class for all models
- * Handles common database operations
- */
 export class BaseModel {
-	/**
-	 * Creates a BaseModel instance
-	 * @param {string} modelName - Prisma model name
-	 */
-	constructor(modelName) {
-		this.prisma = prisma;
-		this.model = this.prisma[modelName];
+	static get model() {
+		if (!this.modelName)
+			throw new Error("modelName not defined in child class");
+		return prisma[this.modelName];
 	}
 
-	/**
-	 * Creates a new record
-	 * @param {Object} data - Data to create
-	 * @returns {Promise<Object>} Created record
-	 */
-	async create(data) {
+	static async create(data) {
 		return await this.model.create({ data });
 	}
 
-	async upsert({ where, create, update }) {
+	static async upsert({ where, create, update }) {
 		try {
 			return await this.model.upsert({
 				where,
@@ -37,42 +25,22 @@ export class BaseModel {
 		}
 	}
 
-	/**
-	 * Updates an existing record
-	 * @param {string|number} id - Record ID
-	 * @param {Object} data - Data to update
-	 * @returns {Promise<Object>} Updated record
-	 */
-	async update(id, data) {
+	static async update({ where, data }) {
 		return await this.model.update({
-			where: { id },
+			where,
 			data,
 		});
 	}
 
-	/**
-	 * Deletes a record
-	 * @param {string|number} id - Record ID
-	 * @returns {Promise<Object>} Deleted record
-	 */
-	async delete(id) {
+	static async delete(id) {
 		return await this.model.delete({ where: { id } });
 	}
 
-	/**
-	 * Finds a record by ID
-	 * @param {string|number} id - Record ID
-	 * @returns {Promise<Object|null>} Found record or null
-	 */
-	async findById(id) {
-		return await this.model.findUnique({ where: { id } });
+	static async findUnique({ where, select }) {
+		return await this.model.findUnique({ where, ...(select && { select }) });
 	}
 
-	/**
-	 * Finds all resource
-	 * @returns {Promise<Array>} Array of resources
-	 */
-	async findMany({ where, select, orderBy = { createdAt: "desc" } }) {
+	static async findMany({ where, select, orderBy = { createdAt: "desc" } }) {
 		return await this.model.findMany({
 			...(where && { where }),
 			...(select && { select }),
@@ -80,9 +48,7 @@ export class BaseModel {
 		});
 	}
 
-	async findFirst(whereClause) {
-		return await this.model.findFirst({
-			where: whereClause,
-		});
+	static async findFirst({ where }) {
+		return await this.model.findFirst({ where });
 	}
 }

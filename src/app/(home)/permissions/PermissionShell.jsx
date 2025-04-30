@@ -1,31 +1,50 @@
 "use client";
 
 import { useState } from "react";
-import PermissionCreateForm from "./PermissionCreateForm";
-import PermissionLisitngs from "./PermisssionListings";
-import NoPermissionUI from "./NoPermissionUI";
+import PermissionLisitngs from "./components/PermisssionListings";
+import NoPermissionUI from "./components/NoPermissionUI";
+import dynamic from "next/dynamic";
+import { Spinner } from "@/components/ui/spinner";
 
-export default function PermissionShell({
-	permissions,
-	hasPermissionResouces,
-}) {
-	const [isOpen, setIsOpen] = useState(false);
+const PermissionCreateDrawerLazy = dynamic(
+	() => import("@/app/(home)/permissions/components/PermissionCreateDialog"),
+	{
+		ssr: false,
+		loading: () => (
+			<div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
+				<div className="relative w-[600px] h-[500px] bg-muted border rounded-lg shadow-lg flex items-center justify-center">
+					<Spinner size="medium">Opening drawer...</Spinner>
+				</div>
+			</div>
+		),
+	}
+);
 
-	const handleOpen = () => setIsOpen(true);
+export default function PermissionShell({ hasPermission }) {
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [startFetchPermissions, setStartFetchPermissions] = useState(
+		hasPermission ? true : false
+	);
 
 	return (
 		<>
-			{/* Shared dialog at top */}
-			<PermissionCreateForm isOpen={isOpen} onOpenChange={setIsOpen} />
+			{isDialogOpen && (
+				<PermissionCreateDrawerLazy
+					isDialogOpen={isDialogOpen}
+					setIsDialogOpen={setIsDialogOpen}
+					setStartFetchPermissions={setStartFetchPermissions}
+				/>
+			)}
 
-			{/* Conditional content */}
-			{hasPermissionResouces ? (
+			{hasPermission ? (
 				<PermissionLisitngs
-					permissions={permissions}
-					onCreateClick={handleOpen}
+					hasPermission={hasPermission}
+					setIsDialogOpen={setIsDialogOpen}
+					startFetchPermissions={startFetchPermissions}
+					setStartFetchPermissions={setStartFetchPermissions}
 				/>
 			) : (
-				<NoPermissionUI onCreateClick={handleOpen} />
+				<NoPermissionUI setIsDialogOpen={setIsDialogOpen} />
 			)}
 		</>
 	);

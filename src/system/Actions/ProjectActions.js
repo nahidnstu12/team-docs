@@ -8,26 +8,20 @@ import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import { WorkspaceService } from "../Services/WorkspaceService";
 
 class ProjectAction extends BaseAction {
-	constructor() {
-		super(ProjectSchema);
-		this.projectModel = new ProjectModel();
+	static get schema() {
+		return ProjectSchema;
 	}
 
-	async create(formData) {
+	static async create(formData) {
 		const result = await this.execute(formData);
 
-		Logger.info(result, "result");
-
-		if (!result.success) {
-			return result;
-		}
+		if (!result.success) return result;
 
 		try {
 			const session = await Session.getCurrentUser();
-			const workspaceService = new WorkspaceService();
-			const workspace = await workspaceService.hasWorkspace(session.id);
+			const workspace = await WorkspaceService.hasWorkspace(session.id);
 
-			await this.projectModel.create({
+			await ProjectModel.create({
 				...result.data,
 				workspace: {
 					connect: { id: workspace.id },
@@ -45,14 +39,12 @@ class ProjectAction extends BaseAction {
 			};
 		} catch (error) {
 			Logger.error(error.message, "project creation failed:");
-			// Handle Prisma errors
-			if (error.code) {
+			if (error.code)
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
 					"slug",
 					"description",
 				]);
-			}
 
 			return {
 				success: false,
@@ -65,6 +57,5 @@ class ProjectAction extends BaseAction {
 }
 
 export async function createProjectAction(prevState, formData) {
-	const action = new ProjectAction();
-	return await action.create(formData);
+	return await ProjectAction.create(formData);
 }

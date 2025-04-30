@@ -7,30 +7,22 @@ import { Session } from "@/lib/Session";
 import { RolePermissionAssignSchema } from "@/lib/schemas/RolePermissionAssignSchema";
 import { RolePermissionAssignModel } from "../Models/RolePermissionAssignModel";
 
-/**
- * Handles workspace-specific actions
- * @extends BaseAction
- */
 class RolePermissionAssignActions extends BaseAction {
-	constructor() {
-		super(RolePermissionAssignSchema);
-		this.rolePermissionAssignModel = new RolePermissionAssignModel();
+	static get schema() {
+		return RolePermissionAssignSchema;
 	}
 
-	async create(formData) {
+	static async create(formData) {
 		const result = await this.execute(formData);
-		Logger.info(result);
+
 		if (!result.success) return result;
 
 		try {
-			Logger.success(result.data);
-			const { roleId, permissions } = result.data;
 			const session = await Session.getCurrentUser();
+			const { roleId, permissions } = result.data;
 
 			// ✅ Fetch current assignments from DB
-			const existing = await this.rolePermissionAssignModel.findByRoleId(
-				roleId
-			);
+			const existing = await RolePermissionAssignModel.findByRoleId(roleId);
 			const existingIds = new Set(existing.map((p) => p.permissionId));
 			const newIds = new Set(permissions);
 
@@ -42,7 +34,7 @@ class RolePermissionAssignActions extends BaseAction {
 			// ✅ Upsert new permissions
 			await Promise.all(
 				toAdd.map((permissionId) =>
-					this.rolePermissionAssignModel.upsert({
+					RolePermissionAssignModel.upsert({
 						where: {
 							roleId_permissionId: {
 								roleId,
@@ -64,10 +56,7 @@ class RolePermissionAssignActions extends BaseAction {
 			// ✅ Delete removed permissions
 			await Promise.all(
 				toRemove.map((permissionId) =>
-					this.rolePermissionAssignModel.delete({
-						roleId,
-						permissionId,
-					})
+					RolePermissionAssignModel.delete(roleId, permissionId)
 				)
 			);
 
@@ -79,13 +68,9 @@ class RolePermissionAssignActions extends BaseAction {
 			};
 		} catch (error) {
 			Logger.error(error.message, `role permission assignment fail`);
-			if (error.code) {
-				return PrismaErrorFormatter.handle(error, result.data, [
-					"name",
-					"description",
-					"scope",
-				]);
-			}
+			if (error.code)
+				return PrismaErrorFormatter.handle(error, result.data, ["permissions"]);
+
 			return {
 				success: false,
 				type: "fail",
@@ -96,13 +81,6 @@ class RolePermissionAssignActions extends BaseAction {
 	}
 }
 
-/**
- * Server action for workspace creation
- * @param {Object} prevState - Previous form state
- * @param {FormData} formData - Form data
- * @returns {Promise<Object>} Action result
- */
 export async function assignPermissionsToRole(prevState, formData) {
-	const action = new RolePermissionAssignActions();
-	return await action.create(formData);
+	return await RolePermissionAssignActions.create(formData);
 }

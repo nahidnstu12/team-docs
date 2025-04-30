@@ -1,33 +1,31 @@
+import Logger from "@/lib/Logger";
 import { RolePermissionAssignDTO } from "../DTOs/RolePermissionAssignDTO";
 import { PermissionModel } from "../Models/PermissionModel";
 import { RolePermissionAssignModel } from "../Models/RolePermissionAssignModel";
 import { BaseService } from "./BaseService";
 
-/**
- * Handles workspace-specific business logic
- * @extends BaseService
- */
 export class RolePermissionAssignServices extends BaseService {
 	constructor() {
 		super("RolePermissionAssignment");
-		this.model = new RolePermissionAssignModel();
 	}
 
-	/**
-	 * Gets all workspaces with DTO transformation
-	 * @returns {Promise<Array>} Array of transformed workspaces
-	 */
-	async getAllPermissions(whereClause) {
-		const permissionModel = new PermissionModel();
-		const permissions = await permissionModel.findMany(whereClause);
-		return RolePermissionAssignDTO.toCollection(permissions);
+	static async getAllPermissions(whereClause) {
+		try {
+			const permissions = await PermissionModel.findMany(whereClause);
+			return RolePermissionAssignDTO.toCollection(permissions);
+		} catch (error) {
+			Logger.error(error.message, `Get all permissions failed`);
+		}
 	}
 
-	// Inside your service layer
-	async getSelectedPermissionsForRole({ roleId, ownerId }) {
-		return this.model.findMany({
-			where: { roleId, ownerId },
-			select: { permissionId: true },
-		});
+	static async getSelectedPermissionsForRole({ roleId, ownerId }) {
+		try {
+			return RolePermissionAssignModel.findMany({
+				where: { roleId, ownerId },
+				select: { permissionId: true },
+			});
+		} catch (error) {
+			Logger.error(error.message, `Get selected permissions for role failed`);
+		}
 	}
 }

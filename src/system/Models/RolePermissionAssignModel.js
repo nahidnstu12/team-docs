@@ -1,38 +1,51 @@
 import Logger from "@/lib/Logger";
 import { BaseModel } from "./BaseModel";
 
-/**
- * Handles workspace-specific database operations
- * @extends BaseModel
- */
 export class RolePermissionAssignModel extends BaseModel {
-	constructor() {
-		super("rolePermissionAssignment");
-	}
+	static modelName = "rolePermissionAssignment";
 
-	async findByRoleId(roleId) {
-		return await this.model.findMany({
-			where: { roleId },
-			select: { permissionId: true },
-		});
-	}
-
-	async upsert({ where, create, update }) {
+	static async findByRoleId(roleId) {
 		try {
-			return await this.model.upsert({ where, create, update });
+			return await super.findMany({
+				where: { roleId },
+				select: { permissionId: true },
+			});
+		} catch (error) {
+			Logger.error(error.message, `Find by roleid fail`);
+		}
+	}
+
+	static async upsert({ where, create, update }) {
+		try {
+			return await super.upsert({ where, create, update });
 		} catch (error) {
 			Logger.error(error.message, `Upsert failed`);
 			throw error;
 		}
 	}
 
-	async delete({ roleId, permissionId }) {
+	static async delete(roleId, permissionId) {
 		try {
-			return await this.model.delete({
+			// Step 1: Lookup the unique record first using composite key
+			const record = await super.findUnique({
 				where: {
-					roleId_permissionId: { roleId, permissionId },
+					roleId_permissionId: {
+						roleId,
+						permissionId,
+					},
 				},
+				select: { id: true }, // We just need the ID
 			});
+
+			// Step 2: If no record found, throw
+			if (!record) {
+				throw new Error(
+					`RolePermissionAssignment not found for roleId=${roleId}, permissionId=${permissionId}`
+				);
+			}
+
+			// Step 3: Now call the parent delete method with the actual ID
+			return await super.delete(record.id);
 		} catch (error) {
 			Logger.error(error.message, `Delete failed`);
 			throw error;

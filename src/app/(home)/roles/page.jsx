@@ -1,15 +1,18 @@
 import { RoleService } from "@/system/Services/RoleServices";
 import { Session } from "@/lib/Session";
 import RoleShell from "./RoleShell";
+import { ProjectService } from "@/system/Services/ProjectServices";
+import { redirect } from "next/navigation";
+import { UserModel } from "@/system/Models/UserModel";
 
 export default async function RolePage() {
 	const session = await Session.getCurrentUser();
-	const roleService = new RoleService();
-	const hasRoles = await roleService.hasRoles(session.id);
+	const user = await UserModel.findFirst({ where: { id: session.id } });
+	const hasProject = await ProjectService.hasProjects(user.workspaceId);
 
-	const roles = await roleService.getAllRoles({
-		OR: [{ isSystem: true }, { ownerId: session.id }],
-	});
+	if (!hasProject) redirect("/workspace");
 
-	return <RoleShell roles={roles} hasRoles={hasRoles} />;
+	const hasRoles = await RoleService.hasRoles(session.id);
+
+	return <RoleShell hasRoles={hasRoles} />;
 }

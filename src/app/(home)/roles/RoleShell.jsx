@@ -1,25 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import RoleCreateForm from "./RoleCreateForm";
-import RoleLisitngs from "./RoleListings";
-import NoRolesUI from "./NoRolesUI";
+import NoRolesUI from "./components/NoRolesUI";
+import dynamic from "next/dynamic";
+import DrawerLoading from "@/components/laoding/DawerLoading";
+import LazyPageLoading from "@/components/laoding/LazyPageLoading";
 
-export default function RoleShell({ hasRoles, roles }) {
-	const [isOpen, setIsOpen] = useState(false);
+const RoleCreateDrawerLazy = dynamic(
+	() => import("@/app/(home)/roles/components/RoleCreateDrawer"),
+	{
+		ssr: false,
+		loading: () => <DrawerLoading />,
+	}
+);
 
-	const handleOpen = () => setIsOpen(true);
+const RoleListingsLazy = dynamic(
+	() => import("@/app/(home)/roles/components/RoleListings"),
+	{
+		loading: () => <LazyPageLoading>Loading Roles...</LazyPageLoading>,
+	}
+);
+
+export default function RoleShell({ hasRoles }) {
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	const [shouldStartFetchRoles, setShouldStartFetchRoles] = useState(
+		hasRoles ? true : false
+	);
 
 	return (
 		<>
-			{/* Shared dialog at top */}
-			<RoleCreateForm isOpen={isOpen} onOpenChange={setIsOpen} />
+			{isDialogOpen && (
+				<RoleCreateDrawerLazy
+					isDialogOpen={isDialogOpen}
+					setIsDialogOpen={setIsDialogOpen}
+					setShouldStartFetchRoles={setShouldStartFetchRoles}
+				/>
+			)}
 
-			{/* Conditional content */}
 			{hasRoles ? (
-				<RoleLisitngs roles={roles} onCreateClick={handleOpen} />
+				<RoleListingsLazy
+					hasRoles={hasRoles}
+					setIsDialogOpen={setIsDialogOpen}
+					shouldStartFetchRoles={shouldStartFetchRoles}
+					setShouldStartFetchRoles={setShouldStartFetchRoles}
+				/>
 			) : (
-				<NoRolesUI onCreateClick={handleOpen} />
+				<NoRolesUI setIsDialogOpen={setIsDialogOpen} />
 			)}
 		</>
 	);

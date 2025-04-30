@@ -20140,10 +20140,11 @@ export namespace Prisma {
 
   export type RoleWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    name?: string
+    ownerId_name?: RoleOwnerIdNameCompoundUniqueInput
     AND?: RoleWhereInput | RoleWhereInput[]
     OR?: RoleWhereInput[]
     NOT?: RoleWhereInput | RoleWhereInput[]
+    name?: StringFilter<"Role"> | string
     description?: StringNullableFilter<"Role"> | string | null
     isSystem?: BoolFilter<"Role"> | boolean
     createdAt?: DateTimeFilter<"Role"> | Date | string
@@ -20152,7 +20153,7 @@ export namespace Prisma {
     permissions?: RolePermissionAssignmentListRelationFilter
     workspaceMembers?: WorkspaceMemberListRelationFilter
     projectMembers?: ProjectMemberListRelationFilter
-  }, "id" | "name">
+  }, "id" | "ownerId_name">
 
   export type RoleOrderByWithAggregationInput = {
     id?: SortOrder
@@ -20205,17 +20206,19 @@ export namespace Prisma {
 
   export type PermissionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    name?: string
+    ownerId_name?: PermissionOwnerIdNameCompoundUniqueInput
+    ownerId_scope?: PermissionOwnerIdScopeCompoundUniqueInput
     AND?: PermissionWhereInput | PermissionWhereInput[]
     OR?: PermissionWhereInput[]
     NOT?: PermissionWhereInput | PermissionWhereInput[]
+    name?: StringFilter<"Permission"> | string
     description?: StringNullableFilter<"Permission"> | string | null
     scope?: StringFilter<"Permission"> | string
     createdAt?: DateTimeFilter<"Permission"> | Date | string
     ownerId?: StringNullableFilter<"Permission"> | string | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     roles?: RolePermissionAssignmentListRelationFilter
-  }, "id" | "name">
+  }, "id" | "ownerId_name" | "ownerId_scope">
 
   export type PermissionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -20338,11 +20341,12 @@ export namespace Prisma {
 
   export type WorkspaceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    slug?: string
+    ownerId_slug?: WorkspaceOwnerIdSlugCompoundUniqueInput
     AND?: WorkspaceWhereInput | WorkspaceWhereInput[]
     OR?: WorkspaceWhereInput[]
     NOT?: WorkspaceWhereInput | WorkspaceWhereInput[]
     name?: StringFilter<"Workspace"> | string
+    slug?: StringFilter<"Workspace"> | string
     description?: StringNullableFilter<"Workspace"> | string | null
     logo?: StringNullableFilter<"Workspace"> | string | null
     createdAt?: DateTimeFilter<"Workspace"> | Date | string
@@ -20352,7 +20356,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: WorkspaceMemberListRelationFilter
     projects?: ProjectListRelationFilter
-  }, "id" | "slug">
+  }, "id" | "ownerId_slug">
 
   export type WorkspaceOrderByWithAggregationInput = {
     id?: SortOrder
@@ -20487,11 +20491,12 @@ export namespace Prisma {
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    slug?: string
+    slug_name_ownerId?: ProjectSlugNameOwnerIdCompoundUniqueInput
     AND?: ProjectWhereInput | ProjectWhereInput[]
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     name?: StringFilter<"Project"> | string
+    slug?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
     icon?: StringNullableFilter<"Project"> | string | null
     color?: StringNullableFilter<"Project"> | string | null
@@ -20504,7 +20509,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ProjectMemberListRelationFilter
     sections?: SectionListRelationFilter
-  }, "id" | "slug">
+  }, "id" | "slug_name_ownerId">
 
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
@@ -22524,6 +22529,11 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
+  export type RoleOwnerIdNameCompoundUniqueInput = {
+    ownerId: string
+    name: string
+  }
+
   export type RoleCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -22549,6 +22559,16 @@ export namespace Prisma {
     isSystem?: SortOrder
     createdAt?: SortOrder
     ownerId?: SortOrder
+  }
+
+  export type PermissionOwnerIdNameCompoundUniqueInput = {
+    ownerId: string
+    name: string
+  }
+
+  export type PermissionOwnerIdScopeCompoundUniqueInput = {
+    ownerId: string
+    scope: string
   }
 
   export type PermissionCountOrderByAggregateInput = {
@@ -22645,6 +22665,11 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type WorkspaceOwnerIdSlugCompoundUniqueInput = {
+    ownerId: string
+    slug: string
+  }
+
   export type WorkspaceCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -22737,6 +22762,12 @@ export namespace Prisma {
     userId?: SortOrder
     roleId?: SortOrder
     joinedAt?: SortOrder
+  }
+
+  export type ProjectSlugNameOwnerIdCompoundUniqueInput = {
+    slug: string
+    name: string
+    ownerId: string
   }
 
   export type ProjectCountOrderByAggregateInput = {

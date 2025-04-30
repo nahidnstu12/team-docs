@@ -7,39 +7,19 @@ import { Session } from "@/lib/Session";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 import { PermissionModel } from "../Models/PermissionModel";
 
-/**
- * Handles workspace-specific actions
- * @extends BaseAction
- */
 class PermissionActions extends BaseAction {
-	/**
-	 * Creates a WorkspaceAction instance
-	 * Initializes service and model dependencies
-	 */
-	constructor() {
-		super(PermissionSchema);
-		this.permissionModel = new PermissionModel();
+	static get schema() {
+		return PermissionSchema;
 	}
 
-	/**
-	 * Creates a new workspace
-	 * @param {FormData|Object} formData - Workspace data
-	 * @returns {Promise<{
-	 *   success: boolean,
-	 *   type?: string,
-	 *   redirectTo?: string,
-	 *   errors?: Object,
-	 *   data?: Object
-	 * }>} Creation result
-	 */
-	async create(formData) {
+	static async create(formData) {
 		const result = await this.execute(formData);
 
 		if (!result.success) return result;
 
 		try {
 			const session = await Session.getCurrentUser();
-			await this.permissionModel.create({
+			await PermissionModel.create({
 				...result.data,
 				ownerId: session.id,
 			});
@@ -52,13 +32,12 @@ class PermissionActions extends BaseAction {
 			};
 		} catch (error) {
 			Logger.error(error.message, `Permission Create fail`);
-			if (error.code) {
+			if (error.code)
 				return PrismaErrorFormatter.handle(error, result.data, [
 					"name",
 					"description",
 					"scope",
 				]);
-			}
 
 			return {
 				success: false,
@@ -70,13 +49,6 @@ class PermissionActions extends BaseAction {
 	}
 }
 
-/**
- * Server action for workspace creation
- * @param {Object} prevState - Previous form state
- * @param {FormData} formData - Form data
- * @returns {Promise<Object>} Action result
- */
 export async function createPermissions(prevState, formData) {
-	const action = new PermissionActions();
-	return await action.create(formData);
+	return await PermissionActions.create(formData);
 }
