@@ -11870,7 +11870,7 @@ export namespace Prisma {
     name: string | null
     description: string | null
     projectId: string | null
-    creatorId: string | null
+    ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     sortOrder: number | null
@@ -11881,7 +11881,7 @@ export namespace Prisma {
     name: string | null
     description: string | null
     projectId: string | null
-    creatorId: string | null
+    ownerId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     sortOrder: number | null
@@ -11892,7 +11892,7 @@ export namespace Prisma {
     name: number
     description: number
     projectId: number
-    creatorId: number
+    ownerId: number
     createdAt: number
     updatedAt: number
     sortOrder: number
@@ -11913,7 +11913,7 @@ export namespace Prisma {
     name?: true
     description?: true
     projectId?: true
-    creatorId?: true
+    ownerId?: true
     createdAt?: true
     updatedAt?: true
     sortOrder?: true
@@ -11924,7 +11924,7 @@ export namespace Prisma {
     name?: true
     description?: true
     projectId?: true
-    creatorId?: true
+    ownerId?: true
     createdAt?: true
     updatedAt?: true
     sortOrder?: true
@@ -11935,7 +11935,7 @@ export namespace Prisma {
     name?: true
     description?: true
     projectId?: true
-    creatorId?: true
+    ownerId?: true
     createdAt?: true
     updatedAt?: true
     sortOrder?: true
@@ -12033,7 +12033,7 @@ export namespace Prisma {
     name: string
     description: string | null
     projectId: string
-    creatorId: string
+    ownerId: string
     createdAt: Date
     updatedAt: Date
     sortOrder: number
@@ -12063,7 +12063,7 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     projectId?: boolean
-    creatorId?: boolean
+    ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sortOrder?: boolean
@@ -12078,7 +12078,7 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     projectId?: boolean
-    creatorId?: boolean
+    ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sortOrder?: boolean
@@ -12091,7 +12091,7 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     projectId?: boolean
-    creatorId?: boolean
+    ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sortOrder?: boolean
@@ -12104,13 +12104,13 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     projectId?: boolean
-    creatorId?: boolean
+    ownerId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sortOrder?: boolean
   }
 
-  export type SectionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "projectId" | "creatorId" | "createdAt" | "updatedAt" | "sortOrder", ExtArgs["result"]["section"]>
+  export type SectionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "projectId" | "ownerId" | "createdAt" | "updatedAt" | "sortOrder", ExtArgs["result"]["section"]>
   export type SectionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     creator?: boolean | UserDefaultArgs<ExtArgs>
@@ -12138,7 +12138,7 @@ export namespace Prisma {
       name: string
       description: string | null
       projectId: string
-      creatorId: string
+      ownerId: string
       createdAt: Date
       updatedAt: Date
       sortOrder: number
@@ -12572,7 +12572,7 @@ export namespace Prisma {
     readonly name: FieldRef<"Section", 'String'>
     readonly description: FieldRef<"Section", 'String'>
     readonly projectId: FieldRef<"Section", 'String'>
-    readonly creatorId: FieldRef<"Section", 'String'>
+    readonly ownerId: FieldRef<"Section", 'String'>
     readonly createdAt: FieldRef<"Section", 'DateTime'>
     readonly updatedAt: FieldRef<"Section", 'DateTime'>
     readonly sortOrder: FieldRef<"Section", 'Int'>
@@ -19777,7 +19777,7 @@ export namespace Prisma {
     name: 'name',
     description: 'description',
     projectId: 'projectId',
-    creatorId: 'creatorId',
+    ownerId: 'ownerId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     sortOrder: 'sortOrder'
@@ -20615,7 +20615,7 @@ export namespace Prisma {
     name?: StringFilter<"Section"> | string
     description?: StringNullableFilter<"Section"> | string | null
     projectId?: StringFilter<"Section"> | string
-    creatorId?: StringFilter<"Section"> | string
+    ownerId?: StringFilter<"Section"> | string
     createdAt?: DateTimeFilter<"Section"> | Date | string
     updatedAt?: DateTimeFilter<"Section"> | Date | string
     sortOrder?: IntFilter<"Section"> | number
@@ -20629,7 +20629,7 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrderInput | SortOrder
     projectId?: SortOrder
-    creatorId?: SortOrder
+    ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sortOrder?: SortOrder
@@ -20640,27 +20640,27 @@ export namespace Prisma {
 
   export type SectionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    name?: string
     AND?: SectionWhereInput | SectionWhereInput[]
     OR?: SectionWhereInput[]
     NOT?: SectionWhereInput | SectionWhereInput[]
-    name?: StringFilter<"Section"> | string
     description?: StringNullableFilter<"Section"> | string | null
     projectId?: StringFilter<"Section"> | string
-    creatorId?: StringFilter<"Section"> | string
+    ownerId?: StringFilter<"Section"> | string
     createdAt?: DateTimeFilter<"Section"> | Date | string
     updatedAt?: DateTimeFilter<"Section"> | Date | string
     sortOrder?: IntFilter<"Section"> | number
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     pages?: PageListRelationFilter
-  }, "id">
+  }, "id" | "name">
 
   export type SectionOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
     projectId?: SortOrder
-    creatorId?: SortOrder
+    ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sortOrder?: SortOrder
@@ -20679,7 +20679,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Section"> | string
     description?: StringNullableWithAggregatesFilter<"Section"> | string | null
     projectId?: StringWithAggregatesFilter<"Section"> | string
-    creatorId?: StringWithAggregatesFilter<"Section"> | string
+    ownerId?: StringWithAggregatesFilter<"Section"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Section"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Section"> | Date | string
     sortOrder?: IntWithAggregatesFilter<"Section"> | number
@@ -21755,7 +21755,7 @@ export namespace Prisma {
     name: string
     description?: string | null
     projectId: string
-    creatorId: string
+    ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     sortOrder?: number
@@ -21779,7 +21779,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
-    creatorId?: StringFieldUpdateOperationsInput | string
+    ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -21791,7 +21791,7 @@ export namespace Prisma {
     name: string
     description?: string | null
     projectId: string
-    creatorId: string
+    ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     sortOrder?: number
@@ -21811,7 +21811,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
-    creatorId?: StringFieldUpdateOperationsInput | string
+    ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -22862,7 +22862,7 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     projectId?: SortOrder
-    creatorId?: SortOrder
+    ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sortOrder?: SortOrder
@@ -22877,7 +22877,7 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     projectId?: SortOrder
-    creatorId?: SortOrder
+    ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sortOrder?: SortOrder
@@ -22888,7 +22888,7 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     projectId?: SortOrder
-    creatorId?: SortOrder
+    ownerId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sortOrder?: SortOrder
@@ -25332,7 +25332,7 @@ export namespace Prisma {
     name?: StringFilter<"Section"> | string
     description?: StringNullableFilter<"Section"> | string | null
     projectId?: StringFilter<"Section"> | string
-    creatorId?: StringFilter<"Section"> | string
+    ownerId?: StringFilter<"Section"> | string
     createdAt?: DateTimeFilter<"Section"> | Date | string
     updatedAt?: DateTimeFilter<"Section"> | Date | string
     sortOrder?: IntFilter<"Section"> | number
@@ -26685,7 +26685,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
-    creatorId: string
+    ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     sortOrder?: number
@@ -27330,7 +27330,7 @@ export namespace Prisma {
     name: string
     description?: string | null
     projectId: string
-    creatorId: string
+    ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     sortOrder?: number
@@ -27550,7 +27550,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: StringFieldUpdateOperationsInput | string
-    creatorId?: StringFieldUpdateOperationsInput | string
+    ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -28894,7 +28894,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
-    creatorId: string
+    ownerId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     sortOrder?: number
@@ -28936,7 +28936,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    creatorId?: StringFieldUpdateOperationsInput | string
+    ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sortOrder?: IntFieldUpdateOperationsInput | number
@@ -28947,7 +28947,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    creatorId?: StringFieldUpdateOperationsInput | string
+    ownerId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sortOrder?: IntFieldUpdateOperationsInput | number

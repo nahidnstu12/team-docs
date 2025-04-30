@@ -43,7 +43,8 @@
     "sonner": "^2.0.3",
     "tw-animate-css": "^1.2.8",
     "typescript": "^5.8.3",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",

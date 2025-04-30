@@ -202,7 +202,7 @@ exports.Prisma.SectionScalarFieldEnum = {
   name: 'name',
   description: 'description',
   projectId: 'projectId',
-  creatorId: 'creatorId',
+  ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   sortOrder: 'sortOrder'

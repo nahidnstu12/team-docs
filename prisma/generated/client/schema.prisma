@@ -195,21 +195,21 @@ model ProjectMember {
 
 model Section {
   id          String   @id @default(cuid())
-  name        String
+  name        String   @unique
   description String?
   projectId   String
-  creatorId   String
+  ownerId     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   sortOrder   Int      @default(0) // For ordering sections within project
 
   // Relationships
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  creator User    @relation("sectionCreator", fields: [creatorId], references: [id])
+  creator User    @relation("sectionCreator", fields: [ownerId], references: [id])
   pages   Page[]
 
   @@index([projectId])
-  @@index([creatorId])
+  @@index([ownerId])
 }
 
 model Page {

@@ -52,7 +52,7 @@ export default function MainSidebar() {
 	// Helper to determine if a link is active
 	const isActive = (href) => pathname === href;
 	return (
-		<Sidebar variant="floating" collapsible="icon">
+		<Sidebar variant="floating" collapsible="offcanvas">
 			<SidebarContent className="px-4 py-12">
 				{/* Home Link */}
 				<SidebarMenu>

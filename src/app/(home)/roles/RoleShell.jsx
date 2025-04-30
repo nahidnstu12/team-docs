@@ -6,8 +6,8 @@ import dynamic from "next/dynamic";
 import DrawerLoading from "@/components/laoding/DawerLoading";
 import LazyPageLoading from "@/components/laoding/LazyPageLoading";
 
-const RoleCreateDrawerLazy = dynamic(
-	() => import("@/app/(home)/roles/components/RoleCreateDrawer"),
+const RoleCreateDialogLazy = dynamic(
+	() => import("@/app/(home)/roles/components/RoleCreateDialog"),
 	{
 		ssr: false,
 		loading: () => <DrawerLoading />,
@@ -30,7 +30,7 @@ export default function RoleShell({ hasRoles }) {
 	return (
 		<>
 			{isDialogOpen && (
-				<RoleCreateDrawerLazy
+				<RoleCreateDialogLazy
 					isDialogOpen={isDialogOpen}
 					setIsDialogOpen={setIsDialogOpen}
 					setShouldStartFetchRoles={setShouldStartFetchRoles}
