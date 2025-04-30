@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createRole } from "@/system/Actions/RoleActions";
 import { RoleSchema } from "@/lib/schemas/RoleSchema";
-import { useServerFormAction } from "@/hook/useServerFormAction";
+import { useServerFormAction } from "@/hooks/useServerFormAction";
 import { useCallback, useMemo } from "react";
 
 export default function RoleCreateDrawer({

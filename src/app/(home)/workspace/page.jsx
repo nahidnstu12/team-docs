@@ -1,7 +1,6 @@
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 import WorkspaceShell from "./WorkspaceShell";
-import { redirect } from "next/navigation";
 
 export default async function WorkspacePage() {
 	await Session.requireAuth();
@@ -9,9 +8,5 @@ export default async function WorkspacePage() {
 
 	const hasWorkspace = await WorkspaceService.hasWorkspace(user.id);
 
-	if (!hasWorkspace) {
-		return <WorkspaceShell />;
-	}
-
-	return redirect("/home");
+	return <WorkspaceShell hasWorkspace={hasWorkspace} />;
 }

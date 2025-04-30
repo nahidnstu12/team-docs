@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
+import { Edit, LayoutTemplate, Trash, UsersRound } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import {
 	Table,
@@ -14,6 +14,8 @@ import {
 import TableLoading from "@/components/laoding/TableLoading";
 import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProjectListings({
 	hasProjects,
@@ -21,6 +23,7 @@ export default function ProjectListings({
 	startFetchProjects,
 	setStartFetchProjects,
 }) {
+	const router = useRouter();
 	const {
 		data: projects,
 		fetchError,
@@ -95,9 +98,29 @@ export default function ProjectListings({
 											variant="outline"
 											size="sm"
 											className="flex items-center gap-1 cursor-pointer"
+											onClick={() => {
+												router.push(`/projects/${project.slug}/editor`);
+												router.refresh();
+											}}
+										>
+											<LayoutTemplate className="w-4 h-4" /> View
+										</Button>
+										<Button
+											size="sm"
+											variant="outline"
+											className="flex items-center gap-1 bg-yellow-100 cursor-pointer"
 										>
 											<Edit className="w-4 h-4" /> Edit
 										</Button>
+										<Link href={`/projects/${project.slug}/assign-dev`}>
+											<Button
+												variant="outline"
+												size="sm"
+												className="flex items-center gap-1 bg-green-100 cursor-pointer"
+											>
+												<UsersRound className="w-4 h-4" /> Assign Dev
+											</Button>
+										</Link>
 										<Button
 											variant="destructive"
 											size="sm"

@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { assignPermissionsToRole } from "@/system/Actions/RolePermissionAssignActions";
 import { Loader2 } from "lucide-react";
-import { useServerFormAction } from "@/hook/useServerFormAction";
+import { useServerFormAction } from "@/hooks/useServerFormAction";
 import { RolePermissionAssignSchema } from "@/lib/schemas/RolePermissionAssignSchema";
 import { useRolePermissions } from "./hooks/useRolePermissions";
 

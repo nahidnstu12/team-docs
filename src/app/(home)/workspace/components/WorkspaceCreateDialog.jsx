@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useServerFormAction } from "@/hook/useServerFormAction";
+import { useServerFormAction } from "@/hooks/useServerFormAction";
 
 export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 	const router = useRouter();

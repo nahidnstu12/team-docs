@@ -7,6 +7,10 @@ export async function middleware(request) {
 	const token = await getToken({ req: request, secret });
 	const { pathname } = request.nextUrl;
 
+	// Create new request headers with `x-pathname`
+	const requestHeaders = new Headers(request.headers);
+	requestHeaders.set("x-pathname", pathname);
+
 	// ✅ Skip public files (static, images, etc.)
 	if (
 		pathname.startsWith("/_next") ||
@@ -33,7 +37,11 @@ export async function middleware(request) {
 	}
 
 	// ✅ Allow to continue
-	return NextResponse.next();
+	return NextResponse.next({
+		request: {
+			headers: requestHeaders,
+		},
+	});
 }
 
 export const config = {
