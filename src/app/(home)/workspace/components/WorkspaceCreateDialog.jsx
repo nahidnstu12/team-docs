@@ -42,22 +42,29 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 	);
 
 	// Use the custom server form action hook
-	const { register, reset, watch, setValue, formAction, isPending, errors } =
-		useServerFormAction({
-			schema: WorkspaceSchema,
-			actionFn: createWorkspace,
-			defaultValues,
-			successToast,
-			onSuccess: (redirectTo) => {
-				// Handle form submission success
-				setIsDrawerOpen(false);
-				reset(); // Reset form fields
-				router.push(redirectTo); // Redirect after success
-			},
-			onError: () => {
-				// Handle error if needed (formState will display server errors automatically)
-			},
-		});
+	const {
+		register,
+		reset,
+		watch,
+		setValue,
+		formAction,
+		isPending,
+		errors,
+		isSubmitDisabled,
+	} = useServerFormAction({
+		schema: WorkspaceSchema,
+		actionFn: createWorkspace,
+		defaultValues,
+		successToast,
+		onSuccess: (redirectTo) => {
+			setIsDrawerOpen(false);
+			reset(); // Reset form fields
+			router.push(redirectTo); // Redirect after success
+		},
+		onError: () => {
+			// Handle error if needed (formState will display server errors automatically)
+		},
+	});
 
 	const nameValue = watch("name");
 	const slugValue = watch("slug");
@@ -82,22 +89,6 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 	useEffect(() => {
 		if (isDrawerOpen) reset();
 	}, [isDrawerOpen, reset]);
-
-	// 🩹 When dialog opens and form had errors: repopulate values and restore error messages
-	// useEffect(() => {
-	// 	if (!isDrawerOpen || formState?.type === "success") return;
-
-	// 	// Step 1: Reset values to last attempted input
-	// 	reset(formState.data || {}, { keepErrors: true });
-
-	// 	// Step 2: Re-apply server errors
-	// 	Object.entries(formState.errors).forEach(([field, message]) => {
-	// 		setError(field, {
-	// 			type: "server",
-	// 			message: Array.isArray(message) ? message[0] : message,
-	// 		});
-	// 	});
-	// }, [isDrawerOpen, formState, reset, setError]);
 
 	return (
 		<Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
@@ -175,7 +166,7 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 					)}
 
 					<DialogFooter className="pt-4">
-						<Button type="submit" disabled={!slugValue || isPending}>
+						<Button type="submit" disabled={!slugValue || isSubmitDisabled}>
 							{isPending ? "Creating..." : "Create Workspace"}
 						</Button>
 					</DialogFooter>

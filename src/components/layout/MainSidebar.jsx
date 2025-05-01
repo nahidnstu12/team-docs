@@ -31,191 +31,158 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "../ui/collapsible";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useActionState } from "react";
 import { signout } from "@/lib/auth/signout";
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 export default function MainSidebar() {
-	const [_, formAction, isPending] = useActionState(signout, {});
-	const { data: session } = useSession();
 	const pathname = usePathname();
+	const { data: session } = useSession();
+	const [_, formAction, isPending] = useActionState(signout, {});
 
-	console.log(session);
-
-	// Helper to determine if a link is active
+	// Helpers
 	const isActive = (href) => pathname === href;
+	const isParentActive = (paths = []) =>
+		paths.some((path) => pathname.startsWith(path));
+
+	const [openSection, setOpenSection] = useState(() => {
+		return isParentActive(["/projects"])
+			? "projects"
+			: isParentActive(["/users", "/roles", "/permissions"])
+			? "users"
+			: isParentActive(["/settings"])
+			? "settings"
+			: "";
+	});
+
+	const toggleSection = (section) => {
+		setOpenSection((prev) => (prev === section ? "" : section));
+	};
+
 	return (
-		<Sidebar variant="floating" collapsible="icon">
+		<Sidebar variant="floating" collapsible="offcanvas">
 			<SidebarContent className="px-4 py-12">
-				{/* Home Link */}
+				{/* Home */}
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
-							className={isActive("/home") ? "bg-muted font-semibold" : ""}
 							asChild
+							className={isActive("/home") ? "bg-muted font-semibold" : ""}
 						>
 							<Link href="/home">
-								<Home height={35} width={35} className="mr-4" />
+								<Home className="w-5 h-5 mr-3" />
 								<span>Home</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
 
+				{/* Workspace */}
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
-							className={isActive("/workspace") ? "bg-muted font-semibold" : ""}
 							asChild
+							className={isActive("/workspace") ? "bg-muted font-semibold" : ""}
 						>
 							<Link href="/workspace">
-								<Building2 height={35} width={35} className="mr-4" />
-								<span>workspace create</span>
+								<Building2 className="w-5 h-5 mr-3" />
+								<span>Workspace</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
 
 				{/* Project Manage */}
-				<SidebarMenu>
-					<Collapsible className="group/collapsible">
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
-									<span className="flex items-center gap-2">
-										<FolderKanban height={20} width={20} className="mr-2" />
-										Project Manage
-									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											className={
-												isActive("/projects") ? "bg-muted font-semibold" : ""
-											}
-											asChild
-										>
-											<Link href="/projects">
-												<FolderOpenDot />
-												<span className="">Projects</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				</SidebarMenu>
+				<SidebarCollapseSection
+					title="Project Manage"
+					icon={FolderKanban}
+					isOpen={openSection === "projects"}
+					onToggle={() => toggleSection("projects")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/projects") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/projects">
+								<FolderOpenDot className="w-4 h-4" />
+								<span>Projects</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
 
 				{/* User Manage */}
-				<SidebarMenu>
-					<Collapsible defaultOpen className="group/collapsible">
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
-									<span className="flex items-center gap-2">
-										<Users height={20} width={20} className="mr-2" />
-										User Manage
-									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											className={
-												isActive("/permissions") ? "bg-muted font-semibold" : ""
-											}
-											asChild
-										>
-											<Link href="/permissions">
-												<Shield />
-												<span className="">Permissions</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											className={
-												isActive("/roles") ? "bg-muted font-semibold" : ""
-											}
-											asChild
-										>
-											<Link href="/roles">
-												<SquarePen />
-												<span className="">Roles</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											className={
-												isActive("/users") ? "bg-muted font-semibold" : ""
-											}
-											asChild
-										>
-											<Link href="/users">
-												<Users />
-												Users
-												<span className=""></span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				</SidebarMenu>
+				<SidebarCollapseSection
+					title="User Manage"
+					icon={Users}
+					isOpen={openSection === "users"}
+					onToggle={() => toggleSection("users")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={
+								isActive("/permissions") ? "bg-muted font-semibold" : ""
+							}
+						>
+							<Link href="/permissions">
+								<Shield className="w-4 h-4" />
+								<span>Permissions</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/roles") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/roles">
+								<SquarePen className="w-4 h-4" />
+								<span>Roles</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/users") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/users">
+								<Users className="w-4 h-4" />
+								<span>Users</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
 
 				{/* Settings */}
-				<SidebarMenu>
-					<Collapsible className="group/collapsible">
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
-									<span className="flex items-center gap-2">
-										<Settings height={20} width={20} className="mr-2" />
-										Settings
-									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											className={
-												isActive("/settings/profile")
-													? "bg-muted font-semibold"
-													: ""
-											}
-											asChild
-										>
-											<Link href="/settings/profile">
-												<UserPen />
-												<span className="">Profile</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				</SidebarMenu>
+				<SidebarCollapseSection
+					title="Settings"
+					icon={Settings}
+					isOpen={openSection === "settings"}
+					onToggle={() => toggleSection("settings")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={
+								isActive("/settings/profile") ? "bg-muted font-semibold" : ""
+							}
+						>
+							<Link href="/settings/profile">
+								<UserPen className="w-4 h-4" />
+								<span>Profile</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
 			</SidebarContent>
 
 			{/* Footer */}
@@ -225,17 +192,15 @@ export default function MainSidebar() {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild className="p-0">
 								<SidebarMenuButton className="flex items-center gap-2">
-									{/* Avatar */}
 									<div className="flex items-center justify-center w-8 h-8 overflow-hidden rounded-full bg-muted">
 										<User2 className="w-4 h-4 text-muted-foreground" />
 									</div>
-									{/* User Info */}
 									<div className="flex flex-col items-start text-left">
 										<span className="text-sm font-semibold">
-											{session?.user.username}
+											{session?.user?.username}
 										</span>
 										<span className="text-xs text-muted-foreground">
-											{session?.user.email}
+											{session?.user?.email}
 										</span>
 									</div>
 									<ChevronUp className="ml-auto" />
@@ -261,5 +226,55 @@ export default function MainSidebar() {
 				</SidebarMenu>
 			</SidebarFooter>
 		</Sidebar>
+	);
+}
+
+function SidebarCollapseSection({
+	title,
+	icon: Icon,
+	isOpen,
+	onToggle,
+	children,
+}) {
+	return (
+		<SidebarMenu>
+			<SidebarMenuItem className="mb-2">
+				<SidebarMenuButton
+					onClick={onToggle}
+					className={cn(
+						"justify-between transition-colors",
+						isOpen && "bg-muted font-semibold"
+					)}
+				>
+					<span className="flex items-center gap-2">
+						<Icon className="w-5 h-5" />
+						{title}
+					</span>
+					<ChevronDown
+						className={cn(
+							"w-4 h-4 transition-transform",
+							isOpen ? "rotate-0" : "-rotate-90"
+						)}
+					/>
+				</SidebarMenuButton>
+
+				{/* Animated content */}
+				<AnimatePresence initial={false}>
+					{isOpen && (
+						<motion.div
+							initial={{ height: 0, opacity: 0 }}
+							animate={{ height: "auto", opacity: 1 }}
+							exit={{ height: 0, opacity: 0 }}
+							transition={{ duration: 0.3, ease: "easeInOut" }}
+							className="overflow-hidden"
+						>
+							<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
+								{children}
+							</SidebarMenuSub>
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</SidebarMenuItem>
+		</SidebarMenu>
 	);
 }

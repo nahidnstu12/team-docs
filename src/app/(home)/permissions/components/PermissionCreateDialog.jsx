@@ -51,13 +51,15 @@ export default function PermissionCreateDialog({
 		[router, setIsDialogOpen, setStartFetchPermissions]
 	);
 
-	const { register, errors, formAction, isPending } = useServerFormAction({
-		schema: PermissionSchema,
-		actionFn: createPermissions,
-		defaultValues,
-		successToast,
-		onSuccess: handleSuccess,
-	});
+	const { register, errors, formAction, isPending, isSubmitDisabled } =
+		useServerFormAction({
+			schema: PermissionSchema,
+			actionFn: createPermissions,
+			defaultValues,
+			successToast,
+			onSuccess: handleSuccess,
+			isDialogOpen,
+		});
 
 	return (
 		<>
@@ -132,7 +134,7 @@ export default function PermissionCreateDialog({
 						)}
 
 						<DialogFooter className="pt-4">
-							<Button type="submit" disabled={isPending}>
+							<Button type="submit" disabled={isSubmitDisabled}>
 								{isPending ? "Creating..." : "Create Permission"}
 							</Button>
 						</DialogFooter>

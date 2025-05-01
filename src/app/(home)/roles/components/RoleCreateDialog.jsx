@@ -52,13 +52,15 @@ export default function RoleCreateDrawer({
 		[router, setIsDialogOpen, setShouldStartFetchRoles]
 	);
 
-	const { register, errors, formAction, isPending } = useServerFormAction({
-		schema: RoleSchema,
-		actionFn: createRole,
-		defaultValues,
-		successToast,
-		onSuccess: handleSuccess,
-	});
+	const { register, errors, formAction, isPending, isSubmitDisabled } =
+		useServerFormAction({
+			schema: RoleSchema,
+			actionFn: createRole,
+			defaultValues,
+			successToast,
+			onSuccess: handleSuccess,
+			isDialogOpen,
+		});
 
 	return (
 		<>
@@ -118,7 +120,7 @@ export default function RoleCreateDrawer({
 						)}
 
 						<DialogFooter className="pt-4">
-							<Button type="submit" disabled={isPending}>
+							<Button type="submit" disabled={isSubmitDisabled}>
 								{isPending ? "Creating..." : "Create Role"}
 							</Button>
 						</DialogFooter>

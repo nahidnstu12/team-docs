@@ -36,8 +36,6 @@ export default function SignUpForm() {
 		},
 	});
 
-	console.log(formState);
-
 	useEffect(() => {
 		if (!formState) return;
 

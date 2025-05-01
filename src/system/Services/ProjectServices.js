@@ -1,6 +1,7 @@
 import Logger from "@/lib/Logger";
 import { ProjectModel } from "../Models/ProjectModel";
 import { BaseService } from "./BaseService";
+import { ProjectDTO } from "../DTOs/ProjectDTO";
 
 export class ProjectService extends BaseService {
 	constructor() {
@@ -18,6 +19,21 @@ export class ProjectService extends BaseService {
 			return !!projects;
 		} catch (error) {
 			Logger.error(error.message, `has projects fail`);
+		}
+	}
+
+	static async getProject({ id, slug }) {
+		if (!id && !slug) return false;
+
+		try {
+			const project = await ProjectModel.findFirst({
+				OR: [id ? { id } : undefined, slug ? { slug } : undefined],
+			});
+
+			const projectDTO = ProjectDTO.toResponse(project);
+			return projectDTO;
+		} catch (error) {
+			Logger.error(error.message, `project fetch fail`);
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useRef } from "react";
+import { useActionState, useMemo, useRef } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -11,6 +11,7 @@ export function useServerFormAction({
 	onSuccess,
 	onError,
 	onSettled,
+	isDialogOpen = null,
 	successToast = {
 		title: "Action successful",
 		description: "Your request was completed successfully.",
@@ -20,7 +21,6 @@ export function useServerFormAction({
 		description: "There was an error processing your request.",
 	},
 }) {
-	const hasHandled = useRef(false);
 	const [formState, formAction, isPending] = useActionState(actionFn, {
 		errors: null,
 		data: null,
@@ -33,17 +33,43 @@ export function useServerFormAction({
 		reset,
 		watch,
 		setValue,
-		formState: { errors },
+		formState: { errors, isValid, isSubmitting },
 	} = useForm({
 		resolver: zodResolver(schema),
 		defaultValues,
+		mode: "onChange",
+		reValidateMode: "onChange",
 	});
 
+	// Track the last processed form state
+	const lastProcessedState = useRef(null);
+
+	// Track all form values to check if empty
+	const formValues = watch();
+	const isFormEmpty = useMemo(() => {
+		return Object.values(formValues).every(
+			(value) => value === "" || value === null || value === undefined
+		);
+	}, [formValues]);
+
+	// Disable when form is empty OR when submitting
+	const isSubmitDisabled = !isValid || isFormEmpty || isPending || isSubmitting;
+
+	// Handle dialog open/close reset logic inside the hook
 	useEffect(() => {
-		if (!formState || hasHandled.current) return;
+		if (isDialogOpen !== null && isDialogOpen) {
+			reset(defaultValues);
+		}
+	}, [isDialogOpen, reset, defaultValues]);
+
+	useEffect(() => {
+		if (!formState || formState === lastProcessedState.current) return;
+
+		// Mark this state as processed
+		lastProcessedState.current = formState;
 
 		if (formState.success === false) {
-			hasHandled.current = true;
+			// Reset form with submitted values but keep errors
 			reset(formState.data, { keepErrors: true });
 			Object.entries(formState.errors || {}).forEach(([field, message]) => {
 				setError(field, {
@@ -51,9 +77,11 @@ export function useServerFormAction({
 					message: Array.isArray(message) ? message[0] : message,
 				});
 			});
+			// Show form-level error toast only if _form exists
 			if (formState.errors?._form) {
 				toast.error(formState.errors._form[0]);
-			} else {
+			} else if (Object.keys(formState.errors || {}).length > 0) {
+				// Only show generic error toast if there are errors but no _form error
 				toast.error(errorToast.title, {
 					description: errorToast.description,
 				});
@@ -62,7 +90,6 @@ export function useServerFormAction({
 		}
 
 		if (formState.type === "success") {
-			hasHandled.current = true;
 			reset(defaultValues); // optional depending on your need
 			if (successToast) {
 				toast.success(successToast.title, {
@@ -95,5 +122,6 @@ export function useServerFormAction({
 		watch,
 		setValue,
 		formState,
+		isSubmitDisabled,
 	};
 }
