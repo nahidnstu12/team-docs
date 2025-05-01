@@ -47,8 +47,6 @@ export default function MainSidebar() {
 	const { data: session } = useSession();
 	const pathname = usePathname();
 
-	console.log(session);
-
 	// Helper to determine if a link is active
 	const isActive = (href) => pathname === href;
 	return (

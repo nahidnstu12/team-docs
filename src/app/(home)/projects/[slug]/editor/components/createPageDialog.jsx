@@ -49,7 +49,9 @@ export default function CreatePageDialog({
 		defaultValues,
 		successToast,
 		onSuccess: handleSuccess,
+		isDialogOpen,
 	});
+
 	return (
 		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 			<DialogTrigger asChild>

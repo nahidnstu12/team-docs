@@ -49,7 +49,6 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 			defaultValues,
 			successToast,
 			onSuccess: (redirectTo) => {
-				// Handle form submission success
 				setIsDrawerOpen(false);
 				reset(); // Reset form fields
 				router.push(redirectTo); // Redirect after success
@@ -82,22 +81,6 @@ export default function WorkspaceForm({ isDrawerOpen, setIsDrawerOpen }) {
 	useEffect(() => {
 		if (isDrawerOpen) reset();
 	}, [isDrawerOpen, reset]);
-
-	// 🩹 When dialog opens and form had errors: repopulate values and restore error messages
-	// useEffect(() => {
-	// 	if (!isDrawerOpen || formState?.type === "success") return;
-
-	// 	// Step 1: Reset values to last attempted input
-	// 	reset(formState.data || {}, { keepErrors: true });
-
-	// 	// Step 2: Re-apply server errors
-	// 	Object.entries(formState.errors).forEach(([field, message]) => {
-	// 		setError(field, {
-	// 			type: "server",
-	// 			message: Array.isArray(message) ? message[0] : message,
-	// 		});
-	// 	});
-	// }, [isDrawerOpen, formState, reset, setError]);
 
 	return (
 		<Dialog open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>

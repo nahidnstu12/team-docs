@@ -57,6 +57,7 @@ export default function PermissionCreateDialog({
 		defaultValues,
 		successToast,
 		onSuccess: handleSuccess,
+		isDialogOpen,
 	});
 
 	return (
