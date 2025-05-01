@@ -2,11 +2,30 @@
 
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
 import { useEffect, useState } from "react";
-import CreateSectionDialog from "./components/CreateSectionDialog";
 import NoSectionUI from "./components/NoSectionUI";
 import { useProjectStore } from "../../store/useProjectStore";
-import CreatePageDialog from "./components/createPageDialog";
 import { usePageDialogStore } from "../../store/usePageDialogStore";
+import dynamic from "next/dynamic";
+import DialogLoading from "@/components/laoding/DialogLoading";
+
+const CreateSectionDialogLazy = dynamic(
+	() =>
+		import(
+			"@/app/(home)/projects/[slug]/editor/components/CreateSectionDialog"
+		),
+	{
+		ssr: false,
+		loading: () => <DialogLoading />,
+	}
+);
+const CreatePageDialogLazy = dynamic(
+	() =>
+		import("@/app/(home)/projects/[slug]/editor/components/createPageDialog"),
+	{
+		ssr: false,
+		loading: () => <DialogLoading />,
+	}
+);
 
 export default function ProjectEditorShell({ hasSection, project, sections }) {
 	const [isSectionDialogOpen, setIsSectionDialogOpen] = useState(false);
@@ -34,7 +53,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 
 			{/* section dialog */}
 			{isSectionDialogOpen && (
-				<CreateSectionDialog
+				<CreateSectionDialogLazy
 					project={project}
 					isDialogOpen={isSectionDialogOpen}
 					setIsDialogOpen={setIsSectionDialogOpen}
@@ -43,7 +62,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 
 			{/* page dialog */}
 			{isPageDialogOpen && (
-				<CreatePageDialog
+				<CreatePageDialogLazy
 					sectionId={selectedSectionId}
 					isDialogOpen={isPageDialogOpen}
 					setIsDialogOpen={closePageDialog}

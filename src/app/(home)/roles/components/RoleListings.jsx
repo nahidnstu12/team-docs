@@ -14,7 +14,7 @@ import dynamic from "next/dynamic";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { useRoles } from "../hooks/useRoles";
 import TableLoading from "@/components/laoding/TableLoading";
-import DrawerLoading from "@/components/laoding/DawerLoading";
+import DrawerLoading from "@/components/laoding/DialogLoading";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 
 const LoadRolePermissionDialogLazy = dynamic(

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import NoRolesUI from "./components/NoRolesUI";
 import dynamic from "next/dynamic";
-import DrawerLoading from "@/components/laoding/DawerLoading";
+import DrawerLoading from "@/components/laoding/DialogLoading";
 import LazyPageLoading from "@/components/laoding/LazyPageLoading";
 
 const RoleCreateDialogLazy = dynamic(
