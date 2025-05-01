@@ -33,11 +33,12 @@ export function useServerFormAction({
 		reset,
 		watch,
 		setValue,
-		formState: { errors, isDirty },
+		formState: { errors, isValid, isDirty, isSubmitting },
 	} = useForm({
 		resolver: zodResolver(schema),
 		defaultValues,
 		mode: "onChange",
+		reValidateMode: "onChange",
 	});
 
 	// Track the last processed form state
@@ -52,7 +53,7 @@ export function useServerFormAction({
 	}, [formValues]);
 
 	// Disable when form is empty OR when submitting
-	const isSubmitDisabled = isFormEmpty || isPending;
+	const isSubmitDisabled = !isValid || isFormEmpty || isPending || isSubmitting;
 
 	// Handle dialog open/close reset logic inside the hook
 	useEffect(() => {
