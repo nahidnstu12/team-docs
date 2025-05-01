@@ -43,13 +43,14 @@ export default function CreateSectionDialog({
 		setIsDialogOpen(false);
 	}, [setIsDialogOpen]);
 
-	const { register, errors, formAction, isPending } = useServerFormAction({
-		schema: SectionSchema,
-		actionFn: createSection,
-		defaultValues,
-		successToast,
-		onSuccess: handleSuccess,
-	});
+	const { register, errors, formAction, isPending, isSubmitDisabled } =
+		useServerFormAction({
+			schema: SectionSchema,
+			actionFn: createSection,
+			defaultValues,
+			successToast,
+			onSuccess: handleSuccess,
+		});
 	return (
 		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 			<DialogTrigger asChild>
@@ -106,7 +107,7 @@ export default function CreateSectionDialog({
 					)}
 
 					<DialogFooter className="pt-4">
-						<Button type="submit" disabled={isPending}>
+						<Button type="submit" disabled={isSubmitDisabled}>
 							{isPending ? "Creating..." : "Create Section"}
 						</Button>
 					</DialogFooter>

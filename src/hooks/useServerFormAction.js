@@ -33,7 +33,7 @@ export function useServerFormAction({
 		reset,
 		watch,
 		setValue,
-		formState: { errors, isValid, isDirty, isSubmitting },
+		formState: { errors, isValid, isSubmitting },
 	} = useForm({
 		resolver: zodResolver(schema),
 		defaultValues,

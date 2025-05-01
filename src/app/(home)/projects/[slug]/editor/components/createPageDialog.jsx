@@ -43,14 +43,15 @@ export default function CreatePageDialog({
 		setIsDialogOpen(false);
 	}, [setIsDialogOpen]);
 
-	const { register, errors, formAction, isPending } = useServerFormAction({
-		schema: PageSchema,
-		actionFn: createPage,
-		defaultValues,
-		successToast,
-		onSuccess: handleSuccess,
-		isDialogOpen,
-	});
+	const { register, errors, formAction, isPending, isSubmitDisabled } =
+		useServerFormAction({
+			schema: PageSchema,
+			actionFn: createPage,
+			defaultValues,
+			successToast,
+			onSuccess: handleSuccess,
+			isDialogOpen,
+		});
 
 	return (
 		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -110,7 +111,7 @@ export default function CreatePageDialog({
 					)}
 
 					<DialogFooter className="pt-4">
-						<Button type="submit" disabled={isPending}>
+						<Button type="submit" disabled={isSubmitDisabled}>
 							{isPending ? "Creating..." : "Create Page"}
 						</Button>
 					</DialogFooter>

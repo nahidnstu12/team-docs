@@ -41,41 +41,46 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useActionState } from "react";
 import { signout } from "@/lib/auth/signout";
+import { cn } from "@/lib/utils";
 
 export default function MainSidebar() {
-	const [_, formAction, isPending] = useActionState(signout, {});
-	const { data: session } = useSession();
 	const pathname = usePathname();
+	const { data: session } = useSession();
+	const [_, formAction, isPending] = useActionState(signout, {});
 
-	// Helper to determine if a link is active
+	// Helpers
 	const isActive = (href) => pathname === href;
+	const isParentActive = (paths = []) =>
+		paths.some((path) => pathname.startsWith(path));
+
 	return (
 		<Sidebar variant="floating" collapsible="offcanvas">
 			<SidebarContent className="px-4 py-12">
-				{/* Home Link */}
+				{/* Home */}
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
-							className={isActive("/home") ? "bg-muted font-semibold" : ""}
 							asChild
+							className={isActive("/home") ? "bg-muted font-semibold" : ""}
 						>
 							<Link href="/home">
-								<Home height={35} width={35} className="mr-4" />
+								<Home className="w-5 h-5 mr-3" />
 								<span>Home</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
 
+				{/* Workspace */}
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton
-							className={isActive("/workspace") ? "bg-muted font-semibold" : ""}
 							asChild
+							className={isActive("/workspace") ? "bg-muted font-semibold" : ""}
 						>
 							<Link href="/workspace">
-								<Building2 height={35} width={35} className="mr-4" />
-								<span>workspace create</span>
+								<Building2 className="w-5 h-5 mr-3" />
+								<span>Workspace</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -83,30 +88,46 @@ export default function MainSidebar() {
 
 				{/* Project Manage */}
 				<SidebarMenu>
-					<Collapsible className="group/collapsible">
+					<Collapsible
+						defaultOpen={isParentActive(["/projects"])}
+						className="group/collapsible"
+					>
 						<SidebarMenuItem className="mb-2">
 							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
+								<SidebarMenuButton
+									className={cn(
+										"justify-between transition-colors",
+										isParentActive(["/projects"]) && "bg-muted font-semibold"
+									)}
+								>
 									<span className="flex items-center gap-2">
-										<FolderKanban height={20} width={20} className="mr-2" />
+										<FolderKanban className="w-5 h-5" />
 										Project Manage
 									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
+									<ChevronDown
+										className={cn("transition-transform duration-300")}
+									/>
 								</SidebarMenuButton>
 							</CollapsibleTrigger>
 
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+							<CollapsibleContent
+								className={cn(
+									"overflow-hidden transition-all duration-500 ease-in-out",
+									"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
+									"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
+								)}
+							>
 								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
 									<SidebarMenuSubItem>
 										<SidebarMenuButton
+											asChild
 											className={
 												isActive("/projects") ? "bg-muted font-semibold" : ""
 											}
-											asChild
 										>
 											<Link href="/projects">
-												<FolderOpenDot />
-												<span className="">Projects</span>
+												<FolderOpenDot className="w-4 h-4" />
+												<span>Projects</span>
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuSubItem>
@@ -118,57 +139,73 @@ export default function MainSidebar() {
 
 				{/* User Manage */}
 				<SidebarMenu>
-					<Collapsible defaultOpen className="group/collapsible">
+					<Collapsible
+						defaultOpen={isParentActive(["/users", "/roles", "/permissions"])}
+						className="group/collapsible"
+					>
 						<SidebarMenuItem className="mb-2">
 							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
+								<SidebarMenuButton
+									className={cn(
+										"justify-between transition-colors",
+										isParentActive(["/users", "/roles", "/permissions"]) &&
+											"bg-muted font-semibold"
+									)}
+								>
 									<span className="flex items-center gap-2">
-										<Users height={20} width={20} className="mr-2" />
+										<Users className="w-5 h-5" />
 										User Manage
 									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
+									<ChevronDown
+										className={cn("transition-transform duration-300")}
+									/>
 								</SidebarMenuButton>
 							</CollapsibleTrigger>
 
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+							<CollapsibleContent
+								className={cn(
+									"overflow-hidden transition-all duration-500 ease-in-out",
+									"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
+									"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
+								)}
+							>
 								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
 									<SidebarMenuSubItem>
 										<SidebarMenuButton
+											asChild
 											className={
 												isActive("/permissions") ? "bg-muted font-semibold" : ""
 											}
-											asChild
 										>
 											<Link href="/permissions">
-												<Shield />
-												<span className="">Permissions</span>
+												<Shield className="w-4 h-4" />
+												<span>Permissions</span>
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuSubItem>
 									<SidebarMenuSubItem>
 										<SidebarMenuButton
+											asChild
 											className={
 												isActive("/roles") ? "bg-muted font-semibold" : ""
 											}
-											asChild
 										>
 											<Link href="/roles">
-												<SquarePen />
-												<span className="">Roles</span>
+												<SquarePen className="w-4 h-4" />
+												<span>Roles</span>
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuSubItem>
 									<SidebarMenuSubItem>
 										<SidebarMenuButton
+											asChild
 											className={
 												isActive("/users") ? "bg-muted font-semibold" : ""
 											}
-											asChild
 										>
 											<Link href="/users">
-												<Users />
-												Users
-												<span className=""></span>
+												<Users className="w-4 h-4" />
+												<span>Users</span>
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuSubItem>
@@ -180,32 +217,48 @@ export default function MainSidebar() {
 
 				{/* Settings */}
 				<SidebarMenu>
-					<Collapsible className="group/collapsible">
+					<Collapsible
+						defaultOpen={isParentActive(["/settings"])}
+						className="group/collapsible"
+					>
 						<SidebarMenuItem className="mb-2">
 							<CollapsibleTrigger asChild>
-								<SidebarMenuButton className="justify-between">
+								<SidebarMenuButton
+									className={cn(
+										"justify-between transition-colors",
+										isParentActive(["/settings"]) && "bg-muted font-semibold"
+									)}
+								>
 									<span className="flex items-center gap-2">
-										<Settings height={20} width={20} className="mr-2" />
+										<Settings className="w-5 h-5" />
 										Settings
 									</span>
-									<ChevronDown className="transition-transform group-data-[state=open]:rotate-180" />
+									<ChevronDown
+										className={cn("transition-transform duration-300")}
+									/>
 								</SidebarMenuButton>
 							</CollapsibleTrigger>
 
-							<CollapsibleContent className="overflow-hidden transition-all data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+							<CollapsibleContent
+								className={cn(
+									"overflow-hidden transition-all duration-500 ease-in-out",
+									"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
+									"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
+								)}
+							>
 								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
 									<SidebarMenuSubItem>
 										<SidebarMenuButton
+											asChild
 											className={
 												isActive("/settings/profile")
 													? "bg-muted font-semibold"
 													: ""
 											}
-											asChild
 										>
 											<Link href="/settings/profile">
-												<UserPen />
-												<span className="">Profile</span>
+												<UserPen className="w-4 h-4" />
+												<span>Profile</span>
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuSubItem>
@@ -223,17 +276,15 @@ export default function MainSidebar() {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild className="p-0">
 								<SidebarMenuButton className="flex items-center gap-2">
-									{/* Avatar */}
 									<div className="flex items-center justify-center w-8 h-8 overflow-hidden rounded-full bg-muted">
 										<User2 className="w-4 h-4 text-muted-foreground" />
 									</div>
-									{/* User Info */}
 									<div className="flex flex-col items-start text-left">
 										<span className="text-sm font-semibold">
-											{session?.user.username}
+											{session?.user?.username}
 										</span>
 										<span className="text-xs text-muted-foreground">
-											{session?.user.email}
+											{session?.user?.email}
 										</span>
 									</div>
 									<ChevronUp className="ml-auto" />
