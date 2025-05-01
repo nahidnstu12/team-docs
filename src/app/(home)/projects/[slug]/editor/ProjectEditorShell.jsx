@@ -7,6 +7,8 @@ import { useProjectStore } from "../../store/useProjectStore";
 import { usePageDialogStore } from "../../store/usePageDialogStore";
 import dynamic from "next/dynamic";
 import DialogLoading from "@/components/laoding/DialogLoading";
+import Logger from "@/lib/Logger";
+import RTEeditor from "./components/RTEeditor";
 
 const CreateSectionDialogLazy = dynamic(
 	() =>
@@ -38,6 +40,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 	const selectedSectionId = useProjectStore((state) => state.selectedSection);
 	const setProject = useProjectStore((state) => state.setProject);
 	const setSections = useProjectStore((state) => state.setSections);
+	const selectedPage = useProjectStore((state) => state.selectedPage);
 
 	useEffect(() => {
 		setProject(project);
@@ -70,6 +73,8 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 			)}
 
 			{!hasSection && <NoSectionUI setIsDialogOpen={setIsSectionDialogOpen} />}
+
+			{selectedPage && <RTEeditor pageId={selectedPage} />}
 		</>
 	);
 }

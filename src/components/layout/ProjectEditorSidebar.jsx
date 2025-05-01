@@ -38,10 +38,11 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function ProjectEditorSidebar() {
 	const router = useRouter();
 	const sections = useProjectStore((state) => state.sections);
-	const selectedSection = useProjectStore((state) => state.selectedSection);
 	const setSelectedSection = useProjectStore(
 		(state) => state.setSelectedSection
 	);
+	const selectedPage = useProjectStore((state) => state.selectedPage);
+	const setSelectedPage = useProjectStore((state) => state.setSelectedPage);
 
 	const [openSections, setOpenSections] = useState({});
 
@@ -50,7 +51,7 @@ export default function ProjectEditorSidebar() {
 			...prev,
 			[sectionId]: !prev[sectionId],
 		}));
-		setSelectedSection(sectionId);
+		// setSelectedSection(sectionId);
 	};
 
 	return (
@@ -90,13 +91,14 @@ export default function ProjectEditorSidebar() {
 									onClick={() => toggleSection(section.id)}
 									className={cn(
 										"flex items-center justify-between w-full p-2 transition rounded-xs hover:bg-gray-200/30",
-										selectedSection === section.id && "bg-blue-100"
+										section.pages?.some((p) => p.id === selectedPage) &&
+											"bg-blue-100" // ✅ only highlight section if a page inside it is selected
 									)}
 								>
 									<div className="flex items-center gap-2">
 										<ChevronDown
 											className={cn(
-												"w-4 h-4 transition-transform duration-300",
+												"w-4 h-4 text-muted-foreground transition-transform duration-300",
 												openSections[section.id] ? "rotate-0" : "-rotate-90"
 											)}
 										/>
@@ -114,32 +116,41 @@ export default function ProjectEditorSidebar() {
 											<MoreHorizontal className="w-4 h-4" />
 										</SidebarMenuAction>
 									</DropdownMenuTrigger>
-									<DropdownMenuContent
-										side="right"
-										align="start"
-										className={cn(
-											"overflow-hidden transition-all duration-500 ease-in-out",
-											"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
-											"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
-										)}
-									>
-										<DropdownMenuItem
-											onClick={() =>
-												usePageDialogStore.getState().openPageDialog()
-											}
+									<AnimatePresence>
+										<motion.div
+											initial={{ opacity: 0, x: 50 }}
+											animate={{ opacity: 1, x: 0 }}
+											exit={{ opacity: 0, x: 50 }}
+											transition={{ duration: 0.2, ease: "easeInOut" }}
 										>
-											<FileText className="w-4 h-4 mr-2 text-blue-500" />
-											Create Page
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-											Update Section
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											<Trash className="w-4 h-4 mr-2 text-red-500" />
-											Delete Section
-										</DropdownMenuItem>
-									</DropdownMenuContent>
+											<DropdownMenuContent
+												side="right"
+												align="start"
+												className={cn(
+													"overflow-hidden transition-all duration-500 ease-in-out",
+													"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-left-4",
+													"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-left-4"
+												)}
+											>
+												<DropdownMenuItem
+													onClick={() =>
+														usePageDialogStore.getState().openPageDialog()
+													}
+												>
+													<FileText className="w-4 h-4 mr-2 text-blue-500" />
+													Create Page
+												</DropdownMenuItem>
+												<DropdownMenuItem>
+													<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+													Update Section
+												</DropdownMenuItem>
+												<DropdownMenuItem>
+													<Trash className="w-4 h-4 mr-2 text-red-500" />
+													Delete Section
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</motion.div>
+									</AnimatePresence>
 								</DropdownMenu>
 
 								{/* Pages under section */}
@@ -151,9 +162,9 @@ export default function ProjectEditorSidebar() {
 											animate={{ height: "auto", opacity: 1 }}
 											exit={{ height: 0, opacity: 0 }}
 											transition={{ duration: 0.3, ease: "easeInOut" }}
-											className="overflow-hidden ml-4 mt-0.5 border-l border-gray-200 bg-gray-200/30"
+											className="overflow-hidden ml-4 mt-0.5 bg-gray-200/30"
 										>
-											<SidebarMenuSub className="transition-all duration-300 ease-in-out overflow-hidden max-h-[1000px] px-0 mx-0 ml-4 mt-0.5 space-y-1 border-l border-gray-200 bg-gray-200/30">
+											<SidebarMenuSub className="transition-all duration-300 ease-in-out overflow-hidden max-h-[1000px] px-0 mx-0 ml-4 mt-0.5 space-y-1">
 												{section.pages.map((page) => (
 													<SidebarMenuSubItem
 														key={page.id}
@@ -161,10 +172,18 @@ export default function ProjectEditorSidebar() {
 													>
 														<SidebarMenuSubButton
 															asChild
-															className="flex items-center w-full p-2 transition-all rounded-xs hover:bg-gray-200/40"
+															className={cn(
+																"flex items-center w-full p-2 rounded-xs transition hover:bg-muted",
+																selectedPage === page.id &&
+																	"bg-gray-200/40 text-primary font-semibold"
+															)}
 														>
 															<a
 																href="#"
+																onClick={() => {
+																	setSelectedSection(section.id); // ensure parent is selected
+																	setSelectedPage(page.id); // highlight page
+																}}
 																className="flex items-center w-full gap-2"
 															>
 																<FileText className="w-4 h-4 text-muted-foreground" />
