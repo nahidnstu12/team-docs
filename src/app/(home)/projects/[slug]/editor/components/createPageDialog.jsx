@@ -109,7 +109,7 @@ export default function CreatePageDialog({
 
 					<DialogFooter className="pt-4">
 						<Button type="submit" disabled={isPending}>
-							{isPending ? "Creating..." : "Create Section"}
+							{isPending ? "Creating..." : "Create Page"}
 						</Button>
 					</DialogFooter>
 				</form>

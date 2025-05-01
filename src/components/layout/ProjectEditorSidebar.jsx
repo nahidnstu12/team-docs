@@ -82,14 +82,7 @@ export default function ProjectEditorSidebar() {
 								</div>
 							</SidebarMenuButton>
 
-							<DropdownMenu
-								onOpenChange={(isOpen) => {
-									if (isOpen) {
-										setSelectedSection(section.id);
-										console.log("Dropdown opened for section:", section.id);
-									}
-								}}
-							>
+							<DropdownMenu onOpenChange={() => setSelectedSection(section.id)}>
 								<DropdownMenuTrigger asChild>
 									<SidebarMenuAction className="absolute right-2 top-2">
 										<MoreHorizontal className="w-4 h-4" />
