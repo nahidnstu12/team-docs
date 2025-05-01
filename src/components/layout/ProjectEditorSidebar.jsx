@@ -52,66 +52,82 @@ export default function ProjectEditorSidebar() {
 	};
 
 	return (
-		<Sidebar className="border-r">
-			<SidebarContent>
-				<Button
-					variant="outline"
-					className="justify-start mx-2 my-2 text-gray-600 cursor-pointer"
-					onClick={() => {
-						router.push("/home");
-						router.refresh();
-					}}
-				>
-					<Home className="mx-1" />
-					go to home
-				</Button>
+		<Sidebar className="bg-white border-r">
+			<SidebarContent className="flex flex-col h-full">
+				{/* HOME BUTTON */}
+				<div className="p-3">
+					<Button
+						variant="outline"
+						className="justify-start w-full text-gray-600 transition hover:bg-gray-100"
+						onClick={() => {
+							router.push("/home");
+							router.refresh();
+						}}
+					>
+						<Home className="w-4 h-4 mr-2" />
+						Go to Home
+					</Button>
+				</div>
 
-				<SidebarMenu className="px-2 mt-6 space-y-2">
-					{sections.map((section) => (
-						<SidebarMenuItem key={section.id} className="relative group">
-							<SidebarMenuButton
-								onClick={() => toggleSection(section.id)}
-								className={cn(
-									"flex items-center justify-between w-full p-2 transition rounded-xs hover:bg-gray-200/30",
-									selectedSection === section.id && "bg-blue-100"
-								)}
-							>
-								<div className="flex items-center gap-2">
-									<FolderKanban className="w-4 h-4" />
-									<span>{section.name}</span>
-								</div>
-							</SidebarMenuButton>
+				{/* Divider */}
+				<div className="px-3">
+					<div className="my-2 border-t border-gray-200" />
+				</div>
 
-							<DropdownMenu onOpenChange={() => setSelectedSection(section.id)}>
-								<DropdownMenuTrigger asChild>
-									<SidebarMenuAction className="absolute right-2 top-2">
-										<MoreHorizontal className="w-4 h-4" />
-									</SidebarMenuAction>
-								</DropdownMenuTrigger>
+				{/* MAIN MENU */}
+				<SidebarMenu className="flex-1 px-2 mt-2 space-y-2 overflow-y-auto">
+					{sections.length === 0 ? (
+						// Empty state fallback
+						<div className="p-4 mx-2 mt-4 text-xs text-gray-500 bg-gray-100 rounded">
+							No sections yet. Create one to get started.
+						</div>
+					) : (
+						sections.map((section) => (
+							<SidebarMenuItem key={section.id} className="relative group">
+								<SidebarMenuButton
+									onClick={() => toggleSection(section.id)}
+									className={cn(
+										"flex items-center justify-between w-full p-2 transition rounded-xs hover:bg-gray-200/30",
+										selectedSection === section.id && "bg-blue-100"
+									)}
+								>
+									<div className="flex items-center gap-2">
+										<FolderKanban className="w-4 h-4" />
+										<span>{section.name}</span>
+									</div>
+								</SidebarMenuButton>
 
-								<DropdownMenuContent side="right" align="start">
-									<DropdownMenuItem
-										onClick={() =>
-											usePageDialogStore.getState().openPageDialog()
-										}
-									>
-										<FileText className="w-4 h-4 mr-2 text-blue-500" />
-										Create Page
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-										Update Section
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<Trash className="w-4 h-4 mr-2 text-red-500" />
-										Delete Section
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
+								{/* Section Menu */}
+								<DropdownMenu
+									onOpenChange={() => setSelectedSection(section.id)}
+								>
+									<DropdownMenuTrigger asChild>
+										<SidebarMenuAction className="absolute right-2 top-2">
+											<MoreHorizontal className="w-4 h-4" />
+										</SidebarMenuAction>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent side="right" align="start">
+										<DropdownMenuItem
+											onClick={() =>
+												usePageDialogStore.getState().openPageDialog()
+											}
+										>
+											<FileText className="w-4 h-4 mr-2 text-blue-500" />
+											Create Page
+										</DropdownMenuItem>
+										<DropdownMenuItem>
+											<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+											Update Section
+										</DropdownMenuItem>
+										<DropdownMenuItem>
+											<Trash className="w-4 h-4 mr-2 text-red-500" />
+											Delete Section
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
 
-							{openSections[section.id] &&
-								section.pages &&
-								section.pages.length > 0 && (
+								{/* Pages under section */}
+								{openSections[section.id] && section.pages?.length > 0 && (
 									<SidebarMenuSub className="transition-all duration-300 ease-in-out overflow-hidden max-h-[1000px] px-0 mx-0 ml-4 mt-0.5 space-y-1 border-l border-gray-200 bg-gray-200/30">
 										{section.pages.map((page) => (
 											<SidebarMenuSubItem
@@ -160,8 +176,9 @@ export default function ProjectEditorSidebar() {
 										))}
 									</SidebarMenuSub>
 								)}
-						</SidebarMenuItem>
-					))}
+							</SidebarMenuItem>
+						))
+					)}
 				</SidebarMenu>
 			</SidebarContent>
 		</Sidebar>

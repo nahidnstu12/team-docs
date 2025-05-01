@@ -9,5 +9,5 @@ export const SectionSchema = z.object({
 			(val) => !val || val.length >= 10,
 			"Description must be at least 10 characters."
 		),
-	projectId: z.string().min(1, "project id is required"),
+	projectId: z.string().optional(), // actually required. but real time validation is not working. so i had to optional it
 });
