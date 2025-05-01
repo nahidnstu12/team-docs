@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useRef } from "react";
+import { useActionState, useMemo, useRef } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -33,14 +33,26 @@ export function useServerFormAction({
 		reset,
 		watch,
 		setValue,
-		formState: { errors },
+		formState: { errors, isDirty },
 	} = useForm({
 		resolver: zodResolver(schema),
 		defaultValues,
+		mode: "onChange",
 	});
 
 	// Track the last processed form state
 	const lastProcessedState = useRef(null);
+
+	// Track all form values to check if empty
+	const formValues = watch();
+	const isFormEmpty = useMemo(() => {
+		return Object.values(formValues).every(
+			(value) => value === "" || value === null || value === undefined
+		);
+	}, [formValues]);
+
+	// Disable when form is empty OR when submitting
+	const isSubmitDisabled = isFormEmpty || isPending;
 
 	// Handle dialog open/close reset logic inside the hook
 	useEffect(() => {
@@ -109,5 +121,6 @@ export function useServerFormAction({
 		watch,
 		setValue,
 		formState,
+		isSubmitDisabled,
 	};
 }

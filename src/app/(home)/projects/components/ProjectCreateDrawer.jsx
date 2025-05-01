@@ -32,30 +32,38 @@ export default function ProjectDrawer({
 	}, []);
 
 	// ✅ Use your custom server form action hook
-	const { register, watch, setValue, reset, errors, formAction, isPending } =
-		useServerFormAction({
-			schema: ProjectSchema,
-			actionFn: createProjectAction,
-			defaultValues,
-			onSuccess: () => {
-				if (hasShownToastRef.current) return;
-				hasShownToastRef.current = true;
+	const {
+		register,
+		watch,
+		setValue,
+		reset,
+		errors,
+		formAction,
+		isPending,
+		isSubmitDisabled,
+	} = useServerFormAction({
+		schema: ProjectSchema,
+		actionFn: createProjectAction,
+		defaultValues,
+		onSuccess: () => {
+			if (hasShownToastRef.current) return;
+			hasShownToastRef.current = true;
 
-				reset(); // Clear form fields
-				setIsDrawerOpen(false); // Close drawer
-				setStartFetchProjects(true); // Tell parent to refetch projects
-				router.refresh(); // Refresh router
-				setTimeout(() => {
-					hasShownToastRef.current = false;
-				}, 500);
-			},
-			onError: () => {
-				// No need to do anything special here; the hook already displays server errors
-			},
-			onSettled: () => {
-				// Can be used for extra cleanup if needed
-			},
-		});
+			reset(); // Clear form fields
+			setIsDrawerOpen(false); // Close drawer
+			setStartFetchProjects(true); // Tell parent to refetch projects
+			router.refresh(); // Refresh router
+			setTimeout(() => {
+				hasShownToastRef.current = false;
+			}, 500);
+		},
+		onError: () => {
+			// No need to do anything special here; the hook already displays server errors
+		},
+		onSettled: () => {
+			// Can be used for extra cleanup if needed
+		},
+	});
 
 	const nameValue = watch("name");
 	const slugValue = watch("slug");
@@ -166,7 +174,7 @@ export default function ProjectDrawer({
 						)}
 
 						<DrawerFooter className="flex justify-end px-6 py-4 space-x-3 border-t border-gray-200">
-							<Button type="submit" disabled={!slugValue || isPending}>
+							<Button type="submit" disabled={!slugValue || isSubmitDisabled}>
 								{isPending ? "Creating..." : "Create Project"}
 							</Button>
 						</DrawerFooter>
