@@ -7,7 +7,6 @@ import { useProjectStore } from "../../store/useProjectStore";
 import { usePageDialogStore } from "../../store/usePageDialogStore";
 import dynamic from "next/dynamic";
 import DialogLoading from "@/components/laoding/DialogLoading";
-import Logger from "@/lib/Logger";
 import RTEeditor from "./components/RTEeditor";
 
 const CreateSectionDialogLazy = dynamic(
@@ -29,7 +28,12 @@ const CreatePageDialogLazy = dynamic(
 	}
 );
 
-export default function ProjectEditorShell({ hasSection, project, sections }) {
+export default function ProjectEditorShell({
+	hasSection,
+	project,
+	sections,
+	initialContent,
+}) {
 	const [isSectionDialogOpen, setIsSectionDialogOpen] = useState(false);
 
 	const isPageDialogOpen = usePageDialogStore(
@@ -74,7 +78,9 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 
 			{!hasSection && <NoSectionUI setIsDialogOpen={setIsSectionDialogOpen} />}
 
-			{selectedPage && <RTEeditor pageId={selectedPage} />}
+			{selectedPage && (
+				<RTEeditor pageId={selectedPage} initialContent={initialContent} />
+			)}
 		</>
 	);
 }

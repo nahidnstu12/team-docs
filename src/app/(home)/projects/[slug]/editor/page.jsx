@@ -9,12 +9,14 @@ export default async function ProjectEditorPage({ params }) {
 	const getAllSections = await SectionServices.getAllSectionWithPages({
 		projectId: project.id,
 	});
+	const doc = null;
 
 	return (
 		<ProjectEditorShell
 			project={project}
 			hasSection={hasSection}
 			sections={getAllSections}
+			initialContent={doc}
 		/>
 	);
 }
