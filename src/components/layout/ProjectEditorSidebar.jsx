@@ -1,5 +1,6 @@
 "use client";
 import {
+	ChevronDown,
 	Copy,
 	FileText,
 	FolderKanban,
@@ -32,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { cn } from "@/lib/utils";
 import { usePageDialogStore } from "@/app/(home)/projects/store/usePageDialogStore";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProjectEditorSidebar() {
 	const router = useRouter();
@@ -92,6 +94,12 @@ export default function ProjectEditorSidebar() {
 									)}
 								>
 									<div className="flex items-center gap-2">
+										<ChevronDown
+											className={cn(
+												"w-4 h-4 transition-transform duration-300",
+												openSections[section.id] ? "rotate-0" : "-rotate-90"
+											)}
+										/>
 										<FolderKanban className="w-4 h-4" />
 										<span>{section.name}</span>
 									</div>
@@ -106,7 +114,15 @@ export default function ProjectEditorSidebar() {
 											<MoreHorizontal className="w-4 h-4" />
 										</SidebarMenuAction>
 									</DropdownMenuTrigger>
-									<DropdownMenuContent side="right" align="start">
+									<DropdownMenuContent
+										side="right"
+										align="start"
+										className={cn(
+											"overflow-hidden transition-all duration-500 ease-in-out",
+											"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
+											"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
+										)}
+									>
 										<DropdownMenuItem
 											onClick={() =>
 												usePageDialogStore.getState().openPageDialog()
@@ -127,55 +143,66 @@ export default function ProjectEditorSidebar() {
 								</DropdownMenu>
 
 								{/* Pages under section */}
-								{openSections[section.id] && section.pages?.length > 0 && (
-									<SidebarMenuSub className="transition-all duration-300 ease-in-out overflow-hidden max-h-[1000px] px-0 mx-0 ml-4 mt-0.5 space-y-1 border-l border-gray-200 bg-gray-200/30">
-										{section.pages.map((page) => (
-											<SidebarMenuSubItem
-												key={page.id}
-												className="relative w-full group"
-											>
-												<SidebarMenuSubButton
-													asChild
-													className="flex items-center w-full p-2 transition-all rounded-xs hover:bg-gray-200/40"
-												>
-													<a
-														href="#"
-														className="flex items-center w-full gap-2"
+								<AnimatePresence initial={false}>
+									{openSections[section.id] && section.pages?.length > 0 && (
+										<motion.div
+											key="pages"
+											initial={{ height: 0, opacity: 0 }}
+											animate={{ height: "auto", opacity: 1 }}
+											exit={{ height: 0, opacity: 0 }}
+											transition={{ duration: 0.3, ease: "easeInOut" }}
+											className="overflow-hidden ml-4 mt-0.5 border-l border-gray-200 bg-gray-200/30"
+										>
+											<SidebarMenuSub className="transition-all duration-300 ease-in-out overflow-hidden max-h-[1000px] px-0 mx-0 ml-4 mt-0.5 space-y-1 border-l border-gray-200 bg-gray-200/30">
+												{section.pages.map((page) => (
+													<SidebarMenuSubItem
+														key={page.id}
+														className="relative w-full group"
 													>
-														<FileText className="w-4 h-4 text-muted-foreground" />
-														{page.title || "Untitled Page"}
-													</a>
-												</SidebarMenuSubButton>
+														<SidebarMenuSubButton
+															asChild
+															className="flex items-center w-full p-2 transition-all rounded-xs hover:bg-gray-200/40"
+														>
+															<a
+																href="#"
+																className="flex items-center w-full gap-2"
+															>
+																<FileText className="w-4 h-4 text-muted-foreground" />
+																{page.title || "Untitled Page"}
+															</a>
+														</SidebarMenuSubButton>
 
-												<DropdownMenu>
-													<DropdownMenuTrigger asChild>
-														<SidebarMenuAction className="absolute -translate-y-1/2 right-2 top-1/2">
-															<MoreHorizontal className="w-4 h-4" />
-														</SidebarMenuAction>
-													</DropdownMenuTrigger>
-													<DropdownMenuContent side="right" align="start">
-														<DropdownMenuItem>
-															<Copy className="w-4 h-4 mr-2 text-blue-500" />
-															Duplicate
-														</DropdownMenuItem>
-														<DropdownMenuItem>
-															<Pencil className="w-4 h-4 mr-2 text-green-500" />
-															Update
-														</DropdownMenuItem>
-														<DropdownMenuItem>
-															<Trash className="w-4 h-4 mr-2 text-red-500" />
-															Delete
-														</DropdownMenuItem>
-														<DropdownMenuItem>
-															<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-															Settings
-														</DropdownMenuItem>
-													</DropdownMenuContent>
-												</DropdownMenu>
-											</SidebarMenuSubItem>
-										))}
-									</SidebarMenuSub>
-								)}
+														<DropdownMenu>
+															<DropdownMenuTrigger asChild>
+																<SidebarMenuAction className="absolute -translate-y-1/2 right-2 top-1/2">
+																	<MoreHorizontal className="w-4 h-4" />
+																</SidebarMenuAction>
+															</DropdownMenuTrigger>
+															<DropdownMenuContent side="right" align="start">
+																<DropdownMenuItem>
+																	<Copy className="w-4 h-4 mr-2 text-blue-500" />
+																	Duplicate
+																</DropdownMenuItem>
+																<DropdownMenuItem>
+																	<Pencil className="w-4 h-4 mr-2 text-green-500" />
+																	Update
+																</DropdownMenuItem>
+																<DropdownMenuItem>
+																	<Trash className="w-4 h-4 mr-2 text-red-500" />
+																	Delete
+																</DropdownMenuItem>
+																<DropdownMenuItem>
+																	<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+																	Settings
+																</DropdownMenuItem>
+															</DropdownMenuContent>
+														</DropdownMenu>
+													</SidebarMenuSubItem>
+												))}
+											</SidebarMenuSub>
+										</motion.div>
+									)}
+								</AnimatePresence>
 							</SidebarMenuItem>
 						))
 					)}

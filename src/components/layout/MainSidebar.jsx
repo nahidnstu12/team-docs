@@ -31,17 +31,15 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "../ui/collapsible";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useActionState } from "react";
 import { signout } from "@/lib/auth/signout";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 export default function MainSidebar() {
 	const pathname = usePathname();
@@ -52,6 +50,20 @@ export default function MainSidebar() {
 	const isActive = (href) => pathname === href;
 	const isParentActive = (paths = []) =>
 		paths.some((path) => pathname.startsWith(path));
+
+	const [openSection, setOpenSection] = useState(() => {
+		return isParentActive(["/projects"])
+			? "projects"
+			: isParentActive(["/users", "/roles", "/permissions"])
+			? "users"
+			: isParentActive(["/settings"])
+			? "settings"
+			: "";
+	});
+
+	const toggleSection = (section) => {
+		setOpenSection((prev) => (prev === section ? "" : section));
+	};
 
 	return (
 		<Sidebar variant="floating" collapsible="offcanvas">
@@ -87,186 +99,90 @@ export default function MainSidebar() {
 				</SidebarMenu>
 
 				{/* Project Manage */}
-				<SidebarMenu>
-					<Collapsible
-						defaultOpen={isParentActive(["/projects"])}
-						className="group/collapsible"
-					>
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton
-									className={cn(
-										"justify-between transition-colors",
-										isParentActive(["/projects"]) && "bg-muted font-semibold"
-									)}
-								>
-									<span className="flex items-center gap-2">
-										<FolderKanban className="w-5 h-5" />
-										Project Manage
-									</span>
-									<ChevronDown
-										className={cn("transition-transform duration-300")}
-									/>
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent
-								className={cn(
-									"overflow-hidden transition-all duration-500 ease-in-out",
-									"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
-									"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
-								)}
-							>
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											asChild
-											className={
-												isActive("/projects") ? "bg-muted font-semibold" : ""
-											}
-										>
-											<Link href="/projects">
-												<FolderOpenDot className="w-4 h-4" />
-												<span>Projects</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				</SidebarMenu>
+				<SidebarCollapseSection
+					title="Project Manage"
+					icon={FolderKanban}
+					isOpen={openSection === "projects"}
+					onToggle={() => toggleSection("projects")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/projects") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/projects">
+								<FolderOpenDot className="w-4 h-4" />
+								<span>Projects</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
 
 				{/* User Manage */}
-				<SidebarMenu>
-					<Collapsible
-						defaultOpen={isParentActive(["/users", "/roles", "/permissions"])}
-						className="group/collapsible"
-					>
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton
-									className={cn(
-										"justify-between transition-colors",
-										isParentActive(["/users", "/roles", "/permissions"]) &&
-											"bg-muted font-semibold"
-									)}
-								>
-									<span className="flex items-center gap-2">
-										<Users className="w-5 h-5" />
-										User Manage
-									</span>
-									<ChevronDown
-										className={cn("transition-transform duration-300")}
-									/>
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent
-								className={cn(
-									"overflow-hidden transition-all duration-500 ease-in-out",
-									"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
-									"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
-								)}
-							>
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											asChild
-											className={
-												isActive("/permissions") ? "bg-muted font-semibold" : ""
-											}
-										>
-											<Link href="/permissions">
-												<Shield className="w-4 h-4" />
-												<span>Permissions</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											asChild
-											className={
-												isActive("/roles") ? "bg-muted font-semibold" : ""
-											}
-										>
-											<Link href="/roles">
-												<SquarePen className="w-4 h-4" />
-												<span>Roles</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											asChild
-											className={
-												isActive("/users") ? "bg-muted font-semibold" : ""
-											}
-										>
-											<Link href="/users">
-												<Users className="w-4 h-4" />
-												<span>Users</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				</SidebarMenu>
+				<SidebarCollapseSection
+					title="User Manage"
+					icon={Users}
+					isOpen={openSection === "users"}
+					onToggle={() => toggleSection("users")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={
+								isActive("/permissions") ? "bg-muted font-semibold" : ""
+							}
+						>
+							<Link href="/permissions">
+								<Shield className="w-4 h-4" />
+								<span>Permissions</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/roles") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/roles">
+								<SquarePen className="w-4 h-4" />
+								<span>Roles</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/users") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/users">
+								<Users className="w-4 h-4" />
+								<span>Users</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
 
 				{/* Settings */}
-				<SidebarMenu>
-					<Collapsible
-						defaultOpen={isParentActive(["/settings"])}
-						className="group/collapsible"
-					>
-						<SidebarMenuItem className="mb-2">
-							<CollapsibleTrigger asChild>
-								<SidebarMenuButton
-									className={cn(
-										"justify-between transition-colors",
-										isParentActive(["/settings"]) && "bg-muted font-semibold"
-									)}
-								>
-									<span className="flex items-center gap-2">
-										<Settings className="w-5 h-5" />
-										Settings
-									</span>
-									<ChevronDown
-										className={cn("transition-transform duration-300")}
-									/>
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-
-							<CollapsibleContent
-								className={cn(
-									"overflow-hidden transition-all duration-500 ease-in-out",
-									"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-top-4",
-									"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-top-4"
-								)}
-							>
-								<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
-									<SidebarMenuSubItem>
-										<SidebarMenuButton
-											asChild
-											className={
-												isActive("/settings/profile")
-													? "bg-muted font-semibold"
-													: ""
-											}
-										>
-											<Link href="/settings/profile">
-												<UserPen className="w-4 h-4" />
-												<span>Profile</span>
-											</Link>
-										</SidebarMenuButton>
-									</SidebarMenuSubItem>
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				</SidebarMenu>
+				<SidebarCollapseSection
+					title="Settings"
+					icon={Settings}
+					isOpen={openSection === "settings"}
+					onToggle={() => toggleSection("settings")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={
+								isActive("/settings/profile") ? "bg-muted font-semibold" : ""
+							}
+						>
+							<Link href="/settings/profile">
+								<UserPen className="w-4 h-4" />
+								<span>Profile</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
 			</SidebarContent>
 
 			{/* Footer */}
@@ -310,5 +226,55 @@ export default function MainSidebar() {
 				</SidebarMenu>
 			</SidebarFooter>
 		</Sidebar>
+	);
+}
+
+function SidebarCollapseSection({
+	title,
+	icon: Icon,
+	isOpen,
+	onToggle,
+	children,
+}) {
+	return (
+		<SidebarMenu>
+			<SidebarMenuItem className="mb-2">
+				<SidebarMenuButton
+					onClick={onToggle}
+					className={cn(
+						"justify-between transition-colors",
+						isOpen && "bg-muted font-semibold"
+					)}
+				>
+					<span className="flex items-center gap-2">
+						<Icon className="w-5 h-5" />
+						{title}
+					</span>
+					<ChevronDown
+						className={cn(
+							"w-4 h-4 transition-transform",
+							isOpen ? "rotate-0" : "-rotate-90"
+						)}
+					/>
+				</SidebarMenuButton>
+
+				{/* Animated content */}
+				<AnimatePresence initial={false}>
+					{isOpen && (
+						<motion.div
+							initial={{ height: 0, opacity: 0 }}
+							animate={{ height: "auto", opacity: 1 }}
+							exit={{ height: 0, opacity: 0 }}
+							transition={{ duration: 0.3, ease: "easeInOut" }}
+							className="overflow-hidden"
+						>
+							<SidebarMenuSub className="p-2 mt-2 ml-4 space-y-1 rounded-md bg-muted/20">
+								{children}
+							</SidebarMenuSub>
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</SidebarMenuItem>
+		</SidebarMenu>
 	);
 }
