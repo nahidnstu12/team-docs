@@ -1,0 +1,71 @@
+/* ✅ Root bullet list styling */
+.tiptap > ul {
+	@apply mt-2 pl-4 list-none space-y-2;
+}
+
+.tiptap > ul > li {
+	@apply flex items-start gap-2;
+}
+
+.tiptap > ul > li > span {
+	@apply mt-1 w-2 h-2 bg-foreground rounded-full shrink-0;
+}
+
+.tiptap > ul > li > span + div {
+	@apply flex-1;
+}
+
+.tiptap > ul > li > span + div > div > p {
+	@apply text-base leading-relaxed;
+}
+
+/* ✅ Nested bullet list styling (ul after p) */
+.tiptap p + ul {
+	@apply mt-1 pl-2 list-none space-y-1;
+}
+
+.tiptap p + ul > li {
+	@apply flex items-start gap-2;
+}
+
+.tiptap p + ul > li > span {
+	@apply mt-1 w-1.5 h-1.5 bg-muted-foreground rounded-full opacity-80 shrink-0;
+}
+
+.tiptap p + ul > li > span + div {
+	@apply flex-1;
+}
+
+.tiptap p + ul > li > span + div > div > p {
+	@apply text-sm text-muted-foreground leading-snug;
+}
+
+/* 🟢 Bullet list wrapper  */
+div.node-listItem {
+	@apply space-y-2 list-none pl-4;
+}
+
+/* 🟢 Each list item */
+div.node-listItem > li {
+	@apply flex items-start gap-2 mb-2;
+}
+
+/* 🟣 The bullet dot (span element before label) */
+div.node-listItem > li > span {
+	@apply w-2 mt-0 h-2 bg-foreground rounded-full shrink-0;
+}
+
+/* 🟣 First content wrapper after bullet */
+div.node-listItem > li > span + div {
+	@apply -mt-2;
+}
+
+/* 🟣 Second wrapper */
+div.node-listItem > li > span + div > div {
+	@apply flex flex-col;
+}
+
+/* 🟣 The label text */
+div.node-listItem > li > span + div > div > p {
+	@apply text-base leading-relaxed text-foreground;
+}

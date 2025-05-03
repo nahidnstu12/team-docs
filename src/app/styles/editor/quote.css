@@ -1,0 +1,24 @@
+/* 🟦 Blockquote wrapper */
+.node-blockquote {
+	@apply my-4;
+}
+
+/* 🟦 Actual blockquote element */
+.node-blockquote > blockquote {
+	@apply relative bg-muted/50 dark:bg-muted/30 border-l-6 border-primary pl-3 pr-3 py-2 rounded-none;
+}
+
+/* 🟦 First inner div (usually Tiptap’s layout container) */
+.node-blockquote > blockquote > div {
+	@apply flex flex-col gap-1;
+}
+
+/* 🟦 Second inner div (often another layout wrapper) */
+.node-blockquote > blockquote > div > div {
+	@apply flex flex-col;
+}
+
+/* 🟦 Blockquote text */
+.node-blockquote > blockquote > div > div > p {
+	@apply text-muted-foreground italic text-base leading-relaxed;
+}

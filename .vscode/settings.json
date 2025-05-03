@@ -23,5 +23,8 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "emmet.includeLanguages": {
     "javascript": "javascriptreact"
-  }
+  },
+  "tailwindCSS.experimental.classRegex": [
+    "class:\\s*?[\"'`]([^\"'`]*).*?,"
+  ]
 }
