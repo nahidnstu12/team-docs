@@ -7,6 +7,7 @@ import {
 	Heading2,
 	Heading3,
 	List,
+	ListOrdered,
 	Quote,
 } from "lucide-react";
 
@@ -29,6 +30,34 @@ export default function Toolbar({ editor }) {
 			>
 				<List className="w-4 h-4" />
 				Bullet List
+			</button>
+
+			<button
+				onClick={() => editor.chain().focus().toggleOrderedList().run()} // Toggle ordered list
+				className="flex items-center gap-1 px-3 py-1 text-sm transition border rounded hover:bg-muted"
+			>
+				<ListOrdered className="w-4 h-4" /> {/* Numbered List Icon */}
+				Ordered List
+			</button>
+
+			<button
+				type="button"
+				onClick={() => editor.chain().focus().setHorizontalRule().run()}
+				className="px-2 py-1 text-sm transition rounded-md hover:bg-muted"
+			>
+				― HR
+			</button>
+
+			<button
+				onClick={() => {
+					if (editor.can().insertDetails()) {
+						editor.chain().focus().insertDetails().run();
+					}
+				}}
+				disabled={!editor.can().insertDetails()}
+				className={editor.isActive("details") ? "is-active" : ""}
+			>
+				Add Details
 			</button>
 
 			<button

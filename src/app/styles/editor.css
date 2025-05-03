@@ -4,3 +4,6 @@
 @import "./editor/headings.css";
 @import "./editor/inlinecode.css";
 @import "./editor/quote.css";
+@import "./editor/numberlist.css";
+@import "./editor/linebreak.css";
+@import "./editor/details.css";
