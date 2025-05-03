@@ -1,5 +1,5 @@
 /* ✅ Main wrapper for the whole task list */
-[data-type="taskList"] {
+ul[data-type="taskList"] {
 	@apply my-2;
 }
 

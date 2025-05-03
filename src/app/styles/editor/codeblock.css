@@ -1,9 +1,9 @@
 /* 🧾 Code Block Wrapper — styled like Notion */
-.tiptap > pre.code-block {
-	@apply relative my-6 rounded-md bg-[hsl(0,30%,97%)] text-[hsl(0,40%,20%)] overflow-x-auto text-sm leading-[1.95] p-6 font-mono border border-[hsl(0,0%,90%)];
+.tiptap > pre {
+	@apply relative my-4 rounded-md bg-[hsl(0,30%,97%)] text-[hsl(0,40%,20%)] overflow-x-auto text-sm leading-[1.95] p-6 font-mono border border-[hsl(0,0%,90%)];
 }
 /* ⚙️ Updated Syntax Highlighting Colors */
-.tiptap > .code-block {
+.tiptap > pre > code {
 	.hljs-comment,
 	.hljs-quote {
 		color: #6b7280; /* Tailwind slate-500 */
