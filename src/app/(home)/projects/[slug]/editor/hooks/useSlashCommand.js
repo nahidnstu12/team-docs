@@ -52,56 +52,56 @@ export const useSlashCommand = (editor) => {
 		};
 	};
 
+	// editor get auto focus when drop down menu is closed
+	useEffect(() => {
+		if (!isOpen && editor?.isEditable) {
+			editor.commands.focus();
+		}
+	}, [isOpen, editor]);
+
 	useEffect(() => {
 		if (!editor) return;
 
 		const commands = baseCommands(editor);
 
 		const onKeyDown = (e) => {
-			// Only proceed if editor is focused
 			if (!editor.isFocused) return;
 
-			// Check for single '/' key press
 			if (e.key === "/") {
-				// Get current cursor position
-				const { from } = editor.state.selection;
+				// Defer to next tick to allow slash to appear in doc
+				setTimeout(() => {
+					const { from } = editor.state.selection;
+					const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
 
-				// Get the character before cursor
-				const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
+					if (textBefore === "/") {
+						// Get slash position
+						const pos = editor.view.coordsAtPos(from - 1);
 
-				// Only proceed if we actually have a '/' (in case of key repeat)
-				if (textBefore === "/") {
-					e.preventDefault();
-					e.stopPropagation();
+						const processedCommands = commands.map((cmd) => ({
+							...cmd,
+							command: withSlashRemoval(cmd.command),
+						}));
 
-					// Get exact coordinates of the slash character
-					const pos = editor.view.coordsAtPos(from - 1); // Position before cursor
+						const virtualElement = {
+							getBoundingClientRect: () => ({
+								width: 0,
+								height: 0,
+								x: pos.right,
+								y: pos.bottom,
+								top: pos.bottom,
+								right: pos.right,
+								bottom: pos.bottom,
+								left: pos.right,
+							}),
+						};
 
-					const processedCommands = commands.map((cmd) => ({
-						...cmd,
-						command: withSlashRemoval(cmd.command),
-					}));
+						refs.setReference(virtualElement);
 
-					const virtualElement = {
-						getBoundingClientRect: () => ({
-							width: 0,
-							height: 0,
-							x: pos.right,
-							y: pos.bottom,
-							top: pos.bottom,
-							right: pos.right,
-							bottom: pos.bottom,
-							left: pos.right,
-						}),
-					};
-
-					refs.setReference(virtualElement);
-
-					// Open the menu
-					setIsOpen(true);
-					setSearchQuery("");
-					setMenuStack([commands, processedCommands]);
-				}
+						setIsOpen(true);
+						setSearchQuery("");
+						setMenuStack([commands, processedCommands]);
+					}
+				}, 0);
 			}
 		};
 
