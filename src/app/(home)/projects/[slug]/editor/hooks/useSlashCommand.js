@@ -14,7 +14,11 @@ export const useSlashCommand = (editor) => {
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [menuItems, setMenuItems] = useState([]);
-	const [menuStack, setMenuStack] = useState([]);
+	const [menuGroups, setMenuGroups] = useState([]);
+	const [selectedPosition, setSelectedPosition] = useState({
+		groupIndex: 0,
+		itemIndex: 0,
+	});
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isOpen,
@@ -36,20 +40,43 @@ export const useSlashCommand = (editor) => {
 	});
 
 	// remove slash after selecting an item
-	const withSlashRemoval = (command) => {
-		return () => {
-			const { from } = editor.state.selection;
-			const slashPos = from - 1;
+	// const withSlashRemoval = (command) => {
+	// 	return () => {
+	// 		const { from } = editor.state.selection;
+	// 		const slashPos = from - 1;
 
-			// First delete the slash
-			editor.chain().deleteRange({ from: slashPos, to: from }).run();
+	// 		// First delete the slash
+	// 		editor.chain().deleteRange({ from: slashPos, to: from }).run();
 
-			// Then execute the original command
-			command();
+	// 		// Then execute the original command
+	// 		command();
 
-			// Close the menu
-			setIsOpen(false);
-		};
+	// 		// Close the menu
+	// 		setIsOpen(false);
+	// 	};
+	// };
+
+	const flattenAndFilter = (groups, query) => {
+		const all = groups.flatMap((group) =>
+			group.items
+				.filter((item) =>
+					item.keywords.some((kw) =>
+						kw.toLowerCase().includes(query.toLowerCase())
+					)
+				)
+				.map((item) => ({
+					...item,
+					group: group.group,
+				}))
+		);
+
+		const grouped = all.reduce((acc, item) => {
+			acc[item.group] = acc[item.group] || [];
+			acc[item.group].push(item);
+			return acc;
+		}, {});
+
+		return grouped;
 	};
 
 	// editor get auto focus when drop down menu is closed
@@ -62,7 +89,21 @@ export const useSlashCommand = (editor) => {
 	useEffect(() => {
 		if (!editor) return;
 
-		const commands = baseCommands(editor);
+		const commands = baseCommands(editor).map((group) => ({
+			...group,
+			items: group.items.map((item) => ({
+				...item,
+				command: () => {
+					const { from } = editor.state.selection;
+					editor
+						.chain()
+						.deleteRange({ from: from - 1, to: from })
+						.run();
+					item.command();
+					setIsOpen(false);
+				},
+			})),
+		}));
 
 		const onKeyDown = (e) => {
 			if (!editor.isFocused) return;
@@ -77,10 +118,10 @@ export const useSlashCommand = (editor) => {
 						// Get slash position
 						const pos = editor.view.coordsAtPos(from - 1);
 
-						const processedCommands = commands.map((cmd) => ({
-							...cmd,
-							command: withSlashRemoval(cmd.command),
-						}));
+						// const processedCommands = commands.map((cmd) => ({
+						// 	...cmd,
+						// 	command: withSlashRemoval(cmd.command),
+						// }));
 
 						const virtualElement = {
 							getBoundingClientRect: () => ({
@@ -99,7 +140,7 @@ export const useSlashCommand = (editor) => {
 
 						setIsOpen(true);
 						setSearchQuery("");
-						setMenuStack([commands, processedCommands]);
+						setMenuGroups(commands);
 					}
 				}, 0);
 			}
@@ -115,55 +156,84 @@ export const useSlashCommand = (editor) => {
 	// Filtering logic
 	useEffect(() => {
 		if (!isOpen) return;
-		const currentMenu = menuStack[menuStack.length - 1];
-		const filtered = currentMenu.filter((item) =>
-			item.keywords.some((kw) => kw.includes(searchQuery.toLowerCase()))
-		);
-		setMenuItems(filtered);
+		const filtered = flattenAndFilter(menuGroups, searchQuery);
+		const flat = Object.values(filtered).flat();
+		setMenuItems(flat);
 		setSelectedIndex(0);
-	}, [searchQuery, menuStack, isOpen]);
+	}, [searchQuery, menuGroups, isOpen]);
 
 	// Keyboard navigation
 	useEffect(() => {
 		if (!isOpen) return;
 
 		const onKeyDown = (e) => {
+			e.preventDefault();
+
+			const groups = Object.entries(
+				menuItems.reduce((acc, item) => {
+					acc[item.group] = acc[item.group] || [];
+					acc[item.group].push(item);
+					return acc;
+				}, {})
+			);
+
+			const maxGroupIndex = groups.length - 1;
+			const currentGroup = groups[selectedPosition.groupIndex];
+			const maxItemIndex = currentGroup?.[1].length - 1;
+
+			let newGroupIndex = selectedPosition.groupIndex;
+			let newItemIndex = selectedPosition.itemIndex;
+
 			if (e.key === "ArrowDown") {
-				e.preventDefault();
-				setSelectedIndex((prev) => (prev + 1) % menuItems.length);
+				if (newItemIndex < maxItemIndex) {
+					newItemIndex++;
+				} else if (newGroupIndex < maxGroupIndex) {
+					newGroupIndex++;
+					newItemIndex = 0;
+				}
 			} else if (e.key === "ArrowUp") {
-				e.preventDefault();
-				setSelectedIndex(
-					(prev) => (prev - 1 + menuItems.length) % menuItems.length
-				);
+				if (newItemIndex > 0) {
+					newItemIndex--;
+				} else if (newGroupIndex > 0) {
+					newGroupIndex--;
+					const newGroupItems = groups[newGroupIndex][1];
+					newItemIndex = newGroupItems.length - 1;
+				}
 			} else if (e.key === "Enter") {
-				e.preventDefault();
-				if (menuItems[selectedIndex]) {
-					menuItems[selectedIndex].command();
-					setIsOpen(false);
-				}
-			} else if (e.key === "Escape") {
-				e.preventDefault();
-				if (menuStack.length > 1) {
-					setMenuStack((prev) => prev.slice(0, -1));
-				} else {
-					setIsOpen(false);
-				}
+				const item = groups[newGroupIndex][1][newItemIndex];
+				item?.command?.();
+				setIsOpen(false);
+				return;
+			} else {
+				return;
 			}
+
+			setSelectedPosition({
+				groupIndex: newGroupIndex,
+				itemIndex: newItemIndex,
+			});
 		};
 
 		document.addEventListener("keydown", onKeyDown);
 		return () => document.removeEventListener("keydown", onKeyDown);
-	}, [isOpen, selectedIndex, menuItems, menuStack]);
+	}, [isOpen, selectedPosition, menuItems]);
 
 	return {
 		isOpen,
-		menuItems,
+		groupedItems: Object.entries(
+			menuItems.reduce((acc, item) => {
+				acc[item.group] = acc[item.group] || [];
+				acc[item.group].push(item);
+				return acc;
+			}, {})
+		),
 		selectedIndex,
 		floatingStyles,
 		refs,
 		context,
 		searchQuery,
 		setSearchQuery,
+		selectedPosition,
+		setSelectedPosition,
 	};
 };
