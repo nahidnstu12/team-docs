@@ -30,6 +30,12 @@ export default function SlashCommandMenu({ editor }) {
 		}
 	}, [selectedPosition]);
 
+	useEffect(() => {
+		if (!isOpen) {
+			itemRefs.current[0]?.blur(); // Remove any lingering focus state
+		}
+	}, [isOpen]);
+
 	if (!editor) return null;
 
 	return (

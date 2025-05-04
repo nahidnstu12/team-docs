@@ -72,6 +72,12 @@ export const useSlashCommand = (editor) => {
 		);
 	}, [menuItems]);
 
+	useEffect(() => {
+		if (isOpen) {
+			setSelectedPosition({ groupIndex: 0, itemIndex: 0 }); // Reset scroll index
+		}
+	}, [isOpen]);
+
 	// editor get auto focus when drop down menu is closed
 	useEffect(() => {
 		if (!isOpen && editor?.isEditable) {
@@ -111,11 +117,6 @@ export const useSlashCommand = (editor) => {
 						// Get slash position
 						const pos = editor.view.coordsAtPos(from - 1);
 
-						// const processedCommands = commands.map((cmd) => ({
-						// 	...cmd,
-						// 	command: withSlashRemoval(cmd.command),
-						// }));
-
 						const virtualElement = {
 							getBoundingClientRect: () => ({
 								width: 0,
@@ -149,10 +150,27 @@ export const useSlashCommand = (editor) => {
 	// Filtering logic
 	useEffect(() => {
 		if (!isOpen) return;
+
 		const filtered = flattenAndFilter(menuGroups, searchQuery);
 		const flat = Object.values(filtered).flat();
 		setMenuItems(flat);
-		setSelectedIndex(0);
+
+		// Recalculate grouped structure to ensure valid selection
+		const newGrouped = Object.entries(
+			flat.reduce((acc, item) => {
+				acc[item.group] = acc[item.group] || [];
+				acc[item.group].push(item);
+				return acc;
+			}, {})
+		);
+
+		// Always reset to the first available item if present
+		if (newGrouped.length > 0 && newGrouped[0][1].length > 0) {
+			setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
+		} else {
+			// fallback for no result case
+			setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
+		}
 	}, [searchQuery, menuGroups, isOpen]);
 
 	// Keyboard navigation
