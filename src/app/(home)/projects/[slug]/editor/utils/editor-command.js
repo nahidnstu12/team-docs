@@ -28,7 +28,7 @@ import {
 	TextIcon,
 } from "lucide-react";
 
-export const baseCommands = (editor) => [
+export const baseCommands = (editor, setLinkDialogOpen) => [
 	{
 		group: "Headings",
 		items: [
@@ -162,20 +162,7 @@ export const baseCommands = (editor) => [
 				subtitle: "Insert hyperlink",
 				icon: <LinkIcon className="w-5 h-5" />,
 				keywords: ["link", "url", "hyperlink", "anchor", "external"],
-				command: () => {
-					const url = window.prompt("Enter the URL");
-					if (url) {
-						editor
-							.chain()
-							.focus()
-							.setLink({
-								href: url,
-								target: "_blank",
-								rel: "noopener noreferrer",
-							})
-							.run();
-					}
-				},
+				command: () => setLinkDialogOpen(true),
 			},
 		],
 	},

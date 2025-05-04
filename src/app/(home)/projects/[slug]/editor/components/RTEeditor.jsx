@@ -1,12 +1,14 @@
 import { editorExtensions } from "@/lib/editor-extensions/editor-extensions";
 import { useEditor, EditorContent } from "@tiptap/react";
 import EditorFooter from "./EditorFooter";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import SlashCommandMenu from "./SlashCommandMenu";
+import { LinkDialog } from "./LinkDialog";
 
 export default function RTEeditor({ pageId }) {
 	const ref = useRef(null);
+	const [linkDialogOpen, setLinkDialogOpen] = useState(false);
 
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -45,7 +47,18 @@ export default function RTEeditor({ pageId }) {
 						className="w-full max-w-none border-0 p-0 min-h-[400px]"
 					/>
 				</div>
-				{editor && <SlashCommandMenu editor={editor} />}
+				<LinkDialog
+					open={linkDialogOpen}
+					onOpenChange={setLinkDialogOpen}
+					editor={editor}
+				/>
+
+				{editor && (
+					<SlashCommandMenu
+						editor={editor}
+						setLinkDialogOpen={setLinkDialogOpen}
+					/>
+				)}
 			</div>
 			<input type="hidden" name="content" ref={ref} />
 			<EditorFooter editor={editor} />

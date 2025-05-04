@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSlashCommand } from "../hooks/useSlashCommand";
 import { useEffect, useRef } from "react";
 
-export default function SlashCommandMenu({ editor }) {
+export default function SlashCommandMenu({ editor, setLinkDialogOpen }) {
 	const {
 		isOpen,
 		groupedItems,
@@ -14,7 +14,7 @@ export default function SlashCommandMenu({ editor }) {
 		searchQuery,
 		setSearchQuery,
 		selectedPosition,
-	} = useSlashCommand(editor);
+	} = useSlashCommand(editor, setLinkDialogOpen);
 
 	const dismiss = useDismiss(context);
 	const { getFloatingProps } = useInteractions([dismiss]);
