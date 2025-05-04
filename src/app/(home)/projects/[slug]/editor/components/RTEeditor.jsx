@@ -1,15 +1,15 @@
-import BubbleMenu from "@/components/editor/ui/BubbleMenu";
-import Toolbar from "@/components/editor/ui/Toolbar";
 import { editorExtensions } from "@/lib/editor-extensions/editor-extensions";
 import { useEditor, EditorContent } from "@tiptap/react";
 import EditorFooter from "./EditorFooter";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import SlashCommandMenu from "./SlashCommandMenu";
 
-export default function RTEeditor() {
+export default function RTEeditor({ pageId }) {
 	const ref = useRef(null);
 
 	const editor = useEditor({
+		immediatelyRender: false,
 		extensions: editorExtensions,
 		autofocus: true,
 		editorProps: {
@@ -18,6 +18,12 @@ export default function RTEeditor() {
 			},
 		},
 	});
+
+	useEffect(() => {
+		if (editor) {
+			editor.commands.focus("end");
+		}
+	}, [editor, pageId]);
 
 	const handleSubmit = () => {
 		if (!editor) return;
@@ -28,16 +34,6 @@ export default function RTEeditor() {
 	};
 
 	return (
-		// <div className="w-full p-6 space-y-4">
-		// 	<Toolbar editor={editor} />
-		// 	<EditorContent
-		// 		editor={editor}
-		// 		className="space-y-2 focus:outline-none max-w-none"
-		// 	/>
-		// 	<BubbleMenu editor={editor} />
-		// 	<EditorFooter editor={editor} />
-		// </div>
-
 		<form action="/actions/saveDocument" method="POST" className="w-full mt-20">
 			<div className="relative w-full">
 				<div
@@ -49,7 +45,7 @@ export default function RTEeditor() {
 						className="w-full max-w-none border-0 p-0 min-h-[400px]"
 					/>
 				</div>
-				{/* <RTEslash editor={editor} /> */}
+				{editor && <SlashCommandMenu editor={editor} />}
 			</div>
 			<input type="hidden" name="content" ref={ref} />
 			<EditorFooter editor={editor} />
