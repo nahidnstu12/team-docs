@@ -9,12 +9,27 @@ import {
 	Details,
 	DetailsSummary,
 } from "@/components/editor/extensions/details";
+import TextAlign from "@tiptap/extension-text-align";
+import Typography from "@tiptap/extension-typography";
+import FontFamily from "@tiptap/extension-font-family";
+import CharacterCount from "@tiptap/extension-character-count";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import Strike from "@tiptap/extension-strike";
+import Underline from "@tiptap/extension-underline";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
 
 const lowlight = createLowlight(all);
 
 export const editorExtensions = [
 	StarterKit.configure({
 		history: true,
+		// Ensure `TextAlign` can override paragraphs, headings, etc.
+		paragraph: { HTMLAttributes: { class: "text-left" } },
+		heading: { HTMLAttributes: { class: "text-left" } },
 	}),
 	TaskList.configure({
 		nested: true,
@@ -28,5 +43,28 @@ export const editorExtensions = [
 	OrderedList.configure({}),
 	Details,
 	DetailsSummary,
+	TextAlign.configure({
+		types: ["heading", "paragraph"], // Specify which node types to align
+	}),
+	Typography,
+	FontFamily.configure({
+		types: ["textStyle"],
+	}),
+	CharacterCount.configure({
+		limit: 10_000, // Optional: max limit
+	}),
+	Bold,
+	Italic,
+	Strike,
+	Underline,
+	Subscript,
+	Superscript,
+	Highlight,
+	Link.configure({
+		openOnClick: true, // allows ctrl+click or cmd+click to open
+		linkOnPaste: true,
+		autolink: true,
+	}),
+
 	...ColorExtensions,
 ];

@@ -2,6 +2,7 @@ import BubbleMenu from "@/components/editor/ui/BubbleMenu";
 import Toolbar from "@/components/editor/ui/Toolbar";
 import { editorExtensions } from "@/lib/editor-extensions/editor-extensions";
 import { useEditor, EditorContent } from "@tiptap/react";
+import EditorFooter from "./EditorFooter";
 
 export default function RTEeditor() {
 	const editor = useEditor({
@@ -22,6 +23,7 @@ export default function RTEeditor() {
 				className="space-y-2 focus:outline-none max-w-none"
 			/>
 			<BubbleMenu editor={editor} />
+			<EditorFooter editor={editor} />
 		</div>
 	);
 }
