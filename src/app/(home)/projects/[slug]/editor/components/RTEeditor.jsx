@@ -42,12 +42,11 @@ export default function RTEeditor() {
 			<div className="relative w-full">
 				<div
 					onClick={() => editor?.commands.focus()}
-					className="border w-full p-4 rounded-md h-[450px] overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent scrollbar-thumb-rounded-full cursor-text prose prose-sm max-w-none"
+					className="border w-full p-4 rounded-md h-[450px] overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent scrollbar-thumb-rounded-full cursor-text max-w-none"
 				>
 					<EditorContent
 						editor={editor}
-						className="[&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none [&_.ProseMirror]:focus-visible:ring-0 w-full max-w-none border-0 p-0 min-h-[400px]"
-						style={{ lineHeight: "1.2" }}
+						className="w-full max-w-none border-0 p-0 min-h-[400px]"
 					/>
 				</div>
 				{/* <RTEslash editor={editor} /> */}

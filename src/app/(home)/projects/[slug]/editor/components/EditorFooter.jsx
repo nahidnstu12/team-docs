@@ -1,7 +1,7 @@
 export default function EditorFooter({ editor }) {
 	if (!editor) return null;
 
-	const charLimit = 500; // sync with your config
+	const charLimit = 10_000; // sync with your config
 	const charCount = editor.storage.characterCount.characters();
 	const wordCount = editor.storage.characterCount.words();
 	// const remaining = charLimit - charCount;
