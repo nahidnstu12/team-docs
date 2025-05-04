@@ -2,6 +2,7 @@
 import { useDismiss, useInteractions } from "@floating-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSlashCommand } from "../hooks/useSlashCommand";
+import { useEffect, useRef } from "react";
 
 export default function SlashCommandMenu({ editor }) {
 	const {
@@ -17,6 +18,18 @@ export default function SlashCommandMenu({ editor }) {
 
 	const dismiss = useDismiss(context);
 	const { getFloatingProps } = useInteractions([dismiss]);
+
+	const itemRefs = useRef([]);
+
+	useEffect(() => {
+		// Scroll selected item into view
+		if (itemRefs.current[selectedIndex]) {
+			itemRefs.current[selectedIndex].scrollIntoView({
+				behavior: "smooth",
+				block: "nearest",
+			});
+		}
+	}, [selectedIndex]);
 
 	if (!editor) return null;
 
@@ -47,6 +60,7 @@ export default function SlashCommandMenu({ editor }) {
 						{menuItems.map((item, index) => (
 							<button
 								key={item.title}
+								ref={(el) => (itemRefs.current[index] = el)}
 								type="button"
 								onClick={item.command}
 								className={`flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
