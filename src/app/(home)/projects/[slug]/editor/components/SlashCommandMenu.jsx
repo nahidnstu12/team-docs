@@ -49,8 +49,8 @@ export default function SlashCommandMenu({ editor }) {
 								key={item.title}
 								type="button"
 								onClick={item.command}
-								className={`flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-muted transition ${
-									index === selectedIndex ? "bg-muted" : ""
+								className={`flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+									index === selectedIndex ? "bg-zinc-200 dark:bg-zinc-700" : ""
 								}`}
 							>
 								<div className="flex items-center justify-center w-6 h-6 text-muted-foreground">
