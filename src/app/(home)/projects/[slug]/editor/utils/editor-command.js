@@ -17,6 +17,14 @@ import {
 	Highlighter,
 	Subscript,
 	Superscript,
+	ListCollapse,
+	Minus,
+	AlignLeft,
+	AlignCenter,
+	AlignRight,
+	AlignJustify,
+	Undo2,
+	Redo2,
 } from "lucide-react";
 
 export const baseCommands = (editor) => [
@@ -129,6 +137,13 @@ export const baseCommands = (editor) => [
 				],
 				command: () => editor.chain().focus().toggleCodeBlock().run(),
 			},
+			{
+				title: "Details",
+				subtitle: "Toggle Details",
+				icon: <ListCollapse className="w-5 h-5" />,
+				keywords: ["details", "toggle", "summary", "story"],
+				command: () => editor.chain().focus().insertDetails().run(),
+			},
 		],
 	},
 	{
@@ -140,6 +155,26 @@ export const baseCommands = (editor) => [
 				icon: <Code className="w-5 h-5" />,
 				keywords: ["inline code", "snippet", "code inline", "dev"],
 				command: () => editor.chain().focus().toggleCode().run(),
+			},
+			{
+				title: "Add Link",
+				subtitle: "Insert hyperlink",
+				icon: <LinkIcon className="w-5 h-5" />,
+				keywords: ["link", "url", "hyperlink", "anchor", "external"],
+				command: () => {
+					const url = window.prompt("Enter the URL");
+					if (url) {
+						editor
+							.chain()
+							.focus()
+							.setLink({
+								href: url,
+								target: "_blank",
+								rel: "noopener noreferrer",
+							})
+							.run();
+					}
+				},
 			},
 		],
 	},
@@ -195,30 +230,65 @@ export const baseCommands = (editor) => [
 				keywords: ["superscript", "upper text", "power", "math"],
 				command: () => editor.chain().focus().toggleSuperscript().run(),
 			},
+			{
+				title: "Divider",
+				subtitle: "put a divider",
+				icon: <Minus className="w-5 h-5" />,
+				keywords: ["line", "break", "horizontal", "divider"],
+				command: () => editor.chain().focus().toggleSuperscript().run(),
+			},
+		],
+	},
+
+	{
+		group: "Text Alignment",
+		items: [
+			{
+				title: "Align Left",
+				subtitle: "Align text to the left",
+				icon: <AlignLeft className="w-5 h-5" />,
+				keywords: ["left", "align left", "text left", "flush left"],
+				command: () => editor.chain().focus().setTextAlign("left").run(),
+			},
+			{
+				title: "Align Center",
+				subtitle: "Center align text",
+				icon: <AlignCenter className="w-5 h-5" />,
+				keywords: ["center", "align center", "text center", "middle"],
+				command: () => editor.chain().focus().setTextAlign("center").run(),
+			},
+			{
+				title: "Align Right",
+				subtitle: "Align text to the right",
+				icon: <AlignRight className="w-5 h-5" />,
+				keywords: ["right", "align right", "text right", "flush right"],
+				command: () => editor.chain().focus().setTextAlign("right").run(),
+			},
+			{
+				title: "Justify",
+				subtitle: "Justify text alignment",
+				icon: <AlignJustify className="w-5 h-5" />,
+				keywords: ["justify", "align justify", "full justify", "even"],
+				command: () => editor.chain().focus().setTextAlign("justify").run(),
+			},
 		],
 	},
 	{
-		group: "Links",
+		group: "Operations",
 		items: [
 			{
-				title: "Add Link",
-				subtitle: "Insert hyperlink",
-				icon: <LinkIcon className="w-5 h-5" />,
-				keywords: ["link", "url", "hyperlink", "anchor", "external"],
-				command: () => {
-					const url = window.prompt("Enter the URL");
-					if (url) {
-						editor
-							.chain()
-							.focus()
-							.setLink({
-								href: url,
-								target: "_blank",
-								rel: "noopener noreferrer",
-							})
-							.run();
-					}
-				},
+				title: "Undo",
+				subtitle: "Undo last action",
+				icon: <Undo2 className="w-5 h-5" />,
+				keywords: ["undo", "reverse", "back", "step back"],
+				command: () => editor.chain().focus().undo().run(),
+			},
+			{
+				title: "Redo",
+				subtitle: "Redo last undone action",
+				icon: <Redo2 className="w-5 h-5" />,
+				keywords: ["redo", "repeat", "forward", "step forward"],
+				command: () => editor.chain().focus().redo().run(),
 			},
 		],
 	},
