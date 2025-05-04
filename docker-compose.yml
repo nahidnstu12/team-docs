@@ -36,26 +36,9 @@ services:
     networks:
       - postgres-network
 
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   container_name: pgadmin
-  #   restart: always
-  #   ports:
-  #     - "5050:80"
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #   volumes:
-  #     - pgadmin_data:/var/lib/pgadmin
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - postgres-network
-
 networks:
   postgres-network:
     driver: bridge
 
 volumes:
   postgres_data:
-  # pgadmin_data:
