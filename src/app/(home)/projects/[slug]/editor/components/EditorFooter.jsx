@@ -10,7 +10,7 @@ export default function EditorFooter({ editor }) {
 
 	return (
 		<div
-			className={`border-t pt-2 text-xs text-right ${
+			className={`pt-2 text-xs text-right ${
 				overLimit ? "text-red-500" : "text-muted-foreground"
 			}`}
 		>
