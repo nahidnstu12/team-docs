@@ -25,6 +25,7 @@ import {
 	AlignJustify,
 	Undo2,
 	Redo2,
+	TextIcon,
 } from "lucide-react";
 
 export const baseCommands = (editor) => [
@@ -181,6 +182,13 @@ export const baseCommands = (editor) => [
 	{
 		group: "Formatting",
 		items: [
+			{
+				title: "Text",
+				subtitle: "Paragraph style text",
+				icon: <TextIcon className="w-5 h-5" />,
+				keywords: ["text", "paragraph", "normal", "body", "remove heading"],
+				command: () => editor.chain().focus().clearNodes().setParagraph().run(),
+			},
 			{
 				title: "Bold",
 				subtitle: "Bold your text",
