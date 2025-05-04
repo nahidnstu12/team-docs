@@ -235,7 +235,7 @@ export const baseCommands = (editor) => [
 				subtitle: "put a divider",
 				icon: <Minus className="w-5 h-5" />,
 				keywords: ["line", "break", "horizontal", "divider"],
-				command: () => editor.chain().focus().toggleSuperscript().run(),
+				command: () => editor.chain().focus().setHorizontalRule().run(),
 			},
 		],
 	},

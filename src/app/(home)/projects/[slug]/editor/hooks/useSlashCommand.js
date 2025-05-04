@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
 	useFloating,
 	autoUpdate,
@@ -39,23 +39,6 @@ export const useSlashCommand = (editor) => {
 		],
 	});
 
-	// remove slash after selecting an item
-	// const withSlashRemoval = (command) => {
-	// 	return () => {
-	// 		const { from } = editor.state.selection;
-	// 		const slashPos = from - 1;
-
-	// 		// First delete the slash
-	// 		editor.chain().deleteRange({ from: slashPos, to: from }).run();
-
-	// 		// Then execute the original command
-	// 		command();
-
-	// 		// Close the menu
-	// 		setIsOpen(false);
-	// 	};
-	// };
-
 	const flattenAndFilter = (groups, query) => {
 		const all = groups.flatMap((group) =>
 			group.items
@@ -78,6 +61,16 @@ export const useSlashCommand = (editor) => {
 
 		return grouped;
 	};
+
+	const groupedItems = useMemo(() => {
+		return Object.entries(
+			menuItems.reduce((acc, item) => {
+				acc[item.group] = acc[item.group] || [];
+				acc[item.group].push(item);
+				return acc;
+			}, {})
+		);
+	}, [menuItems]);
 
 	// editor get auto focus when drop down menu is closed
 	useEffect(() => {
@@ -167,7 +160,10 @@ export const useSlashCommand = (editor) => {
 		if (!isOpen) return;
 
 		const onKeyDown = (e) => {
-			e.preventDefault();
+			const allowedKeys = ["ArrowDown", "ArrowUp", "Enter"];
+			if (!allowedKeys.includes(e.key)) return;
+
+			e.preventDefault(); // Only prevent if we're handling the key
 
 			const groups = Object.entries(
 				menuItems.reduce((acc, item) => {
@@ -220,13 +216,7 @@ export const useSlashCommand = (editor) => {
 
 	return {
 		isOpen,
-		groupedItems: Object.entries(
-			menuItems.reduce((acc, item) => {
-				acc[item.group] = acc[item.group] || [];
-				acc[item.group].push(item);
-				return acc;
-			}, {})
-		),
+		groupedItems,
 		selectedIndex,
 		floatingStyles,
 		refs,
