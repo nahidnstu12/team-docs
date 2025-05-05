@@ -93,14 +93,12 @@ export function LinkDialog({
 					<DialogFooter className="flex justify-between">
 						<div className="space-x-2">
 							{mode === "edit" && isValidUrl && (
-								<a
-									href={url}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-sm text-blue-600 underline"
+								<Button
+									variant="outline"
+									onClick={() => window.open(initialUrl, "_blank")}
 								>
 									Visit Link
-								</a>
+								</Button>
 							)}
 						</div>
 						<div className="space-x-2">

@@ -36,10 +36,10 @@ export default function RTEeditor({ pageId }) {
 
 		const handler = (event) => {
 			const target = event.target;
-			if (target.tagName === "A") {
+			if (target.dataset.type === "link") {
 				event.preventDefault();
 
-				const url = target.getAttribute("href");
+				const url = target.dataset.href;
 				const text = target.textContent;
 
 				setInitialText(text);
