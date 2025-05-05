@@ -9,7 +9,14 @@ import {
 } from "@floating-ui/react";
 import { baseCommands } from "../utils/editor-command";
 
-export const useSlashCommand = (editor, setLinkDialogOpen) => {
+export const useSlashCommand = (
+	editor,
+	onOpenChange,
+	open,
+	setInitialText,
+	setInitialUrl,
+	setDialogMode
+) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -88,7 +95,13 @@ export const useSlashCommand = (editor, setLinkDialogOpen) => {
 	useEffect(() => {
 		if (!editor) return;
 
-		const commands = baseCommands(editor, setLinkDialogOpen).map((group) => ({
+		const commands = baseCommands(
+			editor,
+			onOpenChange,
+			setInitialText,
+			setInitialUrl,
+			setDialogMode
+		).map((group) => ({
 			...group,
 			items: group.items.map((item) => ({
 				...item,

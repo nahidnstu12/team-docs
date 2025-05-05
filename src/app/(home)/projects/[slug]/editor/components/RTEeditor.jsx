@@ -9,6 +9,9 @@ import { LinkDialog } from "./LinkDialog";
 export default function RTEeditor({ pageId }) {
 	const ref = useRef(null);
 	const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+	const [initialText, setInitialText] = useState("");
+	const [initialUrl, setInitialUrl] = useState("");
+	const [dialogMode, setDialogMode] = useState("create");
 
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -26,6 +29,30 @@ export default function RTEeditor({ pageId }) {
 			editor.commands.focus("end");
 		}
 	}, [editor, pageId]);
+
+	// for link
+	useEffect(() => {
+		if (!editor) return;
+
+		const handler = (event) => {
+			const target = event.target;
+			if (target.tagName === "A") {
+				event.preventDefault();
+
+				const url = target.getAttribute("href");
+				const text = target.textContent;
+
+				setInitialText(text);
+				setInitialUrl(url);
+				setDialogMode("edit");
+				setLinkDialogOpen(true);
+			}
+		};
+
+		const dom = editor.view.dom;
+		dom.addEventListener("click", handler);
+		return () => dom.removeEventListener("click", handler);
+	}, [editor]);
 
 	const handleSubmit = () => {
 		if (!editor) return;
@@ -51,12 +78,19 @@ export default function RTEeditor({ pageId }) {
 					open={linkDialogOpen}
 					onOpenChange={setLinkDialogOpen}
 					editor={editor}
+					initialText={initialText}
+					initialUrl={initialUrl}
+					mode={dialogMode}
 				/>
 
 				{editor && (
 					<SlashCommandMenu
+						open={linkDialogOpen}
+						onOpenChange={setLinkDialogOpen}
 						editor={editor}
-						setLinkDialogOpen={setLinkDialogOpen}
+						setInitialText={setInitialText}
+						setInitialUrl={setInitialUrl}
+						setDialogMode={setDialogMode}
 					/>
 				)}
 			</div>
