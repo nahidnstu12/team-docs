@@ -1,5 +1,4 @@
 import { useEditorInstance } from "./../hooks/useEditorInstance";
-import { useLinkHandling } from "./../hooks/useLinkHandling";
 import { useEditorSubmit } from "./../hooks/useEditorSubmit";
 import { EditorContent } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
@@ -7,56 +6,40 @@ import BubbleMenu from "./menus/BubbleMenu";
 import { LinkDialog } from "./menus/LinkDialog";
 import EditorFooter from "./ui/EditorFooter";
 import SlashCommandMenu from "./menus/SlashCommandMenu";
+import { LinkProvider } from "../ctx/LinkProvider";
 
 export default function RTEeditor({ pageId }) {
 	const { editor, editorRef } = useEditorInstance(pageId);
-	const {
-		linkDialogOpen,
-		setLinkDialogOpen,
-		initialText,
-		setInitialText,
-		initialUrl,
-		setInitialUrl,
-		dialogMode,
-		setDialogMode,
-	} = useLinkHandling(editor);
+
 	const { ref, handleSubmit } = useEditorSubmit(editor);
 
 	if (!editor) return <div>Loading editor...</div>;
 
 	return (
-		<form action="/actions/saveDocument" method="POST" className="w-full mt-20">
-			<div className="relative w-full">
-				<EditorContainer editor={editor} editorRef={editorRef}>
-					<BubbleMenu editor={editor} />
-					<EditorContent editor={editor} />
-				</EditorContainer>
+		<LinkProvider>
+			<form
+				action="/actions/saveDocument"
+				method="POST"
+				className="w-full mt-20"
+			>
+				<div className="relative w-full">
+					<EditorContainer editor={editor} editorRef={editorRef}>
+						<BubbleMenu editor={editor} />
+						<EditorContent editor={editor} />
+					</EditorContainer>
 
-				<LinkDialog
-					open={linkDialogOpen}
-					onOpenChange={setLinkDialogOpen}
-					editor={editor}
-					initialText={initialText}
-					initialUrl={initialUrl}
-					mode={dialogMode}
-				/>
+					<LinkDialog editor={editor} />
 
-				<SlashCommandMenu
-					open={linkDialogOpen}
-					onOpenChange={setLinkDialogOpen}
-					editor={editor}
-					setInitialText={setInitialText}
-					setInitialUrl={setInitialUrl}
-					setDialogMode={setDialogMode}
-				/>
-			</div>
+					<SlashCommandMenu editor={editor} />
+				</div>
 
-			<input type="hidden" name="content" ref={ref} />
-			<EditorFooter editor={editor} />
-			<Button type="button" onClick={handleSubmit} className="mt-4">
-				Save
-			</Button>
-		</form>
+				<input type="hidden" name="content" ref={ref} />
+				<EditorFooter editor={editor} />
+				<Button type="button" onClick={handleSubmit} className="mt-4">
+					Save
+				</Button>
+			</form>
+		</LinkProvider>
 	);
 }
 

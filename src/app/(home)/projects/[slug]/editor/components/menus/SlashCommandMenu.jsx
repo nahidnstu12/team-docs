@@ -2,65 +2,49 @@ import { memo, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSlashCommand } from "../../hooks/useSlashCommand";
 
-const SlashCommandMenu = memo(
-	({
-		open,
-		onOpenChange,
-		editor,
-		setInitialText,
-		setInitialUrl,
-		setDialogMode,
-	}) => {
-		const {
-			isOpen,
-			groupedItems,
-			floatingStyles,
-			refs,
-			searchQuery,
-			setSearchQuery,
-			selectedPosition,
-		} = useSlashCommand(
-			editor,
-			onOpenChange,
-			open,
-			setInitialText,
-			setInitialUrl,
-			setDialogMode
-		);
+const SlashCommandMenu = memo(({ editor }) => {
+	const {
+		isOpen,
+		groupedItems,
+		floatingStyles,
+		refs,
+		searchQuery,
+		setSearchQuery,
+		selectedPosition,
+	} = useSlashCommand(editor);
 
-		const itemRefs = useRef([]);
+	const itemRefs = useRef([]);
 
-		// Auto-scroll to selected item
-		useAutoScroll(itemRefs, selectedPosition);
-		// Cleanup focus state
-		useFocusCleanup(itemRefs, isOpen);
+	// Auto-scroll to selected item
+	useAutoScroll(itemRefs, selectedPosition);
+	// Cleanup focus state
+	useFocusCleanup(itemRefs, isOpen);
 
-		if (!editor) return null;
+	if (!editor) return null;
 
-		return (
-			<AnimatePresence>
-				{isOpen && (
-					<motion.div
-						ref={refs.setFloating}
-						style={{ ...floatingStyles, minWidth: "340px", maxWidth: "400px" }}
-						initial={{ opacity: 0, y: -10 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: -10 }}
-						className="z-50 overflow-hidden bg-white border shadow-xl rounded-xl dark:bg-zinc-900"
-					>
-						<SearchInput value={searchQuery} onChange={setSearchQuery} />
+	return (
+		<AnimatePresence>
+			{isOpen && (
+				<motion.div
+					ref={refs.setFloating}
+					style={{ ...floatingStyles, minWidth: "340px", maxWidth: "400px" }}
+					initial={{ opacity: 0, y: -10 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: -10 }}
+					className="z-50 overflow-hidden bg-white border shadow-xl rounded-xl dark:bg-zinc-900"
+				>
+					<SearchInput value={searchQuery} onChange={setSearchQuery} />
 
-						<CommandList
-							groupedItems={groupedItems}
-							selectedPosition={selectedPosition}
-							itemRefs={itemRefs}
-						/>
-					</motion.div>
-				)}
-			</AnimatePresence>
-		);
-	}
-);
+					<CommandList
+						groupedItems={groupedItems}
+						selectedPosition={selectedPosition}
+						itemRefs={itemRefs}
+					/>
+				</motion.div>
+			)}
+		</AnimatePresence>
+	);
+});
 
 // Sub-components for better readability
 const SearchInput = ({ value, onChange }) => (

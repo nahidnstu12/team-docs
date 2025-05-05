@@ -8,15 +8,9 @@ import {
 	autoUpdate,
 } from "@floating-ui/react";
 import { baseCommands } from "../utils/editor-command";
+import { useLinkContext } from "../ctx/LinkProvider";
 
-export const useSlashCommand = (
-	editor,
-	onOpenChange,
-	open,
-	setInitialText,
-	setInitialUrl,
-	setDialogMode
-) => {
+export const useSlashCommand = (editor) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [menuGroups, setMenuGroups] = useState([]);
@@ -24,6 +18,8 @@ export const useSlashCommand = (
 		groupIndex: 0,
 		itemIndex: 0,
 	});
+
+	const { linkCreateCommand } = useLinkContext();
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isOpen,
@@ -46,10 +42,7 @@ export const useSlashCommand = (
 		setIsOpen,
 		setSearchQuery,
 		setMenuGroups,
-		onOpenChange,
-		setInitialText,
-		setInitialUrl,
-		setDialogMode
+		linkCreateCommand
 	);
 	// Handle keyboard navigation
 	useKeyboardNavigation(
@@ -102,21 +95,12 @@ const useCommandInitialization = (
 	setIsOpen,
 	setSearchQuery,
 	setMenuGroups,
-	onOpenChange,
-	setInitialText,
-	setInitialUrl,
-	setDialogMode
+	linkCreateCommand
 ) => {
 	useEffect(() => {
 		if (!editor) return;
 
-		const commands = baseCommands(
-			editor,
-			onOpenChange,
-			setInitialText,
-			setInitialUrl,
-			setDialogMode
-		).map((group) => ({
+		const commands = baseCommands(editor, linkCreateCommand).map((group) => ({
 			...group,
 			items: group.items.map((item) => ({
 				...item,
@@ -162,17 +146,7 @@ const useCommandInitialization = (
 		window.addEventListener("keydown", onKeyDown, { capture: true });
 		return () =>
 			window.removeEventListener("keydown", onKeyDown, { capture: true });
-	}, [
-		editor,
-		refs,
-		onOpenChange,
-		setDialogMode,
-		setInitialText,
-		setInitialUrl,
-		setIsOpen,
-		setMenuGroups,
-		setSearchQuery,
-	]);
+	}, [editor, refs, setIsOpen, setMenuGroups, setSearchQuery]);
 };
 
 const useKeyboardNavigation = (

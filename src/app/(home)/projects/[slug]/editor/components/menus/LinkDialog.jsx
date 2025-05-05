@@ -10,17 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useLinkContext } from "../../ctx/LinkProvider";
 
-export function LinkDialog({
-	open,
-	onOpenChange,
-	editor,
-	initialText = "",
-	initialUrl = "",
-	mode = "create",
-}) {
+export function LinkDialog({ editor }) {
 	const [text, setText] = useState("");
 	const [url, setUrl] = useState("");
+
+	const {
+		linkDialogOpen: open,
+		setLinkDialogOpen: onOpenChange,
+		initialText,
+		initialUrl,
+		dialogMode: mode,
+	} = useLinkContext();
 
 	useEffect(() => {
 		if (open) {
