@@ -26,8 +26,14 @@ export class ProjectService extends BaseService {
 		if (!id && !slug) return false;
 
 		try {
+			const whereConditions = [];
+			if (id) whereConditions.push({ id });
+			if (slug) whereConditions.push({ slug });
+			
 			const project = await ProjectModel.findFirst({
-				OR: [id ? { id } : undefined, slug ? { slug } : undefined],
+				where: {
+					OR: whereConditions
+				}
 			});
 
 			const projectDTO = ProjectDTO.toResponse(project);
@@ -48,4 +54,6 @@ export class ProjectService extends BaseService {
 			Logger.error(error.message, `Get all projects failed`);
 		}
 	}
+
+	
 }

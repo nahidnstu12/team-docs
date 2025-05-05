@@ -12,6 +12,10 @@ export class BaseModel {
 		return await this.model.create({ data });
 	}
 
+	static async createMany(data) {
+		return await this.model.createMany(data);
+	}
+
 	static async upsert({ where, create, update }) {
 		try {
 			return await this.model.upsert({
