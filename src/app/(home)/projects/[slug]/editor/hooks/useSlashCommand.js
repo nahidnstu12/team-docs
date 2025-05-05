@@ -7,7 +7,7 @@ import {
 	size,
 	autoUpdate,
 } from "@floating-ui/react";
-import { baseCommands } from "../utils/editor-command";
+import { baseCommands } from "../utils/base-command";
 import { useLinkContext } from "../ctx/LinkProvider";
 
 export const useSlashCommand = (editor) => {
