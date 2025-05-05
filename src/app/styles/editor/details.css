@@ -1,0 +1,69 @@
+/* Modern Notion-like Details Component */
+.tiptap > details {
+	@apply my-2 w-full rounded-lg bg-white transition-all duration-200 ease-in-out;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.tiptap > details[open] {
+	@apply pb-3;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tiptap > details > summary {
+	@apply flex items-center gap-2 p-3 text-gray-800 cursor-pointer 
+         hover:bg-gray-50 rounded-lg transition-colors duration-150
+         select-none; /* Prevent text selection */
+	list-style: none; /* Remove default marker */
+}
+
+/* Summary text content */
+.tiptap > details > summary > :not(:first-child) {
+	@apply font-medium text-gray-800;
+}
+
+/* Chevron icon (closed state) */
+.tiptap > details > summary::before {
+	@apply mt-2  transition-transform duration-200;
+	content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* Chevron icon (open state) */
+.tiptap > details[open] > summary::before {
+	@apply rotate-90;
+}
+
+/* Content inside details */
+.tiptap > details > :not(summary) {
+	@apply px-4 pb-2 pt-1 pl-10 text-gray-700;
+}
+
+/* First paragraph after summary gets special treatment */
+.tiptap > details > p:first-of-type {
+	@apply mt-1;
+}
+
+/* Hover effects */
+.tiptap > details:hover {
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+/* Focus state for accessibility */
+.tiptap > details > summary:focus-visible {
+	@apply outline-none ring-2 ring-blue-500/50 rounded-lg;
+}
+
+/* Animation when opening */
+@keyframes details-open {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.tiptap > details[open] > :not(summary) {
+	animation: details-open 0.2s ease-out;
+}

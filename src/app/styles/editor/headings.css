@@ -1,0 +1,14 @@
+/* 🟣 Heading 1 (Main Title) */
+.tiptap > h1 {
+	@apply text-4xl font-extrabold text-foreground mt-6 mb-4;
+}
+
+/* 🟢 Heading 2 (Subheading) */
+.tiptap > h2 {
+	@apply text-3xl font-bold text-foreground mt-5 mb-3;
+}
+
+/* 🔵 Heading 3 (Sub-subheading) */
+.tiptap > h3 {
+	@apply text-2xl font-semibold text-foreground mt-4 mb-2;
+}

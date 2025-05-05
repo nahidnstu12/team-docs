@@ -1,0 +1,51 @@
+/* 🟢 Ordered List wrapper - all levels */
+.tiptap ol {
+	@apply pl-4 mt-0 mb-2;
+	counter-reset: list-item;
+}
+
+/* Top-level OL only */
+.tiptap > ol {
+	@apply mt-2;
+}
+
+/* 🟢 Ordered List item - all levels */
+.tiptap ol li {
+	@apply relative pl-2; /* Use relative positioning for proper alignment */
+	counter-increment: list-item;
+}
+
+/* 🟣 The number with dot - all levels */
+.tiptap ol li::before {
+	@apply absolute left-0 w-6 text-center text-base font-normal;
+	content: counter(list-item) ".";
+}
+
+/* Nested OL cases */
+/* When OL follows a paragraph (treated as nested) */
+.tiptap > p + ol,
+/* Nested OL inside LI */
+.tiptap ol li ol {
+	@apply pl-4 mt-2;
+	counter-reset: list-item;
+}
+
+/* Style nested OL numbers differently */
+.tiptap ol li ol li::before {
+	content: counter(list-item, lower-alpha) ".";
+}
+
+/* Second level nested OL */
+.tiptap ol li ol li ol {
+	counter-reset: list-item;
+}
+
+/* Second level nested OL numbers */
+.tiptap ol li ol li ol li::before {
+	content: counter(list-item, lower-roman) ".";
+}
+
+/* Ensure paragraphs and other content inside list items have proper spacing */
+.tiptap ol li > :not(ol):not(ul) {
+	@apply ml-6;
+}
