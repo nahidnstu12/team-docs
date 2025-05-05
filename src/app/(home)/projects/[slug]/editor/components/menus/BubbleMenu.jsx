@@ -11,7 +11,7 @@ import {
 	Underline,
 } from "lucide-react";
 import { useState } from "react";
-import ColorPickerPanel from "./ColorPickerPanel";
+import ColorPickerPanel from "../../../../../../../components/editor/ui/ColorPickerPanel";
 
 export default function BubbleMenu({ editor }) {
 	const [showColorPanel, setShowColorPanel] = useState(false);

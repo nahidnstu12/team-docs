@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import {
 	useFloating,
-	autoUpdate,
 	offset,
 	flip,
 	shift,
 	size,
+	autoUpdate,
 } from "@floating-ui/react";
 import { baseCommands } from "../utils/editor-command";
 
@@ -18,9 +18,7 @@ export const useSlashCommand = (
 	setDialogMode
 ) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [menuItems, setMenuItems] = useState([]);
 	const [menuGroups, setMenuGroups] = useState([]);
 	const [selectedPosition, setSelectedPosition] = useState({
 		groupIndex: 0,
@@ -32,66 +30,83 @@ export const useSlashCommand = (
 		onOpenChange: setIsOpen,
 		placement: "bottom-start",
 		whileElementsMounted: autoUpdate,
-		middleware: [
-			offset(5),
-			flip(),
-			shift(),
-			size({
-				apply({ rects, elements }) {
-					Object.assign(elements.floating.style, {
-						width: `${rects.reference.width}px`,
-					});
-				},
-			}),
-		],
+		middleware: [offset(5), flip(), shift(), size()],
 	});
 
-	const flattenAndFilter = (groups, query) => {
-		const all = groups.flatMap((group) =>
-			group.items
-				.filter((item) =>
-					item.keywords.some((kw) =>
-						kw.toLowerCase().includes(query.toLowerCase())
-					)
-				)
-				.map((item) => ({
-					...item,
-					group: group.group,
-				}))
-		);
+	const menuItems = useMemo(
+		() => filterItems(menuGroups, searchQuery),
+		[menuGroups, searchQuery]
+	);
+	const groupedItems = useMemo(() => groupItems(menuItems), [menuItems]);
 
-		const grouped = all.reduce((acc, item) => {
-			acc[item.group] = acc[item.group] || [];
-			acc[item.group].push(item);
-			return acc;
-		}, {});
+	// Initialize commands and keyboard handlers
+	useCommandInitialization(
+		editor,
+		refs,
+		setIsOpen,
+		setSearchQuery,
+		setMenuGroups,
+		onOpenChange,
+		setInitialText,
+		setInitialUrl,
+		setDialogMode
+	);
+	// Handle keyboard navigation
+	useKeyboardNavigation(
+		isOpen,
+		groupedItems,
+		selectedPosition,
+		setSelectedPosition,
+		setIsOpen
+	);
+	// Handle editor focus when menu closes
+	useEditorFocus(editor, isOpen);
 
-		return grouped;
+	return {
+		isOpen,
+		groupedItems,
+		floatingStyles,
+		refs,
+		searchQuery,
+		setSearchQuery,
+		selectedPosition,
 	};
+};
 
-	const groupedItems = useMemo(() => {
-		return Object.entries(
-			menuItems.reduce((acc, item) => {
-				acc[item.group] = acc[item.group] || [];
-				acc[item.group].push(item);
-				return acc;
-			}, {})
-		);
-	}, [menuItems]);
+// Helper functions
+const filterItems = (groups, query) => {
+	return groups.flatMap((group) =>
+		group.items
+			.filter((item) =>
+				item.keywords.some((kw) =>
+					kw.toLowerCase().includes(query.toLowerCase())
+				)
+			)
+			.map((item) => ({ ...item, group: group.group }))
+	);
+};
 
-	useEffect(() => {
-		if (isOpen) {
-			setSelectedPosition({ groupIndex: 0, itemIndex: 0 }); // Reset scroll index
-		}
-	}, [isOpen]);
+const groupItems = (items) => {
+	const grouped = items.reduce((acc, item) => {
+		acc[item.group] = acc[item.group] || [];
+		acc[item.group].push(item);
+		return acc;
+	}, {});
+	return Object.entries(grouped);
+};
 
-	// editor get auto focus when drop down menu is closed
-	useEffect(() => {
-		if (!isOpen && editor?.isEditable) {
-			editor.commands.focus();
-		}
-	}, [isOpen, editor]);
-
+// Custom hooks for useSlashCommand
+const useCommandInitialization = (
+	editor,
+	refs,
+	setIsOpen,
+	setSearchQuery,
+	setMenuGroups,
+	onOpenChange,
+	setInitialText,
+	setInitialUrl,
+	setDialogMode
+) => {
 	useEffect(() => {
 		if (!editor) return;
 
@@ -118,123 +133,93 @@ export const useSlashCommand = (
 		}));
 
 		const onKeyDown = (e) => {
-			if (!editor.isFocused) return;
+			if (!editor.isFocused || e.key !== "/") return;
 
-			if (e.key === "/") {
-				// Defer to next tick to allow slash to appear in doc
-				setTimeout(() => {
-					const { from } = editor.state.selection;
-					const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
-
-					if (textBefore === "/") {
-						// Get slash position
-						const pos = editor.view.coordsAtPos(from - 1);
-
-						const virtualElement = {
-							getBoundingClientRect: () => ({
-								width: 0,
-								height: 0,
-								x: pos.right,
-								y: pos.bottom,
-								top: pos.bottom,
-								right: pos.right,
-								bottom: pos.bottom,
-								left: pos.right,
-							}),
-						};
-
-						refs.setReference(virtualElement);
-
-						setIsOpen(true);
-						setSearchQuery("");
-						setMenuGroups(commands);
-					}
-				}, 0);
-			}
+			setTimeout(() => {
+				const { from } = editor.state.selection;
+				const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
+				if (textBefore === "/") {
+					const pos = editor.view.coordsAtPos(from - 1);
+					refs.setReference({
+						getBoundingClientRect: () => ({
+							width: 0,
+							height: 0,
+							x: pos.right,
+							y: pos.bottom,
+							top: pos.bottom,
+							right: pos.right,
+							bottom: pos.bottom,
+							left: pos.right,
+						}),
+					});
+					setIsOpen(true);
+					setSearchQuery("");
+					setMenuGroups(commands);
+				}
+			}, 0);
 		};
 
-		// Use capture phase to ensure we get the event first
 		window.addEventListener("keydown", onKeyDown, { capture: true });
-		return () => {
+		return () =>
 			window.removeEventListener("keydown", onKeyDown, { capture: true });
-		};
-	}, [editor, refs]);
+	}, [
+		editor,
+		refs,
+		onOpenChange,
+		setDialogMode,
+		setInitialText,
+		setInitialUrl,
+		setIsOpen,
+		setMenuGroups,
+		setSearchQuery,
+	]);
+};
 
-	// Filtering logic
-	useEffect(() => {
-		if (!isOpen) return;
-
-		const filtered = flattenAndFilter(menuGroups, searchQuery);
-		const flat = Object.values(filtered).flat();
-		setMenuItems(flat);
-
-		// Recalculate grouped structure to ensure valid selection
-		const newGrouped = Object.entries(
-			flat.reduce((acc, item) => {
-				acc[item.group] = acc[item.group] || [];
-				acc[item.group].push(item);
-				return acc;
-			}, {})
-		);
-
-		// Always reset to the first available item if present
-		if (newGrouped.length > 0 && newGrouped[0][1].length > 0) {
-			setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
-		} else {
-			// fallback for no result case
-			setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
-		}
-	}, [searchQuery, menuGroups, isOpen]);
-
-	// Keyboard navigation
+const useKeyboardNavigation = (
+	isOpen,
+	groupedItems,
+	selectedPosition,
+	setSelectedPosition,
+	setIsOpen
+) => {
 	useEffect(() => {
 		if (!isOpen) return;
 
 		const onKeyDown = (e) => {
-			const allowedKeys = ["ArrowDown", "ArrowUp", "Enter"];
-			if (!allowedKeys.includes(e.key)) return;
+			if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) return;
+			e.preventDefault();
 
-			e.preventDefault(); // Only prevent if we're handling the key
-
-			const groups = Object.entries(
-				menuItems.reduce((acc, item) => {
-					acc[item.group] = acc[item.group] || [];
-					acc[item.group].push(item);
-					return acc;
-				}, {})
-			);
-
-			const maxGroupIndex = groups.length - 1;
-			const currentGroup = groups[selectedPosition.groupIndex];
+			const { groupIndex, itemIndex } = selectedPosition;
+			const maxGroupIndex = groupedItems.length - 1;
+			const currentGroup = groupedItems[groupIndex];
 			const maxItemIndex = currentGroup?.[1].length - 1;
 
-			let newGroupIndex = selectedPosition.groupIndex;
-			let newItemIndex = selectedPosition.itemIndex;
+			let newGroupIndex = groupIndex;
+			let newItemIndex = itemIndex;
 
-			if (e.key === "ArrowDown") {
-				if (newItemIndex < maxItemIndex) {
-					newItemIndex++;
-				} else if (newGroupIndex < maxGroupIndex) {
-					newGroupIndex++;
-					newItemIndex = 0;
+			switch (e.key) {
+				case "ArrowDown": {
+					if (newItemIndex < maxItemIndex) newItemIndex++;
+					else if (newGroupIndex < maxGroupIndex) {
+						newGroupIndex++;
+						newItemIndex = 0;
+					}
+					break;
 				}
-			} else if (e.key === "ArrowUp") {
-				if (newItemIndex > 0) {
-					newItemIndex--;
-				} else if (newGroupIndex > 0) {
-					newGroupIndex--;
-					const newGroupItems = groups[newGroupIndex][1];
-					newItemIndex = newGroupItems.length - 1;
+				case "ArrowUp": {
+					if (newItemIndex > 0) newItemIndex--;
+					else if (newGroupIndex > 0) {
+						newGroupIndex--;
+						newItemIndex = groupedItems[newGroupIndex][1].length - 1;
+					}
+					break;
 				}
-			} else if (e.key === "Enter") {
-				if (groups.length === 0) return;
-
-				const item = groups[newGroupIndex][1][newItemIndex];
-				item?.command?.();
-				setIsOpen(false);
-				return;
-			} else {
-				return;
+				case "Enter": {
+					const item = groupedItems[newGroupIndex]?.[1]?.[newItemIndex];
+					item?.command?.();
+					setIsOpen(false);
+					return;
+				}
 			}
 
 			setSelectedPosition({
@@ -245,18 +230,13 @@ export const useSlashCommand = (
 
 		document.addEventListener("keydown", onKeyDown);
 		return () => document.removeEventListener("keydown", onKeyDown);
-	}, [isOpen, selectedPosition, menuItems]);
+	}, [isOpen, selectedPosition, groupedItems, setIsOpen, setSelectedPosition]);
+};
 
-	return {
-		isOpen,
-		groupedItems,
-		selectedIndex,
-		floatingStyles,
-		refs,
-		context,
-		searchQuery,
-		setSearchQuery,
-		selectedPosition,
-		setSelectedPosition,
-	};
+const useEditorFocus = (editor, isOpen) => {
+	useEffect(() => {
+		if (!isOpen && editor?.isEditable) {
+			editor.commands.focus();
+		}
+	}, [isOpen, editor]);
 };
