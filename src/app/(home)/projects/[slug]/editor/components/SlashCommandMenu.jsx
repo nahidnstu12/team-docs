@@ -76,6 +76,12 @@ export default function SlashCommandMenu({
 					</div>
 
 					<div className="py-2 overflow-y-auto max-h-96">
+						{groupedItems.length === 0 && (
+							<div className="px-4 py-3 text-sm text-muted-foreground">
+								No matching commands
+							</div>
+						)}
+
 						{groupedItems.map(([groupName, items], groupIndex) => (
 							<div key={groupName}>
 								<div className="px-4 py-1 text-xs font-semibold uppercase text-muted-foreground">

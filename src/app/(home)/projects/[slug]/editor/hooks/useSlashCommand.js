@@ -227,6 +227,8 @@ export const useSlashCommand = (
 					newItemIndex = newGroupItems.length - 1;
 				}
 			} else if (e.key === "Enter") {
+				if (groups.length === 0) return;
+
 				const item = groups[newGroupIndex][1][newItemIndex];
 				item?.command?.();
 				setIsOpen(false);
