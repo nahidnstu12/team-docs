@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import SlashCommandMenu from "./SlashCommandMenu";
 import { LinkDialog } from "./LinkDialog";
+import BubbleMenu from "@/components/editor/ui/BubbleMenu";
 
 export default function RTEeditor({ pageId }) {
 	const ref = useRef(null);
@@ -69,6 +70,7 @@ export default function RTEeditor({ pageId }) {
 					onClick={() => editor?.commands.focus()}
 					className="border w-full p-4 rounded-md h-[450px] overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent scrollbar-thumb-rounded-full cursor-text max-w-none"
 				>
+					<BubbleMenu editor={editor} />
 					<EditorContent
 						editor={editor}
 						className="w-full max-w-none border-0 p-0 min-h-[400px]"
