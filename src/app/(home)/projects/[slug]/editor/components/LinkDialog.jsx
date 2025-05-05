@@ -61,9 +61,20 @@ export function LinkDialog({
 
 	const isValidUrl = url.startsWith("http://") || url.startsWith("https://");
 
+	const handleKeyDown = (e) => {
+		// Prevent default Enter behavior (which might open the link)
+		if (e.key === "Enter") {
+			e.preventDefault();
+			handleInsertOrUpdateLink();
+		}
+	};
+
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-md">
+			<DialogContent
+				onKeyDown={handleKeyDown} // Handle Enter at dialog level
+				className="sm:max-w-md"
+			>
 				<DialogHeader>
 					<DialogTitle>
 						{mode === "edit" ? "Edit Link" : "Add Link"}
@@ -95,6 +106,7 @@ export function LinkDialog({
 							{mode === "edit" && isValidUrl && (
 								<Button
 									variant="outline"
+									type="button"
 									onClick={() => window.open(initialUrl, "_blank")}
 								>
 									Visit Link
