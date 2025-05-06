@@ -2,12 +2,8 @@ import { useEffect } from "react";
 import { useLinkContext } from "../ctx/LinkProvider";
 
 export const useLinkHandling = (editor) => {
-	const {
-		setInitialText,
-		setInitialUrl,
-		setDialogMode,
-		setLinkDialogOpen, // this replaces the local useState
-	} = useLinkContext();
+	const { setInitialText, setInitialUrl, setDialogMode, setLinkDialogOpen } =
+		useLinkContext();
 
 	useEffect(() => {
 		if (!editor) return;
@@ -22,7 +18,7 @@ export const useLinkHandling = (editor) => {
 				setInitialText(text);
 				setInitialUrl(url);
 				setDialogMode("edit");
-				setLinkDialogOpen(true); // now uses context, not local state
+				setLinkDialogOpen(true);
 			}
 		};
 

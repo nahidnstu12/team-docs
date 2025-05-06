@@ -28,7 +28,6 @@ export default function RTEeditor({ pageId }) {
 }
 
 function EditorWithProvider({ editor, editorRef, refNode, handleSubmit }) {
-	// ✅ Now safely within <LinkProvider>
 	useLinkHandling(editor);
 
 	return (

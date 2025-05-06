@@ -7,7 +7,7 @@ import {
 	size,
 	autoUpdate,
 } from "@floating-ui/react";
-import { baseCommands } from "../utils/base-command";
+import { baseCommands } from "../utils/base-commands";
 import { useLinkContext } from "../ctx/LinkProvider";
 
 export const useSlashCommand = (editor) => {
@@ -21,7 +21,7 @@ export const useSlashCommand = (editor) => {
 
 	const { linkCreateCommand } = useLinkContext();
 
-	const { refs, floatingStyles, context } = useFloating({
+	const { refs, floatingStyles } = useFloating({
 		open: isOpen,
 		onOpenChange: setIsOpen,
 		placement: "bottom-start",
@@ -34,6 +34,28 @@ export const useSlashCommand = (editor) => {
 		[menuGroups, searchQuery]
 	);
 	const groupedItems = useMemo(() => groupItems(menuItems), [menuItems]);
+
+	useEffect(() => {
+		if (isOpen && groupedItems.length > 0) {
+			setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
+		}
+	}, [isOpen, groupedItems]);
+
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleClickOutside = (event) => {
+			if (
+				refs.floating.current &&
+				!refs.floating.current.contains(event.target)
+			) {
+				setIsOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [isOpen, refs.floating, setIsOpen]);
 
 	// Initialize commands and keyboard handlers
 	useCommandInitialization(
@@ -146,7 +168,14 @@ const useCommandInitialization = (
 		window.addEventListener("keydown", onKeyDown, { capture: true });
 		return () =>
 			window.removeEventListener("keydown", onKeyDown, { capture: true });
-	}, [editor, refs, setIsOpen, setMenuGroups, setSearchQuery]);
+	}, [
+		editor,
+		refs,
+		setIsOpen,
+		setMenuGroups,
+		setSearchQuery,
+		linkCreateCommand,
+	]);
 };
 
 const useKeyboardNavigation = (
@@ -160,7 +189,7 @@ const useKeyboardNavigation = (
 		if (!isOpen) return;
 
 		const onKeyDown = (e) => {
-			if (!["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) return;
+			if (!["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(e.key)) return;
 			e.preventDefault();
 
 			const { groupIndex, itemIndex } = selectedPosition;
@@ -192,6 +221,12 @@ const useKeyboardNavigation = (
 					const item = groupedItems[newGroupIndex]?.[1]?.[newItemIndex];
 					item?.command?.();
 					setIsOpen(false);
+					setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
+					return;
+				}
+				case "Escape": {
+					setIsOpen(false);
+					setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
 					return;
 				}
 			}

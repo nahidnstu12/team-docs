@@ -1,133 +1,205 @@
-"use client";
+import React, { useEffect, useState } from "react";
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react";
+
 import {
 	Bold,
+	Italic,
+	Underline,
+	Strikethrough,
 	Code,
 	Highlighter,
-	Italic,
 	Link,
 	PaintBucket,
-	Strikethrough,
-	Underline,
 } from "lucide-react";
-import { useState } from "react";
-import ColorPickerPanel from "../../../../../../../components/editor/ui/ColorPickerPanel";
+import ColorPickerPanel from "@/components/editor/ui/ColorPickerPanel";
 
-export default function BubbleMenu({ editor }) {
+const BubbleButton = ({
+	editor,
+	onClick,
+	isActive,
+	activeClass = "bg-blue-100 text-blue-600",
+	icon: Icon,
+	title,
+}) => {
+	const handleClick = () => {
+		// Step 1: Apply the formatting command
+		onClick();
+
+		// Step 2: Move cursor to the end of the selection (deselect text)
+		const { to } = editor.state.selection;
+		editor.chain().setTextSelection(to).focus().run();
+
+		// Step 3: Use a short delay to allow the DOM to update
+		setTimeout(() => {
+			editor
+				.chain()
+				.focus()
+				.unsetBold()
+				.unsetItalic()
+				.unsetUnderline()
+				.unsetStrike()
+				.unsetCode()
+				.unsetHighlight()
+				.unsetLink()
+				.run();
+		}, 0); // Delay to avoid interrupting the style being applied
+	};
+
+	useEffect(() => {
+		if (!editor) return;
+
+		const handleUpdate = () => {
+			const { state } = editor;
+			const isEmpty = state.doc.content.size === 0;
+			const isSelectionEmpty = state.selection.empty;
+
+			if (isEmpty || isSelectionEmpty) {
+				editor
+					.chain()
+					.focus()
+					.unsetBold()
+					.unsetItalic()
+					.unsetUnderline()
+					.unsetStrike()
+					.unsetCode()
+					.unsetHighlight()
+					.unsetLink()
+					.run();
+			}
+		};
+
+		editor.on("update", handleUpdate);
+
+		return () => editor.off("update", handleUpdate);
+	}, [editor]);
+
+	return (
+		<button
+			type="button"
+			onClick={handleClick}
+			title={title}
+			className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
+				isActive ? activeClass : ""
+			}`}
+		>
+			<Icon className="w-5 h-5" />
+		</button>
+	);
+};
+
+export const BubbleMenu = ({ editor }) => {
 	const [showColorPanel, setShowColorPanel] = useState(false);
 
+	useEffect(() => {
+		if (!editor) return;
+
+		const handleKeyDown = (e) => {
+			if (e.key === "Escape") {
+				// Clear text selection to hide bubble menu
+				const { to } = editor.state.selection;
+				editor.chain().setTextSelection(to).focus().run();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [editor]);
+
 	if (!editor) return null;
+
+	const handleLinkClick = () => {
+		const previousUrl = editor.getAttributes("link").href;
+		const url = window.prompt("Enter URL", previousUrl);
+		if (url) {
+			editor
+				.chain()
+				.focus()
+				.extendMarkRange("link")
+				.setLink({ href: url })
+				.run();
+		}
+	};
 
 	return (
 		<TiptapBubbleMenu
 			editor={editor}
 			tippyOptions={{ duration: 150, placement: "top" }}
-			shouldShow={({ editor }) => {
-				return (
-					editor.isActive("textStyle") ||
-					editor.isActive("highlight") ||
-					editor.isActive("code") ||
-					editor.state.selection.content().size > 0
-				);
-			}}
 			className="w-[360px] z-50 flex items-center gap-2 px-2 py-2 bg-white border border-gray-200 shadow-xl rounded-xl dark:border-zinc-700 dark:bg-zinc-900"
 		>
 			{/* Bold */}
-			<button
-				type="button"
+			<BubbleButton
+				editor={editor}
 				onClick={() => editor.chain().focus().toggleBold().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("bold") ? "bg-blue-100 text-blue-600" : ""
-				}`}
-			>
-				<Bold className="w-5 h-5" />
-			</button>
+				isActive={editor.isActive("bold")}
+				icon={Bold}
+				title="Bold"
+			/>
 
 			{/* Italic */}
-			<button
-				type="button"
+			<BubbleButton
+				editor={editor}
 				onClick={() => editor.chain().focus().toggleItalic().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("italic") ? "bg-blue-100 text-blue-600" : ""
-				}`}
-			>
-				<Italic className="w-5 h-5" />
-			</button>
+				isActive={editor.isActive("italic")}
+				icon={Italic}
+				title="Italic"
+			/>
 
 			{/* Underline */}
-			<button
-				type="button"
+			<BubbleButton
+				editor={editor}
 				onClick={() => editor.chain().focus().toggleUnderline().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("underline") ? "bg-blue-100 text-blue-600" : ""
-				}`}
-			>
-				<Underline className="w-5 h-5" />
-			</button>
+				isActive={editor.isActive("underline")}
+				icon={Underline}
+				title="Underline"
+			/>
 
 			{/* Strikethrough */}
-			<button
-				type="button"
+			<BubbleButton
+				editor={editor}
 				onClick={() => editor.chain().focus().toggleStrike().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("strike") ? "bg-blue-100 text-blue-600" : ""
-				}`}
-			>
-				<Strikethrough className="w-5 h-5" />
-			</button>
+				isActive={editor.isActive("strike")}
+				icon={Strikethrough}
+				title="Strikethrough"
+			/>
 
 			{/* Inline Code */}
-			<button
-				type="button"
+			<BubbleButton
+				editor={editor}
 				onClick={() => editor.chain().focus().toggleCode().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("code") ? "bg-blue-100 text-blue-600" : ""
-				}`}
-			>
-				<Code className="w-5 h-5" />
-			</button>
+				isActive={editor.isActive("code")}
+				icon={Code}
+				title="Code"
+			/>
 
 			{/* Highlight */}
-			<button
-				type="button"
+			<BubbleButton
+				editor={editor}
 				onClick={() => editor.chain().focus().toggleHighlight().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("highlight") ? "bg-yellow-100 text-yellow-600" : ""
-				}`}
-			>
-				<Highlighter className="w-5 h-5" />
-			</button>
+				isActive={editor.isActive("highlight")}
+				activeClass="bg-yellow-100 text-yellow-600"
+				icon={Highlighter}
+				title="Highlight"
+			/>
 
 			{/* Link */}
-			<button
-				type="button"
-				onClick={() => {
-					const previousUrl = editor.getAttributes("link").href;
-					const url = window.prompt("Enter URL", previousUrl);
-					if (url) {
-						editor
-							.chain()
-							.focus()
-							.extendMarkRange("link")
-							.setLink({ href: url })
-							.run();
-					}
-				}}
-				className="p-2 text-gray-600 transition rounded-lg hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800"
-			>
-				<Link className="w-5 h-5" />
-			</button>
+			<BubbleButton
+				editor={editor}
+				onClick={handleLinkClick}
+				isActive={editor.isActive("link")}
+				icon={Link}
+				title="Link"
+			/>
 
-			{/* 🎨 Color Picker at End */}
-			<button
-				type="button"
+			{/* Color Picker */}
+			<BubbleButton
+				editor={editor}
 				onClick={() => setShowColorPanel((prev) => !prev)}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					showColorPanel ? "bg-pink-100 text-pink-600" : ""
-				}`}
-			>
-				<PaintBucket className="w-5 h-5" />
-			</button>
+				isActive={showColorPanel}
+				activeClass="bg-pink-100 text-pink-600"
+				icon={PaintBucket}
+				title="Text Color"
+			/>
 
 			{/* Color Picker Panel */}
 			{showColorPanel && (
@@ -140,4 +212,6 @@ export default function BubbleMenu({ editor }) {
 			)}
 		</TiptapBubbleMenu>
 	);
-}
+};
+
+export default BubbleMenu;

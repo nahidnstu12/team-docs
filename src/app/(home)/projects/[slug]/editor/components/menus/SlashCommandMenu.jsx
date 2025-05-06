@@ -14,11 +14,14 @@ const SlashCommandMenu = memo(({ editor }) => {
 	} = useSlashCommand(editor);
 
 	const itemRefs = useRef([]);
+	const searchInputRef = useRef(null);
 
 	// Auto-scroll to selected item
 	useAutoScroll(itemRefs, selectedPosition);
 	// Cleanup focus state
 	useFocusCleanup(itemRefs, isOpen);
+
+	useGlobalShortcuts(isOpen, setSearchQuery, searchInputRef);
 
 	if (!editor) return null;
 
@@ -33,7 +36,11 @@ const SlashCommandMenu = memo(({ editor }) => {
 					exit={{ opacity: 0, y: -10 }}
 					className="z-50 overflow-hidden bg-white border shadow-xl rounded-xl dark:bg-zinc-900"
 				>
-					<SearchInput value={searchQuery} onChange={setSearchQuery} />
+					<SearchInput
+						value={searchQuery}
+						onChange={setSearchQuery}
+						inputRef={searchInputRef}
+					/>
 
 					<CommandList
 						groupedItems={groupedItems}
@@ -47,15 +54,16 @@ const SlashCommandMenu = memo(({ editor }) => {
 });
 
 // Sub-components for better readability
-const SearchInput = ({ value, onChange }) => (
+const SearchInput = ({ value, onChange, inputRef }) => (
 	<div className="p-3 border-b">
 		<input
 			type="text"
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
-			className="w-full px-2 py-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+			ref={inputRef}
 			autoFocus
 			placeholder="Type a command or search..."
+			className="w-full px-2 py-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
 		/>
 	</div>
 );
@@ -88,7 +96,7 @@ const useAutoScroll = (itemRefs, selectedPosition) => {
 				block: "nearest",
 			});
 		}
-	}, [selectedPosition]);
+	}, [selectedPosition, itemRefs]);
 };
 
 const useFocusCleanup = (itemRefs, isOpen) => {
@@ -96,16 +104,8 @@ const useFocusCleanup = (itemRefs, isOpen) => {
 		if (!isOpen) {
 			itemRefs.current[0]?.blur();
 		}
-	}, [isOpen]);
+	}, [isOpen, itemRefs]);
 };
-
-function NoResults() {
-	return (
-		<div className="px-4 py-3 text-sm text-muted-foreground">
-			No matching commands
-		</div>
-	);
-}
 
 function CommandGroup({
 	groupName,
@@ -155,5 +155,44 @@ function CommandGroup({
 		</div>
 	);
 }
+
+function NoResults() {
+	return (
+		<div className="px-4 py-3 text-sm text-muted-foreground">
+			No matching commands
+		</div>
+	);
+}
+
+const useGlobalShortcuts = (isOpen, setSearchQuery, searchInputRef) => {
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const onKeyDown = (e) => {
+			// Ctrl+K or Ctrl+Enter focuses search
+			if ((e.ctrlKey && e.key === "k") || (e.ctrlKey && e.key === "Enter")) {
+				e.preventDefault();
+				searchInputRef?.current?.focus();
+				return;
+			}
+
+			// Focus input if letter/number typed
+			if (
+				/^[a-zA-Z0-9]$/.test(e.key) &&
+				document.activeElement !== searchInputRef.current
+			) {
+				searchInputRef?.current?.focus();
+
+				// Insert the key into input manually
+				const currentValue = searchInputRef.current.value || "";
+				searchInputRef.current.value = currentValue + e.key;
+				setSearchQuery(searchInputRef.current.value);
+			}
+		};
+
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [isOpen, setSearchQuery, searchInputRef]);
+};
 
 export default SlashCommandMenu;
