@@ -58,10 +58,10 @@ export default function ProjectEditorSidebar() {
 		<Sidebar className="bg-white border-r">
 			<SidebarContent className="flex flex-col h-full">
 				{/* HOME BUTTON */}
-				<div className="p-3">
+				<div className="px-2 pt-3">
 					<Button
-						variant="outline"
-						className="justify-start w-full text-gray-600 transition hover:bg-gray-100"
+						variant="ghost"
+						className="justify-start w-full px-2 py-2 text-sm transition rounded-md text-muted-foreground hover:bg-gray-100 hover:text-primary"
 						onClick={() => {
 							router.push("/home");
 							router.refresh();
@@ -226,6 +226,18 @@ export default function ProjectEditorSidebar() {
 						))
 					)}
 				</SidebarMenu>
+				<div className="sticky bottom-0 px-2 py-3 bg-white border-t">
+					<Button
+						variant="ghost"
+						className="justify-start w-full text-sm text-muted-foreground hover:text-primary hover:bg-gray-100"
+						onClick={() => {
+							console.log("Create Section clicked");
+						}}
+					>
+						<FolderKanban className="w-4 h-4 mr-2 text-gray-500" />
+						Create Section
+					</Button>
+				</div>
 			</SidebarContent>
 		</Sidebar>
 	);
