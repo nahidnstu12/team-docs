@@ -27,6 +27,13 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
@@ -107,7 +114,18 @@ export default function ProjectEditorSidebar() {
 											)}
 										/>
 										<FolderKanban className="w-4 h-4" />
-										<span>{section.name}</span>
+										<TooltipProvider delayDuration={300}>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<span className="truncate max-w-[160px] text-sm text-gray-800 block">
+														{section.name}
+													</span>
+												</TooltipTrigger>
+												<TooltipContent className="max-w-xs text-xs break-words">
+													{section.name}
+												</TooltipContent>
+											</Tooltip>
+										</TooltipProvider>
 									</div>
 								</SidebarMenuButton>
 
@@ -185,13 +203,24 @@ export default function ProjectEditorSidebar() {
 															<a
 																href="#"
 																onClick={() => {
-																	setSelectedSection(section.id); // ensure parent is selected
-																	setSelectedPage(page.id); // highlight page
+																	setSelectedSection(section.id);
+																	setSelectedPage(page.id);
 																}}
 																className="flex items-center w-full gap-2"
 															>
 																<FileText className="w-4 h-4 text-muted-foreground" />
-																{page.title || "Untitled Page"}
+																<TooltipProvider delayDuration={300}>
+																	<Tooltip>
+																		<TooltipTrigger asChild>
+																			<span className="truncate max-w-[140px] block">
+																				{page.title || "Untitled Page"}
+																			</span>
+																		</TooltipTrigger>
+																		<TooltipContent className="max-w-xs text-xs break-words">
+																			{page.title || "Untitled Page"}
+																		</TooltipContent>
+																	</Tooltip>
+																</TooltipProvider>
 															</a>
 														</SidebarMenuSubButton>
 
@@ -230,6 +259,8 @@ export default function ProjectEditorSidebar() {
 						))
 					)}
 				</SidebarMenu>
+
+				{/* create section button */}
 				<div className="sticky bottom-0 px-2 py-3 bg-white border-t">
 					<Button
 						variant="ghost"
