@@ -1,4 +1,3 @@
-"use client";
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react";
 import {
 	Bold,
@@ -10,25 +9,41 @@ import {
 	Strikethrough,
 	Underline,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ColorPickerPanel from "./ColorPickerPanel";
 
 export default function BubbleMenu({ editor }) {
 	const [showColorPanel, setShowColorPanel] = useState(false);
+
+	// Handle ESC key press to close the menu
+	useEffect(() => {
+		if (!editor) return;
+
+		const handleKeyDown = (event) => {
+			if (event.key === "Escape") {
+				editor.commands.blur(); // Blur the editor as fallback
+				editor.commands.focus(); // Remove any selection
+			}
+		};
+
+		// Listen on editor view DOM
+		const editorDom = editor.view.dom;
+		editorDom.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			editorDom.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [editor]);
 
 	if (!editor) return null;
 
 	return (
 		<TiptapBubbleMenu
 			editor={editor}
-			tippyOptions={{ duration: 150, placement: "top" }}
-			shouldShow={({ editor }) => {
-				return (
-					editor.isActive("textStyle") ||
-					editor.isActive("highlight") ||
-					editor.isActive("code") ||
-					editor.state.selection.content().size > 0
-				);
+			tippyOptions={{
+				duration: 150,
+				placement: "top",
+				onHide: () => setShowColorPanel(false), // Close color panel when menu hides
 			}}
 			className="w-[360px] z-50 flex items-center gap-2 px-2 py-2 bg-white border border-gray-200 shadow-xl rounded-xl dark:border-zinc-700 dark:bg-zinc-900"
 		>
