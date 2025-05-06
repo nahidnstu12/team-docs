@@ -23,6 +23,7 @@ import Highlight from "@tiptap/extension-highlight";
 import { CustomLink } from "@/components/editor/extensions/link";
 import { ClearMarksOnEnter } from "@/components/editor/extensions/clearMarkStyles";
 import { ResetMarksOnDelete } from "@/components/editor/extensions/ResetMarksOnDelete";
+import { Placeholder } from "@tiptap/extension-placeholder";
 
 const lowlight = createLowlight(all);
 
@@ -65,5 +66,9 @@ export const editorExtensions = [
 	CustomLink, // create custome link. store link in span
 	ClearMarksOnEnter, // prevent style to carry to next line (mark style)
 	ResetMarksOnDelete, // reset stored mark style for the same line
+	Placeholder.configure({
+		placeholder: "Start typing your note...",
+	}),
+
 	...ColorExtensions,
 ];

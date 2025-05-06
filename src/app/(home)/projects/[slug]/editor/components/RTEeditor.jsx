@@ -64,18 +64,17 @@ export default function RTEeditor({ pageId }) {
 	};
 
 	return (
-		<form action="/actions/saveDocument" method="POST" className="w-full mt-20">
+		<form action="/actions/saveDocument" method="POST" className="w-full mt-15">
 			<div className="relative w-full">
 				<div
 					onClick={() => editor?.commands.focus()}
-					className="border w-full p-4 rounded-md h-[450px] overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent scrollbar-thumb-rounded-full cursor-text max-w-none"
+					className="w-full p-4 rounded-md cursor-text max-w-none"
 				>
 					<BubbleMenu editor={editor} />
-					<EditorContent
-						editor={editor}
-						className="w-full max-w-none border-0 p-0 min-h-[400px]"
-					/>
+					<EditorContent editor={editor} className="w-full p-0 min-h-[500px]" />
 				</div>
+
+				{/* Link dialog */}
 				<LinkDialog
 					open={linkDialogOpen}
 					onOpenChange={setLinkDialogOpen}
@@ -85,6 +84,7 @@ export default function RTEeditor({ pageId }) {
 					mode={dialogMode}
 				/>
 
+				{/* Slash command menu */}
 				{editor && (
 					<SlashCommandMenu
 						open={linkDialogOpen}
@@ -97,10 +97,10 @@ export default function RTEeditor({ pageId }) {
 				)}
 			</div>
 			<input type="hidden" name="content" ref={ref} />
-			<EditorFooter editor={editor} />
+			{/* <EditorFooter editor={editor} />
 			<Button type="button" onClick={handleSubmit} className="mt-4">
 				Save
-			</Button>
+			</Button> */}
 		</form>
 	);
 }
