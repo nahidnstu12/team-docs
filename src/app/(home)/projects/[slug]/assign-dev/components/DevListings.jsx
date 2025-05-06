@@ -11,19 +11,76 @@ import {
 import { getProjectUsers } from "../actions/getProjectPermission";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { removeDevFromProjectAction } from "@/system/Actions/ProjectPermissionAction";
+import ModifyPermissionsDrawer from "./ModifyPermissionsDrawer";
 
-export default function DevListings({ projectId }) {
+export default function DevListings({ projectId, refetchTrigger, onRemoveDevSuccess }) {
 	const [users, setUsers] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [selectedDeveloper, setSelectedDeveloper] = useState(null);
+	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchUsers = async () => {
-			const users = await getProjectUsers(projectId);
-			setUsers(users);
+			try {
+				setIsLoading(true);
+				setError(null);
+				const users = await getProjectUsers(projectId);
+				setUsers(users);
+			} catch (err) {
+				setError(err.message || "Failed to fetch developers");
+				console.error("Error fetching developers:", err);
+			} finally {
+				setIsLoading(false);
+			}
 		};
 		fetchUsers();
-	}, [projectId]);
+	}, [projectId, refetchTrigger]);
 
-	console.log("assign dev>>", users);
+	const LoadingSkeleton = () => (
+		<>
+			{[1, 2, 3].map((i) => (
+				<TableRow key={i}>
+					<TableCell className="px-6 py-5">
+						<Skeleton className="h-6 w-[200px]" />
+					</TableCell>
+					<TableCell className="px-6 py-5">
+						<Skeleton className="h-6 w-[300px]" />
+					</TableCell>
+					<TableCell className="px-6 py-5">
+						<div className="flex items-center justify-center gap-3">
+							<Skeleton className="h-10 w-[100px]" />
+							<Skeleton className="h-10 w-[100px]" />
+						</div>
+					</TableCell>
+				</TableRow>
+			))}
+		</>
+	);
+
+	const handleRemoveDev = async (userId) => {
+		const result = await removeDevFromProjectAction({
+			selectedUser: userId,
+			projectId: projectId,
+		});
+
+		if (result.success) {
+			onRemoveDevSuccess();
+		}
+	};
+
+	const handleModifyClick = (developer) => {
+		setSelectedDeveloper(developer);
+		setIsDrawerOpen(true);
+	};
+
+	const handleDrawerClose = () => {
+		setIsDrawerOpen(false);
+		setSelectedDeveloper(null);
+	};
+
 	return (
 		<section className="space-y-8">
 			{/* Header with Create Button */}
@@ -45,8 +102,18 @@ export default function DevListings({ projectId }) {
 					</TableHeader>
 
 					<TableBody>
-						{/* If no roles exist */}
-						{users.length === 0 ? (
+						{isLoading ? (
+							<LoadingSkeleton />
+						) : error ? (
+							<TableRow>
+								<TableCell
+									colSpan={4}
+									className="py-10 text-lg text-center text-destructive"
+								>
+									{error}
+								</TableCell>
+							</TableRow>
+						) : users.length === 0 ? (
 							<TableRow>
 								<TableCell
 									colSpan={4}
@@ -56,13 +123,11 @@ export default function DevListings({ projectId }) {
 								</TableCell>
 							</TableRow>
 						) : (
-							/* If roles are loaded */
 							users.map((user) => (
 								<TableRow
 									key={user.id}
 									className="transition-colors duration-200 hover:bg-muted"
 								>
-									{/* Your table cells content */}
 									<TableCell className="px-6 py-5 text-base font-semibold">
 										{user.username}
 									</TableCell>
@@ -73,8 +138,18 @@ export default function DevListings({ projectId }) {
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										<Button variant="outline">Modify</Button>
-										<Button variant="destructive">Remove</Button>
+										<Button 
+											variant="outline"
+											onClick={() => handleModifyClick(user)}
+										>
+											Modify
+										</Button>
+										<Button 
+											variant="destructive" 
+											onClick={() => handleRemoveDev(user.id)}
+										>
+											Remove
+										</Button>
 									</TableCell>
 								</TableRow>
 							))
@@ -82,6 +157,14 @@ export default function DevListings({ projectId }) {
 					</TableBody>
 				</Table>
 			</section>
+
+			<ModifyPermissionsDrawer
+				isOpen={isDrawerOpen}
+				onClose={handleDrawerClose}
+				developer={selectedDeveloper}
+				projectId={projectId}
+				onSuccess={onRemoveDevSuccess}
+			/>
 		</section>
 	);
 }

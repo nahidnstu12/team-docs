@@ -50,6 +50,76 @@ export class ProjectUserPermissionService extends BaseService {
 		}
 	}
 
+	static async removeDevFromProject(formData) {
+		const { selectedUser, projectId } = formData;
+
+		try {
+			const result = await ProjectUserPermissionModel.deleteMany({
+				userId: selectedUser,
+				projectId: projectId,
+			});
+
+			return result;
+		} catch (error) {
+			Logger.error(error.message, `Remove dev from project failed`);
+			throw error;
+		}
+	}
+
+	static async modifyDevPermissions({ selectedUser, projectId, selectedPermissions }) {
+		Logger.info({ selectedUser, projectId, selectedPermissions }, "Modify dev permissions");
+
+		try {
+			// Step 1: Fetch only needed permissionIds
+			const existingPermissionIds = await ProjectUserPermissionModel.findMany({
+				where: { userId: selectedUser, projectId },
+				select: { permissionId: true },
+			}).then((res) => res.map((r) => r.permissionId));
+
+			// Step 2: Determine changes
+			const selectedSet = new Set(selectedPermissions);
+			const existingSet = new Set(existingPermissionIds);
+
+			const toAdd = selectedPermissions.filter(id => !existingSet.has(id));
+			const toRemove = existingPermissionIds.filter(id => !selectedSet.has(id));
+
+			// Step 3: Run mutations only if needed
+			const operations = [];
+
+			if (toRemove.length > 0) {
+				operations.push(
+					ProjectUserPermissionModel.deleteMany({
+						userId: selectedUser,
+						projectId,
+						permissionId: { in: toRemove },
+					})
+				);
+			}
+
+			if (toAdd.length > 0) {
+				operations.push(
+					ProjectUserPermissionModel.createMany({
+						data: toAdd.map((permissionId) => ({
+							userId: selectedUser,
+							projectId,
+							permissionId,
+						})),
+						skipDuplicates: true,
+					})
+				);
+			}
+
+			// Step 4: Execute in parallel
+			await Promise.all(operations);
+
+			return { added: toAdd, removed: toRemove };
+		} catch (error) {
+			Logger.error(error.message, "Modify dev permissions failed");
+			throw error;
+		}
+	}
+
+
 	static async getProjectUsersList(projectId) {
 		if (!projectId) throw new Error("projectId is missing");
 

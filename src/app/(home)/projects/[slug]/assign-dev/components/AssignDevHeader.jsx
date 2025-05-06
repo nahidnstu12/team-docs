@@ -15,29 +15,43 @@ import { getUsersNotInProject } from "../actions/getUsers";
 import { getProjectPermission } from "../actions/getProjectPermission";
 import { assignDevAction } from "@/system/Actions/ProjectPermissionAction";
 
-export default function AssignDevHeader({ projectName, projectId }) {
+export default function AssignDevHeader({ projectName, projectId, onAssignSuccess }) {
 	const [selectedUsers, setSelectedUsers] = useState([]);
 	const [selectedPermissions, setSelectedPermissions] = useState([]);
 	const [search, setSearch] = useState("");
 	const [users, setUsers] = useState([]);
 	const [permissions, setPermissions] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [isAssigning, setIsAssigning] = useState(false);
 	
-	useEffect(() => {
-		const fetchUsers = async () => {
+	const fetchUsers = async () => {
+		try {
+			setIsLoading(true);
 			const users = await getUsersNotInProject(projectId);
 			setUsers(users);
-		};
+		} catch (error) {
+			console.error("Failed to fetch users:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	useEffect(() => {
 		fetchUsers();
 	}, [projectId]);
 
 	useEffect(() => {
 		const fetchPermissions = async () => {
-			const permissions = await getProjectPermission("school-demo");
-			setPermissions(permissions);
+			try {
+				const permissions = await getProjectPermission("school-demo");
+				setPermissions(permissions);
+			} catch (error) {
+				console.error("Failed to fetch permissions:", error);
+			}
 		};
 		fetchPermissions();
 	}, [projectId]);
-	console.log("selectedPermissions>>", selectedPermissions, selectedUsers);
+
 	// Filter users by name or email
 	const filteredUsers =
 		users?.length > 0
@@ -56,6 +70,7 @@ export default function AssignDevHeader({ projectName, projectId }) {
 				: [...prev, userId]
 		);
 	};
+
 	const handlePermissionChange = (permissionId, checked) => {
 		setSelectedPermissions((prev) =>
 			checked
@@ -63,8 +78,10 @@ export default function AssignDevHeader({ projectName, projectId }) {
 				: prev.filter((id) => id !== permissionId)
 		);
 	};
+
 	const handleAssign = async () => {
 		try {
+			setIsAssigning(true);
 			const result = await assignDevAction({
 				selectedPermissions,
 				selectedUsers,
@@ -78,14 +95,40 @@ export default function AssignDevHeader({ projectName, projectId }) {
 			// Clear selections after successful assignment
 			setSelectedUsers([]);
 			setSelectedPermissions([]);
+			setSearch("");
+
+			// Refetch the developer list
+			await fetchUsers();
+
+			// Notify parent component about successful assignment
+			if (onAssignSuccess) {
+				onAssignSuccess();
+			}
 
 			// You can add a toast notification here if you want
 			console.log("Developers assigned successfully:", result.data);
 		} catch (error) {
 			console.error("Failed to assign developers:", error);
 			// You can add error toast notification here
+		} finally {
+			setIsAssigning(false);
 		}
 	};
+
+	// Get selected user names for display
+	const getSelectedUserNames = () => {
+		if (selectedUsers.length === 0) return "Select Dev's";
+		const selectedUserObjects = users.filter(user => selectedUsers.includes(user.id));
+		return `${selectedUserObjects.length} Developer${selectedUserObjects.length > 1 ? 's' : ''} selected`;
+	};
+
+	// Get selected permission names for display
+	const getSelectedPermissionNames = () => {
+		if (selectedPermissions.length === 0) return "Project Permission";
+		const selectedPermissionObjects = permissions.filter(permission => selectedPermissions.includes(permission.id));
+		return `${selectedPermissionObjects.length} Permission${selectedPermissionObjects.length > 1 ? 's' : ''} selected`;
+	};
+
 	return (
 		<div className="my-3">
 			<h1 className="mb-3 text-xl ">
@@ -97,8 +140,12 @@ export default function AssignDevHeader({ projectName, projectId }) {
 				{/* left */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="w-96">
-							Select Dev&apos;s
+						<Button 
+							variant="outline" 
+							className="w-96"
+							disabled={isLoading}
+						>
+							{isLoading ? "Loading..." : getSelectedUserNames()}
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent className="w-96 max-h-[400px] overflow-y-auto">
@@ -115,30 +162,40 @@ export default function AssignDevHeader({ projectName, projectId }) {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 
-						{filteredUsers.map((user) => (
-							<DropdownMenuCheckboxItem
-								key={user.id}
-								checked={selectedUsers.includes(user.id)}
-								onCheckedChange={() => toggleUser(user.id)}
-								onSelect={(e) => e.preventDefault()}
-								className="py-2"
-							>
-								<div className="flex flex-col gap-0.5">
-									<span className="text-sm font-semibold">{user.username}</span>
-									<span className="text-xs text-muted-foreground">
-										{user.email}
-									</span>
-								</div>
-							</DropdownMenuCheckboxItem>
-						))}
+						{isLoading ? (
+							<div className="p-4 text-center text-muted-foreground">
+								Loading developers...
+							</div>
+						) : (
+							filteredUsers.map((user) => (
+								<DropdownMenuCheckboxItem
+									key={user.id}
+									checked={selectedUsers.includes(user.id)}
+									onCheckedChange={() => toggleUser(user.id)}
+									onSelect={(e) => e.preventDefault()}
+									className="py-2"
+								>
+									<div className="flex flex-col gap-0.5">
+										<span className="text-sm font-semibold">{user.username}</span>
+										<span className="text-xs text-muted-foreground">
+											{user.email}
+										</span>
+									</div>
+								</DropdownMenuCheckboxItem>
+							))
+						)}
 					</DropdownMenuContent>
 				</DropdownMenu>
 
 				{/* right */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="w-96">
-							Project Permission
+						<Button 
+							variant="outline" 
+							className="w-96"
+							disabled={isLoading}
+						>
+							{getSelectedPermissionNames()}
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent className="w-96">
@@ -157,7 +214,12 @@ export default function AssignDevHeader({ projectName, projectId }) {
 					</DropdownMenuContent>
 				</DropdownMenu>
 
-				<Button onClick={handleAssign}> Assign</Button>
+				<Button 
+					onClick={handleAssign}
+					disabled={isAssigning || selectedUsers.length === 0 || selectedPermissions.length === 0}
+				>
+					{isAssigning ? "Assigning..." : "Assign"}
+				</Button>
 			</section>
 		</div>
 	);
