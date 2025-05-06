@@ -34,6 +34,7 @@ import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { cn } from "@/lib/utils";
 import { usePageDialogStore } from "@/app/(home)/projects/store/usePageDialogStore";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSectionDialogStore } from "@/app/(home)/projects/[slug]/editor/store/useSectionDialogStore";
 
 export default function ProjectEditorSidebar() {
 	const router = useRouter();
@@ -43,6 +44,9 @@ export default function ProjectEditorSidebar() {
 	);
 	const selectedPage = useProjectStore((state) => state.selectedPage);
 	const setSelectedPage = useProjectStore((state) => state.setSelectedPage);
+	const openSectionDialog = useSectionDialogStore(
+		(state) => state.openSectionDialog
+	);
 
 	const [openSections, setOpenSections] = useState({});
 
@@ -230,9 +234,7 @@ export default function ProjectEditorSidebar() {
 					<Button
 						variant="ghost"
 						className="justify-start w-full text-sm text-muted-foreground hover:text-primary hover:bg-gray-100"
-						onClick={() => {
-							console.log("Create Section clicked");
-						}}
+						onClick={openSectionDialog}
 					>
 						<FolderKanban className="w-4 h-4 mr-2 text-gray-500" />
 						Create Section
