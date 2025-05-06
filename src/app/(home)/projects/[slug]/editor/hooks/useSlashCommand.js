@@ -7,7 +7,7 @@ import {
 	shift,
 	size,
 } from "@floating-ui/react";
-import { baseCommands } from "../utils/editor-command";
+import { baseCommands } from "../utils/base-commands";
 
 export const useSlashCommand = (
 	editor,
