@@ -21,6 +21,7 @@ import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Highlight from "@tiptap/extension-highlight";
 import { CustomLink } from "@/components/editor/extensions/link";
+import { ClearMarksOnEnter } from "@/components/editor/extensions/clearMarkStyles";
 
 const lowlight = createLowlight(all);
 
@@ -61,5 +62,6 @@ export const editorExtensions = [
 	Superscript,
 	Highlight,
 	CustomLink,
+	ClearMarksOnEnter,
 	...ColorExtensions,
 ];
