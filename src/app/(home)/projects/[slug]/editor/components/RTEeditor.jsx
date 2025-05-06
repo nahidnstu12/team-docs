@@ -64,11 +64,11 @@ export default function RTEeditor({ pageId }) {
 	};
 
 	return (
-		<form action="/actions/saveDocument" method="POST" className="w-full mt-15">
+		<form action="/actions/saveDocument" method="POST" className="w-full mt-6">
 			<div className="relative w-full">
 				<div
 					onClick={() => editor?.commands.focus()}
-					className="w-full p-4 rounded-md cursor-text max-w-none"
+					className="w-full p-4 px-0 rounded-md cursor-text max-w-none"
 				>
 					<BubbleMenu editor={editor} />
 					<EditorContent editor={editor} className="w-full p-0 min-h-[500px]" />
