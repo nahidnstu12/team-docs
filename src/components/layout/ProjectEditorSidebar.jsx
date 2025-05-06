@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { usePageDialogStore } from "@/app/(home)/projects/store/usePageDialogStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSectionDialogStore } from "@/app/(home)/projects/[slug]/editor/store/useSectionDialogStore";
+import ComingSoonWrapper from "../abstracts/ComingSoonWrapper";
 
 export default function ProjectEditorSidebar() {
 	const router = useRouter();
@@ -151,7 +152,7 @@ export default function ProjectEditorSidebar() {
 												className={cn(
 													"overflow-hidden transition-all duration-500 ease-in-out",
 													"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-left-4",
-													"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-left-4"
+													"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-left-4 max-w-45"
 												)}
 											>
 												<DropdownMenuItem
@@ -162,14 +163,18 @@ export default function ProjectEditorSidebar() {
 													<FileText className="w-4 h-4 mr-2 text-blue-500" />
 													Create Page
 												</DropdownMenuItem>
-												<DropdownMenuItem>
-													<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-													Update Section
-												</DropdownMenuItem>
-												<DropdownMenuItem>
-													<Trash className="w-4 h-4 mr-2 text-red-500" />
-													Delete Section
-												</DropdownMenuItem>
+												<ComingSoonWrapper enabled className="w-full">
+													<DropdownMenuItem>
+														<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+														Update Section
+													</DropdownMenuItem>
+												</ComingSoonWrapper>
+												<ComingSoonWrapper enabled className="w-full">
+													<DropdownMenuItem>
+														<Trash className="w-4 h-4 mr-2 text-red-500" />
+														Delete Section
+													</DropdownMenuItem>
+												</ComingSoonWrapper>
 											</DropdownMenuContent>
 										</motion.div>
 									</AnimatePresence>
@@ -230,23 +235,35 @@ export default function ProjectEditorSidebar() {
 																	<MoreHorizontal className="w-4 h-4" />
 																</SidebarMenuAction>
 															</DropdownMenuTrigger>
-															<DropdownMenuContent side="right" align="start">
-																<DropdownMenuItem>
-																	<Copy className="w-4 h-4 mr-2 text-blue-500" />
-																	Duplicate
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Pencil className="w-4 h-4 mr-2 text-green-500" />
-																	Update
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Trash className="w-4 h-4 mr-2 text-red-500" />
-																	Delete
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-																	Settings
-																</DropdownMenuItem>
+															<DropdownMenuContent
+																side="right"
+																align="start"
+																className="max-w-35"
+															>
+																<ComingSoonWrapper enabled className="w-full">
+																	<DropdownMenuItem>
+																		<Copy className="w-4 h-4 mr-2 text-blue-500" />
+																		Duplicate
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
+																<ComingSoonWrapper enabled className="wfull">
+																	<DropdownMenuItem>
+																		<Pencil className="w-4 h-4 mr-2 text-green-500" />
+																		Update
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
+																<ComingSoonWrapper enabled className="w-full">
+																	<DropdownMenuItem>
+																		<Trash className="w-4 h-4 mr-2 text-red-500" />
+																		Delete
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
+																<ComingSoonWrapper enabled className="w-full">
+																	<DropdownMenuItem>
+																		<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+																		Settings
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
 															</DropdownMenuContent>
 														</DropdownMenu>
 													</SidebarMenuSubItem>

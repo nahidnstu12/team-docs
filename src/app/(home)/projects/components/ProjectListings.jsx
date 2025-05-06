@@ -16,6 +16,7 @@ import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 export default function ProjectListings({
 	hasProjects,
@@ -105,13 +106,15 @@ export default function ProjectListings({
 										>
 											<LayoutTemplate className="w-4 h-4" /> View
 										</Button>
-										<Button
-											size="sm"
-											variant="outline"
-											className="flex items-center gap-1 bg-yellow-100 cursor-pointer"
-										>
-											<Edit className="w-4 h-4" /> Edit
-										</Button>
+										<ComingSoonWrapper enabled>
+											<Button
+												size="sm"
+												variant="outline"
+												className="flex items-center gap-1 bg-yellow-100 cursor-pointer"
+											>
+												<Edit className="w-4 h-4" /> Edit
+											</Button>
+										</ComingSoonWrapper>
 										<Link href={`/projects/${project.slug}/assign-dev`}>
 											<Button
 												variant="outline"
@@ -121,13 +124,15 @@ export default function ProjectListings({
 												<UsersRound className="w-4 h-4" /> Assign Dev
 											</Button>
 										</Link>
-										<Button
-											variant="destructive"
-											size="sm"
-											className="flex items-center gap-1 cursor-pointer"
-										>
-											<Trash className="w-4 h-4" /> Delete
-										</Button>
+										<ComingSoonWrapper enabled>
+											<Button
+												variant="destructive"
+												size="sm"
+												className="flex items-center gap-1 cursor-pointer"
+											>
+												<Trash className="w-4 h-4" /> Delete
+											</Button>
+										</ComingSoonWrapper>
 									</TableCell>
 								</TableRow>
 							))
