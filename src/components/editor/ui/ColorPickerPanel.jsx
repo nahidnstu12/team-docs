@@ -43,31 +43,30 @@ export default function ColorPickerPanel({ editor, onClose }) {
 	};
 
 	return (
-		<div className="absolute left-0 z-50 w-64 p-3 mt-2 bg-white border rounded-md shadow-lg color-picker-panel top-full">
+		<div className="absolute left-0 top-2 z-50 w-[300px] p-4 bg-white border border-gray-200 rounded-xl shadow-2xl color-picker-panel space-y-4">
 			<div>
-				<p className="mb-1 text-sm font-medium text-gray-700">Text Color</p>
-				<div className="flex flex-wrap gap-2 mb-3">
+				<p className="mb-2 text-sm font-semibold text-gray-800">Text Color</p>
+				<div className="flex flex-wrap gap-3">
 					{textColors.map(({ name, color }) => (
 						<button
 							key={name}
 							onClick={() => applyTextColor(color)}
-							className="w-6 h-6 border rounded-full"
+							className="w-8 h-8 transition-all duration-150 border border-gray-300 rounded-full hover:ring-2 hover:ring-offset-2 hover:ring-gray-400"
 							style={{ backgroundColor: color }}
 							title={name}
 						/>
 					))}
 				</div>
 			</div>
+
 			<div>
-				<p className="mb-1 text-sm font-medium text-gray-700">
-					Background Color
-				</p>
-				<div className="flex flex-wrap gap-2">
+				<p className="mb-2 text-sm font-semibold text-gray-800">Highlight</p>
+				<div className="flex flex-wrap gap-3">
 					{bgColors.map(({ name, color }) => (
 						<button
 							key={name}
 							onClick={() => applyHighlight(color)}
-							className="w-6 h-6 border rounded-full"
+							className="w-8 h-8 transition-all duration-150 border border-gray-300 rounded-full hover:ring-2 hover:ring-offset-2 hover:ring-yellow-400"
 							style={{ backgroundColor: color }}
 							title={name}
 						/>

@@ -141,3 +141,13 @@
 		--sidebar-ring: 217.2 91.2% 59.8%;
 	}
 }
+
+/* Tailwind utility styles */
+
+.bubble-btn {
+	@apply p-1.5 rounded-xl hover:bg-muted transition-colors text-muted-foreground hover:text-foreground;
+}
+
+.bubble-btn-active {
+	@apply bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300;
+}

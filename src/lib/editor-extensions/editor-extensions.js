@@ -20,7 +20,7 @@ import Underline from "@tiptap/extension-underline";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Highlight from "@tiptap/extension-highlight";
-import Link from "@tiptap/extension-link";
+import { CustomLink } from "@/components/editor/extensions/link";
 
 const lowlight = createLowlight(all);
 
@@ -60,11 +60,6 @@ export const editorExtensions = [
 	Subscript,
 	Superscript,
 	Highlight,
-	Link.configure({
-		openOnClick: true, // allows ctrl+click or cmd+click to open
-		linkOnPaste: true,
-		autolink: true,
-	}),
-
+	CustomLink,
 	...ColorExtensions,
 ];

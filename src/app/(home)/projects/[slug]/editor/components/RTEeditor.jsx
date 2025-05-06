@@ -1,66 +1,48 @@
-import { editorExtensions } from "@/lib/editor-extensions/editor-extensions";
-import { useEditor, EditorContent } from "@tiptap/react";
-import EditorFooter from "./EditorFooter";
-import { useEffect, useRef, useState } from "react";
+import { useEditorInstance } from "./../hooks/useEditorInstance";
+import { useEditorSubmit } from "./../hooks/useEditorSubmit";
+import { EditorContent } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
-import SlashCommandMenu from "./SlashCommandMenu";
-import { LinkDialog } from "./LinkDialog";
+import BubbleMenu from "./menus/BubbleMenu";
+import { LinkDialog } from "./menus/LinkDialog";
+import EditorFooter from "./ui/EditorFooter";
+import SlashCommandMenu from "./menus/SlashCommandMenu";
+import { LinkProvider } from "../ctx/LinkProvider";
+import { useLinkHandling } from "../hooks/useLinkHandling";
 
 export default function RTEeditor({ pageId }) {
-	const ref = useRef(null);
-	const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+	const { editor, editorRef } = useEditorInstance(pageId);
+	const { ref, handleSubmit } = useEditorSubmit(editor);
 
-	const editor = useEditor({
-		immediatelyRender: false,
-		extensions: editorExtensions,
-		autofocus: true,
-		editorProps: {
-			attributes: {
-				class: "focus:outline-none max-w-none",
-			},
-		},
-	});
+	if (!editor) return <div>Loading editor...</div>;
 
-	useEffect(() => {
-		if (editor) {
-			editor.commands.focus("end");
-		}
-	}, [editor, pageId]);
+	return (
+		<LinkProvider>
+			<EditorWithProvider
+				editor={editor}
+				editorRef={editorRef}
+				refNode={ref}
+				handleSubmit={handleSubmit}
+			/>
+		</LinkProvider>
+	);
+}
 
-	const handleSubmit = () => {
-		if (!editor) return;
-
-		const content = JSON.stringify(editor.getJSON());
-		ref.current.value = content;
-		ref.current.form.requestSubmit();
-	};
+function EditorWithProvider({ editor, editorRef, refNode, handleSubmit }) {
+	useLinkHandling(editor);
 
 	return (
 		<form action="/actions/saveDocument" method="POST" className="w-full mt-20">
 			<div className="relative w-full">
-				<div
-					onClick={() => editor?.commands.focus()}
-					className="border w-full p-4 rounded-md h-[450px] overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent scrollbar-thumb-rounded-full cursor-text max-w-none"
-				>
-					<EditorContent
-						editor={editor}
-						className="w-full max-w-none border-0 p-0 min-h-[400px]"
-					/>
-				</div>
-				<LinkDialog
-					open={linkDialogOpen}
-					onOpenChange={setLinkDialogOpen}
-					editor={editor}
-				/>
+				<EditorContainer editor={editor} editorRef={editorRef}>
+					<BubbleMenu editor={editor} />
+					<EditorContent editor={editor} />
+				</EditorContainer>
 
-				{editor && (
-					<SlashCommandMenu
-						editor={editor}
-						setLinkDialogOpen={setLinkDialogOpen}
-					/>
-				)}
+				<LinkDialog editor={editor} />
+				<SlashCommandMenu editor={editor} />
 			</div>
-			<input type="hidden" name="content" ref={ref} />
+
+			<input type="hidden" name="content" ref={refNode} />
 			<EditorFooter editor={editor} />
 			<Button type="button" onClick={handleSubmit} className="mt-4">
 				Save
@@ -68,3 +50,13 @@ export default function RTEeditor({ pageId }) {
 		</form>
 	);
 }
+
+const EditorContainer = ({ editor, editorRef, children }) => (
+	<div
+		onClick={() => editor?.commands.focus()}
+		className="border w-full p-4 rounded-md h-[450px] overflow-y-auto scrollbar scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent scrollbar-thumb-rounded-full cursor-text max-w-none"
+		ref={editorRef}
+	>
+		{children}
+	</div>
+);
