@@ -51,9 +51,12 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => editor.chain().focus().toggleBold().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("bold") ? "bg-blue-100 text-blue-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${
+			editor.isActive("bold") ? "bg-blue-100 text-blue-600" : ""
+		}`}
 			>
 				<Bold className="w-5 h-5" />
 			</button>
@@ -62,9 +65,12 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => editor.chain().focus().toggleItalic().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("italic") ? "bg-blue-100 text-blue-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${
+			editor.isActive("italic") ? "bg-blue-100 text-blue-600" : ""
+		}`}
 			>
 				<Italic className="w-5 h-5" />
 			</button>
@@ -73,9 +79,12 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => editor.chain().focus().toggleUnderline().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("underline") ? "bg-blue-100 text-blue-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${
+			editor.isActive("underline") ? "bg-blue-100 text-blue-600" : ""
+		}`}
 			>
 				<Underline className="w-5 h-5" />
 			</button>
@@ -84,9 +93,12 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => editor.chain().focus().toggleStrike().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("strike") ? "bg-blue-100 text-blue-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${
+			editor.isActive("strike") ? "bg-blue-100 text-blue-600" : ""
+		}`}
 			>
 				<Strikethrough className="w-5 h-5" />
 			</button>
@@ -95,9 +107,12 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => editor.chain().focus().toggleCode().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("code") ? "bg-blue-100 text-blue-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${
+			editor.isActive("code") ? "bg-blue-100 text-blue-600" : ""
+		}`}
 			>
 				<Code className="w-5 h-5" />
 			</button>
@@ -106,9 +121,12 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => editor.chain().focus().toggleHighlight().run()}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					editor.isActive("highlight") ? "bg-yellow-100 text-yellow-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${
+			editor.isActive("highlight") ? "bg-yellow-100 text-yellow-600" : ""
+		}`}
 			>
 				<Highlighter className="w-5 h-5" />
 			</button>
@@ -128,7 +146,7 @@ export default function BubbleMenu({ editor }) {
 							.run();
 					}
 				}}
-				className="p-2 text-gray-600 transition rounded-lg hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800"
+				className="p-2 text-gray-600 transition rounded-lg hover:bg-blue-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800"
 			>
 				<Link className="w-5 h-5" />
 			</button>
@@ -137,9 +155,10 @@ export default function BubbleMenu({ editor }) {
 			<button
 				type="button"
 				onClick={() => setShowColorPanel((prev) => !prev)}
-				className={`p-2 rounded-lg transition text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800 ${
-					showColorPanel ? "bg-pink-100 text-pink-600" : ""
-				}`}
+				className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+		focus:outline-none focus:ring-2 focus:ring-blue-200
+		active:bg-blue-50  ${showColorPanel ? "bg-pink-100 text-pink-600" : ""}`}
 			>
 				<PaintBucket className="w-5 h-5" />
 			</button>
