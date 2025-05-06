@@ -238,7 +238,7 @@ export default function ProjectEditorSidebar() {
 															<DropdownMenuContent
 																side="right"
 																align="start"
-																className="max-w-35"
+																className="max-w-3"
 															>
 																<ComingSoonWrapper enabled className="w-full">
 																	<DropdownMenuItem>
