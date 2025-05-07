@@ -1,14 +1,18 @@
 import { editorExtensions } from "@/lib/editor-extensions/editor-extensions";
 import { useEditor, EditorContent } from "@tiptap/react";
-import EditorFooter from "./EditorFooter";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import SlashCommandMenu from "./SlashCommandMenu";
 import { LinkDialog } from "./LinkDialog";
 import BubbleMenu from "@/components/editor/ui/BubbleMenu";
+import { Button } from "@/components/ui/button";
+import { savePageContent } from "../actions/savePageContent";
+import { toast } from "sonner";
+import { fetchPageContent } from "../actions/fetchPageContent";
+import { useProjectStore } from "../../../store/useProjectStore";
 
 export default function RTEeditor({ pageId }) {
 	const ref = useRef(null);
+	const [pageContent, setPageContent] = useState(null);
 	const [linkDialogOpen, setLinkDialogOpen] = useState(false);
 	const [initialText, setInitialText] = useState("");
 	const [initialUrl, setInitialUrl] = useState("");
@@ -18,6 +22,7 @@ export default function RTEeditor({ pageId }) {
 		immediatelyRender: false,
 		extensions: editorExtensions,
 		autofocus: true,
+		content: pageContent,
 		editorProps: {
 			attributes: {
 				class: "focus:outline-none max-w-none",
@@ -55,13 +60,48 @@ export default function RTEeditor({ pageId }) {
 		return () => dom.removeEventListener("click", handler);
 	}, [editor]);
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (!editor) return;
 
-		const content = JSON.stringify(editor.getJSON());
-		ref.current.value = content;
-		ref.current.form.requestSubmit();
+		// Get the JSON output
+		const rawContent = editor.getJSON();
+
+		// Strip functions if any accidentally included
+		const content = JSON.parse(JSON.stringify(rawContent));
+
+		const result = await savePageContent({
+			pageId,
+			content,
+		});
+
+		if (result.success) {
+			toast.success(result.message);
+		} else {
+			toast.error(result.message || "Something went wrong");
+		}
 	};
+
+	useEffect(() => {
+		async function getPageContent() {
+			const res = await fetchPageContent(pageId);
+			setPageContent(res.content);
+		}
+
+		getPageContent();
+	}, [pageId]);
+
+	useEffect(() => {
+		if (editor && pageContent) {
+			editor.commands.setContent(pageContent); // ✅ Manually set content after fetch
+		}
+	}, [editor, pageContent]);
+
+	useEffect(() => {
+		if (editor) {
+			// Register the save function into Zustand
+			useProjectStore.getState().setSaveHandler(handleSubmit);
+		}
+	}, [editor]);
 
 	return (
 		<form action="/actions/saveDocument" method="POST" className="w-full mt-6">
@@ -97,10 +137,7 @@ export default function RTEeditor({ pageId }) {
 				)}
 			</div>
 			<input type="hidden" name="content" ref={ref} />
-			{/* <EditorFooter editor={editor} />
-			<Button type="button" onClick={handleSubmit} className="mt-4">
-				Save
-			</Button> */}
+			{/* <EditorFooter editor={editor} /> */}
 		</form>
 	);
 }

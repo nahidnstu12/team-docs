@@ -67,7 +67,7 @@ export const editorExtensions = [
 	ClearMarksOnEnter, // prevent style to carry to next line (mark style)
 	ResetMarksOnDelete, // reset stored mark style for the same line
 	Placeholder.configure({
-		placeholder: "Start typing your note...",
+		placeholder: "Start typing...",
 	}),
 
 	...ColorExtensions,
