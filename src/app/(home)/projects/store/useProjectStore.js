@@ -11,4 +11,6 @@ export const useProjectStore = create((set) => ({
 	setSections: (sections) => set({ sections }),
 	setSelectedSection: (selectedSection) => set({ selectedSection }),
 	setSelectedPage: (selectedPage) => set({ selectedPage }),
+	saveHandler: null,
+	setSaveHandler: (fn) => set({ saveHandler: fn }),
 }));

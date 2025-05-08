@@ -40,6 +40,7 @@ import { signout } from "@/lib/auth/signout";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import ComingSoonWrapper from "../abstracts/ComingSoonWrapper";
 
 export default function MainSidebar() {
 	const pathname = usePathname();
@@ -150,15 +151,17 @@ export default function MainSidebar() {
 						</SidebarMenuButton>
 					</SidebarMenuSubItem>
 					<SidebarMenuSubItem>
-						<SidebarMenuButton
-							asChild
-							className={isActive("/users") ? "bg-muted font-semibold" : ""}
-						>
-							<Link href="/users">
-								<Users className="w-4 h-4" />
-								<span>Users</span>
-							</Link>
-						</SidebarMenuButton>
+						<ComingSoonWrapper enabled className="w-full">
+							<SidebarMenuButton
+								asChild
+								className={isActive("/users") ? "bg-muted font-semibold" : ""}
+							>
+								<Link href="/users">
+									<Users className="w-4 h-4" />
+									<span>Users</span>
+								</Link>
+							</SidebarMenuButton>
+						</ComingSoonWrapper>
 					</SidebarMenuSubItem>
 				</SidebarCollapseSection>
 
@@ -170,17 +173,19 @@ export default function MainSidebar() {
 					onToggle={() => toggleSection("settings")}
 				>
 					<SidebarMenuSubItem>
-						<SidebarMenuButton
-							asChild
-							className={
-								isActive("/settings/profile") ? "bg-muted font-semibold" : ""
-							}
-						>
-							<Link href="/settings/profile">
-								<UserPen className="w-4 h-4" />
-								<span>Profile</span>
-							</Link>
-						</SidebarMenuButton>
+						<ComingSoonWrapper enabled className="w-full">
+							<SidebarMenuButton
+								asChild
+								className={
+									isActive("/settings/profile") ? "bg-muted font-semibold" : ""
+								}
+							>
+								<Link href="/settings/profile">
+									<UserPen className="w-4 h-4" />
+									<span>Profile</span>
+								</Link>
+							</SidebarMenuButton>
+						</ComingSoonWrapper>
 					</SidebarMenuSubItem>
 				</SidebarCollapseSection>
 			</SidebarContent>

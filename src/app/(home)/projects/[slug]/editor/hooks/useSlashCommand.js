@@ -8,7 +8,6 @@ import {
 	autoUpdate,
 } from "@floating-ui/react";
 import { baseCommands } from "../utils/base-commands";
-import { useLinkContext } from "../ctx/LinkProvider";
 
 export const useSlashCommand = (editor) => {
 	const [isOpen, setIsOpen] = useState(false);
