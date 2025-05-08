@@ -33,6 +33,8 @@ export default function PermissionLisitngs({
 		setStartFetchPermissions
 	);
 
+	console.log("permissions>>", permissions);
+
 	if (fetchError)
 		return (
 			<ClientErrorUI
@@ -71,7 +73,7 @@ export default function PermissionLisitngs({
 									colSpan={4}
 									className="py-10 text-lg text-center text-muted-foreground"
 								>
-									No roles found.
+									No Permissions found.
 								</TableCell>
 							</TableRow>
 						) : showSkeleton || permissions.length === 0 ? (

@@ -151,17 +151,15 @@ export default function MainSidebar() {
 						</SidebarMenuButton>
 					</SidebarMenuSubItem>
 					<SidebarMenuSubItem>
-						<ComingSoonWrapper enabled className="w-full">
-							<SidebarMenuButton
-								asChild
-								className={isActive("/users") ? "bg-muted font-semibold" : ""}
-							>
-								<Link href="/users">
-									<Users className="w-4 h-4" />
-									<span>Users</span>
-								</Link>
-							</SidebarMenuButton>
-						</ComingSoonWrapper>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/users") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/users">
+								<Users className="w-4 h-4" />
+								<span>Users</span>
+							</Link>
+						</SidebarMenuButton>
 					</SidebarMenuSubItem>
 				</SidebarCollapseSection>
 

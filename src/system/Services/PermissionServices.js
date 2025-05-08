@@ -32,4 +32,17 @@ export class PermissionServices extends BaseService {
 			Logger.error(error.message, `has permission resource fail`);
 		}
 	}
+
+	static async getPermissionForProjectScope(projectScope) {
+		try {
+			const permissions = await PermissionModel.findMany({
+				where: {
+					scope: projectScope,
+				},
+			});
+			return permissions;
+		} catch (error) {
+			Logger.error(error.message, `Get permission for project scope failed`);
+		}
+	}
 }
