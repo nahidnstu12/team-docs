@@ -15,7 +15,11 @@ import { getUsersNotInProject } from "../actions/getUsers";
 import { getProjectPermission } from "../actions/getProjectPermission";
 import { assignDevAction } from "@/system/Actions/ProjectPermissionAction";
 
-export default function AssignDevHeader({ projectName, projectId, onAssignSuccess }) {
+export default function AssignDevHeader({
+	projectName,
+	projectId,
+	onAssignSuccess,
+}) {
 	const [selectedUsers, setSelectedUsers] = useState([]);
 	const [selectedPermissions, setSelectedPermissions] = useState([]);
 	const [search, setSearch] = useState("");
@@ -23,7 +27,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 	const [permissions, setPermissions] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isAssigning, setIsAssigning] = useState(false);
-	
+
 	const fetchUsers = async () => {
 		try {
 			setIsLoading(true);
@@ -52,7 +56,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 		fetchPermissions();
 	}, [projectId]);
 
-	console.log("permissions", {permissions, users, projectId, projectName});
+	console.log("permissions", { permissions, users, projectId, projectName });
 
 	// Filter users by name or email
 	const filteredUsers =
@@ -120,33 +124,37 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 	// Get selected user names for display
 	const getSelectedUserNames = () => {
 		if (selectedUsers.length === 0) return "Select Dev's";
-		const selectedUserObjects = users.filter(user => selectedUsers.includes(user.id));
-		return `${selectedUserObjects.length} Developer${selectedUserObjects.length > 1 ? 's' : ''} selected`;
+		const selectedUserObjects = users.filter((user) =>
+			selectedUsers.includes(user.id)
+		);
+		return `${selectedUserObjects.length} Developer${
+			selectedUserObjects.length > 1 ? "s" : ""
+		} selected`;
 	};
 
 	// Get selected permission names for display
 	const getSelectedPermissionNames = () => {
 		if (selectedPermissions.length === 0) return "Project Permission";
-		const selectedPermissionObjects = permissions.filter(permission => selectedPermissions.includes(permission.id));
-		return `${selectedPermissionObjects.length} Permission${selectedPermissionObjects.length > 1 ? 's' : ''} selected`;
+		const selectedPermissionObjects = permissions.filter((permission) =>
+			selectedPermissions.includes(permission.id)
+		);
+		return `${selectedPermissionObjects.length} Permission${
+			selectedPermissionObjects.length > 1 ? "s" : ""
+		} selected`;
 	};
 
 	return (
-		<div className="my-3">
-			<h1 className="mb-3 text-xl ">
+		<div className="">
+			<h1 className="mb-2 text-xl ">
 				Project: Name:{" "}
 				<span className="text-3xl font-semibold">{projectName}</span>
 			</h1>
 
-			<section className="flex justify-between p-8 px-12 mb-10 bg-gray-600 gap-4">
+			<section className="flex justify-between gap-4 py-6 my-6 bg-gray-100">
 				{/* left */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button 
-							variant="outline" 
-							className="w-96"
-							disabled={isLoading}
-						>
+						<Button variant="outline" className="w-96" disabled={isLoading}>
 							{isLoading ? "Loading..." : getSelectedUserNames()}
 						</Button>
 					</DropdownMenuTrigger>
@@ -168,6 +176,10 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 							<div className="p-4 text-center text-muted-foreground">
 								Loading developers...
 							</div>
+						) : filteredUsers.length === 0 ? (
+							<div className="p-4 text-center text-muted-foreground">
+								No developers Found...
+							</div>
 						) : (
 							filteredUsers.map((user) => (
 								<DropdownMenuCheckboxItem
@@ -178,7 +190,9 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 									className="py-2"
 								>
 									<div className="flex flex-col gap-0.5">
-										<span className="text-sm font-semibold">{user.username}</span>
+										<span className="text-sm font-semibold">
+											{user.username}
+										</span>
 										<span className="text-xs text-muted-foreground">
 											{user.email}
 										</span>
@@ -192,11 +206,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 				{/* right */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button 
-							variant="outline" 
-							className="w-96"
-							disabled={isLoading}
-						>
+						<Button variant="outline" className="w-96" disabled={isLoading}>
 							{getSelectedPermissionNames()}
 						</Button>
 					</DropdownMenuTrigger>
@@ -216,9 +226,13 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 					</DropdownMenuContent>
 				</DropdownMenu>
 
-				<Button 
+				<Button
 					onClick={handleAssign}
-					disabled={isAssigning || selectedUsers.length === 0 || selectedPermissions.length === 0}
+					disabled={
+						isAssigning ||
+						selectedUsers.length === 0 ||
+						selectedPermissions.length === 0
+					}
 				>
 					{isAssigning ? "Assigning..." : "Assign"}
 				</Button>
