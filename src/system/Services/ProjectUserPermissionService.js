@@ -3,6 +3,7 @@ import { ProjectModel } from "../Models/ProjectModel";
 import { ProjectUserPermissionModel } from "../Models/ProjectUserPermission";
 import { BaseService } from "./BaseService";
 import { UserModel } from "../Models/UserModel";
+import prisma from "@/lib/prisma";
 
 export class ProjectUserPermissionService extends BaseService {
 	constructor() {
@@ -66,8 +67,15 @@ export class ProjectUserPermissionService extends BaseService {
 		}
 	}
 
-	static async modifyDevPermissions({ selectedUser, projectId, selectedPermissions }) {
-		Logger.info({ selectedUser, projectId, selectedPermissions }, "Modify dev permissions");
+	static async modifyDevPermissions({
+		selectedUser,
+		projectId,
+		selectedPermissions,
+	}) {
+		Logger.info(
+			{ selectedUser, projectId, selectedPermissions },
+			"Modify dev permissions"
+		);
 
 		try {
 			// Step 1: Fetch only needed permissionIds
@@ -80,8 +88,10 @@ export class ProjectUserPermissionService extends BaseService {
 			const selectedSet = new Set(selectedPermissions);
 			const existingSet = new Set(existingPermissionIds);
 
-			const toAdd = selectedPermissions.filter(id => !existingSet.has(id));
-			const toRemove = existingPermissionIds.filter(id => !selectedSet.has(id));
+			const toAdd = selectedPermissions.filter((id) => !existingSet.has(id));
+			const toRemove = existingPermissionIds.filter(
+				(id) => !selectedSet.has(id)
+			);
 
 			// Step 3: Run mutations only if needed
 			const operations = [];
@@ -119,29 +129,18 @@ export class ProjectUserPermissionService extends BaseService {
 		}
 	}
 
-
 	static async getProjectUsersList(projectId) {
 		if (!projectId) throw new Error("projectId is missing");
 
 		try {
-			return await UserModel.findMany({
+			return await prisma.user.findMany({
 				where: {
 					projectPermissions: {
 						some: {
-							projectId: projectId,
+							projectId, // or just: projectId
 						},
 					},
 				},
-				// include: {
-				// 	projectPermissions: {
-				// 		where: {
-				// 			projectId: projectId,
-				// 		},
-				// 		include: {
-				// 			permission: true,
-				// 		},
-				// 	},
-				// },
 				select: {
 					id: true,
 					username: true,
@@ -150,6 +149,9 @@ export class ProjectUserPermissionService extends BaseService {
 					createdAt: true,
 					updatedAt: true,
 					projectPermissions: {
+						where: {
+							projectId: projectId, // Ensure we only get relevant permissions
+						},
 						select: {
 							permission: {
 								select: {
@@ -161,6 +163,9 @@ export class ProjectUserPermissionService extends BaseService {
 							},
 						},
 					},
+				},
+				orderBy: {
+					createdAt: "desc",
 				},
 			});
 		} catch (error) {

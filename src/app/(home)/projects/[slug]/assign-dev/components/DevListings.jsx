@@ -14,8 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { removeDevFromProjectAction } from "@/system/Actions/ProjectPermissionAction";
 import ModifyPermissionsDrawer from "./ModifyPermissionsDrawer";
+import Logger from "@/lib/Logger";
 
-export default function DevListings({ projectId, refetchTrigger, onRemoveDevSuccess }) {
+export default function DevListings({
+	projectId,
+	refetchTrigger,
+	onRemoveDevSuccess,
+}) {
 	const [users, setUsers] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -28,6 +33,7 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
 				setIsLoading(true);
 				setError(null);
 				const users = await getProjectUsers(projectId);
+				Logger.debug(users, "get users from dev-listings");
 				setUsers(users);
 			} catch (err) {
 				setError(err.message || "Failed to fetch developers");
@@ -138,14 +144,14 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										<Button 
+										<Button
 											variant="outline"
 											onClick={() => handleModifyClick(user)}
 										>
 											Modify
 										</Button>
-										<Button 
-											variant="destructive" 
+										<Button
+											variant="destructive"
 											onClick={() => handleRemoveDev(user.id)}
 										>
 											Remove
