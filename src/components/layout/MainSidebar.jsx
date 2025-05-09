@@ -99,26 +99,6 @@ export default function MainSidebar() {
 					</SidebarMenuItem>
 				</SidebarMenu>
 
-				{/* Project Manage */}
-				<SidebarCollapseSection
-					title="Project Manage"
-					icon={FolderKanban}
-					isOpen={openSection === "projects"}
-					onToggle={() => toggleSection("projects")}
-				>
-					<SidebarMenuSubItem>
-						<SidebarMenuButton
-							asChild
-							className={isActive("/projects") ? "bg-muted font-semibold" : ""}
-						>
-							<Link href="/projects">
-								<FolderOpenDot className="w-4 h-4" />
-								<span>Projects</span>
-							</Link>
-						</SidebarMenuButton>
-					</SidebarMenuSubItem>
-				</SidebarCollapseSection>
-
 				{/* User Manage */}
 				<SidebarCollapseSection
 					title="User Manage"
@@ -162,6 +142,28 @@ export default function MainSidebar() {
 						</SidebarMenuButton>
 					</SidebarMenuSubItem>
 				</SidebarCollapseSection>
+
+				{/* Project Manage */}
+				<SidebarCollapseSection
+					title="Project Manage"
+					icon={FolderKanban}
+					isOpen={openSection === "projects"}
+					onToggle={() => toggleSection("projects")}
+				>
+					<SidebarMenuSubItem>
+						<SidebarMenuButton
+							asChild
+							className={isActive("/projects") ? "bg-muted font-semibold" : ""}
+						>
+							<Link href="/projects">
+								<FolderOpenDot className="w-4 h-4" />
+								<span>Projects</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuSubItem>
+				</SidebarCollapseSection>
+
+				
 
 				{/* Settings */}
 				<SidebarCollapseSection

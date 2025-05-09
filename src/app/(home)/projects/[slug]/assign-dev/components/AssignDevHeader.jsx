@@ -138,7 +138,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 				<span className="text-3xl font-semibold">{projectName}</span>
 			</h1>
 
-			<section className="flex justify-between p-8 px-12 mb-10 bg-gray-600 gap-4">
+			<section className="flex justify-center p-8 px-12 mb-10 bg-gray-600 gap-4">
 				{/* left */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>

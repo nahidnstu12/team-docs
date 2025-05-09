@@ -102,7 +102,7 @@ export default function ProjectEditorSidebar() {
 								<SidebarMenuButton
 									onClick={() => toggleSection(section.id)}
 									className={cn(
-										"flex items-center justify-between w-full p-2 transition rounded-xs hover:bg-gray-200/30",
+										"flex items-center justify-between w-full p-2 transition rounded-xs  hover:bg-gray-200/30",
 										section.pages?.some((p) => p.id === selectedPage) &&
 											"bg-blue-100" // ✅ only highlight section if a page inside it is selected
 									)}

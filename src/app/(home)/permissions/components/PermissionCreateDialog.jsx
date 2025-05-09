@@ -81,21 +81,6 @@ export default function PermissionCreateDialog({
 
 					<form action={formAction} className="mt-6 space-y-5">
 						<div className="space-y-1.5">
-							<Label htmlFor="scope">Permission Scope</Label>
-							<Input
-								id="scope"
-								placeholder="e.g. workspace, project, page"
-								className="h-11"
-								{...register("scope")}
-							/>
-							{errors.scope && (
-								<p className="mt-1 text-sm text-red-500">
-									{errors.scope.message}
-								</p>
-							)}
-						</div>
-
-						<div className="space-y-1.5">
 							<Label htmlFor="name">Permission Name</Label>
 							<Input
 								id="name"
@@ -106,6 +91,20 @@ export default function PermissionCreateDialog({
 							{errors.name && (
 								<p className="mt-1 text-sm text-red-500">
 									{errors.name.message}
+								</p>
+							)}
+						</div>
+						<div className="space-y-1.5">
+							<Label htmlFor="scope">Permission Scope</Label>
+							<Input
+								id="scope"
+								placeholder="e.g. workspace, project, page"
+								className="h-11"
+								{...register("scope")}
+							/>
+							{errors.scope && (
+								<p className="mt-1 text-sm text-red-500">
+									{errors.scope.message}
 								</p>
 							)}
 						</div>
