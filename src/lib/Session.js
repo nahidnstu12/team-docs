@@ -1,8 +1,6 @@
 import { auth } from "@/app/auth";
 import { forbidden } from "next/navigation";
-import prisma from "./prisma";
 import { UserModel } from "@/system/Models/UserModel";
-import Logger from "./Logger";
 
 export class Session {
 	static async getCurrentUser() {

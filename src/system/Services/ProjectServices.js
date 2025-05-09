@@ -32,8 +32,8 @@ export class ProjectService extends BaseService {
 
 			const project = await ProjectModel.findFirst({
 				where: {
-					OR: whereConditions
-				}
+					OR: whereConditions,
+				},
 			});
 
 			const projectDTO = ProjectDTO.toResponse(project);

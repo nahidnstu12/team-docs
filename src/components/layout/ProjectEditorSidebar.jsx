@@ -63,13 +63,7 @@ export default function ProjectEditorSidebar() {
 			...prev,
 			[sectionId]: !prev[sectionId],
 		}));
-		// setSelectedSection(sectionId);
 	};
-
-	// const selectedSection = useProjectStore((state) => state.selectedSection);
-
-	// console.log("selected section from sidebar", selectedSection);
-	// console.log("seelected page from sidebar", selectedPage);
 
 	return (
 		<Sidebar className="bg-white border-r">
@@ -82,6 +76,7 @@ export default function ProjectEditorSidebar() {
 						onClick={() => {
 							router.push("/home");
 							router.refresh();
+							setSelectedPage(null);
 						}}
 					>
 						<Home className="w-4 h-4 mr-2" />
@@ -124,7 +119,7 @@ export default function ProjectEditorSidebar() {
 											)}
 										/>
 										<FolderKanban className="w-4 h-4" />
-										<TooltipProvider delayDuration={300}>
+										<TooltipProvider delayDuration={600}>
 											<Tooltip>
 												<TooltipTrigger asChild>
 													<span className="truncate max-w-[160px] text-sm text-gray-800 block">
@@ -223,7 +218,7 @@ export default function ProjectEditorSidebar() {
 																className="flex items-center w-full gap-2"
 															>
 																<FileText className="w-4 h-4 text-muted-foreground" />
-																<TooltipProvider delayDuration={300}>
+																<TooltipProvider delayDuration={600}>
 																	<Tooltip>
 																		<TooltipTrigger asChild>
 																			<span className="truncate max-w-[140px] block">

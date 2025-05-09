@@ -1,6 +1,7 @@
 import { ProjectService } from "@/system/Services/ProjectServices";
 import ProjectEditorShell from "./ProjectEditorShell";
 import { SectionServices } from "@/system/Services/SectionServices";
+import Logger from "@/lib/Logger";
 
 export default async function ProjectEditorPage({ params }) {
 	const { slug } = await params;
@@ -9,6 +10,8 @@ export default async function ProjectEditorPage({ params }) {
 	const getAllSections = await SectionServices.getAllSectionWithPages({
 		projectId: project.id,
 	});
+
+	Logger.debug(project, "project-slug");
 
 	return (
 		<ProjectEditorShell
