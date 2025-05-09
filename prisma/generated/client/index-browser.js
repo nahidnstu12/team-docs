@@ -197,6 +197,14 @@ exports.Prisma.ProjectMemberScalarFieldEnum = {
   joinedAt: 'joinedAt'
 };
 
+exports.Prisma.ProjectUserPermissionScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  permissionId: 'permissionId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SectionScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -313,6 +321,7 @@ exports.Prisma.ModelName = {
   WorkspaceMember: 'WorkspaceMember',
   Project: 'Project',
   ProjectMember: 'ProjectMember',
+  ProjectUserPermission: 'ProjectUserPermission',
   Section: 'Section',
   Page: 'Page',
   PageVersion: 'PageVersion',

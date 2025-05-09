@@ -8,5 +8,6 @@ export async function fetchPageContent(pageId) {
 			id: pageId,
 		},
 	});
+	console.log(pageData, "pageData from server");
 	return pageData;
 }

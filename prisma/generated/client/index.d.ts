@@ -54,6 +54,11 @@ export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
  */
 export type ProjectMember = $Result.DefaultSelection<Prisma.$ProjectMemberPayload>
 /**
+ * Model ProjectUserPermission
+ * 
+ */
+export type ProjectUserPermission = $Result.DefaultSelection<Prisma.$ProjectUserPermissionPayload>
+/**
  * Model Section
  * 
  */
@@ -293,6 +298,16 @@ export class PrismaClient<
     * ```
     */
   get projectMember(): Prisma.ProjectMemberDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectUserPermission`: Exposes CRUD operations for the **ProjectUserPermission** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectUserPermissions
+    * const projectUserPermissions = await prisma.projectUserPermission.findMany()
+    * ```
+    */
+  get projectUserPermission(): Prisma.ProjectUserPermissionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.section`: Exposes CRUD operations for the **Section** model.
@@ -811,6 +826,7 @@ export namespace Prisma {
     WorkspaceMember: 'WorkspaceMember',
     Project: 'Project',
     ProjectMember: 'ProjectMember',
+    ProjectUserPermission: 'ProjectUserPermission',
     Section: 'Section',
     Page: 'Page',
     PageVersion: 'PageVersion',
@@ -836,7 +852,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "role" | "permission" | "rolePermissionAssignment" | "workspace" | "workspaceMember" | "project" | "projectMember" | "section" | "page" | "pageVersion" | "pageShare" | "annotation" | "notification" | "invitation"
+      modelProps: "user" | "role" | "permission" | "rolePermissionAssignment" | "workspace" | "workspaceMember" | "project" | "projectMember" | "projectUserPermission" | "section" | "page" | "pageVersion" | "pageShare" | "annotation" | "notification" | "invitation"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1429,6 +1445,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ProjectMemberCountArgs<ExtArgs>
             result: $Utils.Optional<ProjectMemberCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProjectUserPermission: {
+        payload: Prisma.$ProjectUserPermissionPayload<ExtArgs>
+        fields: Prisma.ProjectUserPermissionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectUserPermissionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectUserPermissionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectUserPermissionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectUserPermissionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectUserPermissionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectUserPermissionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectUserPermissionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectUserPermissionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectUserPermissionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>
+          }
+          update: {
+            args: Prisma.ProjectUserPermissionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectUserPermissionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectUserPermissionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectUserPermissionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectUserPermissionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPermissionPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectUserPermissionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectUserPermission>
+          }
+          groupBy: {
+            args: Prisma.ProjectUserPermissionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectUserPermissionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectUserPermissionCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectUserPermissionCountAggregateOutputType> | number
           }
         }
       }
@@ -2042,6 +2132,7 @@ export namespace Prisma {
     workspaceMember?: WorkspaceMemberOmit
     project?: ProjectOmit
     projectMember?: ProjectMemberOmit
+    projectUserPermission?: ProjectUserPermissionOmit
     section?: SectionOmit
     page?: PageOmit
     pageVersion?: PageVersionOmit
@@ -2155,6 +2246,7 @@ export namespace Prisma {
     Role: number
     Permission: number
     RolePermissionAssignment: number
+    projectPermissions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2170,6 +2262,7 @@ export namespace Prisma {
     Role?: boolean | UserCountOutputTypeCountRoleArgs
     Permission?: boolean | UserCountOutputTypeCountPermissionArgs
     RolePermissionAssignment?: boolean | UserCountOutputTypeCountRolePermissionAssignmentArgs
+    projectPermissions?: boolean | UserCountOutputTypeCountProjectPermissionsArgs
   }
 
   // Custom InputTypes
@@ -2267,6 +2360,13 @@ export namespace Prisma {
     where?: RolePermissionAssignmentWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProjectPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPermissionWhereInput
+  }
+
 
   /**
    * Count Type RoleCountOutputType
@@ -2323,10 +2423,12 @@ export namespace Prisma {
 
   export type PermissionCountOutputType = {
     roles: number
+    projectUserPermissions: number
   }
 
   export type PermissionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | PermissionCountOutputTypeCountRolesArgs
+    projectUserPermissions?: boolean | PermissionCountOutputTypeCountProjectUserPermissionsArgs
   }
 
   // Custom InputTypes
@@ -2345,6 +2447,13 @@ export namespace Prisma {
    */
   export type PermissionCountOutputTypeCountRolesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RolePermissionAssignmentWhereInput
+  }
+
+  /**
+   * PermissionCountOutputType without action
+   */
+  export type PermissionCountOutputTypeCountProjectUserPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPermissionWhereInput
   }
 
 
@@ -2395,11 +2504,13 @@ export namespace Prisma {
   export type ProjectCountOutputType = {
     members: number
     sections: number
+    userPermissions: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     members?: boolean | ProjectCountOutputTypeCountMembersArgs
     sections?: boolean | ProjectCountOutputTypeCountSectionsArgs
+    userPermissions?: boolean | ProjectCountOutputTypeCountUserPermissionsArgs
   }
 
   // Custom InputTypes
@@ -2425,6 +2536,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountSectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SectionWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountUserPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPermissionWhereInput
   }
 
 
@@ -2720,6 +2838,7 @@ export namespace Prisma {
     Role?: boolean | User$RoleArgs<ExtArgs>
     Permission?: boolean | User$PermissionArgs<ExtArgs>
     RolePermissionAssignment?: boolean | User$RolePermissionAssignmentArgs<ExtArgs>
+    projectPermissions?: boolean | User$projectPermissionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2773,6 +2892,7 @@ export namespace Prisma {
     Role?: boolean | User$RoleArgs<ExtArgs>
     Permission?: boolean | User$PermissionArgs<ExtArgs>
     RolePermissionAssignment?: boolean | User$RolePermissionAssignmentArgs<ExtArgs>
+    projectPermissions?: boolean | User$projectPermissionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2793,6 +2913,7 @@ export namespace Prisma {
       Role: Prisma.$RolePayload<ExtArgs>[]
       Permission: Prisma.$PermissionPayload<ExtArgs>[]
       RolePermissionAssignment: Prisma.$RolePermissionAssignmentPayload<ExtArgs>[]
+      projectPermissions: Prisma.$ProjectUserPermissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3210,6 +3331,7 @@ export namespace Prisma {
     Role<T extends User$RoleArgs<ExtArgs> = {}>(args?: Subset<T, User$RoleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Permission<T extends User$PermissionArgs<ExtArgs> = {}>(args?: Subset<T, User$PermissionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     RolePermissionAssignment<T extends User$RolePermissionAssignmentArgs<ExtArgs> = {}>(args?: Subset<T, User$RolePermissionAssignmentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    projectPermissions<T extends User$projectPermissionsArgs<ExtArgs> = {}>(args?: Subset<T, User$projectPermissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3921,6 +4043,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RolePermissionAssignmentScalarFieldEnum | RolePermissionAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.projectPermissions
+   */
+  export type User$projectPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    where?: ProjectUserPermissionWhereInput
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectUserPermissionScalarFieldEnum | ProjectUserPermissionScalarFieldEnum[]
   }
 
   /**
@@ -5292,6 +5438,7 @@ export namespace Prisma {
     ownerId?: boolean
     createdBy?: boolean | Permission$createdByArgs<ExtArgs>
     roles?: boolean | Permission$rolesArgs<ExtArgs>
+    projectUserPermissions?: boolean | Permission$projectUserPermissionsArgs<ExtArgs>
     _count?: boolean | PermissionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["permission"]>
 
@@ -5328,6 +5475,7 @@ export namespace Prisma {
   export type PermissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | Permission$createdByArgs<ExtArgs>
     roles?: boolean | Permission$rolesArgs<ExtArgs>
+    projectUserPermissions?: boolean | Permission$projectUserPermissionsArgs<ExtArgs>
     _count?: boolean | PermissionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PermissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5342,6 +5490,7 @@ export namespace Prisma {
     objects: {
       createdBy: Prisma.$UserPayload<ExtArgs> | null
       roles: Prisma.$RolePermissionAssignmentPayload<ExtArgs>[]
+      projectUserPermissions: Prisma.$ProjectUserPermissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5746,6 +5895,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     createdBy<T extends Permission$createdByArgs<ExtArgs> = {}>(args?: Subset<T, Permission$createdByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     roles<T extends Permission$rolesArgs<ExtArgs> = {}>(args?: Subset<T, Permission$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RolePermissionAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    projectUserPermissions<T extends Permission$projectUserPermissionsArgs<ExtArgs> = {}>(args?: Subset<T, Permission$projectUserPermissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6217,6 +6367,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RolePermissionAssignmentScalarFieldEnum | RolePermissionAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * Permission.projectUserPermissions
+   */
+  export type Permission$projectUserPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    where?: ProjectUserPermissionWhereInput
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectUserPermissionScalarFieldEnum | ProjectUserPermissionScalarFieldEnum[]
   }
 
   /**
@@ -9785,6 +9959,7 @@ export namespace Prisma {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     sections?: boolean | Project$sectionsArgs<ExtArgs>
+    userPermissions?: boolean | Project$userPermissionsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -9840,6 +10015,7 @@ export namespace Prisma {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     sections?: boolean | Project$sectionsArgs<ExtArgs>
+    userPermissions?: boolean | Project$userPermissionsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9858,6 +10034,7 @@ export namespace Prisma {
       owner: Prisma.$UserPayload<ExtArgs>
       members: Prisma.$ProjectMemberPayload<ExtArgs>[]
       sections: Prisma.$SectionPayload<ExtArgs>[]
+      userPermissions: Prisma.$ProjectUserPermissionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10269,6 +10446,7 @@ export namespace Prisma {
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     members<T extends Project$membersArgs<ExtArgs> = {}>(args?: Subset<T, Project$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sections<T extends Project$sectionsArgs<ExtArgs> = {}>(args?: Subset<T, Project$sectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userPermissions<T extends Project$userPermissionsArgs<ExtArgs> = {}>(args?: Subset<T, Project$userPermissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10750,6 +10928,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SectionScalarFieldEnum | SectionScalarFieldEnum[]
+  }
+
+  /**
+   * Project.userPermissions
+   */
+  export type Project$userPermissionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    where?: ProjectUserPermissionWhereInput
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectUserPermissionScalarFieldEnum | ProjectUserPermissionScalarFieldEnum[]
   }
 
   /**
@@ -11842,6 +12044,1080 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProjectMemberInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProjectUserPermission
+   */
+
+  export type AggregateProjectUserPermission = {
+    _count: ProjectUserPermissionCountAggregateOutputType | null
+    _min: ProjectUserPermissionMinAggregateOutputType | null
+    _max: ProjectUserPermissionMaxAggregateOutputType | null
+  }
+
+  export type ProjectUserPermissionMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    userId: string | null
+    permissionId: string | null
+    createdAt: Date | null
+  }
+
+  export type ProjectUserPermissionMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    userId: string | null
+    permissionId: string | null
+    createdAt: Date | null
+  }
+
+  export type ProjectUserPermissionCountAggregateOutputType = {
+    id: number
+    projectId: number
+    userId: number
+    permissionId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ProjectUserPermissionMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    permissionId?: true
+    createdAt?: true
+  }
+
+  export type ProjectUserPermissionMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    permissionId?: true
+    createdAt?: true
+  }
+
+  export type ProjectUserPermissionCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    userId?: true
+    permissionId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ProjectUserPermissionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectUserPermission to aggregate.
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPermissions to fetch.
+     */
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectUserPermissions
+    **/
+    _count?: true | ProjectUserPermissionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectUserPermissionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectUserPermissionMaxAggregateInputType
+  }
+
+  export type GetProjectUserPermissionAggregateType<T extends ProjectUserPermissionAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectUserPermission]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectUserPermission[P]>
+      : GetScalarType<T[P], AggregateProjectUserPermission[P]>
+  }
+
+
+
+
+  export type ProjectUserPermissionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPermissionWhereInput
+    orderBy?: ProjectUserPermissionOrderByWithAggregationInput | ProjectUserPermissionOrderByWithAggregationInput[]
+    by: ProjectUserPermissionScalarFieldEnum[] | ProjectUserPermissionScalarFieldEnum
+    having?: ProjectUserPermissionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectUserPermissionCountAggregateInputType | true
+    _min?: ProjectUserPermissionMinAggregateInputType
+    _max?: ProjectUserPermissionMaxAggregateInputType
+  }
+
+  export type ProjectUserPermissionGroupByOutputType = {
+    id: string
+    projectId: string
+    userId: string
+    permissionId: string
+    createdAt: Date
+    _count: ProjectUserPermissionCountAggregateOutputType | null
+    _min: ProjectUserPermissionMinAggregateOutputType | null
+    _max: ProjectUserPermissionMaxAggregateOutputType | null
+  }
+
+  type GetProjectUserPermissionGroupByPayload<T extends ProjectUserPermissionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectUserPermissionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectUserPermissionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectUserPermissionGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectUserPermissionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectUserPermissionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    permissionId?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    permission?: boolean | PermissionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectUserPermission"]>
+
+  export type ProjectUserPermissionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    permissionId?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    permission?: boolean | PermissionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectUserPermission"]>
+
+  export type ProjectUserPermissionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    permissionId?: boolean
+    createdAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    permission?: boolean | PermissionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectUserPermission"]>
+
+  export type ProjectUserPermissionSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    userId?: boolean
+    permissionId?: boolean
+    createdAt?: boolean
+  }
+
+  export type ProjectUserPermissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "userId" | "permissionId" | "createdAt", ExtArgs["result"]["projectUserPermission"]>
+  export type ProjectUserPermissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    permission?: boolean | PermissionDefaultArgs<ExtArgs>
+  }
+  export type ProjectUserPermissionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    permission?: boolean | PermissionDefaultArgs<ExtArgs>
+  }
+  export type ProjectUserPermissionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    permission?: boolean | PermissionDefaultArgs<ExtArgs>
+  }
+
+  export type $ProjectUserPermissionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectUserPermission"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      permission: Prisma.$PermissionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      userId: string
+      permissionId: string
+      createdAt: Date
+    }, ExtArgs["result"]["projectUserPermission"]>
+    composites: {}
+  }
+
+  type ProjectUserPermissionGetPayload<S extends boolean | null | undefined | ProjectUserPermissionDefaultArgs> = $Result.GetResult<Prisma.$ProjectUserPermissionPayload, S>
+
+  type ProjectUserPermissionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectUserPermissionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectUserPermissionCountAggregateInputType | true
+    }
+
+  export interface ProjectUserPermissionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectUserPermission'], meta: { name: 'ProjectUserPermission' } }
+    /**
+     * Find zero or one ProjectUserPermission that matches the filter.
+     * @param {ProjectUserPermissionFindUniqueArgs} args - Arguments to find a ProjectUserPermission
+     * @example
+     * // Get one ProjectUserPermission
+     * const projectUserPermission = await prisma.projectUserPermission.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectUserPermissionFindUniqueArgs>(args: SelectSubset<T, ProjectUserPermissionFindUniqueArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectUserPermission that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectUserPermissionFindUniqueOrThrowArgs} args - Arguments to find a ProjectUserPermission
+     * @example
+     * // Get one ProjectUserPermission
+     * const projectUserPermission = await prisma.projectUserPermission.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectUserPermissionFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectUserPermissionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectUserPermission that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionFindFirstArgs} args - Arguments to find a ProjectUserPermission
+     * @example
+     * // Get one ProjectUserPermission
+     * const projectUserPermission = await prisma.projectUserPermission.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectUserPermissionFindFirstArgs>(args?: SelectSubset<T, ProjectUserPermissionFindFirstArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectUserPermission that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionFindFirstOrThrowArgs} args - Arguments to find a ProjectUserPermission
+     * @example
+     * // Get one ProjectUserPermission
+     * const projectUserPermission = await prisma.projectUserPermission.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectUserPermissionFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectUserPermissionFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectUserPermissions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectUserPermissions
+     * const projectUserPermissions = await prisma.projectUserPermission.findMany()
+     * 
+     * // Get first 10 ProjectUserPermissions
+     * const projectUserPermissions = await prisma.projectUserPermission.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectUserPermissionWithIdOnly = await prisma.projectUserPermission.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectUserPermissionFindManyArgs>(args?: SelectSubset<T, ProjectUserPermissionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectUserPermission.
+     * @param {ProjectUserPermissionCreateArgs} args - Arguments to create a ProjectUserPermission.
+     * @example
+     * // Create one ProjectUserPermission
+     * const ProjectUserPermission = await prisma.projectUserPermission.create({
+     *   data: {
+     *     // ... data to create a ProjectUserPermission
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectUserPermissionCreateArgs>(args: SelectSubset<T, ProjectUserPermissionCreateArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectUserPermissions.
+     * @param {ProjectUserPermissionCreateManyArgs} args - Arguments to create many ProjectUserPermissions.
+     * @example
+     * // Create many ProjectUserPermissions
+     * const projectUserPermission = await prisma.projectUserPermission.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectUserPermissionCreateManyArgs>(args?: SelectSubset<T, ProjectUserPermissionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectUserPermissions and returns the data saved in the database.
+     * @param {ProjectUserPermissionCreateManyAndReturnArgs} args - Arguments to create many ProjectUserPermissions.
+     * @example
+     * // Create many ProjectUserPermissions
+     * const projectUserPermission = await prisma.projectUserPermission.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectUserPermissions and only return the `id`
+     * const projectUserPermissionWithIdOnly = await prisma.projectUserPermission.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectUserPermissionCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectUserPermissionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectUserPermission.
+     * @param {ProjectUserPermissionDeleteArgs} args - Arguments to delete one ProjectUserPermission.
+     * @example
+     * // Delete one ProjectUserPermission
+     * const ProjectUserPermission = await prisma.projectUserPermission.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectUserPermission
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectUserPermissionDeleteArgs>(args: SelectSubset<T, ProjectUserPermissionDeleteArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectUserPermission.
+     * @param {ProjectUserPermissionUpdateArgs} args - Arguments to update one ProjectUserPermission.
+     * @example
+     * // Update one ProjectUserPermission
+     * const projectUserPermission = await prisma.projectUserPermission.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectUserPermissionUpdateArgs>(args: SelectSubset<T, ProjectUserPermissionUpdateArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectUserPermissions.
+     * @param {ProjectUserPermissionDeleteManyArgs} args - Arguments to filter ProjectUserPermissions to delete.
+     * @example
+     * // Delete a few ProjectUserPermissions
+     * const { count } = await prisma.projectUserPermission.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectUserPermissionDeleteManyArgs>(args?: SelectSubset<T, ProjectUserPermissionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectUserPermissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectUserPermissions
+     * const projectUserPermission = await prisma.projectUserPermission.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectUserPermissionUpdateManyArgs>(args: SelectSubset<T, ProjectUserPermissionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectUserPermissions and returns the data updated in the database.
+     * @param {ProjectUserPermissionUpdateManyAndReturnArgs} args - Arguments to update many ProjectUserPermissions.
+     * @example
+     * // Update many ProjectUserPermissions
+     * const projectUserPermission = await prisma.projectUserPermission.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectUserPermissions and only return the `id`
+     * const projectUserPermissionWithIdOnly = await prisma.projectUserPermission.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectUserPermissionUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectUserPermissionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectUserPermission.
+     * @param {ProjectUserPermissionUpsertArgs} args - Arguments to update or create a ProjectUserPermission.
+     * @example
+     * // Update or create a ProjectUserPermission
+     * const projectUserPermission = await prisma.projectUserPermission.upsert({
+     *   create: {
+     *     // ... data to create a ProjectUserPermission
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectUserPermission we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectUserPermissionUpsertArgs>(args: SelectSubset<T, ProjectUserPermissionUpsertArgs<ExtArgs>>): Prisma__ProjectUserPermissionClient<$Result.GetResult<Prisma.$ProjectUserPermissionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectUserPermissions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionCountArgs} args - Arguments to filter ProjectUserPermissions to count.
+     * @example
+     * // Count the number of ProjectUserPermissions
+     * const count = await prisma.projectUserPermission.count({
+     *   where: {
+     *     // ... the filter for the ProjectUserPermissions we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectUserPermissionCountArgs>(
+      args?: Subset<T, ProjectUserPermissionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectUserPermissionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectUserPermission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectUserPermissionAggregateArgs>(args: Subset<T, ProjectUserPermissionAggregateArgs>): Prisma.PrismaPromise<GetProjectUserPermissionAggregateType<T>>
+
+    /**
+     * Group by ProjectUserPermission.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPermissionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectUserPermissionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectUserPermissionGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectUserPermissionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectUserPermissionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectUserPermissionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectUserPermission model
+   */
+  readonly fields: ProjectUserPermissionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectUserPermission.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectUserPermissionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    permission<T extends PermissionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PermissionDefaultArgs<ExtArgs>>): Prisma__PermissionClient<$Result.GetResult<Prisma.$PermissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectUserPermission model
+   */
+  interface ProjectUserPermissionFieldRefs {
+    readonly id: FieldRef<"ProjectUserPermission", 'String'>
+    readonly projectId: FieldRef<"ProjectUserPermission", 'String'>
+    readonly userId: FieldRef<"ProjectUserPermission", 'String'>
+    readonly permissionId: FieldRef<"ProjectUserPermission", 'String'>
+    readonly createdAt: FieldRef<"ProjectUserPermission", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectUserPermission findUnique
+   */
+  export type ProjectUserPermissionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPermission to fetch.
+     */
+    where: ProjectUserPermissionWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPermission findUniqueOrThrow
+   */
+  export type ProjectUserPermissionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPermission to fetch.
+     */
+    where: ProjectUserPermissionWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPermission findFirst
+   */
+  export type ProjectUserPermissionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPermission to fetch.
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPermissions to fetch.
+     */
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectUserPermissions.
+     */
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectUserPermissions.
+     */
+    distinct?: ProjectUserPermissionScalarFieldEnum | ProjectUserPermissionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectUserPermission findFirstOrThrow
+   */
+  export type ProjectUserPermissionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPermission to fetch.
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPermissions to fetch.
+     */
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectUserPermissions.
+     */
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPermissions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectUserPermissions.
+     */
+    distinct?: ProjectUserPermissionScalarFieldEnum | ProjectUserPermissionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectUserPermission findMany
+   */
+  export type ProjectUserPermissionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPermissions to fetch.
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPermissions to fetch.
+     */
+    orderBy?: ProjectUserPermissionOrderByWithRelationInput | ProjectUserPermissionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectUserPermissions.
+     */
+    cursor?: ProjectUserPermissionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPermissions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPermissions.
+     */
+    skip?: number
+    distinct?: ProjectUserPermissionScalarFieldEnum | ProjectUserPermissionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectUserPermission create
+   */
+  export type ProjectUserPermissionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectUserPermission.
+     */
+    data: XOR<ProjectUserPermissionCreateInput, ProjectUserPermissionUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectUserPermission createMany
+   */
+  export type ProjectUserPermissionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectUserPermissions.
+     */
+    data: ProjectUserPermissionCreateManyInput | ProjectUserPermissionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectUserPermission createManyAndReturn
+   */
+  export type ProjectUserPermissionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectUserPermissions.
+     */
+    data: ProjectUserPermissionCreateManyInput | ProjectUserPermissionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectUserPermission update
+   */
+  export type ProjectUserPermissionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectUserPermission.
+     */
+    data: XOR<ProjectUserPermissionUpdateInput, ProjectUserPermissionUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectUserPermission to update.
+     */
+    where: ProjectUserPermissionWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPermission updateMany
+   */
+  export type ProjectUserPermissionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectUserPermissions.
+     */
+    data: XOR<ProjectUserPermissionUpdateManyMutationInput, ProjectUserPermissionUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectUserPermissions to update
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * Limit how many ProjectUserPermissions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectUserPermission updateManyAndReturn
+   */
+  export type ProjectUserPermissionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectUserPermissions.
+     */
+    data: XOR<ProjectUserPermissionUpdateManyMutationInput, ProjectUserPermissionUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectUserPermissions to update
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * Limit how many ProjectUserPermissions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectUserPermission upsert
+   */
+  export type ProjectUserPermissionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectUserPermission to update in case it exists.
+     */
+    where: ProjectUserPermissionWhereUniqueInput
+    /**
+     * In case the ProjectUserPermission found by the `where` argument doesn't exist, create a new ProjectUserPermission with this data.
+     */
+    create: XOR<ProjectUserPermissionCreateInput, ProjectUserPermissionUncheckedCreateInput>
+    /**
+     * In case the ProjectUserPermission was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectUserPermissionUpdateInput, ProjectUserPermissionUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectUserPermission delete
+   */
+  export type ProjectUserPermissionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectUserPermission to delete.
+     */
+    where: ProjectUserPermissionWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPermission deleteMany
+   */
+  export type ProjectUserPermissionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectUserPermissions to delete
+     */
+    where?: ProjectUserPermissionWhereInput
+    /**
+     * Limit how many ProjectUserPermissions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectUserPermission without action
+   */
+  export type ProjectUserPermissionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPermission
+     */
+    select?: ProjectUserPermissionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPermission
+     */
+    omit?: ProjectUserPermissionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPermissionInclude<ExtArgs> | null
   }
 
 
@@ -19785,6 +21061,17 @@ export namespace Prisma {
   export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
 
 
+  export const ProjectUserPermissionScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    userId: 'userId',
+    permissionId: 'permissionId',
+    createdAt: 'createdAt'
+  };
+
+  export type ProjectUserPermissionScalarFieldEnum = (typeof ProjectUserPermissionScalarFieldEnum)[keyof typeof ProjectUserPermissionScalarFieldEnum]
+
+
   export const SectionScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -20040,6 +21327,7 @@ export namespace Prisma {
     Role?: RoleListRelationFilter
     Permission?: PermissionListRelationFilter
     RolePermissionAssignment?: RolePermissionAssignmentListRelationFilter
+    projectPermissions?: ProjectUserPermissionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -20064,13 +21352,13 @@ export namespace Prisma {
     Role?: RoleOrderByRelationAggregateInput
     Permission?: PermissionOrderByRelationAggregateInput
     RolePermissionAssignment?: RolePermissionAssignmentOrderByRelationAggregateInput
+    projectPermissions?: ProjectUserPermissionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     username?: string
     email?: string
-    workspaceId?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -20078,6 +21366,7 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    workspaceId?: StringNullableFilter<"User"> | string | null
     isSuperAdmin?: BoolFilter<"User"> | boolean
     workspaces?: WorkspaceMemberListRelationFilter
     projects?: ProjectMemberListRelationFilter
@@ -20091,7 +21380,8 @@ export namespace Prisma {
     Role?: RoleListRelationFilter
     Permission?: PermissionListRelationFilter
     RolePermissionAssignment?: RolePermissionAssignmentListRelationFilter
-  }, "id" | "username" | "email" | "workspaceId">
+    projectPermissions?: ProjectUserPermissionListRelationFilter
+  }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -20205,6 +21495,7 @@ export namespace Prisma {
     ownerId?: StringNullableFilter<"Permission"> | string | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     roles?: RolePermissionAssignmentListRelationFilter
+    projectUserPermissions?: ProjectUserPermissionListRelationFilter
   }
 
   export type PermissionOrderByWithRelationInput = {
@@ -20216,12 +21507,12 @@ export namespace Prisma {
     ownerId?: SortOrderInput | SortOrder
     createdBy?: UserOrderByWithRelationInput
     roles?: RolePermissionAssignmentOrderByRelationAggregateInput
+    projectUserPermissions?: ProjectUserPermissionOrderByRelationAggregateInput
   }
 
   export type PermissionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     ownerId_name?: PermissionOwnerIdNameCompoundUniqueInput
-    ownerId_scope?: PermissionOwnerIdScopeCompoundUniqueInput
     AND?: PermissionWhereInput | PermissionWhereInput[]
     OR?: PermissionWhereInput[]
     NOT?: PermissionWhereInput | PermissionWhereInput[]
@@ -20232,7 +21523,8 @@ export namespace Prisma {
     ownerId?: StringNullableFilter<"Permission"> | string | null
     createdBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     roles?: RolePermissionAssignmentListRelationFilter
-  }, "id" | "ownerId_name" | "ownerId_scope">
+    projectUserPermissions?: ProjectUserPermissionListRelationFilter
+  }, "id" | "ownerId_name">
 
   export type PermissionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -20483,6 +21775,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ProjectMemberListRelationFilter
     sections?: SectionListRelationFilter
+    userPermissions?: ProjectUserPermissionListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -20501,6 +21794,7 @@ export namespace Prisma {
     owner?: UserOrderByWithRelationInput
     members?: ProjectMemberOrderByRelationAggregateInput
     sections?: SectionOrderByRelationAggregateInput
+    userPermissions?: ProjectUserPermissionOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -20523,6 +21817,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     members?: ProjectMemberListRelationFilter
     sections?: SectionListRelationFilter
+    userPermissions?: ProjectUserPermissionListRelationFilter
   }, "id" | "slug_name_ownerId">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -20619,6 +21914,68 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"ProjectMember"> | string
     roleId?: StringWithAggregatesFilter<"ProjectMember"> | string
     joinedAt?: DateTimeWithAggregatesFilter<"ProjectMember"> | Date | string
+  }
+
+  export type ProjectUserPermissionWhereInput = {
+    AND?: ProjectUserPermissionWhereInput | ProjectUserPermissionWhereInput[]
+    OR?: ProjectUserPermissionWhereInput[]
+    NOT?: ProjectUserPermissionWhereInput | ProjectUserPermissionWhereInput[]
+    id?: StringFilter<"ProjectUserPermission"> | string
+    projectId?: StringFilter<"ProjectUserPermission"> | string
+    userId?: StringFilter<"ProjectUserPermission"> | string
+    permissionId?: StringFilter<"ProjectUserPermission"> | string
+    createdAt?: DateTimeFilter<"ProjectUserPermission"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    permission?: XOR<PermissionScalarRelationFilter, PermissionWhereInput>
+  }
+
+  export type ProjectUserPermissionOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    permissionId?: SortOrder
+    createdAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    permission?: PermissionOrderByWithRelationInput
+  }
+
+  export type ProjectUserPermissionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    projectId_userId_permissionId?: ProjectUserPermissionProjectIdUserIdPermissionIdCompoundUniqueInput
+    AND?: ProjectUserPermissionWhereInput | ProjectUserPermissionWhereInput[]
+    OR?: ProjectUserPermissionWhereInput[]
+    NOT?: ProjectUserPermissionWhereInput | ProjectUserPermissionWhereInput[]
+    projectId?: StringFilter<"ProjectUserPermission"> | string
+    userId?: StringFilter<"ProjectUserPermission"> | string
+    permissionId?: StringFilter<"ProjectUserPermission"> | string
+    createdAt?: DateTimeFilter<"ProjectUserPermission"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    permission?: XOR<PermissionScalarRelationFilter, PermissionWhereInput>
+  }, "id" | "projectId_userId_permissionId">
+
+  export type ProjectUserPermissionOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    permissionId?: SortOrder
+    createdAt?: SortOrder
+    _count?: ProjectUserPermissionCountOrderByAggregateInput
+    _max?: ProjectUserPermissionMaxOrderByAggregateInput
+    _min?: ProjectUserPermissionMinOrderByAggregateInput
+  }
+
+  export type ProjectUserPermissionScalarWhereWithAggregatesInput = {
+    AND?: ProjectUserPermissionScalarWhereWithAggregatesInput | ProjectUserPermissionScalarWhereWithAggregatesInput[]
+    OR?: ProjectUserPermissionScalarWhereWithAggregatesInput[]
+    NOT?: ProjectUserPermissionScalarWhereWithAggregatesInput | ProjectUserPermissionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectUserPermission"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectUserPermission"> | string
+    userId?: StringWithAggregatesFilter<"ProjectUserPermission"> | string
+    permissionId?: StringWithAggregatesFilter<"ProjectUserPermission"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ProjectUserPermission"> | Date | string
   }
 
   export type SectionWhereInput = {
@@ -21153,6 +22510,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -21177,6 +22535,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -21201,6 +22560,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -21225,6 +22585,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -21345,6 +22706,7 @@ export namespace Prisma {
     createdAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutPermissionInput
     roles?: RolePermissionAssignmentCreateNestedManyWithoutPermissionInput
+    projectUserPermissions?: ProjectUserPermissionCreateNestedManyWithoutPermissionInput
   }
 
   export type PermissionUncheckedCreateInput = {
@@ -21355,6 +22717,7 @@ export namespace Prisma {
     createdAt?: Date | string
     ownerId?: string | null
     roles?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutPermissionInput
+    projectUserPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutPermissionInput
   }
 
   export type PermissionUpdateInput = {
@@ -21365,6 +22728,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutPermissionNestedInput
     roles?: RolePermissionAssignmentUpdateManyWithoutPermissionNestedInput
+    projectUserPermissions?: ProjectUserPermissionUpdateManyWithoutPermissionNestedInput
   }
 
   export type PermissionUncheckedUpdateInput = {
@@ -21375,6 +22739,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: NullableStringFieldUpdateOperationsInput | string | null
     roles?: RolePermissionAssignmentUncheckedUpdateManyWithoutPermissionNestedInput
+    projectUserPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutPermissionNestedInput
   }
 
   export type PermissionCreateManyInput = {
@@ -21614,6 +22979,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     sections?: SectionCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -21630,6 +22996,7 @@ export namespace Prisma {
     isArchived?: boolean
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     sections?: SectionUncheckedCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -21646,6 +23013,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     sections?: SectionUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -21662,6 +23030,7 @@ export namespace Prisma {
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     sections?: SectionUncheckedUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -21755,6 +23124,59 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     roleId?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutUserPermissionsInput
+    user: UserCreateNestedOneWithoutProjectPermissionsInput
+    permission: PermissionCreateNestedOneWithoutProjectUserPermissionsInput
+  }
+
+  export type ProjectUserPermissionUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    userId: string
+    permissionId: string
+    createdAt?: Date | string
+  }
+
+  export type ProjectUserPermissionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutUserPermissionsNestedInput
+    user?: UserUpdateOneRequiredWithoutProjectPermissionsNestedInput
+    permission?: PermissionUpdateOneRequiredWithoutProjectUserPermissionsNestedInput
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    permissionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionCreateManyInput = {
+    id?: string
+    projectId: string
+    userId: string
+    permissionId: string
+    createdAt?: Date | string
+  }
+
+  export type ProjectUserPermissionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    permissionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SectionCreateInput = {
@@ -22407,6 +23829,12 @@ export namespace Prisma {
     none?: RolePermissionAssignmentWhereInput
   }
 
+  export type ProjectUserPermissionListRelationFilter = {
+    every?: ProjectUserPermissionWhereInput
+    some?: ProjectUserPermissionWhereInput
+    none?: ProjectUserPermissionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -22453,6 +23881,10 @@ export namespace Prisma {
   }
 
   export type RolePermissionAssignmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProjectUserPermissionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22590,11 +24022,6 @@ export namespace Prisma {
   export type PermissionOwnerIdNameCompoundUniqueInput = {
     ownerId: string
     name: string
-  }
-
-  export type PermissionOwnerIdScopeCompoundUniqueInput = {
-    ownerId: string
-    scope: string
   }
 
   export type PermissionCountOrderByAggregateInput = {
@@ -22870,6 +24297,36 @@ export namespace Prisma {
     userId?: SortOrder
     roleId?: SortOrder
     joinedAt?: SortOrder
+  }
+
+  export type ProjectUserPermissionProjectIdUserIdPermissionIdCompoundUniqueInput = {
+    projectId: string
+    userId: string
+    permissionId: string
+  }
+
+  export type ProjectUserPermissionCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    permissionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ProjectUserPermissionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    permissionId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ProjectUserPermissionMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    permissionId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -23323,6 +24780,13 @@ export namespace Prisma {
     connect?: RolePermissionAssignmentWhereUniqueInput | RolePermissionAssignmentWhereUniqueInput[]
   }
 
+  export type ProjectUserPermissionCreateNestedManyWithoutUserInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutUserInput, ProjectUserPermissionUncheckedCreateWithoutUserInput> | ProjectUserPermissionCreateWithoutUserInput[] | ProjectUserPermissionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutUserInput | ProjectUserPermissionCreateOrConnectWithoutUserInput[]
+    createMany?: ProjectUserPermissionCreateManyUserInputEnvelope
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+  }
+
   export type WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<WorkspaceMemberCreateWithoutUserInput, WorkspaceMemberUncheckedCreateWithoutUserInput> | WorkspaceMemberCreateWithoutUserInput[] | WorkspaceMemberUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput | WorkspaceMemberCreateOrConnectWithoutUserInput[]
@@ -23405,6 +24869,13 @@ export namespace Prisma {
     connectOrCreate?: RolePermissionAssignmentCreateOrConnectWithoutCreatedByInput | RolePermissionAssignmentCreateOrConnectWithoutCreatedByInput[]
     createMany?: RolePermissionAssignmentCreateManyCreatedByInputEnvelope
     connect?: RolePermissionAssignmentWhereUniqueInput | RolePermissionAssignmentWhereUniqueInput[]
+  }
+
+  export type ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutUserInput, ProjectUserPermissionUncheckedCreateWithoutUserInput> | ProjectUserPermissionCreateWithoutUserInput[] | ProjectUserPermissionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutUserInput | ProjectUserPermissionCreateOrConnectWithoutUserInput[]
+    createMany?: ProjectUserPermissionCreateManyUserInputEnvelope
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -23591,6 +25062,20 @@ export namespace Prisma {
     deleteMany?: RolePermissionAssignmentScalarWhereInput | RolePermissionAssignmentScalarWhereInput[]
   }
 
+  export type ProjectUserPermissionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutUserInput, ProjectUserPermissionUncheckedCreateWithoutUserInput> | ProjectUserPermissionCreateWithoutUserInput[] | ProjectUserPermissionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutUserInput | ProjectUserPermissionCreateOrConnectWithoutUserInput[]
+    upsert?: ProjectUserPermissionUpsertWithWhereUniqueWithoutUserInput | ProjectUserPermissionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ProjectUserPermissionCreateManyUserInputEnvelope
+    set?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    disconnect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    delete?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    update?: ProjectUserPermissionUpdateWithWhereUniqueWithoutUserInput | ProjectUserPermissionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ProjectUserPermissionUpdateManyWithWhereWithoutUserInput | ProjectUserPermissionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
+  }
+
   export type WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<WorkspaceMemberCreateWithoutUserInput, WorkspaceMemberUncheckedCreateWithoutUserInput> | WorkspaceMemberCreateWithoutUserInput[] | WorkspaceMemberUncheckedCreateWithoutUserInput[]
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput | WorkspaceMemberCreateOrConnectWithoutUserInput[]
@@ -23759,6 +25244,20 @@ export namespace Prisma {
     deleteMany?: RolePermissionAssignmentScalarWhereInput | RolePermissionAssignmentScalarWhereInput[]
   }
 
+  export type ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutUserInput, ProjectUserPermissionUncheckedCreateWithoutUserInput> | ProjectUserPermissionCreateWithoutUserInput[] | ProjectUserPermissionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutUserInput | ProjectUserPermissionCreateOrConnectWithoutUserInput[]
+    upsert?: ProjectUserPermissionUpsertWithWhereUniqueWithoutUserInput | ProjectUserPermissionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ProjectUserPermissionCreateManyUserInputEnvelope
+    set?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    disconnect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    delete?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    update?: ProjectUserPermissionUpdateWithWhereUniqueWithoutUserInput | ProjectUserPermissionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ProjectUserPermissionUpdateManyWithWhereWithoutUserInput | ProjectUserPermissionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutRoleInput = {
     create?: XOR<UserCreateWithoutRoleInput, UserUncheckedCreateWithoutRoleInput>
     connectOrCreate?: UserCreateOrConnectWithoutRoleInput
@@ -23914,11 +25413,25 @@ export namespace Prisma {
     connect?: RolePermissionAssignmentWhereUniqueInput | RolePermissionAssignmentWhereUniqueInput[]
   }
 
+  export type ProjectUserPermissionCreateNestedManyWithoutPermissionInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutPermissionInput, ProjectUserPermissionUncheckedCreateWithoutPermissionInput> | ProjectUserPermissionCreateWithoutPermissionInput[] | ProjectUserPermissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutPermissionInput | ProjectUserPermissionCreateOrConnectWithoutPermissionInput[]
+    createMany?: ProjectUserPermissionCreateManyPermissionInputEnvelope
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+  }
+
   export type RolePermissionAssignmentUncheckedCreateNestedManyWithoutPermissionInput = {
     create?: XOR<RolePermissionAssignmentCreateWithoutPermissionInput, RolePermissionAssignmentUncheckedCreateWithoutPermissionInput> | RolePermissionAssignmentCreateWithoutPermissionInput[] | RolePermissionAssignmentUncheckedCreateWithoutPermissionInput[]
     connectOrCreate?: RolePermissionAssignmentCreateOrConnectWithoutPermissionInput | RolePermissionAssignmentCreateOrConnectWithoutPermissionInput[]
     createMany?: RolePermissionAssignmentCreateManyPermissionInputEnvelope
     connect?: RolePermissionAssignmentWhereUniqueInput | RolePermissionAssignmentWhereUniqueInput[]
+  }
+
+  export type ProjectUserPermissionUncheckedCreateNestedManyWithoutPermissionInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutPermissionInput, ProjectUserPermissionUncheckedCreateWithoutPermissionInput> | ProjectUserPermissionCreateWithoutPermissionInput[] | ProjectUserPermissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutPermissionInput | ProjectUserPermissionCreateOrConnectWithoutPermissionInput[]
+    createMany?: ProjectUserPermissionCreateManyPermissionInputEnvelope
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
   }
 
   export type UserUpdateOneWithoutPermissionNestedInput = {
@@ -23945,6 +25458,20 @@ export namespace Prisma {
     deleteMany?: RolePermissionAssignmentScalarWhereInput | RolePermissionAssignmentScalarWhereInput[]
   }
 
+  export type ProjectUserPermissionUpdateManyWithoutPermissionNestedInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutPermissionInput, ProjectUserPermissionUncheckedCreateWithoutPermissionInput> | ProjectUserPermissionCreateWithoutPermissionInput[] | ProjectUserPermissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutPermissionInput | ProjectUserPermissionCreateOrConnectWithoutPermissionInput[]
+    upsert?: ProjectUserPermissionUpsertWithWhereUniqueWithoutPermissionInput | ProjectUserPermissionUpsertWithWhereUniqueWithoutPermissionInput[]
+    createMany?: ProjectUserPermissionCreateManyPermissionInputEnvelope
+    set?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    disconnect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    delete?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    update?: ProjectUserPermissionUpdateWithWhereUniqueWithoutPermissionInput | ProjectUserPermissionUpdateWithWhereUniqueWithoutPermissionInput[]
+    updateMany?: ProjectUserPermissionUpdateManyWithWhereWithoutPermissionInput | ProjectUserPermissionUpdateManyWithWhereWithoutPermissionInput[]
+    deleteMany?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
+  }
+
   export type RolePermissionAssignmentUncheckedUpdateManyWithoutPermissionNestedInput = {
     create?: XOR<RolePermissionAssignmentCreateWithoutPermissionInput, RolePermissionAssignmentUncheckedCreateWithoutPermissionInput> | RolePermissionAssignmentCreateWithoutPermissionInput[] | RolePermissionAssignmentUncheckedCreateWithoutPermissionInput[]
     connectOrCreate?: RolePermissionAssignmentCreateOrConnectWithoutPermissionInput | RolePermissionAssignmentCreateOrConnectWithoutPermissionInput[]
@@ -23957,6 +25484,20 @@ export namespace Prisma {
     update?: RolePermissionAssignmentUpdateWithWhereUniqueWithoutPermissionInput | RolePermissionAssignmentUpdateWithWhereUniqueWithoutPermissionInput[]
     updateMany?: RolePermissionAssignmentUpdateManyWithWhereWithoutPermissionInput | RolePermissionAssignmentUpdateManyWithWhereWithoutPermissionInput[]
     deleteMany?: RolePermissionAssignmentScalarWhereInput | RolePermissionAssignmentScalarWhereInput[]
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateManyWithoutPermissionNestedInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutPermissionInput, ProjectUserPermissionUncheckedCreateWithoutPermissionInput> | ProjectUserPermissionCreateWithoutPermissionInput[] | ProjectUserPermissionUncheckedCreateWithoutPermissionInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutPermissionInput | ProjectUserPermissionCreateOrConnectWithoutPermissionInput[]
+    upsert?: ProjectUserPermissionUpsertWithWhereUniqueWithoutPermissionInput | ProjectUserPermissionUpsertWithWhereUniqueWithoutPermissionInput[]
+    createMany?: ProjectUserPermissionCreateManyPermissionInputEnvelope
+    set?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    disconnect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    delete?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    update?: ProjectUserPermissionUpdateWithWhereUniqueWithoutPermissionInput | ProjectUserPermissionUpdateWithWhereUniqueWithoutPermissionInput[]
+    updateMany?: ProjectUserPermissionUpdateManyWithWhereWithoutPermissionInput | ProjectUserPermissionUpdateManyWithWhereWithoutPermissionInput[]
+    deleteMany?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutRolePermissionAssignmentInput = {
@@ -24169,6 +25710,13 @@ export namespace Prisma {
     connect?: SectionWhereUniqueInput | SectionWhereUniqueInput[]
   }
 
+  export type ProjectUserPermissionCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutProjectInput, ProjectUserPermissionUncheckedCreateWithoutProjectInput> | ProjectUserPermissionCreateWithoutProjectInput[] | ProjectUserPermissionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutProjectInput | ProjectUserPermissionCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectUserPermissionCreateManyProjectInputEnvelope
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+  }
+
   export type ProjectMemberUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -24181,6 +25729,13 @@ export namespace Prisma {
     connectOrCreate?: SectionCreateOrConnectWithoutProjectInput | SectionCreateOrConnectWithoutProjectInput[]
     createMany?: SectionCreateManyProjectInputEnvelope
     connect?: SectionWhereUniqueInput | SectionWhereUniqueInput[]
+  }
+
+  export type ProjectUserPermissionUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutProjectInput, ProjectUserPermissionUncheckedCreateWithoutProjectInput> | ProjectUserPermissionCreateWithoutProjectInput[] | ProjectUserPermissionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutProjectInput | ProjectUserPermissionCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectUserPermissionCreateManyProjectInputEnvelope
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
   }
 
   export type WorkspaceUpdateOneRequiredWithoutProjectsNestedInput = {
@@ -24227,6 +25782,20 @@ export namespace Prisma {
     deleteMany?: SectionScalarWhereInput | SectionScalarWhereInput[]
   }
 
+  export type ProjectUserPermissionUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutProjectInput, ProjectUserPermissionUncheckedCreateWithoutProjectInput> | ProjectUserPermissionCreateWithoutProjectInput[] | ProjectUserPermissionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutProjectInput | ProjectUserPermissionCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectUserPermissionUpsertWithWhereUniqueWithoutProjectInput | ProjectUserPermissionUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectUserPermissionCreateManyProjectInputEnvelope
+    set?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    disconnect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    delete?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    update?: ProjectUserPermissionUpdateWithWhereUniqueWithoutProjectInput | ProjectUserPermissionUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectUserPermissionUpdateManyWithWhereWithoutProjectInput | ProjectUserPermissionUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
+  }
+
   export type ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -24253,6 +25822,20 @@ export namespace Prisma {
     update?: SectionUpdateWithWhereUniqueWithoutProjectInput | SectionUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: SectionUpdateManyWithWhereWithoutProjectInput | SectionUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: SectionScalarWhereInput | SectionScalarWhereInput[]
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectUserPermissionCreateWithoutProjectInput, ProjectUserPermissionUncheckedCreateWithoutProjectInput> | ProjectUserPermissionCreateWithoutProjectInput[] | ProjectUserPermissionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPermissionCreateOrConnectWithoutProjectInput | ProjectUserPermissionCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectUserPermissionUpsertWithWhereUniqueWithoutProjectInput | ProjectUserPermissionUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectUserPermissionCreateManyProjectInputEnvelope
+    set?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    disconnect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    delete?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    connect?: ProjectUserPermissionWhereUniqueInput | ProjectUserPermissionWhereUniqueInput[]
+    update?: ProjectUserPermissionUpdateWithWhereUniqueWithoutProjectInput | ProjectUserPermissionUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectUserPermissionUpdateManyWithWhereWithoutProjectInput | ProjectUserPermissionUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutMembersInput = {
@@ -24295,6 +25878,48 @@ export namespace Prisma {
     upsert?: RoleUpsertWithoutProjectMembersInput
     connect?: RoleWhereUniqueInput
     update?: XOR<XOR<RoleUpdateToOneWithWhereWithoutProjectMembersInput, RoleUpdateWithoutProjectMembersInput>, RoleUncheckedUpdateWithoutProjectMembersInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutUserPermissionsInput = {
+    create?: XOR<ProjectCreateWithoutUserPermissionsInput, ProjectUncheckedCreateWithoutUserPermissionsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutUserPermissionsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutProjectPermissionsInput = {
+    create?: XOR<UserCreateWithoutProjectPermissionsInput, UserUncheckedCreateWithoutProjectPermissionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProjectPermissionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type PermissionCreateNestedOneWithoutProjectUserPermissionsInput = {
+    create?: XOR<PermissionCreateWithoutProjectUserPermissionsInput, PermissionUncheckedCreateWithoutProjectUserPermissionsInput>
+    connectOrCreate?: PermissionCreateOrConnectWithoutProjectUserPermissionsInput
+    connect?: PermissionWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutUserPermissionsNestedInput = {
+    create?: XOR<ProjectCreateWithoutUserPermissionsInput, ProjectUncheckedCreateWithoutUserPermissionsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutUserPermissionsInput
+    upsert?: ProjectUpsertWithoutUserPermissionsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutUserPermissionsInput, ProjectUpdateWithoutUserPermissionsInput>, ProjectUncheckedUpdateWithoutUserPermissionsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutProjectPermissionsNestedInput = {
+    create?: XOR<UserCreateWithoutProjectPermissionsInput, UserUncheckedCreateWithoutProjectPermissionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProjectPermissionsInput
+    upsert?: UserUpsertWithoutProjectPermissionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProjectPermissionsInput, UserUpdateWithoutProjectPermissionsInput>, UserUncheckedUpdateWithoutProjectPermissionsInput>
+  }
+
+  export type PermissionUpdateOneRequiredWithoutProjectUserPermissionsNestedInput = {
+    create?: XOR<PermissionCreateWithoutProjectUserPermissionsInput, PermissionUncheckedCreateWithoutProjectUserPermissionsInput>
+    connectOrCreate?: PermissionCreateOrConnectWithoutProjectUserPermissionsInput
+    upsert?: PermissionUpsertWithoutProjectUserPermissionsInput
+    connect?: PermissionWhereUniqueInput
+    update?: XOR<XOR<PermissionUpdateToOneWithWhereWithoutProjectUserPermissionsInput, PermissionUpdateWithoutProjectUserPermissionsInput>, PermissionUncheckedUpdateWithoutProjectUserPermissionsInput>
   }
 
   export type ProjectCreateNestedOneWithoutSectionsInput = {
@@ -24936,6 +26561,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     sections?: SectionCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutOwnerInput = {
@@ -24951,6 +26577,7 @@ export namespace Prisma {
     isArchived?: boolean
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     sections?: SectionUncheckedCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutOwnerInput = {
@@ -25178,6 +26805,7 @@ export namespace Prisma {
     scope: string
     createdAt?: Date | string
     roles?: RolePermissionAssignmentCreateNestedManyWithoutPermissionInput
+    projectUserPermissions?: ProjectUserPermissionCreateNestedManyWithoutPermissionInput
   }
 
   export type PermissionUncheckedCreateWithoutCreatedByInput = {
@@ -25187,6 +26815,7 @@ export namespace Prisma {
     scope: string
     createdAt?: Date | string
     roles?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutPermissionInput
+    projectUserPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutPermissionInput
   }
 
   export type PermissionCreateOrConnectWithoutCreatedByInput = {
@@ -25220,6 +26849,30 @@ export namespace Prisma {
 
   export type RolePermissionAssignmentCreateManyCreatedByInputEnvelope = {
     data: RolePermissionAssignmentCreateManyCreatedByInput | RolePermissionAssignmentCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectUserPermissionCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutUserPermissionsInput
+    permission: PermissionCreateNestedOneWithoutProjectUserPermissionsInput
+  }
+
+  export type ProjectUserPermissionUncheckedCreateWithoutUserInput = {
+    id?: string
+    projectId: string
+    permissionId: string
+    createdAt?: Date | string
+  }
+
+  export type ProjectUserPermissionCreateOrConnectWithoutUserInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    create: XOR<ProjectUserPermissionCreateWithoutUserInput, ProjectUserPermissionUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProjectUserPermissionCreateManyUserInputEnvelope = {
+    data: ProjectUserPermissionCreateManyUserInput | ProjectUserPermissionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -25562,6 +27215,33 @@ export namespace Prisma {
     ownerId?: StringNullableFilter<"RolePermissionAssignment"> | string | null
   }
 
+  export type ProjectUserPermissionUpsertWithWhereUniqueWithoutUserInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    update: XOR<ProjectUserPermissionUpdateWithoutUserInput, ProjectUserPermissionUncheckedUpdateWithoutUserInput>
+    create: XOR<ProjectUserPermissionCreateWithoutUserInput, ProjectUserPermissionUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProjectUserPermissionUpdateWithWhereUniqueWithoutUserInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    data: XOR<ProjectUserPermissionUpdateWithoutUserInput, ProjectUserPermissionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ProjectUserPermissionUpdateManyWithWhereWithoutUserInput = {
+    where: ProjectUserPermissionScalarWhereInput
+    data: XOR<ProjectUserPermissionUpdateManyMutationInput, ProjectUserPermissionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ProjectUserPermissionScalarWhereInput = {
+    AND?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
+    OR?: ProjectUserPermissionScalarWhereInput[]
+    NOT?: ProjectUserPermissionScalarWhereInput | ProjectUserPermissionScalarWhereInput[]
+    id?: StringFilter<"ProjectUserPermission"> | string
+    projectId?: StringFilter<"ProjectUserPermission"> | string
+    userId?: StringFilter<"ProjectUserPermission"> | string
+    permissionId?: StringFilter<"ProjectUserPermission"> | string
+    createdAt?: DateTimeFilter<"ProjectUserPermission"> | Date | string
+  }
+
   export type UserCreateWithoutRoleInput = {
     id?: string
     username: string
@@ -25583,6 +27263,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -25606,6 +27287,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -25717,6 +27399,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -25740,6 +27423,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RolePermissionAssignmentUpsertWithWhereUniqueWithoutRoleInput = {
@@ -25811,6 +27495,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPermissionInput = {
@@ -25834,6 +27519,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPermissionInput = {
@@ -25862,6 +27548,30 @@ export namespace Prisma {
 
   export type RolePermissionAssignmentCreateManyPermissionInputEnvelope = {
     data: RolePermissionAssignmentCreateManyPermissionInput | RolePermissionAssignmentCreateManyPermissionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectUserPermissionCreateWithoutPermissionInput = {
+    id?: string
+    createdAt?: Date | string
+    project: ProjectCreateNestedOneWithoutUserPermissionsInput
+    user: UserCreateNestedOneWithoutProjectPermissionsInput
+  }
+
+  export type ProjectUserPermissionUncheckedCreateWithoutPermissionInput = {
+    id?: string
+    projectId: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type ProjectUserPermissionCreateOrConnectWithoutPermissionInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    create: XOR<ProjectUserPermissionCreateWithoutPermissionInput, ProjectUserPermissionUncheckedCreateWithoutPermissionInput>
+  }
+
+  export type ProjectUserPermissionCreateManyPermissionInputEnvelope = {
+    data: ProjectUserPermissionCreateManyPermissionInput | ProjectUserPermissionCreateManyPermissionInput[]
     skipDuplicates?: boolean
   }
 
@@ -25897,6 +27607,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPermissionInput = {
@@ -25920,6 +27631,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RolePermissionAssignmentUpsertWithWhereUniqueWithoutPermissionInput = {
@@ -25936,6 +27648,22 @@ export namespace Prisma {
   export type RolePermissionAssignmentUpdateManyWithWhereWithoutPermissionInput = {
     where: RolePermissionAssignmentScalarWhereInput
     data: XOR<RolePermissionAssignmentUpdateManyMutationInput, RolePermissionAssignmentUncheckedUpdateManyWithoutPermissionInput>
+  }
+
+  export type ProjectUserPermissionUpsertWithWhereUniqueWithoutPermissionInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    update: XOR<ProjectUserPermissionUpdateWithoutPermissionInput, ProjectUserPermissionUncheckedUpdateWithoutPermissionInput>
+    create: XOR<ProjectUserPermissionCreateWithoutPermissionInput, ProjectUserPermissionUncheckedCreateWithoutPermissionInput>
+  }
+
+  export type ProjectUserPermissionUpdateWithWhereUniqueWithoutPermissionInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    data: XOR<ProjectUserPermissionUpdateWithoutPermissionInput, ProjectUserPermissionUncheckedUpdateWithoutPermissionInput>
+  }
+
+  export type ProjectUserPermissionUpdateManyWithWhereWithoutPermissionInput = {
+    where: ProjectUserPermissionScalarWhereInput
+    data: XOR<ProjectUserPermissionUpdateManyMutationInput, ProjectUserPermissionUncheckedUpdateManyWithoutPermissionInput>
   }
 
   export type UserCreateWithoutRolePermissionAssignmentInput = {
@@ -25959,6 +27687,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutUserInput
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRolePermissionAssignmentInput = {
@@ -25982,6 +27711,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRolePermissionAssignmentInput = {
@@ -26023,6 +27753,7 @@ export namespace Prisma {
     scope: string
     createdAt?: Date | string
     createdBy?: UserCreateNestedOneWithoutPermissionInput
+    projectUserPermissions?: ProjectUserPermissionCreateNestedManyWithoutPermissionInput
   }
 
   export type PermissionUncheckedCreateWithoutRolesInput = {
@@ -26032,6 +27763,7 @@ export namespace Prisma {
     scope: string
     createdAt?: Date | string
     ownerId?: string | null
+    projectUserPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutPermissionInput
   }
 
   export type PermissionCreateOrConnectWithoutRolesInput = {
@@ -26071,6 +27803,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRolePermissionAssignmentInput = {
@@ -26094,6 +27827,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutPermissionsInput = {
@@ -26147,6 +27881,7 @@ export namespace Prisma {
     scope?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneWithoutPermissionNestedInput
+    projectUserPermissions?: ProjectUserPermissionUpdateManyWithoutPermissionNestedInput
   }
 
   export type PermissionUncheckedUpdateWithoutRolesInput = {
@@ -26156,6 +27891,7 @@ export namespace Prisma {
     scope?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    projectUserPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutPermissionNestedInput
   }
 
   export type UserCreateWithoutCreatedWorkspacesInput = {
@@ -26179,6 +27915,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedWorkspacesInput = {
@@ -26202,6 +27939,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedWorkspacesInput = {
@@ -26246,6 +27984,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     sections?: SectionCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutWorkspaceInput = {
@@ -26261,6 +28000,7 @@ export namespace Prisma {
     isArchived?: boolean
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     sections?: SectionUncheckedCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutWorkspaceInput = {
@@ -26305,6 +28045,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedWorkspacesInput = {
@@ -26328,6 +28069,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
@@ -26414,6 +28156,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWorkspacesInput = {
@@ -26437,6 +28180,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWorkspacesInput = {
@@ -26540,6 +28284,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkspacesInput = {
@@ -26563,6 +28308,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutWorkspaceMembersInput = {
@@ -26650,6 +28396,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedProjectsInput = {
@@ -26673,6 +28420,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedProjectsInput = {
@@ -26733,6 +28481,30 @@ export namespace Prisma {
 
   export type SectionCreateManyProjectInputEnvelope = {
     data: SectionCreateManyProjectInput | SectionCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectUserPermissionCreateWithoutProjectInput = {
+    id?: string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutProjectPermissionsInput
+    permission: PermissionCreateNestedOneWithoutProjectUserPermissionsInput
+  }
+
+  export type ProjectUserPermissionUncheckedCreateWithoutProjectInput = {
+    id?: string
+    userId: string
+    permissionId: string
+    createdAt?: Date | string
+  }
+
+  export type ProjectUserPermissionCreateOrConnectWithoutProjectInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    create: XOR<ProjectUserPermissionCreateWithoutProjectInput, ProjectUserPermissionUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectUserPermissionCreateManyProjectInputEnvelope = {
+    data: ProjectUserPermissionCreateManyProjectInput | ProjectUserPermissionCreateManyProjectInput[]
     skipDuplicates?: boolean
   }
 
@@ -26805,6 +28577,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedProjectsInput = {
@@ -26828,6 +28601,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProjectMemberUpsertWithWhereUniqueWithoutProjectInput = {
@@ -26862,6 +28636,22 @@ export namespace Prisma {
     data: XOR<SectionUpdateManyMutationInput, SectionUncheckedUpdateManyWithoutProjectInput>
   }
 
+  export type ProjectUserPermissionUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    update: XOR<ProjectUserPermissionUpdateWithoutProjectInput, ProjectUserPermissionUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectUserPermissionCreateWithoutProjectInput, ProjectUserPermissionUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectUserPermissionUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectUserPermissionWhereUniqueInput
+    data: XOR<ProjectUserPermissionUpdateWithoutProjectInput, ProjectUserPermissionUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectUserPermissionUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectUserPermissionScalarWhereInput
+    data: XOR<ProjectUserPermissionUpdateManyMutationInput, ProjectUserPermissionUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutMembersInput = {
     id?: string
     name: string
@@ -26875,6 +28665,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutProjectsInput
     owner: UserCreateNestedOneWithoutCreatedProjectsInput
     sections?: SectionCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -26890,6 +28681,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     isArchived?: boolean
     sections?: SectionUncheckedCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -26918,6 +28710,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -26941,6 +28734,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -26999,6 +28793,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutProjectsNestedInput
     owner?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     sections?: SectionUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -27014,6 +28809,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     sections?: SectionUncheckedUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectsInput = {
@@ -27048,6 +28844,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -27071,6 +28868,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutProjectMembersInput = {
@@ -27106,6 +28904,254 @@ export namespace Prisma {
     workspaceMembers?: WorkspaceMemberUncheckedUpdateManyWithoutRoleNestedInput
   }
 
+  export type ProjectCreateWithoutUserPermissionsInput = {
+    id?: string
+    name: string
+    slug: string
+    description?: string | null
+    icon?: string | null
+    color?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isArchived?: boolean
+    workspace: WorkspaceCreateNestedOneWithoutProjectsInput
+    owner: UserCreateNestedOneWithoutCreatedProjectsInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    sections?: SectionCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutUserPermissionsInput = {
+    id?: string
+    name: string
+    slug: string
+    description?: string | null
+    icon?: string | null
+    color?: string | null
+    workspaceId: string
+    ownerId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isArchived?: boolean
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    sections?: SectionUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutUserPermissionsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutUserPermissionsInput, ProjectUncheckedCreateWithoutUserPermissionsInput>
+  }
+
+  export type UserCreateWithoutProjectPermissionsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceId?: string | null
+    isSuperAdmin?: boolean
+    workspaces?: WorkspaceMemberCreateNestedManyWithoutUserInput
+    projects?: ProjectMemberCreateNestedManyWithoutUserInput
+    createdWorkspaces?: WorkspaceCreateNestedManyWithoutOwnerInput
+    createdProjects?: ProjectCreateNestedManyWithoutOwnerInput
+    createdSections?: SectionCreateNestedManyWithoutCreatorInput
+    createdPages?: PageCreateNestedManyWithoutCreatorInput
+    updatedPages?: PageCreateNestedManyWithoutUpdatedByInput
+    annotations?: AnnotationCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    Role?: RoleCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionCreateNestedManyWithoutCreatedByInput
+    RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutProjectPermissionsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceId?: string | null
+    isSuperAdmin?: boolean
+    workspaces?: WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+    projects?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    createdWorkspaces?: WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+    createdProjects?: ProjectUncheckedCreateNestedManyWithoutOwnerInput
+    createdSections?: SectionUncheckedCreateNestedManyWithoutCreatorInput
+    createdPages?: PageUncheckedCreateNestedManyWithoutCreatorInput
+    updatedPages?: PageUncheckedCreateNestedManyWithoutUpdatedByInput
+    annotations?: AnnotationUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
+    Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
+    RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutProjectPermissionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProjectPermissionsInput, UserUncheckedCreateWithoutProjectPermissionsInput>
+  }
+
+  export type PermissionCreateWithoutProjectUserPermissionsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    scope: string
+    createdAt?: Date | string
+    createdBy?: UserCreateNestedOneWithoutPermissionInput
+    roles?: RolePermissionAssignmentCreateNestedManyWithoutPermissionInput
+  }
+
+  export type PermissionUncheckedCreateWithoutProjectUserPermissionsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    scope: string
+    createdAt?: Date | string
+    ownerId?: string | null
+    roles?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutPermissionInput
+  }
+
+  export type PermissionCreateOrConnectWithoutProjectUserPermissionsInput = {
+    where: PermissionWhereUniqueInput
+    create: XOR<PermissionCreateWithoutProjectUserPermissionsInput, PermissionUncheckedCreateWithoutProjectUserPermissionsInput>
+  }
+
+  export type ProjectUpsertWithoutUserPermissionsInput = {
+    update: XOR<ProjectUpdateWithoutUserPermissionsInput, ProjectUncheckedUpdateWithoutUserPermissionsInput>
+    create: XOR<ProjectCreateWithoutUserPermissionsInput, ProjectUncheckedCreateWithoutUserPermissionsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutUserPermissionsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutUserPermissionsInput, ProjectUncheckedUpdateWithoutUserPermissionsInput>
+  }
+
+  export type ProjectUpdateWithoutUserPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    workspace?: WorkspaceUpdateOneRequiredWithoutProjectsNestedInput
+    owner?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    sections?: SectionUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutUserPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceId?: StringFieldUpdateOperationsInput | string
+    ownerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    sections?: SectionUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutProjectPermissionsInput = {
+    update: XOR<UserUpdateWithoutProjectPermissionsInput, UserUncheckedUpdateWithoutProjectPermissionsInput>
+    create: XOR<UserCreateWithoutProjectPermissionsInput, UserUncheckedCreateWithoutProjectPermissionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProjectPermissionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProjectPermissionsInput, UserUncheckedUpdateWithoutProjectPermissionsInput>
+  }
+
+  export type UserUpdateWithoutProjectPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: NullableStringFieldUpdateOperationsInput | string | null
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
+    workspaces?: WorkspaceMemberUpdateManyWithoutUserNestedInput
+    projects?: ProjectMemberUpdateManyWithoutUserNestedInput
+    createdWorkspaces?: WorkspaceUpdateManyWithoutOwnerNestedInput
+    createdProjects?: ProjectUpdateManyWithoutOwnerNestedInput
+    createdSections?: SectionUpdateManyWithoutCreatorNestedInput
+    createdPages?: PageUpdateManyWithoutCreatorNestedInput
+    updatedPages?: PageUpdateManyWithoutUpdatedByNestedInput
+    annotations?: AnnotationUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    Role?: RoleUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
+    RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProjectPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceId?: NullableStringFieldUpdateOperationsInput | string | null
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
+    workspaces?: WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+    projects?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdWorkspaces?: WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+    createdProjects?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+    createdSections?: SectionUncheckedUpdateManyWithoutCreatorNestedInput
+    createdPages?: PageUncheckedUpdateManyWithoutCreatorNestedInput
+    updatedPages?: PageUncheckedUpdateManyWithoutUpdatedByNestedInput
+    annotations?: AnnotationUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+    Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
+    RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type PermissionUpsertWithoutProjectUserPermissionsInput = {
+    update: XOR<PermissionUpdateWithoutProjectUserPermissionsInput, PermissionUncheckedUpdateWithoutProjectUserPermissionsInput>
+    create: XOR<PermissionCreateWithoutProjectUserPermissionsInput, PermissionUncheckedCreateWithoutProjectUserPermissionsInput>
+    where?: PermissionWhereInput
+  }
+
+  export type PermissionUpdateToOneWithWhereWithoutProjectUserPermissionsInput = {
+    where?: PermissionWhereInput
+    data: XOR<PermissionUpdateWithoutProjectUserPermissionsInput, PermissionUncheckedUpdateWithoutProjectUserPermissionsInput>
+  }
+
+  export type PermissionUpdateWithoutProjectUserPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneWithoutPermissionNestedInput
+    roles?: RolePermissionAssignmentUpdateManyWithoutPermissionNestedInput
+  }
+
+  export type PermissionUncheckedUpdateWithoutProjectUserPermissionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+    roles?: RolePermissionAssignmentUncheckedUpdateManyWithoutPermissionNestedInput
+  }
+
   export type ProjectCreateWithoutSectionsInput = {
     id?: string
     name: string
@@ -27119,6 +29165,7 @@ export namespace Prisma {
     workspace: WorkspaceCreateNestedOneWithoutProjectsInput
     owner: UserCreateNestedOneWithoutCreatedProjectsInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutSectionsInput = {
@@ -27134,6 +29181,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     isArchived?: boolean
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    userPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutSectionsInput = {
@@ -27162,6 +29210,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedSectionsInput = {
@@ -27185,6 +29234,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedSectionsInput = {
@@ -27260,6 +29310,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutProjectsNestedInput
     owner?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutSectionsInput = {
@@ -27275,6 +29326,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutCreatedSectionsInput = {
@@ -27309,6 +29361,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedSectionsInput = {
@@ -27332,6 +29385,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PageUpsertWithWhereUniqueWithoutSectionInput = {
@@ -27398,6 +29452,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCreatedPagesInput = {
@@ -27421,6 +29476,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCreatedPagesInput = {
@@ -27449,6 +29505,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUpdatedPagesInput = {
@@ -27472,6 +29529,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUpdatedPagesInput = {
@@ -27624,6 +29682,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedPagesInput = {
@@ -27647,6 +29706,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutUpdatedPagesInput = {
@@ -27681,6 +29741,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUpdatedPagesInput = {
@@ -27704,6 +29765,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AnnotationUpsertWithWhereUniqueWithoutPageInput = {
@@ -28005,6 +30067,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAnnotationsInput = {
@@ -28028,6 +30091,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAnnotationsInput = {
@@ -28112,6 +30176,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAnnotationsInput = {
@@ -28135,6 +30200,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -28158,6 +30224,7 @@ export namespace Prisma {
     Role?: RoleCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -28181,6 +30248,7 @@ export namespace Prisma {
     Role?: RoleUncheckedCreateNestedManyWithoutCreatedByInput
     Permission?: PermissionUncheckedCreateNestedManyWithoutCreatedByInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedCreateNestedManyWithoutCreatedByInput
+    projectPermissions?: ProjectUserPermissionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -28220,6 +30288,7 @@ export namespace Prisma {
     Role?: RoleUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -28243,6 +30312,7 @@ export namespace Prisma {
     Role?: RoleUncheckedUpdateManyWithoutCreatedByNestedInput
     Permission?: PermissionUncheckedUpdateManyWithoutCreatedByNestedInput
     RolePermissionAssignment?: RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    projectPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type WorkspaceMemberCreateManyUserInput = {
@@ -28362,6 +30432,13 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ProjectUserPermissionCreateManyUserInput = {
+    id?: string
+    projectId: string
+    permissionId: string
+    createdAt?: Date | string
+  }
+
   export type WorkspaceMemberUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28454,6 +30531,7 @@ export namespace Prisma {
     workspace?: WorkspaceUpdateOneRequiredWithoutProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     sections?: SectionUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutOwnerInput = {
@@ -28469,6 +30547,7 @@ export namespace Prisma {
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     sections?: SectionUncheckedUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutOwnerInput = {
@@ -28703,6 +30782,7 @@ export namespace Prisma {
     scope?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: RolePermissionAssignmentUpdateManyWithoutPermissionNestedInput
+    projectUserPermissions?: ProjectUserPermissionUpdateManyWithoutPermissionNestedInput
   }
 
   export type PermissionUncheckedUpdateWithoutCreatedByInput = {
@@ -28712,6 +30792,7 @@ export namespace Prisma {
     scope?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     roles?: RolePermissionAssignmentUncheckedUpdateManyWithoutPermissionNestedInput
+    projectUserPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutPermissionNestedInput
   }
 
   export type PermissionUncheckedUpdateManyWithoutCreatedByInput = {
@@ -28739,6 +30820,27 @@ export namespace Prisma {
   export type RolePermissionAssignmentUncheckedUpdateManyWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     roleId?: StringFieldUpdateOperationsInput | string
+    permissionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutUserPermissionsNestedInput
+    permission?: PermissionUpdateOneRequiredWithoutProjectUserPermissionsNestedInput
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    permissionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
     permissionId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28834,6 +30936,13 @@ export namespace Prisma {
     ownerId?: string | null
   }
 
+  export type ProjectUserPermissionCreateManyPermissionInput = {
+    id?: string
+    projectId: string
+    userId: string
+    createdAt?: Date | string
+  }
+
   export type RolePermissionAssignmentUpdateWithoutPermissionInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28853,6 +30962,27 @@ export namespace Prisma {
     roleId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProjectUserPermissionUpdateWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutUserPermissionsNestedInput
+    user?: UserUpdateOneRequiredWithoutProjectPermissionsNestedInput
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateManyWithoutPermissionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type WorkspaceMemberCreateManyWorkspaceInput = {
@@ -28909,6 +31039,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutCreatedProjectsNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     sections?: SectionUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutWorkspaceInput = {
@@ -28924,6 +31055,7 @@ export namespace Prisma {
     isArchived?: BoolFieldUpdateOperationsInput | boolean
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     sections?: SectionUncheckedUpdateManyWithoutProjectNestedInput
+    userPermissions?: ProjectUserPermissionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -28954,6 +31086,13 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     sortOrder?: number
+  }
+
+  export type ProjectUserPermissionCreateManyProjectInput = {
+    id?: string
+    userId: string
+    permissionId: string
+    createdAt?: Date | string
   }
 
   export type ProjectMemberUpdateWithoutProjectInput = {
@@ -29007,6 +31146,27 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sortOrder?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ProjectUserPermissionUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProjectPermissionsNestedInput
+    permission?: PermissionUpdateOneRequiredWithoutProjectUserPermissionsNestedInput
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    permissionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPermissionUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    permissionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PageCreateManySectionInput = {

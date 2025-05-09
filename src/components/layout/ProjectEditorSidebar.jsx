@@ -66,6 +66,11 @@ export default function ProjectEditorSidebar() {
 		// setSelectedSection(sectionId);
 	};
 
+	// const selectedSection = useProjectStore((state) => state.selectedSection);
+
+	// console.log("selected section from sidebar", selectedSection);
+	// console.log("seelected page from sidebar", selectedPage);
+
 	return (
 		<Sidebar className="bg-white border-r">
 			<SidebarContent className="flex flex-col h-full">
@@ -100,7 +105,11 @@ export default function ProjectEditorSidebar() {
 						sections.map((section) => (
 							<SidebarMenuItem key={section.id} className="relative group">
 								<SidebarMenuButton
-									onClick={() => toggleSection(section.id)}
+									onClick={() => {
+										toggleSection(section.id);
+										setSelectedSection(section.id);
+										if (selectedPage) setSelectedPage(null);
+									}}
 									className={cn(
 										"flex items-center justify-between w-full p-2 transition rounded-xs hover:bg-gray-200/30",
 										section.pages?.some((p) => p.id === selectedPage) &&

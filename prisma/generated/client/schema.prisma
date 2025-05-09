@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = "linux-musl-openssl-3.0.x"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
   output        = "./generated/client"
 }
 
@@ -19,7 +19,7 @@ model User {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  workspaceId String?  @unique
+  workspaceId String?
   // name       String?
   // avatar     String? // URL to avatar image
 
@@ -39,6 +39,7 @@ model User {
   Role                     Role[]
   Permission               Permission[]
   RolePermissionAssignment RolePermissionAssignment[]
+  projectPermissions       ProjectUserPermission[]
 
   @@index([email])
 }
@@ -78,10 +79,11 @@ model Permission {
   createdBy User?   @relation(fields: [ownerId], references: [id])
 
   // Relationships
-  roles RolePermissionAssignment[]
+  roles                  RolePermissionAssignment[]
+  projectUserPermissions ProjectUserPermission[]    @relation("ProjectUserPermissions")
+  // @@unique([ownerId, scope])
 
   @@unique([ownerId, name])
-  @@unique([ownerId, scope])
 }
 
 // Many-to-many relationship between Role and Permission
@@ -153,8 +155,8 @@ model Project {
   name        String
   slug        String
   description String?
-  icon        String? // Icon identifier or URL
-  color       String? // Theme color for the project
+  icon        String?
+  color       String?
   workspaceId String
   ownerId     String
   createdAt   DateTime @default(now())
@@ -162,12 +164,13 @@ model Project {
   isArchived  Boolean  @default(false)
 
   // Relationships
-  workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  owner     User            @relation("projectCreator", fields: [ownerId], references: [id])
-  members   ProjectMember[]
-  sections  Section[]
+  workspace       Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner           User                    @relation("projectCreator", fields: [ownerId], references: [id])
+  members         ProjectMember[] // You can keep this if you need membership tracking
+  sections        Section[]
+  userPermissions ProjectUserPermission[] @relation("ProjectUserPermissions")
 
-  @@unique([slug, name, ownerId]) // ✅ slug must be unique only within this owner
+  @@unique([slug, name, ownerId])
   @@index([workspaceId])
   @@index([ownerId])
 }
@@ -189,6 +192,25 @@ model ProjectMember {
   @@index([projectId])
   @@index([userId])
   @@index([roleId])
+}
+
+// New model for direct user permissions in projects
+model ProjectUserPermission {
+  id           String   @id @default(cuid())
+  projectId    String
+  userId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  // Relationships
+  project    Project    @relation("ProjectUserPermissions", fields: [projectId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation("ProjectUserPermissions", fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId, permissionId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([permissionId])
 }
 
 // ==================== SECTION & PAGE MODULE ====================
