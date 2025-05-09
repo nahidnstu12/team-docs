@@ -15,6 +15,7 @@ import { getAllPermissionsFn } from "../actions/getAllPermissions";
 import TableLoading from "@/components/laoding/TableLoading";
 import { useStartFetch } from "@/hooks/useStartFetch";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 export default function PermissionLisitngs({
 	hasPermission,
@@ -31,6 +32,8 @@ export default function PermissionLisitngs({
 		startFetchPermissions,
 		setStartFetchPermissions
 	);
+
+	console.log("permissions>>", permissions);
 
 	if (fetchError)
 		return (
@@ -70,7 +73,7 @@ export default function PermissionLisitngs({
 									colSpan={4}
 									className="py-10 text-lg text-center text-muted-foreground"
 								>
-									No roles found.
+									No Permissions found.
 								</TableCell>
 							</TableRow>
 						) : showSkeleton || permissions.length === 0 ? (
@@ -98,23 +101,27 @@ export default function PermissionLisitngs({
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										<Button
-											size="sm"
-											variant="secondary"
-											className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
-										>
-											<Pencil className="w-5 h-5 mr-2 text-yellow-600" />
-											Edit
-										</Button>
+										<ComingSoonWrapper enabled>
+											<Button
+												size="sm"
+												variant="secondary"
+												className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
+											>
+												<Pencil className="w-5 h-5 mr-2 text-yellow-600" />
+												Edit
+											</Button>
+										</ComingSoonWrapper>
 
-										<Button
-											size="sm"
-											variant="destructive"
-											className="cursor-pointer bg-red-600 hover:text-white-500 hover:bg-red-500 text-white px-5 py-2.5 text-base"
-										>
-											<Trash2 className="w-5 h-5 mr-2 text-white" />
-											Delete
-										</Button>
+										<ComingSoonWrapper enabled>
+											<Button
+												size="sm"
+												variant="destructive"
+												className="cursor-pointer bg-red-600 hover:text-white-500 hover:bg-red-500 text-white px-5 py-2.5 text-base"
+											>
+												<Trash2 className="w-5 h-5 mr-2 text-white" />
+												Delete
+											</Button>
+										</ComingSoonWrapper>
 									</TableCell>
 								</TableRow>
 							))

@@ -27,6 +27,13 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
@@ -34,6 +41,8 @@ import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { cn } from "@/lib/utils";
 import { usePageDialogStore } from "@/app/(home)/projects/store/usePageDialogStore";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSectionDialogStore } from "@/app/(home)/projects/[slug]/editor/store/useSectionDialogStore";
+import ComingSoonWrapper from "../abstracts/ComingSoonWrapper";
 
 export default function ProjectEditorSidebar() {
 	const router = useRouter();
@@ -43,6 +52,9 @@ export default function ProjectEditorSidebar() {
 	);
 	const selectedPage = useProjectStore((state) => state.selectedPage);
 	const setSelectedPage = useProjectStore((state) => state.setSelectedPage);
+	const openSectionDialog = useSectionDialogStore(
+		(state) => state.openSectionDialog
+	);
 
 	const [openSections, setOpenSections] = useState({});
 
@@ -58,10 +70,10 @@ export default function ProjectEditorSidebar() {
 		<Sidebar className="bg-white border-r">
 			<SidebarContent className="flex flex-col h-full">
 				{/* HOME BUTTON */}
-				<div className="p-3">
+				<div className="px-2 pt-3">
 					<Button
-						variant="outline"
-						className="justify-start w-full text-gray-600 transition hover:bg-gray-100"
+						variant="ghost"
+						className="justify-start w-full px-2 py-2 text-sm transition rounded-md text-muted-foreground hover:bg-gray-100 hover:text-primary"
 						onClick={() => {
 							router.push("/home");
 							router.refresh();
@@ -103,7 +115,18 @@ export default function ProjectEditorSidebar() {
 											)}
 										/>
 										<FolderKanban className="w-4 h-4" />
-										<span>{section.name}</span>
+										<TooltipProvider delayDuration={300}>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<span className="truncate max-w-[160px] text-sm text-gray-800 block">
+														{section.name}
+													</span>
+												</TooltipTrigger>
+												<TooltipContent className="max-w-xs text-xs break-words">
+													{section.name}
+												</TooltipContent>
+											</Tooltip>
+										</TooltipProvider>
 									</div>
 								</SidebarMenuButton>
 
@@ -129,7 +152,7 @@ export default function ProjectEditorSidebar() {
 												className={cn(
 													"overflow-hidden transition-all duration-500 ease-in-out",
 													"data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-left-4",
-													"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-left-4"
+													"data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-left-4 max-w-45"
 												)}
 											>
 												<DropdownMenuItem
@@ -140,14 +163,18 @@ export default function ProjectEditorSidebar() {
 													<FileText className="w-4 h-4 mr-2 text-blue-500" />
 													Create Page
 												</DropdownMenuItem>
-												<DropdownMenuItem>
-													<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-													Update Section
-												</DropdownMenuItem>
-												<DropdownMenuItem>
-													<Trash className="w-4 h-4 mr-2 text-red-500" />
-													Delete Section
-												</DropdownMenuItem>
+												<ComingSoonWrapper enabled className="w-full">
+													<DropdownMenuItem>
+														<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+														Update Section
+													</DropdownMenuItem>
+												</ComingSoonWrapper>
+												<ComingSoonWrapper enabled className="w-full">
+													<DropdownMenuItem>
+														<Trash className="w-4 h-4 mr-2 text-red-500" />
+														Delete Section
+													</DropdownMenuItem>
+												</ComingSoonWrapper>
 											</DropdownMenuContent>
 										</motion.div>
 									</AnimatePresence>
@@ -181,13 +208,24 @@ export default function ProjectEditorSidebar() {
 															<a
 																href="#"
 																onClick={() => {
-																	setSelectedSection(section.id); // ensure parent is selected
-																	setSelectedPage(page.id); // highlight page
+																	setSelectedSection(section.id);
+																	setSelectedPage(page.id);
 																}}
 																className="flex items-center w-full gap-2"
 															>
 																<FileText className="w-4 h-4 text-muted-foreground" />
-																{page.title || "Untitled Page"}
+																<TooltipProvider delayDuration={300}>
+																	<Tooltip>
+																		<TooltipTrigger asChild>
+																			<span className="truncate max-w-[140px] block">
+																				{page.title || "Untitled Page"}
+																			</span>
+																		</TooltipTrigger>
+																		<TooltipContent className="max-w-xs text-xs break-words">
+																			{page.title || "Untitled Page"}
+																		</TooltipContent>
+																	</Tooltip>
+																</TooltipProvider>
 															</a>
 														</SidebarMenuSubButton>
 
@@ -197,23 +235,35 @@ export default function ProjectEditorSidebar() {
 																	<MoreHorizontal className="w-4 h-4" />
 																</SidebarMenuAction>
 															</DropdownMenuTrigger>
-															<DropdownMenuContent side="right" align="start">
-																<DropdownMenuItem>
-																	<Copy className="w-4 h-4 mr-2 text-blue-500" />
-																	Duplicate
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Pencil className="w-4 h-4 mr-2 text-green-500" />
-																	Update
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Trash className="w-4 h-4 mr-2 text-red-500" />
-																	Delete
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Settings className="w-4 h-4 mr-2 text-yellow-500" />
-																	Settings
-																</DropdownMenuItem>
+															<DropdownMenuContent
+																side="right"
+																align="start"
+																className="max-w-3"
+															>
+																<ComingSoonWrapper enabled className="w-full">
+																	<DropdownMenuItem>
+																		<Copy className="w-4 h-4 mr-2 text-blue-500" />
+																		Duplicate
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
+																<ComingSoonWrapper enabled className="wfull">
+																	<DropdownMenuItem>
+																		<Pencil className="w-4 h-4 mr-2 text-green-500" />
+																		Update
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
+																<ComingSoonWrapper enabled className="w-full">
+																	<DropdownMenuItem>
+																		<Trash className="w-4 h-4 mr-2 text-red-500" />
+																		Delete
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
+																<ComingSoonWrapper enabled className="w-full">
+																	<DropdownMenuItem>
+																		<Settings className="w-4 h-4 mr-2 text-yellow-500" />
+																		Settings
+																	</DropdownMenuItem>
+																</ComingSoonWrapper>
 															</DropdownMenuContent>
 														</DropdownMenu>
 													</SidebarMenuSubItem>
@@ -226,6 +276,18 @@ export default function ProjectEditorSidebar() {
 						))
 					)}
 				</SidebarMenu>
+
+				{/* create section button */}
+				<div className="sticky bottom-0 px-2 py-3 bg-white border-t">
+					<Button
+						variant="ghost"
+						className="justify-start w-full text-sm text-muted-foreground hover:text-primary hover:bg-gray-100"
+						onClick={openSectionDialog}
+					>
+						<FolderKanban className="w-4 h-4 mr-2 text-gray-500" />
+						Create Section
+					</Button>
+				</div>
 			</SidebarContent>
 		</Sidebar>
 	);

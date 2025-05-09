@@ -12,6 +12,10 @@ export class BaseModel {
 		return await this.model.create({ data });
 	}
 
+	static async createMany(data) {
+		return await this.model.createMany(data);
+	}
+
 	static async upsert({ where, create, update }) {
 		try {
 			return await this.model.upsert({
@@ -32,8 +36,16 @@ export class BaseModel {
 		});
 	}
 
+	static async updateMany({ where, data }) {
+		return await this.model.updateMany({ where, data });
+	}
+
 	static async delete(id) {
 		return await this.model.delete({ where: { id } });
+	}
+
+	static async deleteMany(where) {
+		return await this.model.deleteMany({ where });
 	}
 
 	static async findUnique({ where, select }) {

@@ -1,0 +1,1 @@
+export { ColorExtensions } from "./extension";

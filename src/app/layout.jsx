@@ -1,4 +1,4 @@
-import "./globals.css";
+import "./styles/globals.css";
 
 export const metadata = {
 	title: "Documentation Collaboration System",
@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en" className="light">
 			<body>{children}</body>
 		</html>
 	);

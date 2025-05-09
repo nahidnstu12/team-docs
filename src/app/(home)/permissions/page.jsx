@@ -7,13 +7,14 @@ import { redirect } from "next/navigation";
 export default async function PermissionsPage() {
 	const session = await Session.getCurrentUser();
 
-	const hasRoles = await RoleService.hasRoles(session.id);
+	// const hasRoles = await RoleService.hasRoles(session.id);
 
-	if (!hasRoles) redirect("/roles");
+	// if (!hasRoles) redirect("/roles");
 
 	const hasPermission = await PermissionServices.hasPermissionResouces(
 		session.id
 	);
+
 
 	return <PermissionShell hasPermission={hasPermission} />;
 }

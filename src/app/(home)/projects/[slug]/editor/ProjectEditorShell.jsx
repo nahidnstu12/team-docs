@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import DialogLoading from "@/components/laoding/DialogLoading";
 import Logger from "@/lib/Logger";
 import RTEeditor from "./components/RTEeditor";
+import { useSectionDialogStore } from "./store/useSectionDialogStore";
 
 const CreateSectionDialogLazy = dynamic(
 	() =>
@@ -30,8 +31,6 @@ const CreatePageDialogLazy = dynamic(
 );
 
 export default function ProjectEditorShell({ hasSection, project, sections }) {
-	const [isSectionDialogOpen, setIsSectionDialogOpen] = useState(false);
-
 	const isPageDialogOpen = usePageDialogStore(
 		(state) => state.isPageDialogOpen
 	);
@@ -41,6 +40,15 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 	const setProject = useProjectStore((state) => state.setProject);
 	const setSections = useProjectStore((state) => state.setSections);
 	const selectedPage = useProjectStore((state) => state.selectedPage);
+	const isSectionDialogOpen = useSectionDialogStore(
+		(state) => state.isSectionDialogOpen
+	);
+	const closeSectionDialog = useSectionDialogStore(
+		(state) => state.closeSectionDialog
+	);
+	const openSectionDialog = useSectionDialogStore(
+		(state) => state.openSectionDialog
+	);
 
 	useEffect(() => {
 		setProject(project);
@@ -51,7 +59,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 		<>
 			<ProjectEditorHeader
 				hasSection={hasSection}
-				setIsDialogOpen={setIsSectionDialogOpen}
+				// setIsDialogOpen={setIsSectionDialogOpen}
 			/>
 
 			{/* section dialog */}
@@ -59,7 +67,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 				<CreateSectionDialogLazy
 					project={project}
 					isDialogOpen={isSectionDialogOpen}
-					setIsDialogOpen={setIsSectionDialogOpen}
+					setIsDialogOpen={closeSectionDialog}
 				/>
 			)}
 
@@ -72,7 +80,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 				/>
 			)}
 
-			{!hasSection && <NoSectionUI setIsDialogOpen={setIsSectionDialogOpen} />}
+			{!hasSection && <NoSectionUI setIsDialogOpen={openSectionDialog} />}
 
 			{selectedPage && <RTEeditor pageId={selectedPage} />}
 		</>
