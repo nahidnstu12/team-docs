@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import SlashCommandMenu from "./SlashCommandMenu";
 import { LinkDialog } from "./LinkDialog";
 import BubbleMenu from "@/components/editor/ui/BubbleMenu";
-import { Button } from "@/components/ui/button";
 import { savePageContent } from "../actions/savePageContent";
 import { toast } from "sonner";
 import { fetchPageContent } from "../actions/fetchPageContent";
@@ -84,11 +83,21 @@ export default function RTEeditor({ pageId }) {
 	useEffect(() => {
 		async function getPageContent() {
 			const res = await fetchPageContent(pageId);
-			setPageContent(res.content);
+			const content = res.content;
+
+			setPageContent(content);
+
+			if (editor) {
+				if (content) {
+					editor.commands.setContent(content);
+				} else {
+					editor.commands.clearContent(); // ✅ clear editor content if none exists
+				}
+			}
 		}
 
 		getPageContent();
-	}, [pageId]);
+	}, [pageId, editor]);
 
 	useEffect(() => {
 		if (editor && pageContent) {
@@ -104,7 +113,7 @@ export default function RTEeditor({ pageId }) {
 	}, [editor]);
 
 	return (
-		<form action="/actions/saveDocument" method="POST" className="w-full mt-6">
+		<form className="w-full mt-6">
 			<div className="relative w-full">
 				<div
 					onClick={() => editor?.commands.focus()}
@@ -137,7 +146,6 @@ export default function RTEeditor({ pageId }) {
 				)}
 			</div>
 			<input type="hidden" name="content" ref={ref} />
-			{/* <EditorFooter editor={editor} /> */}
 		</form>
 	);
 }

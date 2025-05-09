@@ -50,6 +50,9 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 		(state) => state.openSectionDialog
 	);
 
+	// console.log("selected page from shell", selectedPage);
+	// console.log("selected sectionId", selectedSectionId);
+
 	useEffect(() => {
 		setProject(project);
 		setSections(sections);
@@ -57,10 +60,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 
 	return (
 		<>
-			<ProjectEditorHeader
-				hasSection={hasSection}
-				// setIsDialogOpen={setIsSectionDialogOpen}
-			/>
+			<ProjectEditorHeader selectedPage={selectedPage} />
 
 			{/* section dialog */}
 			{isSectionDialogOpen && (
