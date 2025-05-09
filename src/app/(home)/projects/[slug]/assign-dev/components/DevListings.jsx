@@ -88,14 +88,16 @@ export default function DevListings({
 	};
 
 	return (
-		<section className="space-y-8">
+		<section className="mt-8">
 			{/* Header with Create Button */}
-			<section className="flex items-start justify-between w-full pb-4 border-b max-h-14">
-				<h1 className="text-3xl font-bold tracking-tight">Assign Developer</h1>
+			<section className="flex items-start justify-between w-full pb-2 border-b max-h-14">
+				<h1 className="text-3xl font-bold tracking-tight">
+					Assigned Developers
+				</h1>
 			</section>
 
 			{/* Project List */}
-			<section className="mt-8 space-y-4">
+			<section className="mt-6">
 				<Table>
 					<TableHeader className="sticky top-0 z-10 bg-muted">
 						<TableRow className="text-lg font-semibold tracking-wide">

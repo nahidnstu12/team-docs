@@ -81,9 +81,9 @@ model Permission {
   // Relationships
   roles                  RolePermissionAssignment[]
   projectUserPermissions ProjectUserPermission[]    @relation("ProjectUserPermissions")
+  // @@unique([ownerId, scope])
 
   @@unique([ownerId, name])
-  @@unique([ownerId, scope])
 }
 
 // Many-to-many relationship between Role and Permission
