@@ -1,0 +1,357 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  output        = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USER & AUTHENTICATION ====================
+
+model User {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspaceId String?
+  // name       String?
+  // avatar     String? // URL to avatar image
+
+  // Relationships
+  workspaces        WorkspaceMember[]
+  projects          ProjectMember[]
+  createdWorkspaces Workspace[]       @relation("workspaceCreator")
+  createdProjects   Project[]         @relation("projectCreator")
+  createdSections   Section[]         @relation("sectionCreator")
+  createdPages      Page[]            @relation("UserCreatedPages") // ← Relation name
+  updatedPages      Page[]            @relation("UserUpdatedPages") // ← Different name
+  annotations       Annotation[]
+  notifications     Notification[]
+
+  // Optional relationships for admin use case
+  isSuperAdmin             Boolean                    @default(false) // For SaaS phase-2
+  Role                     Role[]
+  Permission               Permission[]
+  RolePermissionAssignment RolePermissionAssignment[]
+  projectPermissions       ProjectUserPermission[]
+
+  @@index([email])
+}
+
+// ==================== RBAC (Role-Based Access Control) ====================
+
+// Global roles that define sets of permissions
+model Role {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isSystem    Boolean  @default(false) // True for default roles (Admin, Developer, Viewer)
+  createdAt   DateTime @default(now())
+
+  // ✅ Optional reference to User
+  ownerId   String?
+  createdBy User?   @relation(fields: [ownerId], references: [id])
+
+  // Relationships
+  permissions      RolePermissionAssignment[]
+  workspaceMembers WorkspaceMember[] // Users with this role at workspace level
+  projectMembers   ProjectMember[] // Users with this role at project level
+
+  @@unique([ownerId, name]) // ✅ name must be unique only within same user
+}
+
+// Permission definitions
+model Permission {
+  id          String   @id @default(cuid())
+  name        String // e.g., "create:page", "update:project", etc.
+  description String?
+  scope       String // e.g., "workspace", "project", "page", "user"
+  createdAt   DateTime @default(now())
+
+  // ✅ Optional reference to User
+  ownerId   String?
+  createdBy User?   @relation(fields: [ownerId], references: [id])
+
+  // Relationships
+  roles                  RolePermissionAssignment[]
+  projectUserPermissions ProjectUserPermission[]    @relation("ProjectUserPermissions")
+  // @@unique([ownerId, scope])
+
+  @@unique([ownerId, name])
+}
+
+// Many-to-many relationship between Role and Permission
+model RolePermissionAssignment {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  ownerId   String?
+  createdBy User?   @relation(fields: [ownerId], references: [id])
+
+  // Relationships
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+// ==================== WORKSPACE & ORGANIZATION ====================
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String // URL-friendly identifier
+  description String?
+  logo        String? // URL to logo image
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ownerId     String
+
+  // Relationships
+  owner    User              @relation("workspaceCreator", fields: [ownerId], references: [id])
+  members  WorkspaceMember[]
+  projects Project[]
+
+  // Settings and configurations
+  settings Json? // Workspace-level settings (JSON)
+
+  @@unique([ownerId, slug]) // ✅ slug must be unique only within this owner
+  @@index([ownerId])
+}
+
+// Many-to-many relationship between User and Workspace with Role
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  roleId      String
+  joinedAt    DateTime @default(now())
+
+  // Relationships
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role      @relation(fields: [roleId], references: [id])
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+// ==================== PROJECT MODULE ====================
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  icon        String?
+  color       String?
+  workspaceId String
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isArchived  Boolean  @default(false)
+
+  // Relationships
+  workspace       Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  owner           User                    @relation("projectCreator", fields: [ownerId], references: [id])
+  members         ProjectMember[] // You can keep this if you need membership tracking
+  sections        Section[]
+  userPermissions ProjectUserPermission[] @relation("ProjectUserPermissions")
+
+  @@unique([slug, name, ownerId])
+  @@index([workspaceId])
+  @@index([ownerId])
+}
+
+// Many-to-many relationship between User and Project with Role
+model ProjectMember {
+  id        String   @id @default(cuid())
+  projectId String
+  userId    String
+  roleId    String
+  joinedAt  DateTime @default(now())
+
+  // Relationships
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role    Role    @relation(fields: [roleId], references: [id])
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+// New model for direct user permissions in projects
+model ProjectUserPermission {
+  id           String   @id @default(cuid())
+  projectId    String
+  userId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  // Relationships
+  project    Project    @relation("ProjectUserPermissions", fields: [projectId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation("ProjectUserPermissions", fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId, permissionId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([permissionId])
+}
+
+// ==================== SECTION & PAGE MODULE ====================
+
+model Section {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  projectId   String
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sortOrder   Int      @default(0) // For ordering sections within project
+
+  // Relationships
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  creator User    @relation("sectionCreator", fields: [ownerId], references: [id])
+  pages   Page[]
+
+  @@index([projectId])
+  @@index([ownerId])
+}
+
+model Page {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  content       Json? // Rich text content as JSON (Tiptap compatible)
+  sectionId     String
+  ownerId       String
+  lastUpdatedBy String? // ID of the user who last updated the page
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  sortOrder     Int      @default(0) // For ordering pages within section
+
+  // Page sharing and access control settings
+  isPublic Boolean @default(false) // If true, can be accessed with link
+  password String? // Optional password for protected pages
+
+  // Relationships
+  section   Section @relation(fields: [sectionId], references: [id])
+  creator   User    @relation("UserCreatedPages", fields: [ownerId], references: [id]) // ← Match the name
+  updatedBy User?   @relation("UserUpdatedPages", fields: [lastUpdatedBy], references: [id]) // ← Match the name
+
+  annotations Annotation[]
+  versions    PageVersion[]
+  pageShares  PageShare[]
+
+  @@index([sectionId])
+  @@index([ownerId])
+  @@index([lastUpdatedBy])
+}
+
+// For page version history tracking
+model PageVersion {
+  id        String   @id @default(cuid())
+  pageId    String
+  content   Json // Snapshot of page content
+  createdAt DateTime @default(now())
+  createdBy String // User ID who created this version
+
+  // Relationships
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@index([createdBy])
+}
+
+// For tracking who has specific access to a page
+model PageShare {
+  id        String    @id @default(cuid())
+  pageId    String
+  userId    String? // Null for anonymous/public shares
+  token     String    @unique // Unique token for the share link
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  // Relationships
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@index([userId])
+  @@index([token])
+}
+
+// ==================== ANNOTATIONS & COMMENTS ====================
+
+model Annotation {
+  id         String   @id @default(cuid())
+  pageId     String
+  userId     String
+  content    String // The annotation/comment text
+  position   Json // Position data within the document (start/end markers)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isResolved Boolean  @default(false)
+
+  // Relationships
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([pageId])
+  @@index([userId])
+}
+
+// ==================== NOTIFICATIONS ====================
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // e.g., "new_annotation", "role_assigned", "invite"
+  content   Json // Structured data about the notification
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([isRead])
+}
+
+// ==================== INVITATIONS ====================
+
+model Invitation {
+  id          String   @id @default(cuid())
+  email       String
+  token       String   @unique
+  workspaceId String
+  roleId      String
+  invitedBy   String // User ID who sent the invitation
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  isAccepted  Boolean  @default(false)
+
+  // Optional relationships for direct project invites
+  projectId String? // If inviting directly to a project
+
+  @@index([email])
+  @@index([token])
+  @@index([workspaceId])
+  @@index([projectId])
+}
