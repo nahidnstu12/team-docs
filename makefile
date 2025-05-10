@@ -12,7 +12,7 @@ local_generate:
 
 # Reset DB (DANGEROUS)
 reset:
-	docker compose exec team-docs bunx prisma migrate reset --force
+	docker compose exec team-docs bunx prisma migrate reset --force --skip-seed
 
 # Seed DB
 seed:

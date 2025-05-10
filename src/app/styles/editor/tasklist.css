@@ -1,0 +1,34 @@
+/* ✅ Main wrapper for the whole task list */
+ul[data-type="taskList"] {
+	@apply my-2;
+}
+
+/* ✅ Each task item wrapper (list item) */
+[data-type="taskList"] > li {
+	@apply flex items-start gap-1 my-2;
+}
+
+/* ✅ Label wraps the checkbox input */
+[data-type="taskList"] > li > label {
+	@apply flex items-center gap-1 cursor-pointer select-none;
+}
+
+/* ✅ The checkbox input itself */
+[data-type="taskList"] > li > label > input {
+	@apply w-4 h-4 accent-primary rounded-sm cursor-pointer mt-0.5;
+}
+
+/* ✅ Text label container */
+[data-type="taskList"] > li > div {
+	@apply flex-1;
+}
+
+/* ✅ Task label text (unchecked) */
+[data-type="taskList"] > li > div > p {
+	@apply text-base text-foreground leading-tight transition-all duration-200;
+}
+
+/* ✅ Checked task (text with strikethrough + muted) */
+[data-type="taskList"] > li[data-checked="true"] > div > p {
+	@apply line-through text-muted-foreground;
+}

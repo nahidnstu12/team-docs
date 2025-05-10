@@ -1,0 +1,4 @@
+/* ⬛ Horizontal Rule inside editor */
+.tiptap hr {
+	@apply my-4 border-t;
+}

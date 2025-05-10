@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+	devIndicators: false,
+	experimental: {
+		authInterrupts: true,
+	},
+};
 
 export default nextConfig;

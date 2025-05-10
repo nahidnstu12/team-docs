@@ -1,0 +1,57 @@
+/* 🧾 Code Block Wrapper — styled like Notion */
+.tiptap > pre {
+	@apply relative my-4 rounded-md bg-[hsl(0,30%,97%)] text-[hsl(0,40%,20%)] overflow-x-auto text-sm leading-[1.95] p-6 font-mono border border-[hsl(0,0%,90%)];
+}
+/* ⚙️ Updated Syntax Highlighting Colors */
+.tiptap > pre > code {
+	.hljs-comment,
+	.hljs-quote {
+		color: #6b7280; /* Tailwind slate-500 */
+	}
+
+	.hljs-variable,
+	.hljs-template-variable,
+	.hljs-attribute,
+	.hljs-tag,
+	.hljs-regexp,
+	.hljs-link,
+	.hljs-name,
+	.hljs-selector-id,
+	.hljs-selector-class {
+		color: #dc2626; /* Tailwind red-600 */
+	}
+
+	.hljs-number,
+	.hljs-meta,
+	.hljs-built_in,
+	.hljs-builtin-name,
+	.hljs-literal,
+	.hljs-type,
+	.hljs-params {
+		color: #d97706; /* Tailwind amber-600 */
+	}
+
+	.hljs-string,
+	.hljs-symbol,
+	.hljs-bullet {
+		color: #15803d; /* Tailwind green-700 */
+	}
+
+	.hljs-title,
+	.hljs-section {
+		color: #b45309; /* Tailwind yellow-700 */
+	}
+
+	.hljs-keyword,
+	.hljs-selector-tag {
+		color: #2563eb; /* Tailwind blue-600 */
+	}
+
+	.hljs-emphasis {
+		font-style: italic;
+	}
+
+	.hljs-strong {
+		font-weight: 700;
+	}
+}

@@ -1,10 +1,10 @@
-import { PrismaClient } from "../app/generated/prisma";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { PrismaClient } from "prisma/generated/client";
 
 // Create a global reference to reuse Prisma client
 const globalForPrisma = global;
 
-// Initialize Prisma client with Accelerate extension
+/** @type {import('@prisma/client').PrismaClient} */
 const prisma =
 	globalForPrisma.prisma || new PrismaClient().$extends(withAccelerate());
 
