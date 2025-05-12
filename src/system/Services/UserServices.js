@@ -1,6 +1,7 @@
 import Logger from "@/lib/Logger";
 import { BaseService } from "./BaseService";
 import { UserModel } from "../Models/UserModel";
+import { UserDTO } from "../DTOs/UserDTO";
 
 export class UserServices extends BaseService {
 	constructor() {
@@ -48,8 +49,6 @@ export class UserServices extends BaseService {
 		}
 	}
 
-
-
 	static async getUsersNotInProject(projectId) {
 		if (!projectId) throw new Error("projectId is missing");
 
@@ -59,11 +58,11 @@ export class UserServices extends BaseService {
 					NOT: {
 						projectPermissions: {
 							some: {
-								projectId: projectId
-							}
-						}
+								projectId: projectId,
+							},
+						},
 					},
-					isSuperAdmin: false
+					isSuperAdmin: false,
 				},
 				select: {
 					id: true,
@@ -71,13 +70,16 @@ export class UserServices extends BaseService {
 					email: true,
 					isActive: true,
 					createdAt: true,
-					updatedAt: true
+					updatedAt: true,
 				},
 				orderBy: {
-					createdAt: 'desc'
-				}
+					createdAt: "desc",
+				},
 			});
-			Logger.info({count:users?.length, projectId}, `Get users not in project`);
+			Logger.info(
+				{ count: users?.length, projectId },
+				`Get users not in project`
+			);
 			return users;
 		} catch (error) {
 			Logger.error(error.message, `Get user list for project failed`);
