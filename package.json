@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "bunx prisma generate && next build"
+    "vercel-build": "bunx prisma generate && bun run build",
+    "build": "next build",
+    "postinstall": "bunx prisma generate"
   },
   "prisma": {
     "seed": "bun prisma/seed.js"
