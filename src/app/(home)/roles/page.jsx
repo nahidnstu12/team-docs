@@ -7,10 +7,10 @@ import { UserModel } from "@/system/Models/UserModel";
 
 export default async function RolePage() {
 	const session = await Session.getCurrentUser();
-	const user = await UserModel.findFirst({ where: { id: session.id } });
-	const hasProject = await ProjectService.hasProjects(user.workspaceId);
+	// const user = await UserModel.findFirst({ where: { id: session.id } });
+	// const hasProject = await ProjectService.hasProjects(user.workspaceId);
 
-	if (!hasProject) redirect("/workspace");
+	// if (!hasProject) redirect("/workspace");
 
 	const hasRoles = await RoleService.hasRoles(session.id);
 

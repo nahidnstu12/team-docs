@@ -1,46 +1,41 @@
-// src/auth.js or wherever your NextAuth config lives
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import authConfig from "@/lib/auth.config";
 
-export const authOptions = {
+const credentialsProvider = authConfig.providers.find(
+	(p) => p.id === "credentials"
+);
+
+// Now we add the `authorize` function in this file
+if (credentialsProvider) {
+	credentialsProvider.authorize = async (credentials) => {
+		if (!credentials?.email || !credentials?.password) {
+			throw new Error("Invalid email or password");
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { email: credentials.email },
+		});
+
+		if (!user || !user.password) {
+			throw new Error("Invalid email or password");
+		}
+
+		const isValid = await bcrypt.compare(credentials.password, user.password);
+		if (!isValid) {
+			throw new Error("Invalid email or password");
+		}
+
+		return user;
+	};
+}
+
+export const { auth, handlers, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
 
-	providers: [
-		Credentials({
-			credentials: {
-				email: { label: "Email", type: "email" },
-				password: { label: "Password", type: "password" },
-			},
-
-			async authorize(credentials) {
-				if (!credentials?.email || !credentials?.password)
-					throw new Error("Invalid email or password");
-
-				const user = await prisma.user.findUnique({
-					where: { email: credentials.email },
-				});
-
-				if (!user || !user.password)
-					throw new Error("Invalid email or password");
-
-				const isValid = await bcrypt.compare(
-					credentials.password,
-					user.password
-				);
-
-				if (!isValid) throw new Error("Invalid email or password");
-
-				return user;
-			},
-		}),
-	],
-
-	session: {
-		strategy: "jwt",
-	},
+	session: { strategy: "jwt" },
 
 	callbacks: {
 		async session({ session, token }) {
@@ -72,7 +67,6 @@ export const authOptions = {
 			return token;
 		},
 	},
-};
 
-// Export individual handlers
-export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
+	...authConfig,
+});
