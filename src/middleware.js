@@ -5,6 +5,8 @@ const secret = process.env.AUTH_SECRET;
 
 export async function middleware(request) {
 	const token = await getToken({ req: request, secret });
+	console.log("middleware session", token);
+	console.log("middleware secret", secret);
 	const { pathname } = request.nextUrl;
 
 	// Create new request headers with `x-pathname`
