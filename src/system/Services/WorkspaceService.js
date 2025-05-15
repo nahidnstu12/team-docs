@@ -41,7 +41,7 @@ export class WorkspaceService extends BaseService {
 
 		try {
 			const workspace = await WorkspaceModel.findFirst({
-				ownerId: id,
+				where: { ownerId: id },
 			});
 
 			return workspace;

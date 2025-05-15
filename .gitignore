@@ -1,4 +1,4 @@
-prisma/generated
+src/generated
 
 # dependencies
 /node_modules

@@ -1,5 +1,5 @@
+import { PrismaClient } from "@/generated/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { PrismaClient } from "prisma/generated/client";
 
 // Create a global reference to reuse Prisma client
 const globalForPrisma = global;
