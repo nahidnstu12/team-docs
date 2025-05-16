@@ -63,7 +63,6 @@ export default function ProjectEditorSidebar() {
 			...prev,
 			[sectionId]: !prev[sectionId],
 		}));
-		// setSelectedSection(sectionId);
 	};
 
 	return (
@@ -77,6 +76,7 @@ export default function ProjectEditorSidebar() {
 						onClick={() => {
 							router.push("/home");
 							router.refresh();
+							setSelectedPage(null);
 						}}
 					>
 						<Home className="w-4 h-4 mr-2" />
@@ -100,7 +100,11 @@ export default function ProjectEditorSidebar() {
 						sections.map((section) => (
 							<SidebarMenuItem key={section.id} className="relative group">
 								<SidebarMenuButton
-									onClick={() => toggleSection(section.id)}
+									onClick={() => {
+										toggleSection(section.id);
+										setSelectedSection(section.id);
+										if (selectedPage) setSelectedPage(null);
+									}}
 									className={cn(
 										"flex items-center justify-between w-full p-2 transition rounded-xs  hover:bg-gray-200/30",
 										section.pages?.some((p) => p.id === selectedPage) &&
@@ -115,7 +119,7 @@ export default function ProjectEditorSidebar() {
 											)}
 										/>
 										<FolderKanban className="w-4 h-4" />
-										<TooltipProvider delayDuration={300}>
+										<TooltipProvider delayDuration={600}>
 											<Tooltip>
 												<TooltipTrigger asChild>
 													<span className="truncate max-w-[160px] text-sm text-gray-800 block">
@@ -214,7 +218,7 @@ export default function ProjectEditorSidebar() {
 																className="flex items-center w-full gap-2"
 															>
 																<FileText className="w-4 h-4 text-muted-foreground" />
-																<TooltipProvider delayDuration={300}>
+																<TooltipProvider delayDuration={600}>
 																	<Tooltip>
 																		<TooltipTrigger asChild>
 																			<span className="truncate max-w-[140px] block">

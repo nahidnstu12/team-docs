@@ -111,20 +111,26 @@ export default function UserLisitngs({
 
 									<TableCell className="px-6 py-5 text-center">
 										<div className="flex items-center justify-center gap-2">
-											<Button
-												variant="ghost"
-												size="icon"
-												className="hover:bg-muted-foreground/10"
-											>
-												<Pencil className="w-4 h-4" />
-											</Button>
-											<Button
-												variant="ghost"
-												size="icon"
-												className="hover:bg-destructive/10 hover:text-destructive"
-											>
-												<Trash2 className="w-4 h-4" />
-											</Button>
+											<ComingSoonWrapper enabled>
+												<Button
+													size="sm"
+													variant="secondary"
+													className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
+												>
+													<Pencil className="w-5 h-5 mr-2 text-yellow-600" />
+													Edit
+												</Button>
+											</ComingSoonWrapper>
+											<ComingSoonWrapper enabled>
+												<Button
+													size="sm"
+													variant="destructive"
+													className="cursor-pointer bg-red-600 hover:text-white-500 hover:bg-red-500 text-white px-5 py-2.5 text-base"
+												>
+													<Trash2 className="w-5 h-5 mr-2 text-white" />
+													Delete
+												</Button>
+											</ComingSoonWrapper>
 										</div>
 									</TableCell>
 								</TableRow>

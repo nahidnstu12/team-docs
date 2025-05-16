@@ -34,8 +34,12 @@ export class SectionServices extends BaseService {
 
 		try {
 			const section = await SectionModel.findFirst({
-				projectId: id,
+				where: {
+					projectId: id,
+				},
 			});
+
+			Logger.debug(section, "services");
 
 			return !!section;
 		} catch (error) {

@@ -1,13 +1,12 @@
 "use client";
 
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import NoSectionUI from "./components/NoSectionUI";
 import { useProjectStore } from "../../store/useProjectStore";
 import { usePageDialogStore } from "../../store/usePageDialogStore";
 import dynamic from "next/dynamic";
 import DialogLoading from "@/components/laoding/DialogLoading";
-import Logger from "@/lib/Logger";
 import RTEeditor from "./components/RTEeditor";
 import { useSectionDialogStore } from "./store/useSectionDialogStore";
 
@@ -57,10 +56,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 
 	return (
 		<>
-			<ProjectEditorHeader
-				hasSection={hasSection}
-				// setIsDialogOpen={setIsSectionDialogOpen}
-			/>
+			<ProjectEditorHeader selectedPage={selectedPage} />
 
 			{/* section dialog */}
 			{isSectionDialogOpen && (

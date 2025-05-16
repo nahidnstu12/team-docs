@@ -1,7 +1,8 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
-  output        = "./generated/client"
+  // binaryTargets = ["native", "linux-musl", "rhel-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-musl"]
+  output        = "../src/generated/client"
 }
 
 datasource db {
@@ -9,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ==================== USER & AUTHENTICATION ====================
+// ==================== USER & AUTHENTICATION ===================
 
 model User {
   id          String   @id @default(cuid())
@@ -81,9 +82,9 @@ model Permission {
   // Relationships
   roles                  RolePermissionAssignment[]
   projectUserPermissions ProjectUserPermission[]    @relation("ProjectUserPermissions")
+  // @@unique([ownerId, scope])
 
   @@unique([ownerId, name])
-  @@unique([ownerId, scope])
 }
 
 // Many-to-many relationship between Role and Permission

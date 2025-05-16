@@ -15,7 +15,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { removeDevFromProjectAction } from "@/system/Actions/ProjectPermissionAction";
 import ModifyPermissionsDrawer from "./ModifyPermissionsDrawer";
 
-export default function DevListings({ projectId, refetchTrigger, onRemoveDevSuccess }) {
+export default function DevListings({
+	projectId,
+	refetchTrigger,
+	onRemoveDevSuccess,
+}) {
 	const [users, setUsers] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -82,14 +86,15 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
 	};
 
 	return (
-		<section className="space-y-8">
+		<section className="mt-8">
 			{/* Header with Create Button */}
-			<section className="flex items-start justify-between w-full pb-4 border-b max-h-14">
-				<h1 className="text-3xl font-bold tracking-tight">Assign Developer</h1>
+			<section className="flex items-start justify-between w-full pb-2 border-b max-h-14">
+				<h1 className="text-3xl font-bold tracking-tight">
+					Assigned Developers
+				</h1>
 			</section>
-
 			{/* Project List */}
-			<section className="mt-8 space-y-4">
+			<section className="mt-6 overflow-auto border shadow-lg rounded-2xl bg-background">
 				<Table>
 					<TableHeader className="sticky top-0 z-10 bg-muted">
 						<TableRow className="text-lg font-semibold tracking-wide">
@@ -138,14 +143,14 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
 									</TableCell>
 
 									<TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-										<Button 
+										<Button
 											variant="outline"
 											onClick={() => handleModifyClick(user)}
 										>
 											Modify
 										</Button>
-										<Button 
-											variant="destructive" 
+										<Button
+											variant="destructive"
 											onClick={() => handleRemoveDev(user.id)}
 										>
 											Remove
@@ -157,7 +162,6 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
 					</TableBody>
 				</Table>
 			</section>
-
 			<ModifyPermissionsDrawer
 				isOpen={isDrawerOpen}
 				onClose={handleDrawerClose}
