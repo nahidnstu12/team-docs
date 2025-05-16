@@ -2,7 +2,9 @@ import chalk from "chalk";
 import util from "util";
 
 class Logger {
-	static isProduction = process.env.NODE_ENV === "production";
+	static isProduction =
+		typeof window !== "undefined" &&
+		process.env.NEXT_PUBLIC_NODE_ENV === "production";
 
 	// Enhanced color system with background colors
 	static colors = {

@@ -107,7 +107,8 @@ async function main() {
 				data: {
 					username: faker.internet.userName(),
 					email: faker.internet.email(),
-					password: "$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
+					password:
+						"$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
 					isActive: true,
 					isSuperAdmin: false,
 					workspaceId: workspace.id,
