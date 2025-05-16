@@ -20,7 +20,11 @@ export default async function HomeLayout({ children }) {
 
 	return (
 		<SessionProvider>
-			<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+			<ThemeProvider
+				attribute="class"
+				defaultTheme="light"
+				enableSystem={false}
+			>
 				<SidebarProvider defaultOpen={defaultOpen}>
 					<div className="flex w-screen h-screen overflow-hidden">
 						{/* <Sidebar /> */}
