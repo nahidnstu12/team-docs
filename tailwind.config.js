@@ -1,17 +1,14 @@
 // tailwind.config.js
-import { heroui } from "@heroui/theme";
-
 /** @type {import('tailwindcss').Config} */
 const config = {
 	content: [
-		"./node_modules/@heroui/theme/dist/components/(drawer|modal).js",
-		"./src/**/*.{js,jsx}", // ✅ Also include your app files if you forgot
+		"./src/**/*.{js,jsx}", // ✅ App source files
 	],
 	theme: {
 		extend: {},
 	},
-	darkMode: "class",
-	plugins: [heroui(), require("tailwindcss-animate")],
+	darkMode: "class", // ✅ for dark mode support
+	plugins: [require("tailwindcss-animate")], // ✅ ShadCN-compatible animation plugin
 };
 
 export default config;
