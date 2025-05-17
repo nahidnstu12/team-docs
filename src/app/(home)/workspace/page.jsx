@@ -7,7 +7,7 @@ export default async function WorkspacePage() {
 	const user = await Session.getCurrentUser();
 
 	const hasWorkspace = await WorkspaceService.hasResource({
-		ownerId: user.id,
+		where: { ownerId: user.id },
 	});
 
 	return <WorkspaceShell hasWorkspace={hasWorkspace} />;

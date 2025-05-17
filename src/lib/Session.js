@@ -45,6 +45,7 @@ export class Session {
 	 * @returns {Promise<string|null>}
 	 */
 	static async getWorkspaceId(id) {
+		console.log(id, "session cls id");
 		try {
 			const user = await UserModel.findUnique({
 				where: { id },
