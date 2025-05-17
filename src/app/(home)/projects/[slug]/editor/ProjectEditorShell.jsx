@@ -6,7 +6,7 @@ import NoSectionUI from "./components/NoSectionUI";
 import { useProjectStore } from "../../store/useProjectStore";
 import { usePageDialogStore } from "../../store/usePageDialogStore";
 import dynamic from "next/dynamic";
-import DialogLoading from "@/components/laoding/DialogLoading";
+import DialogLoading from "@/components/loading/DialogLoading";
 import RTEeditor from "./components/RTEeditor";
 import { useSectionDialogStore } from "./store/useSectionDialogStore";
 

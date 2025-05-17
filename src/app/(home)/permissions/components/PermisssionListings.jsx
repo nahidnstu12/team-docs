@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { getAllPermissionsFn } from "../actions/getAllPermissions";
-import TableLoading from "@/components/laoding/TableLoading";
+import TableLoading from "@/components/loading/TableLoading";
 import { useStartFetch } from "@/hooks/useStartFetch";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";

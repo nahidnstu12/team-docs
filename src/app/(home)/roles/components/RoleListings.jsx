@@ -13,8 +13,8 @@ import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { useRoles } from "../hooks/useRoles";
-import TableLoading from "@/components/laoding/TableLoading";
-import DrawerLoading from "@/components/laoding/DialogLoading";
+import TableLoading from "@/components/loading/TableLoading";
+import DrawerLoading from "@/components/loading/DialogLoading";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 

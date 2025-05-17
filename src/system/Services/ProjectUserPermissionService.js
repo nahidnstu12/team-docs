@@ -34,15 +34,6 @@ export class ProjectUserPermissionService extends BaseService {
 				skipDuplicates: true, // Skip if any combination already exists
 			});
 
-			Logger.info(
-				{
-					usersCount: selectedUsers.length,
-					permissionsCount: selectedPermissions.length,
-					assignmentsCreated: result.count,
-				},
-				"Dev permissions assigned successfully"
-			);
-
 			return result;
 		} catch (error) {
 			Logger.error(error.message, `Assign dev failed`);

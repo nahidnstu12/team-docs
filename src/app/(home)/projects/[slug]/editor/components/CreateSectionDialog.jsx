@@ -51,6 +51,7 @@ export default function CreateSectionDialog({
 			successToast,
 			onSuccess: handleSuccess,
 		});
+
 	return (
 		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 			<DialogTrigger asChild>

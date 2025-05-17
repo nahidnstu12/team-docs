@@ -115,7 +115,7 @@ model Workspace {
   logo        String? // URL to logo image
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  ownerId     String
+  ownerId     String   @unique
 
   // Relationships
   owner    User              @relation("workspaceCreator", fields: [ownerId], references: [id])

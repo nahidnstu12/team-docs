@@ -11,7 +11,9 @@ export async function getAllProjectsFn() {
 	if (workspaceId === null)
 		workspaceId = await Session.getWorkspaceId(session.id);
 
-	const projects = await ProjectService.getAllProjets(workspaceId);
+	const projects = await ProjectService.getAllResources({
+		where: { workspaceId },
+	});
 
 	return projects;
 }

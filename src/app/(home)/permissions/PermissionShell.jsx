@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import PermissionLisitngs from "./components/PermisssionListings";
-import NoPermissionUI from "./components/NoPermissionUI";
 import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -36,16 +35,12 @@ export default function PermissionShell({ hasPermission }) {
 				/>
 			)}
 
-			{hasPermission ? (
-				<PermissionLisitngs
-					hasPermission={hasPermission}
-					setIsDialogOpen={setIsDialogOpen}
-					startFetchPermissions={startFetchPermissions}
-					setStartFetchPermissions={setStartFetchPermissions}
-				/>
-			) : (
-				<NoPermissionUI setIsDialogOpen={setIsDialogOpen} />
-			)}
+			<PermissionLisitngs
+				hasPermission={hasPermission}
+				setIsDialogOpen={setIsDialogOpen}
+				startFetchPermissions={startFetchPermissions}
+				setStartFetchPermissions={setStartFetchPermissions}
+			/>
 		</>
 	);
 }

@@ -7,8 +7,8 @@ import { RolePermissionAssignServices } from "@/system/Services/RolePermissionAs
 export async function getAllPermissions(roleId) {
 	const session = await Session.getCurrentUser();
 
-	const allPermissions = await PermissionServices.getAllPermissions({
-		ownerId: session.id,
+	const allPermissions = await PermissionServices.getAllResources({
+		where: { ownerId: session.id },
 	});
 
 	const preSelectPermissions =
