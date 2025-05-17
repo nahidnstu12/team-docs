@@ -27,6 +27,18 @@ deploy:
 # -----------------------
 
 # View Postgres logs
+up:
+	docker compose up
+
+down: 
+	docker compose down
+
+build: 
+	docker compose build --no-cache
+
+restart:
+	docker compose down && docker compose up 
+
 logs:
 	docker logs -f team-docs-postgres
 
@@ -35,7 +47,7 @@ exec:
 	docker exec -it team-docs-postgres sh
 
 # Restart Postgres
-restart:
+restart-db:
 	docker restart team-docs-postgres
 
 # Fully reset Docker volumes (DANGEROUS!)
