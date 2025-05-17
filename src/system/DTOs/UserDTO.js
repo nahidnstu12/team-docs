@@ -3,6 +3,7 @@ export class UserDTO {
 		return {
 			id: user.id,
 			username: user.username,
+			email: user.email,
 			createdAt: user.createdAt.toISOString(),
 			updatedAt: user.updatedAt.toISOString(),
 		};
