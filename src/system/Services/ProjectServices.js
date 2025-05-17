@@ -13,7 +13,7 @@ export class ProjectService extends BaseService {
 
 		try {
 			const projects = await ProjectModel.findFirst({
-				workspaceId: id,
+				where: { workspaceId: id },
 			});
 
 			return !!projects;

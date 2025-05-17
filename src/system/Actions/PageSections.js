@@ -23,7 +23,7 @@ class pageActions extends BaseAction {
 		try {
 			const { title, description, sectionId } = result.data;
 			const session = await Session.getCurrentUser();
-			const section = await SectionServices.getSection({ sectionId });
+			const section = await SectionServices.getSection(sectionId);
 			const project = await ProjectService.getProject({
 				id: section.projectId,
 			});

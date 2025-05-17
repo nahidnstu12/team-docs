@@ -13,7 +13,7 @@ export class UserServices extends BaseService {
 
 		try {
 			const user = await UserModel.findFirst({
-				OR: [id ? { id } : undefined, email ? { email } : undefined],
+				where: { OR: [id ? { id } : undefined, email ? { email } : undefined] },
 			});
 
 			const userDTO = UserDTO.toResponse(user);
@@ -76,10 +76,6 @@ export class UserServices extends BaseService {
 					createdAt: "desc",
 				},
 			});
-			Logger.info(
-				{ count: users?.length, projectId },
-				`Get users not in project`
-			);
 			return users;
 		} catch (error) {
 			Logger.error(error.message, `Get user list for project failed`);

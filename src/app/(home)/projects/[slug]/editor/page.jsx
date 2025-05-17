@@ -11,8 +11,6 @@ export default async function ProjectEditorPage({ params }) {
 		projectId: project.id,
 	});
 
-	Logger.debug(project, "project-slug");
-
 	return (
 		<ProjectEditorShell
 			project={project}

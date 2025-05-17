@@ -24,7 +24,7 @@ export class PermissionServices extends BaseService {
 
 		try {
 			const permissionResources = await PermissionModel.findFirst({
-				ownerId,
+				where: { ownerId },
 			});
 
 			return !!permissionResources;

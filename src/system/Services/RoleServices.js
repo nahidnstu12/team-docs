@@ -22,7 +22,7 @@ export class RoleService extends BaseService {
 
 		try {
 			const role = await RoleModel.findFirst({
-				ownerId: id,
+				where: { ownerId: id },
 			});
 
 			return !!role;

@@ -12,7 +12,9 @@ export class WorkspaceService extends BaseService {
 	static async getWorkspace(id) {
 		if (!id) throw new Error("Session is missing user ID");
 
-		const workspace = await WorkspaceModel.findFirst({ ownerId: id });
+		const workspace = await WorkspaceModel.findFirst({
+			where: { ownerId: id },
+		});
 		return workspace;
 	}
 

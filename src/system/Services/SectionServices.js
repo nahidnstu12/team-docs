@@ -39,8 +39,6 @@ export class SectionServices extends BaseService {
 				},
 			});
 
-			Logger.debug(section, "services");
-
 			return !!section;
 		} catch (error) {
 			Logger.error(error.message, `has section fail`);
@@ -50,9 +48,11 @@ export class SectionServices extends BaseService {
 	static async getSection(id) {
 		if (!id) throw new Error("section id is missing");
 
+		Logger.debug(id, "getSection invoked");
+
 		try {
 			const section = await SectionModel.findFirst({
-				id,
+				where: { id },
 			});
 
 			const sectionDTO = SectionDTO.toResponse(section);
