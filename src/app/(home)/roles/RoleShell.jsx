@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import NoRolesUI from "./components/NoRolesUI";
 import dynamic from "next/dynamic";
-import DrawerLoading from "@/components/laoding/DialogLoading";
-import LazyPageLoading from "@/components/laoding/LazyPageLoading";
+import DrawerLoading from "@/components/loading/DialogLoading";
+import LazyPageLoading from "@/components/loading/LazyPageLoading";
 
 const RoleCreateDialogLazy = dynamic(
 	() => import("@/app/(home)/roles/components/RoleCreateDialog"),
@@ -37,16 +36,12 @@ export default function RoleShell({ hasRoles }) {
 				/>
 			)}
 
-			{hasRoles ? (
-				<RoleListingsLazy
-					hasRoles={hasRoles}
-					setIsDialogOpen={setIsDialogOpen}
-					shouldStartFetchRoles={shouldStartFetchRoles}
-					setShouldStartFetchRoles={setShouldStartFetchRoles}
-				/>
-			) : (
-				<NoRolesUI setIsDialogOpen={setIsDialogOpen} />
-			)}
+			<RoleListingsLazy
+				hasRoles={hasRoles}
+				setIsDialogOpen={setIsDialogOpen}
+				shouldStartFetchRoles={shouldStartFetchRoles}
+				setShouldStartFetchRoles={setShouldStartFetchRoles}
+			/>
 		</>
 	);
 }

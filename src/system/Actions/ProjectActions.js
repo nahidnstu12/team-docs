@@ -19,7 +19,9 @@ class ProjectAction extends BaseAction {
 
 		try {
 			const session = await Session.getCurrentUser();
-			const workspace = await WorkspaceService.hasWorkspace(session.id);
+			const workspace = await WorkspaceService.getResource({
+				where: { ownerId: session.id },
+			});
 
 			await ProjectModel.create({
 				...result.data,

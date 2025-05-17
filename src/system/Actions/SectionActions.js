@@ -22,7 +22,7 @@ class SectionActions extends BaseAction {
 		try {
 			const { name, description, projectId } = result.data;
 			const session = await Session.getCurrentUser();
-			const project = await ProjectService.getProject({ id: projectId });
+			const project = await ProjectService.getResource({ id: projectId });
 
 			await SectionModel.create({
 				name,

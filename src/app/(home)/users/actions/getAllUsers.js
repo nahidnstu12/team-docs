@@ -11,7 +11,7 @@ export async function getAllUsersFn() {
 	if (workspaceId === null)
 		workspaceId = await Session.getWorkspaceId(session.id);
 
-	const users = await UserServices.getAllUsers(workspaceId);
+	const users = await UserServices.getAllResources({ where: { workspaceId } });
 
 	return users;
 }

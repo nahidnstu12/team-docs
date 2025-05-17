@@ -3,7 +3,7 @@
 import { useState } from "react";
 import UserLisitngs from "./components/UserListing";
 import dynamic from "next/dynamic";
-import DrawerLoading from "@/components/laoding/DrawerLoading";
+import DrawerLoading from "@/components/loading/DrawerLoading";
 
 const UserCreateDrawerLazy = dynamic(
 	() => import("./components/UserCreateDrawer"),

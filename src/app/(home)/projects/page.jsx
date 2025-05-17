@@ -1,6 +1,5 @@
 import { Session } from "@/lib/Session";
 import { ProjectService } from "@/system/Services/ProjectServices";
-import { redirect } from "next/navigation";
 import ProjectShell from "./ProjectShell";
 
 export default async function ProjectPage() {
@@ -9,11 +8,11 @@ export default async function ProjectPage() {
 	let workspaceId = session.workspaceId;
 
 	if (workspaceId === null)
-		workspaceId = await Session.getWorkspaceId(session.id);
+		workspaceId = await Session.getWorkspaceId(session.workspaceId);
 
-	// if (!workspaceId) return redirect("/workspace");
-
-	const hasProjects = await ProjectService.hasProjects(workspaceId);
+	const hasProjects = await ProjectService.hasResource({
+		where: { workspaceId },
+	});
 
 	return <ProjectShell hasProjects={hasProjects} />;
 }

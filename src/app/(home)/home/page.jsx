@@ -8,5 +8,5 @@ export default async function MainPage() {
 	// if (workspaceId === null)
 	//   workspaceId = await Session.getWorkspaceId(session.id);
 
-	return <div className="">MainPage</div>;
+	return <div className="">HomePage</div>;
 }

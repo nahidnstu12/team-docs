@@ -3,8 +3,8 @@
 import { useState } from "react";
 import NoProjectUI from "./components/NoProjectUI";
 import dynamic from "next/dynamic";
-import DrawerLoading from "@/components/laoding/DrawerLoading";
-import LazyPageLoading from "@/components/laoding/LazyPageLoading";
+import DrawerLoading from "@/components/loading/DrawerLoading";
+import LazyPageLoading from "@/components/loading/LazyPageLoading";
 
 const ProjectCreateDrawerLazy = dynamic(
 	() => import("@/app/(home)/projects/components/ProjectCreateDrawer"),

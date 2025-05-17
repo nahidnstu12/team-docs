@@ -11,7 +11,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import TableLoading from "@/components/laoding/TableLoading";
+import TableLoading from "@/components/loading/TableLoading";
 import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import Link from "next/link";

@@ -11,7 +11,9 @@ export class RolePermissionAssignServices extends BaseService {
 
 	static async getAllPermissions(whereClause) {
 		try {
-			const permissions = await PermissionModel.findMany(whereClause);
+			const permissions = await PermissionModel.findMany({
+				where: { whereClause },
+			});
 			return RolePermissionAssignDTO.toCollection(permissions);
 		} catch (error) {
 			Logger.error(error.message, `Get all permissions failed`);

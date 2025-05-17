@@ -34,15 +34,6 @@ export class ProjectUserPermissionService extends BaseService {
 				skipDuplicates: true, // Skip if any combination already exists
 			});
 
-			Logger.info(
-				{
-					usersCount: selectedUsers.length,
-					permissionsCount: selectedPermissions.length,
-					assignmentsCreated: result.count,
-				},
-				"Dev permissions assigned successfully"
-			);
-
 			return result;
 		} catch (error) {
 			Logger.error(error.message, `Assign dev failed`);
@@ -66,9 +57,11 @@ export class ProjectUserPermissionService extends BaseService {
 		}
 	}
 
-	static async modifyDevPermissions({ selectedUser, projectId, selectedPermissions }) {
-		Logger.info({ selectedUser, projectId, selectedPermissions }, "Modify dev permissions");
-
+	static async modifyDevPermissions({
+		selectedUser,
+		projectId,
+		selectedPermissions,
+	}) {
 		try {
 			// Step 1: Fetch only needed permissionIds
 			const existingPermissionIds = await ProjectUserPermissionModel.findMany({
@@ -80,8 +73,10 @@ export class ProjectUserPermissionService extends BaseService {
 			const selectedSet = new Set(selectedPermissions);
 			const existingSet = new Set(existingPermissionIds);
 
-			const toAdd = selectedPermissions.filter(id => !existingSet.has(id));
-			const toRemove = existingPermissionIds.filter(id => !selectedSet.has(id));
+			const toAdd = selectedPermissions.filter((id) => !existingSet.has(id));
+			const toRemove = existingPermissionIds.filter(
+				(id) => !selectedSet.has(id)
+			);
 
 			// Step 3: Run mutations only if needed
 			const operations = [];
@@ -118,7 +113,6 @@ export class ProjectUserPermissionService extends BaseService {
 			throw error;
 		}
 	}
-
 
 	static async getProjectUsersList(projectId) {
 		if (!projectId) throw new Error("projectId is missing");
