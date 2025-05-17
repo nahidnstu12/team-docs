@@ -11,7 +11,7 @@ export default async function ProjectPage() {
 	if (workspaceId === null)
 		workspaceId = await Session.getWorkspaceId(session.id);
 
-	if (!workspaceId) return redirect("/workspace");
+	// if (!workspaceId) return redirect("/workspace");
 
 	const hasProjects = await ProjectService.hasProjects(workspaceId);
 

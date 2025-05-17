@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import authConfig from "./lib/auth.config";
+import NextAuth from "next-auth";
 
-const secret = process.env.AUTH_SECRET;
+const { auth } = NextAuth(authConfig);
 
-export async function middleware(request) {
-	const token = await getToken({ req: request, secret });
+export default auth(async function middleware(request) {
+	const session = !!request.auth;
 	const { pathname } = request.nextUrl;
 
 	// Create new request headers with `x-pathname`
@@ -22,17 +23,17 @@ export async function middleware(request) {
 	}
 
 	// ✅ BLOCK logged-in users from accessing `/auth/*`
-	if (token && pathname.startsWith("/auth")) {
+	if (session && pathname.startsWith("/auth")) {
 		return NextResponse.redirect(new URL("/home", request.url));
 	}
 
 	// ✅ Redirect not-logged-in users from protected pages (except /auth)
-	if (!token && !pathname.startsWith("/auth")) {
+	if (!session && !pathname.startsWith("/auth")) {
 		return NextResponse.redirect(new URL("/auth/signin", request.url));
 	}
 
 	// ✅ Optional: redirect / to /home if logged in
-	if (token && pathname === "/") {
+	if (session && pathname === "/") {
 		return NextResponse.redirect(new URL("/home", request.url));
 	}
 
@@ -42,7 +43,7 @@ export async function middleware(request) {
 			headers: requestHeaders,
 		},
 	});
-}
+});
 
 export const config = {
 	matcher: [

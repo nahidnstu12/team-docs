@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack"
+    "dev": "next dev --turbopack",
+    "vercel-build": "bunx prisma generate && bunx prisma db seed && bun run build",
+    "build": "next build",
+    "start": "next start",
+    "postinstall": "bunx prisma generate"
   },
   "prisma": {
     "seed": "bun prisma/seed.js"
@@ -23,6 +27,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@next/eslint-plugin-next": "^15.3.1",
     "@prisma/client": "^6.6.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.7.0",
     "@radix-ui/react-alert-dialog": "^1.1.8",
     "@radix-ui/react-checkbox": "^1.2.3",
     "@radix-ui/react-collapsible": "^1.1.8",

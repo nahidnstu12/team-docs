@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 export const ProjectSchema = z.object({
 	name: z.string().min(3, "Project Name must be at least 3 characters"),
