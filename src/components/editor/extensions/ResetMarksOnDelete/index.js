@@ -1,0 +1,1 @@
+export { ResetMarksOnDelete } from "./extensionm";

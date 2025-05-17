@@ -15,6 +15,7 @@ export default [
 	{
 		settings: { react: { version: "detect" } },
 		rules: {
+			"react/no-array-index-key": "off",
 			"react/react-in-jsx-scope": "off",
 			"react/jsx-uses-react": "error",
 			"react/jsx-uses-vars": "error",
@@ -25,7 +26,6 @@ export default [
 			"no-var": "warn",
 			"react/jsx-no-duplicate-props": "warn",
 			"react/self-closing-comp": "off",
-			"react/no-array-index-key": "warn",
 			"react/jsx-pascal-case": "warn",
 			"react/destructuring-assignment": ["warn", "always"],
 			"react/no-deprecated": "warn",
@@ -41,7 +41,7 @@ export default [
 			...nextPlugin.configs["core-web-vitals"].rules,
 		},
 	},
-	{ ignores: [".next/*", "node_modules/*"] },
+	{ ignores: [".next/*", "node_modules/*", "src/generated/*"] },
 	{ files: ["**/*.jsx", "**/*.js"] },
 	{
 		languageOptions: {

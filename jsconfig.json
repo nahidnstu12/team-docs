@@ -1,7 +1,21 @@
 {
   "compilerOptions": {
+    "checkJs": true,
+    "module": "commonjs",
+    "target": "es6",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    ".prisma/client"
+  ]
 }

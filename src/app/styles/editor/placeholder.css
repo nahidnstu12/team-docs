@@ -1,0 +1,18 @@
+p.is-editor-empty:first-child::before {
+	content: attr(data-placeholder);
+	color: #9ca3af;
+	font-size: 1.8rem;
+	font-weight: 200;
+	line-height: 1.75rem;
+	position: absolute;
+	pointer-events: none;
+	height: 0;
+	white-space: nowrap;
+	opacity: 0.6;
+}
+
+p.is-editor-empty {
+	caret-color: #9ca3af; /* Matches placeholder tone */
+	font-size: 2rem; /* Ensure it matches placeholder */
+	line-height: 1.75rem;
+}
