@@ -4,6 +4,7 @@ import { useState } from "react";
 import PermissionLisitngs from "./components/PermisssionListings";
 import dynamic from "next/dynamic";
 import { Spinner } from "@/components/ui/spinner";
+import NoPermissionUI from "./components/NoPermissionUI";
 
 const PermissionCreateDrawerLazy = dynamic(
 	() => import("@/app/(home)/permissions/components/PermissionCreateDialog"),
@@ -35,12 +36,16 @@ export default function PermissionShell({ hasPermission }) {
 				/>
 			)}
 
-			<PermissionLisitngs
-				hasPermission={hasPermission}
-				setIsDialogOpen={setIsDialogOpen}
-				startFetchPermissions={startFetchPermissions}
-				setStartFetchPermissions={setStartFetchPermissions}
-			/>
+			{hasPermission ? (
+				<PermissionLisitngs
+					hasPermission={hasPermission}
+					setIsDialogOpen={setIsDialogOpen}
+					startFetchPermissions={startFetchPermissions}
+					setStartFetchPermissions={setStartFetchPermissions}
+				/>
+			) : (
+				<NoPermissionUI setIsDialogOpen={setIsDialogOpen} />
+			)}
 		</>
 	);
 }
