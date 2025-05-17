@@ -1,40 +1,40 @@
 "use client";
 
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
-import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
-import { ShieldCheck } from "lucide-react";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+} from "@/components/ui/card";
+import { Sparkles } from "lucide-react";
 
 export default function NoPermissionUI({ setIsDialogOpen }) {
 	return (
-		<div className="flex items-center justify-center w-full px-4 mt-10 rounded-lg">
-			<Card className="w-full max-w-2xl h-[320px] border-none shadow-xl rounded-2xl bg-background flex flex-col">
-				<CardBody className="flex flex-col justify-between flex-1 px-8 py-5 overflow-hidden">
-					{/* Header & Text */}
-					<div className="flex flex-col items-center space-y-4 text-center">
-						<CardHeader className="flex flex-col items-center space-y-2">
-							<div className="flex items-center gap-2 text-primary">
-								<ShieldCheck className="w-6 h-6" />
-								<h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
-									No Permission Found
-								</h1>
-							</div>
-						</CardHeader>
-
-						<CardBody className="p-0">
-							<p className="max-w-xl text-base text-center sm:text-lg text-muted-foreground">
-								Create your first permissions to manage access control within
-								your system.
-							</p>
-						</CardBody>
+		<div className="flex items-center justify-center px-4 mt-10">
+			<Card className="w-full max-w-2xl border shadow-xl rounded-2xl bg-background">
+				<CardHeader className="items-center mb-12 space-y-4 text-center">
+					<div className="flex items-center justify-center gap-2 text-primary">
+						<Sparkles className="w-6 h-6" />
+						<CardTitle className="text-4xl font-extrabold tracking-tight text-gray-900">
+							No Permission Found
+						</CardTitle>
 					</div>
+					<CardDescription className="max-w-xl text-base text-muted-foreground">
+						Create your first permissions to manage access control within your
+						system.
+					</CardDescription>
+				</CardHeader>
 
-					{/* Footer CTA Button */}
-					<CardFooter className="flex justify-center pt-18">
-						<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
-							Create Permission
-						</CreateButtonShared>
-					</CardFooter>
-				</CardBody>
+				<CardContent className="flex justify-center pt-4">
+					<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
+						Create Your First Permission
+					</CreateButtonShared>
+				</CardContent>
+
+				<CardFooter />
 			</Card>
 		</div>
 	);

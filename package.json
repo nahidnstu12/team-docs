@@ -19,7 +19,6 @@
     "@faker-js/faker": "^9.7.0",
     "@floating-ui/react": "^0.27.8",
     "@floating-ui/react-dom": "^2.1.2",
-    "@heroui/card": "^2.2.16",
     "@heroui/drawer": "^2.2.14",
     "@heroui/system": "^2.4.13",
     "@heroui/theme": "^2.4.13",

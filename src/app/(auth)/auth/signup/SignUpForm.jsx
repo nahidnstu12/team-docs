@@ -3,6 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -13,15 +17,14 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 import { signup } from "./signupAction";
 import { signUpSchema } from "./signupSchema";
-import { useRouter } from "next/navigation";
-import { Card, CardBody, CardHeader } from "@heroui/card";
 
 export default function SignUpForm() {
 	const router = useRouter();
+
 	const [formState, formAction, isPending] = useActionState(signup, {
 		message: null,
 		errors: null,
@@ -55,35 +58,28 @@ export default function SignUpForm() {
 		if (formState?.type === "success") {
 			router.push(formState.redirectTo);
 		}
-	}, [
-		formState.errors,
-		form,
-		formState.redirectTo,
-		formState?.type,
-		router,
-		formState,
-	]);
+	}, [formState, form, router]);
 
 	return (
 		<div className="w-full max-w-md mx-auto">
 			{formState?.type === "success" ? (
 				<Card className="border-blue-200 shadow-xl animate-pulse">
-					<CardHeader className="w-full text-center">
-						<h1 className="w-full mb-8 text-xl font-semibold text-center text-blue-600">
+					<CardHeader className="text-center">
+						<CardTitle className="text-xl text-blue-600">
 							Creating your account...
-						</h1>
+						</CardTitle>
 					</CardHeader>
-					<CardBody className="flex flex-col items-center justify-center py-6 space-y-4">
+					<CardContent className="flex flex-col items-center justify-center py-6 space-y-4">
 						<Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
 						<p className="text-sm text-center text-gray-600">
 							Redirecting to your Homepage. Please wait...
 						</p>
-					</CardBody>
+					</CardContent>
 				</Card>
 			) : (
 				<Form {...form}>
 					<form action={formAction} className="space-y-6">
-						{/* Username Field */}
+						{/* Username */}
 						<FormField
 							control={form.control}
 							name="username"
@@ -106,7 +102,7 @@ export default function SignUpForm() {
 							)}
 						/>
 
-						{/* Email Field */}
+						{/* Email */}
 						<FormField
 							control={form.control}
 							name="email"
@@ -130,7 +126,7 @@ export default function SignUpForm() {
 							)}
 						/>
 
-						{/* Password Field */}
+						{/* Password */}
 						<FormField
 							control={form.control}
 							name="password"
@@ -154,7 +150,7 @@ export default function SignUpForm() {
 							)}
 						/>
 
-						{/* Form-wide Errors */}
+						{/* Global Form Errors */}
 						{formState?.errors?._form && (
 							<div className="space-y-1 text-sm text-red-500">
 								{formState.errors._form.map((msg, index) => (
@@ -163,10 +159,10 @@ export default function SignUpForm() {
 							</div>
 						)}
 
-						{/* Submit */}
+						{/* Submit Button */}
 						<SubmitButton isPending={isPending} />
 
-						{/* Link to Sign In */}
+						{/* Auth redirect */}
 						<div className="pt-4 text-center">
 							<p className="text-sm text-muted-foreground">
 								Already have an account?{" "}
