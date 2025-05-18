@@ -18,10 +18,7 @@ import { deleteRoleAction } from "@/system/Actions/RoleActions";
 import { toast } from "sonner";
 import Logger from "@/lib/Logger";
 
-export default function DeleteRoleDialog({
-  role,
-  setShouldStartFetchRoles,
-}) {
+export default function DeleteRoleDialog({ role, setShouldStartFetchRoles }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -29,7 +26,7 @@ export default function DeleteRoleDialog({
     try {
       setIsDeleting(true);
       Logger.debug("Deleting role", { roleId: role.id });
-      
+
       const result = await deleteRoleAction(null, role.id);
 
       if (result.success) {
@@ -61,7 +58,7 @@ export default function DeleteRoleDialog({
         className="cursor-pointer bg-red-600 hover:text-white-500 hover:bg-red-500 text-white px-5 py-2.5 text-base"
         onClick={() => setIsOpen(true)}
       >
-        <Trash2 className="w-5 h-5 mr-2 text-white" />
+        <Trash2 className="mr-2 w-5 h-5 text-white" />
         Delete
       </Button>
 
@@ -70,13 +67,13 @@ export default function DeleteRoleDialog({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete this role?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the {" "}
-              <strong className="font-medium">{role.name}</strong> role
-              and all associated permissions.
+              This action cannot be undone. This will permanently delete the{" "}
+              <strong className="font-medium">{role.name}</strong> role and all associated
+              permissions.
               {role.isSystem && (
-                <div className="mt-2 p-2 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700">
+                <span className="block p-2 mt-2 text-yellow-700 bg-yellow-50 border-l-4 border-yellow-500">
                   Warning: This is a system role. Deleting it may affect system functionality.
-                </div>
+                </span>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
