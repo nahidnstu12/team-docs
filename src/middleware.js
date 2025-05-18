@@ -5,51 +5,68 @@ import NextAuth from "next-auth";
 const { auth } = NextAuth(authConfig);
 
 export default auth(async function middleware(request) {
-	const session = !!request.auth;
-	const { pathname } = request.nextUrl;
+  const session = !!request.auth;
+  const { pathname } = request.nextUrl;
+  const response = NextResponse.next();
 
-	// Create new request headers with `x-pathname`
-	const requestHeaders = new Headers(request.headers);
-	requestHeaders.set("x-pathname", pathname);
+  // Security headers
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 
-	// ✅ Skip public files (static, images, etc.)
-	if (
-		pathname.startsWith("/_next") ||
-		pathname.startsWith("/favicon.ico") ||
-		pathname.startsWith("/api") ||
-		pathname.match(/\.(.*)$/) // static files like .png, .css, .js
-	) {
-		return NextResponse.next();
-	}
+  // Create new request headers with `x-pathname`
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
 
-	// ✅ BLOCK logged-in users from accessing `/auth/*`
-	if (session && pathname.startsWith("/auth")) {
-		return NextResponse.redirect(new URL("/home", request.url));
-	}
+  // ✅ Skip public files (static, images, etc.)
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon.ico") ||
+    pathname.startsWith("/api") ||
+    pathname.match(/\.(.*)$/) // static files like .png, .css, .js
+  ) {
+    return response;
+  }
 
-	// ✅ Redirect not-logged-in users from protected pages (except /auth)
-	if (!session && !pathname.startsWith("/auth")) {
-		return NextResponse.redirect(new URL("/auth/signin", request.url));
-	}
+  // ✅ BLOCK logged-in users from accessing `/auth/*`
+  if (session && pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
 
-	// ✅ Optional: redirect / to /home if logged in
-	if (session && pathname === "/") {
-		return NextResponse.redirect(new URL("/home", request.url));
-	}
+  // ✅ Allow non-authenticated users to access landing page at root
+  if (pathname === "/") {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
 
-	// ✅ Allow to continue
-	return NextResponse.next({
-		request: {
-			headers: requestHeaders,
-		},
-	});
+  // ✅ Redirect not-logged-in users from protected pages (except / and /auth)
+  if (!session && !pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL("/auth/signin", request.url));
+  }
+
+  // ✅ Optional: redirect / to /home if logged in
+  if (session && pathname === "/") {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
+
+  // ✅ Allow to continue
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 });
 
 export const config = {
-	matcher: [
-		"/", // root
-		"/home", // main page
-		"/auth/:path*", // must explicitly include auth
-		"/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)",
-	],
+  matcher: [
+    "/", // root
+    "/home", // main page
+    "/auth/:path*", // must explicitly include auth
+    "/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)",
+  ],
 };
