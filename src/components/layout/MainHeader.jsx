@@ -3,20 +3,8 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 
 export default async function Header() {
-	const session = await Session.getCurrentUser();
-
-	let workspaceId = session.workspaceId;
-
-	if (workspaceId === null)
-		workspaceId = await Session.getWorkspaceId(session.id);
-
-	let workspace = null;
-	workspace =
-		workspaceId === null
-			? null
-			: await WorkspaceService.getResource({
-					where: { id: workspaceId },
-			  });
+	const workspaceId = await Session.getWorkspaceIdForUser();
+	const workspace = workspaceId ? await WorkspaceService.getResource({ where: { id: workspaceId } }) : null;
 
 	return (
 		<header className="flex items-center justify-between h-16 px-4 border-b bg-background">

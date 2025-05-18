@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function savePageContent({ pageId, content }) {
-	Logger.success(pageId, "server side content");
+
 	try {
 		const updatedPage = await prisma.page.update({
 			where: { id: pageId },
@@ -13,8 +13,6 @@ export async function savePageContent({ pageId, content }) {
 				content: content,
 			},
 		});
-
-		// revalidatePath(`/project/${pageId}`); // Optional: revalidate cache
 
 		return {
 			success: true,

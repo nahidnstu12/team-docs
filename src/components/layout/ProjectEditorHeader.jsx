@@ -23,9 +23,9 @@ export default function ProjectEditorHeader({ selectedPage, projectName }) {
 						variant="ghost"
 						size="icon"
 						onClick={handleRedirect}
-						className="transition hover:bg-muted"
+						className="transition hover:bg-muted cursor-pointer"
 					>
-						<ArrowLeft className="w-5 h-5 text-gray-700" />
+						<ArrowLeft className="w-5 h-5 text-gray-700 cursor-pointer" />
 						<span className="sr-only">Go to Project Page</span>
 					</Button>
 					<span className="-ml-1">{projectName || "Project Name"}</span>

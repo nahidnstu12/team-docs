@@ -11,7 +11,5 @@ export async function getAllPermissionsFn() {
 		where: { ownerId: session.id },
 	});
 
-	Logger.debug(permissions, "permissions actions");
-
 	return permissions;
 }

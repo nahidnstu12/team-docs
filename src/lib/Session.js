@@ -45,7 +45,6 @@ export class Session {
 	 * @returns {Promise<string|null>}
 	 */
 	static async getWorkspaceId(id) {
-		console.log(id, "session cls id");
 		try {
 			const user = await UserModel.findUnique({
 				where: { id },
@@ -57,5 +56,20 @@ export class Session {
 			console.error("[Session.getWorkspaceId] Error:", error);
 			return null;
 		}
+	}
+
+	/**
+	 * Get the workspaceId for the current user
+	 * @returns {Promise<string|null>} The workspaceId or null if not found
+	 */
+	static async getWorkspaceIdForUser() {
+		const session = await this.getCurrentUser();
+		if (!session) return null;
+
+		// Try JWT first
+		if (session.workspaceId) return session.workspaceId;
+
+		// Fallback to database
+		return this.getWorkspaceId(session.id);
 	}
 }

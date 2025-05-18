@@ -8,8 +8,10 @@ import {
 	CardDescription,
 } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
+import { useSectionDialogStore } from "@/app/(home)/projects/[slug]/editor/store/useSectionDialogStore";
 
-export default function NoSectionUI({ setIsDialogOpen }) {
+export default function NoSectionUI() {
+	const openSectionDialog = useSectionDialogStore((state) => state.openSectionDialog);
 	return (
 		<div className="flex items-center justify-center px-4 mt-10">
 			<Card className="w-full max-w-2xl border shadow-xl rounded-2xl bg-background">
@@ -27,7 +29,7 @@ export default function NoSectionUI({ setIsDialogOpen }) {
 				</CardHeader>
 
 				<CardContent className="flex justify-center pt-4">
-					<CreateButtonShared onClick={() => setIsDialogOpen(true)}>
+					<CreateButtonShared onClick={openSectionDialog}>
 						Create Your First Section
 					</CreateButtonShared>
 				</CardContent>
