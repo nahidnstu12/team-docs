@@ -245,7 +245,7 @@ model Page {
   password String? // Optional password for protected pages
 
   // Relationships
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   creator   User    @relation("UserCreatedPages", fields: [ownerId], references: [id]) // ← Match the name
   updatedBy User?   @relation("UserUpdatedPages", fields: [lastUpdatedBy], references: [id]) // ← Match the name
 

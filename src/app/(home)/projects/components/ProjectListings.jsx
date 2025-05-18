@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Edit, LayoutTemplate, Trash, UsersRound } from "lucide-react";
+import { Edit, LayoutTemplate, UsersRound } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import {
 	Table,
@@ -16,7 +17,9 @@ import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
+import Logger from "@/lib/Logger";
+import ProjectEditDrawer from "./ProjectEditDrawer";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 export default function ProjectListings({
 	hasProjects,
@@ -30,6 +33,16 @@ export default function ProjectListings({
 		fetchError,
 		showSkeleton,
 	} = useProjects(startFetchProjects, setStartFetchProjects);
+
+	// State for editing project
+	const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+	const [selectedProject, setSelectedProject] = useState(null);
+
+	const handleEditClick = (project) => {
+		Logger.debug("Opening edit drawer for project", { projectId: project.id });
+		setSelectedProject(project);
+		setIsEditDrawerOpen(true);
+	};
 
 	if (fetchError)
 		return (
@@ -47,6 +60,16 @@ export default function ProjectListings({
 					</CreateButtonShared>
 				</div>
 			</section>
+
+			{/* Project Edit Drawer */}
+			{selectedProject && (
+				<ProjectEditDrawer
+					isDrawerOpen={isEditDrawerOpen}
+					setIsDrawerOpen={setIsEditDrawerOpen}
+					setStartFetchProjects={setStartFetchProjects}
+					project={selectedProject}
+				/>
+			)}
 
 			{/* Project List */}
 			<section className="mt-8 space-y-4">
@@ -106,15 +129,14 @@ export default function ProjectListings({
 										>
 											<LayoutTemplate className="w-4 h-4" /> View
 										</Button>
-										<ComingSoonWrapper enabled>
-											<Button
-												size="sm"
-												variant="outline"
-												className="flex items-center gap-1 bg-yellow-100 cursor-pointer"
-											>
-												<Edit className="w-4 h-4" /> Edit
-											</Button>
-										</ComingSoonWrapper>
+										<Button
+											size="sm"
+											variant="outline"
+											className="flex items-center gap-1 bg-yellow-100 cursor-pointer"
+											onClick={() => handleEditClick(project)}
+										>
+											<Edit className="w-4 h-4" /> Edit
+										</Button>
 										<Link href={`/projects/${project.slug}/assign-dev`}>
 											<Button
 												variant="outline"
@@ -124,15 +146,10 @@ export default function ProjectListings({
 												<UsersRound className="w-4 h-4" /> Assign Dev
 											</Button>
 										</Link>
-										<ComingSoonWrapper enabled>
-											<Button
-												variant="destructive"
-												size="sm"
-												className="flex items-center gap-1 cursor-pointer"
-											>
-												<Trash className="w-4 h-4" /> Delete
-											</Button>
-										</ComingSoonWrapper>
+										<DeleteConfirmationDialog 
+											project={project}
+											setStartFetchProjects={setStartFetchProjects}
+										/>
 									</TableCell>
 								</TableRow>
 							))

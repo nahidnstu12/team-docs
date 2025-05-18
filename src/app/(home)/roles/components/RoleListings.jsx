@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -9,14 +10,16 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Pencil, Trash2 } from "lucide-react";
+import { ShieldCheck, Pencil } from "lucide-react";
 import dynamic from "next/dynamic";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import { useRoles } from "../hooks/useRoles";
 import TableLoading from "@/components/loading/TableLoading";
 import DrawerLoading from "@/components/loading/DialogLoading";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
-import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
+import RoleEditDialog from "./RoleEditDialog";
+import DeleteRoleDialog from "./DeleteRoleDialog";
+import Logger from "@/lib/Logger";
 
 const LoadRolePermissionDialogLazy = dynamic(
 	() => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
@@ -41,6 +44,16 @@ export default function RoleListings({
 		setOpenPermissionAssignDialog,
 	} = useRoles(shouldStartFetchRoles, setShouldStartFetchRoles);
 
+	// State for editing role
+	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+	const [selectedRole, setSelectedRole] = useState(null);
+
+	const handleEditClick = (role) => {
+		Logger.debug("Opening edit dialog for role", { roleId: role.id });
+		setSelectedRole(role);
+		setIsEditDialogOpen(true);
+	};
+
 	if (fetchError)
 		return (
 			<ClientErrorUI
@@ -51,6 +64,16 @@ export default function RoleListings({
 
 	return (
 		<>
+			{/* Edit Role Dialog */}
+			{selectedRole && (
+				<RoleEditDialog
+					isDialogOpen={isEditDialogOpen}
+					setIsDialogOpen={setIsEditDialogOpen}
+					setShouldStartFetchRoles={setShouldStartFetchRoles}
+					role={selectedRole}
+				/>
+			)}
+
 			<section className="flex items-start justify-between w-full mb-8 max-h-14">
 				<h1 className="text-3xl font-bold">Roles</h1>
 				<div className="ml-auto">
@@ -136,27 +159,20 @@ export default function RoleListings({
 												/>
 											)}
 
-										<ComingSoonWrapper enabled>
-											<Button
-												size="sm"
-												variant="secondary"
-												className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
-											>
-												<Pencil className="w-5 h-5 mr-2 text-yellow-600" />
-												Edit
-											</Button>
-										</ComingSoonWrapper>
+										<Button
+											size="sm"
+											variant="secondary"
+											onClick={() => handleEditClick(role)}
+											className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
+										>
+											<Pencil className="w-5 h-5 mr-2 text-yellow-600" />
+											Edit
+										</Button>
 
-										<ComingSoonWrapper enabled>
-											<Button
-												size="sm"
-												variant="destructive"
-												className="cursor-pointer bg-red-600 hover:text-white-500 hover:bg-red-500 text-white px-5 py-2.5 text-base"
-											>
-												<Trash2 className="w-5 h-5 mr-2 text-white" />
-												Delete
-											</Button>
-										</ComingSoonWrapper>
+										<DeleteRoleDialog
+											role={role}
+											setShouldStartFetchRoles={setShouldStartFetchRoles}
+										/>
 									</TableCell>
 								</TableRow>
 							))

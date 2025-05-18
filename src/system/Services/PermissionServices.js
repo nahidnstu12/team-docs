@@ -19,4 +19,33 @@ export class PermissionServices extends BaseService {
 			Logger.error(error.message, `Get permission for project scope failed`);
 		}
 	}
+
+	static async updateResource(id, data) {
+		try {
+			Logger.debug(`Updating permission with id: ${id}`, data);
+			const updatedPermission = await PermissionModel.update({
+				where: { id },
+				data,
+			});
+
+			const permissionDTO = PermissionDTO.toResponse(updatedPermission);
+			return permissionDTO;
+		} catch (error) {
+			Logger.error(error.message, `Permission update fail`);
+			throw error;
+		}
+	}
+
+	static async deleteResource(id) {
+		try {
+			Logger.debug(`Deleting permission with id: ${id}`);
+			await PermissionModel.delete({
+				where: { id },
+			});
+			return true;
+		} catch (error) {
+			Logger.error(error.message, `Permission delete fail`);
+			throw error;
+		}
+	}
 }
