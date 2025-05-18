@@ -11,12 +11,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export default function SectionItem({ section, isOpen, onToggle }) {
   const selectedPage = useProjectStore((state) => state.selectedPage);
   const setSelectedSection = useProjectStore((state) => state.setSelectedSection);
-  const setSelectedPage = useProjectStore((state) => state.setSelectedPage);
 
   const handleSectionClick = () => {
     onToggle();
     setSelectedSection(section.id);
-    setSelectedPage(null);
   };
 
   return (

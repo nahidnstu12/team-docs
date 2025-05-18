@@ -57,7 +57,11 @@ export default function PageMenu({ page }) {
             <MoreHorizontal className="w-4 h-4" />
           </SidebarMenuAction>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start" className="max-w-3">
+        <DropdownMenuContent
+          side="right"
+          align="start"
+          className="overflow-hidden transition-all duration-500 ease-in-out"
+        >
           <ComingSoonWrapper enabled className="w-full">
             <DropdownMenuItem>
               <Copy className="mr-2 w-4 h-4 text-blue-500" />
