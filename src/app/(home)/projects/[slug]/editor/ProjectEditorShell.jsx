@@ -17,11 +17,7 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
 
 	return (
 		<>
-			<ProjectEditorLayout
-				hasSection={hasSection}
-				project={project}
-				sections={sections}
-			/>
+			<ProjectEditorLayout hasSection={hasSection} />
 			<ProjectEditorDialogs
 				project={project}
 				selectedSectionId={selectedSectionId}

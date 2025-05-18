@@ -26,10 +26,10 @@ export default async function HomeLayout({ children }) {
 				enableSystem={false}
 			>
 				<SidebarProvider defaultOpen={defaultOpen}>
-					<div className="flex w-screen h-screen overflow-hidden">
+					<div className="flex overflow-hidden w-screen h-screen">
 						{/* <Sidebar /> */}
 						<MainSidebar />
-						<div className="flex flex-col flex-1 pl-6 overflow-hidden">
+						<div className="flex overflow-hidden flex-col flex-1 pl-6">
 							<MainHeader />
 							<Toaster position="top-right" richColors />
 							<main className="flex-1 overflow-auto p-4 min-h-[80vh]">
