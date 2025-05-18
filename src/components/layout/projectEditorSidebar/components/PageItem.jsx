@@ -29,7 +29,7 @@ export default function PageItem({ page, isSelected, sectionId }) {
                 <TooltipProvider delayDuration={600}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <span className="truncate max-w-[140px] block ml-2">
+                            <span className="truncate max-w-[140px] block ml-2 cursor-pointer">
                                 {page.title || "Untitled Page"}
                             </span>
                         </TooltipTrigger>
@@ -40,7 +40,7 @@ export default function PageItem({ page, isSelected, sectionId }) {
                 </TooltipProvider>
             </a>
 
-            <PageMenu pageId={page.id} />
+            <PageMenu page={page} />
         </div>
     );
 }

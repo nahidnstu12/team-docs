@@ -1,9 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
-import { useSectionDialogStore } from "@/app/(home)/projects/[slug]/editor/store/useSectionDialogStore";
 import SectionMenu from "./SectionMenu";
 import PageList from "./PageList";
 import { SidebarMenuItem } from "@/components/ui/sidebar";
@@ -42,7 +40,7 @@ export default function SectionItem({ section, isOpen, onToggle }) {
           <TooltipProvider delayDuration={600}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="truncate max-w-[160px] text-sm text-gray-800 block">
+                <span className="truncate max-w-[160px] text-sm text-gray-800 block cursor-pointer">
                   {section.name}
                 </span>
               </TooltipTrigger>

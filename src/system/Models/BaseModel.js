@@ -60,7 +60,7 @@ export class BaseModel {
     });
   }
 
-  static async findFirst({ where }) {
-    return await this.model.findFirst({ where });
+  static async findFirst({ where, include = {} }) {
+    return await this.model.findFirst({ ...(where && { where }), ...(include && { include }) });
   }
 }

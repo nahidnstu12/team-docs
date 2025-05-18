@@ -8,9 +8,10 @@ import { PageSchema } from "@/lib/schemas/PageSchema";
 import { PageModel } from "../Models/PageModel";
 import { ProjectService } from "../Services/ProjectServices";
 import { SectionServices } from "../Services/SectionServices";
+import { PageServices } from "../Services/PageServices";
 import { revalidatePath } from "next/cache";
 
-class pageActions extends BaseAction {
+class PageActions extends BaseAction {
 	static get schema() {
 		return PageSchema;
 	}
@@ -68,8 +69,78 @@ class pageActions extends BaseAction {
 			};
 		}
 	}
+
+	static async update(pageId, formData) {
+		const result = await this.execute(formData);
+
+		if (!result.success) return result;
+
+		try {
+			Logger.debug("Updating page", { pageId, data: result.data });
+			const page = await PageServices.getPage(pageId);
+			const project = page.section.project;
+			
+			await PageServices.updateResource(pageId, {
+				title: result.data.title,
+				description: result.data.description,
+			});
+
+			revalidatePath(`/(home)/projects/${project.slug}/editor`, "layout");
+			return {
+				data: result.data,
+				success: true,
+				type: "success",
+			};
+		} catch (error) {
+			Logger.error(error.message, "Page update failed:");
+			if (error.code)
+				return PrismaErrorFormatter.handle(error, result.data, [
+					"title",
+					"description",
+				]);
+
+			return {
+				success: false,
+				type: "fail",
+				errors: { _form: ["Failed to update page"] },
+				data: result.data,
+			};
+		}
+	}
+
+	static async delete(pageId) {
+		try {
+			Logger.debug("Deleting page", { pageId });
+			const page = await PageServices.getPage(pageId);
+			const project = page.section.project;
+			
+			await PageServices.deleteResource(pageId);
+			
+			revalidatePath(`/(home)/projects/${project.slug}/editor`, "layout");
+			return {
+				success: true,
+				type: "success",
+				message: "Page successfully deleted",
+			};
+		} catch (error) {
+			Logger.error(error.message, "Page deletion failed:");
+			return {
+				success: false,
+				type: "fail",
+				errors: { _form: ["Failed to delete page"] },
+			};
+		}
+	}
 }
 
 export async function createPage(prevState, formData) {
-	return await pageActions.create(formData);
+	return await PageActions.create(formData);
+}
+
+export async function updatePageAction(prevState, { pageId, formData }) {
+	return await PageActions.update(pageId, formData);
+}
+
+export async function deletePageAction(prevState, pageId) {
+	return await PageActions.delete(pageId);
 }

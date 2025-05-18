@@ -7,23 +7,23 @@ import SectionList from "./components/SectionList";
 import CreateSectionButton from "./components/CreateSectionButton";
 
 export default function ProjectEditorSidebar() {
-    const sections = useProjectStore((state) => state.sections);
+  const sections = useProjectStore((state) => state.sections);
 
-    return (
-        <Sidebar className="bg-white border-r">
-            <SidebarContent className="flex flex-col h-full">
-                <div className="px-2 pt-3">
-                    <HomeButton />
-                </div>
+  return (
+    <Sidebar className="bg-white border-r">
+      <SidebarContent className="flex flex-col h-full">
+        <div className="px-2 pt-3">
+          <HomeButton />
+        </div>
 
-                <div className="px-3">
-                    <div className="my-2 border-t border-gray-200" />
-                </div>
+        <div className="px-3">
+          <div className="my-2 border-t border-gray-200" />
+        </div>
 
-                <SectionList sections={sections} />
+        <SectionList sections={sections} />
 
-                <CreateSectionButton />
-            </SidebarContent>
-        </Sidebar>
-    );
+        <CreateSectionButton />
+      </SidebarContent>
+    </Sidebar>
+  );
 }

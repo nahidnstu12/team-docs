@@ -1,6 +1,6 @@
 import { editorExtensions } from "@/lib/editor-extensions/editor-extensions";
 import { useEditor, EditorContent } from "@tiptap/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import SlashCommandMenu from "./SlashCommandMenu";
 import { LinkDialog } from "./LinkDialog";
 import BubbleMenu from "@/components/editor/ui/BubbleMenu";
@@ -59,7 +59,7 @@ export default function RTEeditor({ pageId }) {
 		return () => dom.removeEventListener("click", handler);
 	}, [editor]);
 
-	const handleSubmit = async () => {
+	const handleSubmit = useCallback(async () => {
 		if (!editor) return;
 
 		// Get the JSON output
@@ -78,39 +78,48 @@ export default function RTEeditor({ pageId }) {
 		} else {
 			toast.error(result.message || "Something went wrong");
 		}
-	};
+	}, [editor, pageId]);
 
 	useEffect(() => {
+		// Reset page content when page changes to avoid showing stale content
+		setPageContent(null);
+		
 		async function getPageContent() {
-			const res = await fetchPageContent(pageId);
-			const content = res.content;
-
-			setPageContent(content);
-
-			if (editor) {
-				if (content) {
-					editor.commands.setContent(content);
-				} else {
-					editor.commands.clearContent(); // ✅ clear editor content if none exists
+			try {
+				const res = await fetchPageContent(pageId);
+				const content = res.content;
+				
+				// Only update if we're still on the same page
+				if (pageId === useProjectStore.getState().selectedPage) {
+					setPageContent(content);
+					
+					if (editor) {
+						if (content) {
+							editor.commands.setContent(content);
+						} else {
+							editor.commands.clearContent();
+						}
+						editor.commands.focus('end');
+					}
 				}
+			} catch (error) {
+				console.error('Error fetching page content:', error);
+				toast.error('Failed to load page content');
 			}
 		}
 
 		getPageContent();
 	}, [pageId, editor]);
-
-	useEffect(() => {
-		if (editor && pageContent) {
-			editor.commands.setContent(pageContent); // ✅ Manually set content after fetch
-		}
-	}, [editor, pageContent]);
+	
+	// We don't need this second effect as it can cause duplicate content setting
+	// The first effect now properly handles setting content when either pageId or editor changes
 
 	useEffect(() => {
 		if (editor) {
 			// Register the save function into Zustand
 			useProjectStore.getState().setSaveHandler(handleSubmit);
 		}
-	}, [editor]);
+	}, [editor, handleSubmit]);
 
 	return (
 		<form className="w-full mt-6">

@@ -2,44 +2,96 @@
 "use client";
 
 import { Copy, MoreHorizontal, Pencil, Settings, Trash } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SidebarMenuAction } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
+import Logger from "@/lib/Logger";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
-export default function PageMenu({ pageId }) {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <SidebarMenuAction className="absolute -translate-y-1/2 right-2 top-1/2">
-                    <MoreHorizontal className="w-4 h-4" />
-                </SidebarMenuAction>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="right" align="start" className="max-w-3">
-                <ComingSoonWrapper enabled className="w-full">
-                    <DropdownMenuItem>
-                        <Copy className="w-4 h-4 mr-2 text-blue-500" />
-                        Duplicate
-                    </DropdownMenuItem>
-                </ComingSoonWrapper>
-                <ComingSoonWrapper enabled className="w-full">
-                    <DropdownMenuItem>
-                        <Pencil className="w-4 h-4 mr-2 text-green-500" />
-                        Update
-                    </DropdownMenuItem>
-                </ComingSoonWrapper>
-                <ComingSoonWrapper enabled className="w-full">
-                    <DropdownMenuItem>
-                        <Trash className="w-4 h-4 mr-2 text-red-500" />
-                        Delete
-                    </DropdownMenuItem>
-                </ComingSoonWrapper>
-                <ComingSoonWrapper enabled className="w-full">
-                    <DropdownMenuItem>
-                        <Settings className="w-4 h-4 mr-2 text-yellow-500" />
-                        Settings
-                    </DropdownMenuItem>
-                </ComingSoonWrapper>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
+// Dynamically import the page dialogs
+const PageEditDialog = dynamic(() =>
+  import("@/app/(home)/projects/[slug]/editor/components/PageEditDialog")
+);
+
+const DeletePageDialog = dynamic(() =>
+  import("@/app/(home)/projects/[slug]/editor/components/DeletePageDialog")
+);
+
+export default function PageMenu({ page }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleMenuOpenChange = (open) => {
+    if (open && page) {
+      // Set this page as selected when menu opens
+      useProjectStore.getState().setSelectedPage(page.id);
+      // Also set the section to maintain consistency
+      useProjectStore.getState().setSelectedSection(page.sectionId);
+    }
+  };
+
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    Logger.debug("Opening edit dialog for page", { pageId: page?.id });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    Logger.debug("Opening delete dialog for page", { pageId: page?.id });
+    setIsDeleteDialogOpen(true);
+  };
+
+  return (
+    <>
+      <DropdownMenu onOpenChange={handleMenuOpenChange}>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuAction className="absolute right-2 top-1/2 -translate-y-1/2">
+            <MoreHorizontal className="w-4 h-4" />
+          </SidebarMenuAction>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="right" align="start" className="max-w-3">
+          <ComingSoonWrapper enabled className="w-full">
+            <DropdownMenuItem>
+              <Copy className="mr-2 w-4 h-4 text-blue-500" />
+              Duplicate
+            </DropdownMenuItem>
+          </ComingSoonWrapper>
+          <DropdownMenuItem onClick={handleEditClick}>
+            <Pencil className="mr-2 w-4 h-4 text-green-500" />
+            Update
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDeleteClick}>
+            <Trash className="mr-2 w-4 h-4 text-red-500" />
+            Delete
+          </DropdownMenuItem>
+          <ComingSoonWrapper enabled className="w-full">
+            <DropdownMenuItem>
+              <Settings className="mr-2 w-4 h-4 text-yellow-500" />
+              Settings
+            </DropdownMenuItem>
+          </ComingSoonWrapper>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <PageEditDialog
+        page={page}
+        isDialogOpen={isEditDialogOpen}
+        setIsDialogOpen={setIsEditDialogOpen}
+      />
+
+      <DeletePageDialog
+        page={page}
+        isDialogOpen={isDeleteDialogOpen}
+        setIsDialogOpen={setIsDeleteDialogOpen}
+      />
+    </>
+  );
 }
