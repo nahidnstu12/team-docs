@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": "bun run vercel-build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "env": {
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_NODE_ENV": "production"
+  }
+}

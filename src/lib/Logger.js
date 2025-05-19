@@ -2,9 +2,15 @@ import chalk from "chalk";
 import util from "util";
 
 class Logger {
-	static isProduction =
-		typeof window !== "undefined" &&
-		process.env.NEXT_PUBLIC_NODE_ENV === "production";
+	// Fixed environment detection for both client and server contexts
+	static isProduction = (() => {
+		// Client-side check (browser)
+		if (typeof window !== "undefined") {
+			return process.env.NEXT_PUBLIC_NODE_ENV === "production";
+		}
+		// Server-side check (Node.js)
+		return process.env.NODE_ENV === "production";
+	})();
 
 	// Enhanced color system with background colors
 	static colors = {
@@ -109,6 +115,7 @@ class Logger {
 	}
 
 	static print(level, message, data) {
+		// Early return if in production to avoid any logging
 		if (Logger.isProduction) return;
 
 		const timeOnly = this.getFormattedTime();

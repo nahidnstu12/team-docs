@@ -7,8 +7,7 @@
     "dev": "next dev --turbopack",
     "vercel-build": "bunx prisma generate && bunx prisma db seed && bun run build",
     "build": "next build",
-    "start": "next start",
-    "postinstall": "bunx prisma generate"
+    "start": "next start"
   },
   "prisma": {
     "seed": "bun prisma/seed.js"
@@ -99,5 +98,8 @@
     "postcss": "^8.5.3",
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.3"
-  }
+  },
+  "trustedDependencies": [
+    "@tailwindcss/oxide"
+  ]
 }
