@@ -26,6 +26,7 @@ export default function PageList({ section, isOpen, selectedPage }) {
                                 page={page}
                                 isSelected={selectedPage === page.id}
                                 sectionId={section.id}
+                                sectionName={section.name}
                             />
                         ))}
                     </SidebarMenuSub>

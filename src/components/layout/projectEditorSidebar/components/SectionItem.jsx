@@ -7,14 +7,31 @@ import PageList from "./PageList";
 import { SidebarMenuItem } from "@/components/ui/sidebar";
 import { ChevronDown, FolderKanban } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export default function SectionItem({ section, isOpen, onToggle }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const selectedPage = useProjectStore((state) => state.selectedPage);
   const setSelectedSection = useProjectStore((state) => state.setSelectedSection);
 
   const handleSectionClick = () => {
     onToggle();
     setSelectedSection(section.id);
+    
+    // Update URL with section name in query params
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('section', section.name);
+    
+    // If there was a page param but we're clicking a different section, remove it
+    const currentSectionParam = searchParams.get('section');
+    if (currentSectionParam !== section.name && params.has('page')) {
+      params.delete('page');
+    }
+    
+    // Update URL without triggering a navigation
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (

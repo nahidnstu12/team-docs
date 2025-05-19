@@ -5,14 +5,26 @@ import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import PageMenu from "./PageMenu";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-export default function PageItem({ page, isSelected, sectionId }) {
+export default function PageItem({ page, isSelected, sectionId, sectionName }) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
     const setSelectedSection = useProjectStore((state) => state.setSelectedSection);
     const setSelectedPage = useProjectStore((state) => state.setSelectedPage);
 
     const handlePageClick = () => {
         setSelectedSection(sectionId);
         setSelectedPage(page.id);
+        
+        // Update URL with section name and page title in query params
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('section', sectionName);
+        params.set('page', page.title || "Untitled Page");
+        
+        // Update URL without triggering a navigation
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
     return (
