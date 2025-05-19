@@ -131,6 +131,35 @@ class PageActions extends BaseAction {
 			};
 		}
 	}
+
+	static async duplicate(pageId) {
+		try {
+			Logger.debug("Duplicating page", { pageId });
+			const session = await Session.getCurrentUser();
+			
+			// Get the original page to find its project for revalidation
+			const originalPage = await PageServices.getPage(pageId);
+			const project = originalPage.section.project;
+			
+			// Use the PageServices to duplicate the page
+			const duplicatedPage = await PageServices.duplicatePage(pageId, session.id);
+			
+			revalidatePath(`/(home)/projects/${project.slug}/editor`, "layout");
+			return {
+				success: true,
+				type: "success",
+				message: "Page successfully duplicated",
+				data: duplicatedPage,
+			};
+		} catch (error) {
+			Logger.error(error.message, "Page duplication failed:");
+			return {
+				success: false,
+				type: "fail",
+				errors: { _form: ["Failed to duplicate page"] },
+			};
+		}
+	}
 }
 
 export async function createPage(prevState, formData) {
@@ -143,4 +172,8 @@ export async function updatePageAction(prevState, { pageId, formData }) {
 
 export async function deletePageAction(prevState, pageId) {
 	return await PageActions.delete(pageId);
+}
+
+export async function duplicatePageAction(prevState, pageId) {
+	return await PageActions.duplicate(pageId);
 }

@@ -15,15 +15,16 @@ trigger: always_on
 - Follow Next.js V15+ patterns and using App Router.
 - Use server components by default, client components only when necessary
 - Directory structure:
-- if reusable hooks then create the hook near the directory (like app/user/hook/) otherwise on src/hooks/
-- if a page needed to be split into component, then put it near the directory (like app/user/component/) otherwise src/components/
-- if client component need to fetch something from server we create the server function near the route (like app/user/actions/)
-- if a route need zustand store, create it near the route (like app/user/store)
-- always try to create server function instead of route handler. those server functions will be invoked by using react useTransition and we will show loading state out of it.
+- if specific hook, then create the hook near the directory (like app/user/hook/) otherwise at src/hooks/
+- if a page needed to be split into components, then put it near the directory (like app/user/components/) otherwise src/components/
+- if client component need to fetch something from server we create the server function near the route (like app/user/actions/) and use react useTransition hook to fetch data & show loading state
+- if a feature need zustand store, create it near the route (like app/user/store)
+- always try to create server function instead of route handler.
 - using authjs jwt with posgres database with prisma orm with credentials login only.
-- use nextjs dynamic to load the client component lazily with spinner with no ssr.
-- each page should contains most common nextjs common file conventions (like not-found, error, unauthorized etc)
-- Use middleware for route protection
+- use nextjs dynamic to load the client component lazily with loading sapinner and add no ssr option.
+- each page should contains most nextjs common file conventions (like not-found, error, unauthorized etc)
+- to protect route, utilize middleware, server function & server component
+- handle edge cases on server component
 
 # Styling & UI
 
