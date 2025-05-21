@@ -20,8 +20,6 @@ export class BaseService {
     try {
       const resource = await this.model.findUnique({ where, include });
 
-      Logger.debug(resource, "from get resource");
-
       if (this.dto && typeof this.dto.toResponse === "function") {
         return this.dto.toResponse(resource);
       }

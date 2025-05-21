@@ -16,7 +16,8 @@ WORKDIR /app
 # Only copy the files needed to generate Prisma Client
 COPY package.json bun.lock ./
 COPY prisma ./prisma
-COPY .env .env
+# Create a dummy .env file for Prisma generation
+RUN touch .env
 # Install production dependencies and generate Prisma client
 # This step is expensive but isolated to this container layer
 RUN bun install --production

@@ -10,109 +10,105 @@ import { revalidatePath } from "next/cache";
 import { RoleService } from "../Services/RoleServices";
 
 class RoleActions extends BaseAction {
-	static get schema() {
-		return RoleSchema;
-	}
+  static get schema() {
+    return RoleSchema;
+  }
 
-	static async create(formData) {
-		const result = await this.execute(formData);
+  static async create(formData) {
+    const result = await this.execute(formData);
 
-		if (!result.success) return result;
+    if (!result.success) return result;
 
-		try {
-			const session = await Session.getCurrentUser();
+    try {
+      const session = await Session.getCurrentUser();
 
-			await RoleModel.create({
-				...result.data,
-				ownerId: session.id,
-			});
+      console.log(session.id, "session");
 
-			revalidatePath("/roles", "page");
-			return {
-				data: result.data,
-				success: true,
-				type: "success",
-				redirectTo: "/roles",
-			};
-		} catch (error) {
-			Logger.error(error.message, `Role Create fail`);
-			if (error.code)
-				return PrismaErrorFormatter.handle(error, result.data, [
-					"name",
-					"description",
-				]);
+      await RoleModel.create({
+        ...result.data,
+        ownerId: session.id,
+      });
 
-			return {
-				success: false,
-				type: "fail",
-				errors: { _form: ["Failed to create Role"] },
-				data: result.data,
-			};
-		}
-	}
+      revalidatePath("/roles", "page");
+      return {
+        data: result.data,
+        success: true,
+        type: "success",
+        redirectTo: "/roles",
+      };
+    } catch (error) {
+      Logger.error(error.message, `Role Create fail`);
+      if (error.code)
+        return PrismaErrorFormatter.handle(error, result.data, ["name", "description"]);
 
-	static async update(roleId, formData) {
-		const result = await this.execute(formData);
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to create Role"] },
+        data: result.data,
+      };
+    }
+  }
 
-		if (!result.success) return result;
+  static async update(roleId, formData) {
+    const result = await this.execute(formData);
 
-		try {
-			Logger.debug("Updating role", { roleId, data: result.data });
-			await RoleService.updateResource(roleId, result.data);
+    if (!result.success) return result;
 
-			revalidatePath("/roles", "page");
-			return {
-				data: result.data,
-				success: true,
-				type: "success",
-			};
-		} catch (error) {
-			Logger.error(error.message, "role update failed:");
-			if (error.code)
-				return PrismaErrorFormatter.handle(error, result.data, [
-					"name",
-					"description",
-				]);
+    try {
+      Logger.debug("Updating role", { roleId, data: result.data });
+      await RoleService.updateResource(roleId, result.data);
 
-			return {
-				success: false,
-				type: "fail",
-				errors: { _form: ["Failed to update role"] },
-				data: result.data,
-			};
-		}
-	}
+      revalidatePath("/roles", "page");
+      return {
+        data: result.data,
+        success: true,
+        type: "success",
+      };
+    } catch (error) {
+      Logger.error(error.message, "role update failed:");
+      if (error.code)
+        return PrismaErrorFormatter.handle(error, result.data, ["name", "description"]);
 
-	static async delete(roleId) {
-		try {
-			Logger.debug("Deleting role", { roleId });
-			await RoleService.deleteResource(roleId);
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to update role"] },
+        data: result.data,
+      };
+    }
+  }
 
-			revalidatePath("/roles", "page");
-			return {
-				success: true,
-				type: "success",
-				message: "Role successfully deleted",
-			};
-		} catch (error) {
-			Logger.error(error.message, "role deletion failed:");
-			return {
-				success: false,
-				type: "fail",
-				errors: { _form: ["Failed to delete role"] },
-			};
-		}
-	}
+  static async delete(roleId) {
+    try {
+      Logger.debug("Deleting role", { roleId });
+      await RoleService.deleteResource(roleId);
+
+      revalidatePath("/roles", "page");
+      return {
+        success: true,
+        type: "success",
+        message: "Role successfully deleted",
+      };
+    } catch (error) {
+      Logger.error(error.message, "role deletion failed:");
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to delete role"] },
+      };
+    }
+  }
 }
 
 export async function createRole(prevState, formData) {
-	return await RoleActions.create(formData);
+  return await RoleActions.create(formData);
 }
 
 export async function updateRoleAction(prevState, { roleId, formData }) {
-	return await RoleActions.update(roleId, formData);
+  return await RoleActions.update(roleId, formData);
 }
 
 export async function deleteRoleAction(prevState, roleId) {
-	return await RoleActions.delete(roleId);
+  return await RoleActions.delete(roleId);
 }

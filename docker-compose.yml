@@ -7,7 +7,8 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://mazumder:1234@team-docs-postgres:5432/team-docs?schema=public
+      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKVlJNUTAzNTAxWEhYSjI4UjhYNU1KNk0iLCJ0ZW5hbnRfaWQiOiIzZGFiODExOTI1MGFhYmMwN2E4Y2M0MDMyYTUzYjYyYjc1NGNjZTY5Zjg0OTQ4MDRhMjBiZGRkN2VhYTU4YmM3IiwiaW50ZXJuYWxfc2VjcmV0IjoiZmU3ZmU5OGMtZjNhNi00NTNhLThlYjctYmQ5NmQwZGIwMmUyIn0.Oxu3Ta_FSPHy2wRpmOnH5omVf-grLp4wD1B5hQAxU3g
+      - OPTIMIZE_API_KEY=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJ3aWQiOiJjbTY1OXA1azYwNzM2YjNyNTQ5YTN6dXE2IiwidWlkIjoiY202NTlwNTd5MDdjZjZzZmE4MDA4MHhlNSIsInRzIjoxNzQ3ODA3NjgwMDE2fQ.0wYGGTTyEmTjNxJVrjIAoSERdIocUYUxeqzKPCQT5jeYFEsOxDU2TOcdzXs2F6vh4HTmgwsi-Idzp9ahFQ6OCQ
       - NEXTAUTH_URL=http://localhost:3000
       - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
       - NODE_ENV=development
@@ -18,10 +19,29 @@ services:
       - /app/.next
     ports:
       - "3000:3000"
-    depends_on:
-      - team-docs-postgres
-    networks:
-      - postgres-network
+    # depends_on:
+    #   - team-docs-postgres
+    # networks:
+    #   - postgres-network
+
+  # Prisma Studio
+  prisma-studio:
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKVlJNUTAzNTAxWEhYSjI4UjhYNU1KNk0iLCJ0ZW5hbnRfaWQiOiIzZGFiODExOTI1MGFhYmMwN2E4Y2M0MDMyYTUzYjYyYjc1NGNjZTY5Zjg0OTQ4MDRhMjBiZGRkN2VhYTU4YmM3IiwiaW50ZXJuYWxfc2VjcmV0IjoiZmU3ZmU5OGMtZjNhNi00NTNhLThlYjctYmQ5NmQwZGIwMmUyIn0.Oxu3Ta_FSPHy2wRpmOnH5omVf-grLp4wD1B5hQAxU3g
+    volumes:
+      - .:/app
+    ports:
+      - "5557:5555"
+    command:
+      ["bunx", "prisma", "studio", "--port", "5555", "--hostname", "0.0.0.0", "--browser", "none"]
+    # depends_on:
+    #   - team-docs-postgres
+    # networks:
+    #   - postgres-network
 
   # Production environment
   team-docs-prod:
@@ -31,38 +51,38 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://mazumder:1234@team-docs-postgres:5432/team-docs?schema=public
+      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKVlJNUTAzNTAxWEhYSjI4UjhYNU1KNk0iLCJ0ZW5hbnRfaWQiOiIzZGFiODExOTI1MGFhYmMwN2E4Y2M0MDMyYTUzYjYyYjc1NGNjZTY5Zjg0OTQ4MDRhMjBiZGRkN2VhYTU4YmM3IiwiaW50ZXJuYWxfc2VjcmV0IjoiZmU3ZmU5OGMtZjNhNi00NTNhLThlYjctYmQ5NmQwZGIwMmUyIn0.Oxu3Ta_FSPHy2wRpmOnH5omVf-grLp4wD1B5hQAxU3g
+      - OPTIMIZE_API_KEY=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJ3aWQiOiJjbTY1OXA1azYwNzM2YjNyNTQ5YTN6dXE2IiwidWlkIjoiY202NTlwNTd5MDdjZjZzZmE4MDA4MHhlNSIsInRzIjoxNzQ3ODA3NjgwMDE2fQ.0wYGGTTyEmTjNxJVrjIAoSERdIocUYUxeqzKPCQT5jeYFEsOxDU2TOcdzXs2F6vh4HTmgwsi-Idzp9ahFQ6OCQ
       - NEXTAUTH_URL=http://localhost:3001
       - NEXTAUTH_TRUST_HOST=true
       - NEXTAUTH_TRUST_HOST=http://localhost:3001
       - AUTH_TRUST_HOST=http://localhost:3001
       - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
       - NODE_ENV=production
-      - NEXT_PUBLIC_NODE_ENV=production     # Required for client-side production detection
+      - NEXT_PUBLIC_NODE_ENV=production # Required for client-side production detection
     ports:
       - "3001:3001"
-    depends_on:
-      - team-docs-postgres
-    networks:
-      - postgres-network
+    # depends_on:
+    #   - team-docs-postgres
+    # networks:
+    #   - postgres-network
+#   team-docs-postgres:
+#     image: postgres:16
+#     restart: unless-stopped
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_USER: mazumder
+#       POSTGRES_PASSWORD: 1234
+#       POSTGRES_DB: team-docs
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - postgres-network
 
-  team-docs-postgres:
-    image: postgres:16
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: mazumder
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: team-docs
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - postgres-network
+# networks:
+#   postgres-network:
+#     driver: bridge
 
-networks:
-  postgres-network:
-    driver: bridge
-
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:
