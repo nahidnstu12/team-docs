@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import Logger from "@/lib/Logger";
 import ProjectEditDrawer from "./ProjectEditDrawer";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import TablePagination from "@/components/shared/TablePagination";
 
 export default function ProjectListings({
 	hasProjects,
@@ -30,6 +31,8 @@ export default function ProjectListings({
 	const router = useRouter();
 	const {
 		data: projects,
+		totalItems,
+		pageSize,
 		fetchError,
 		showSkeleton,
 	} = useProjects(startFetchProjects, setStartFetchProjects);
@@ -157,6 +160,15 @@ export default function ProjectListings({
 					</TableBody>
 				</Table>
 			</section>
+
+			{/* Pagination */}
+			{hasProjects && !showSkeleton && projects.length > 0 && (
+				<TablePagination
+					totalItems={totalItems}
+					itemsPerPage={pageSize}
+					className="mt-6 mb-8"
+				/>
+			)}
 		</section>
 	);
 }

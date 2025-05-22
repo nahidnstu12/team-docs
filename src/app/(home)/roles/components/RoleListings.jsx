@@ -19,6 +19,7 @@ import DrawerLoading from "@/components/loading/DialogLoading";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import RoleEditDialog from "./RoleEditDialog";
 import DeleteRoleDialog from "./DeleteRoleDialog";
+import TablePagination from "@/components/shared/TablePagination";
 
 const LoadRolePermissionDialogLazy = dynamic(
   () => import("@/app/(home)/role-permission-assign/RolePermissionDialog"),
@@ -36,6 +37,8 @@ export default function RoleListings({
 }) {
   const {
     data: allRoles,
+    totalItems,
+    pageSize,
     fetchError,
     showSkeleton,
     selectedRoleId,
@@ -156,6 +159,15 @@ export default function RoleListings({
           </TableBody>
         </Table>
       </div>
+      
+      {/* Pagination */}
+      {hasRoles && !showSkeleton && allRoles.length > 0 && (
+        <TablePagination
+          totalItems={totalItems}
+          itemsPerPage={pageSize}
+          className="mb-8"
+        />
+      )}
     </>
   );
 }

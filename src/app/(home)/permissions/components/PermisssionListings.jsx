@@ -10,14 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
-import { getAllPermissionsFn } from "../actions/getAllPermissions";
 import TableLoading from "@/components/loading/TableLoading";
-import { useStartFetch } from "@/hooks/useStartFetch";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import PermissionEditDialog from "./PermissionEditDialog";
 import DeletePermissionDialog from "./DeletePermissionDialog";
+import TablePagination from "@/components/shared/TablePagination";
+import { usePermissions } from "../hooks/usePermissions";
 import Logger from "@/lib/Logger";
 
 export default function PermissionLisitngs({
@@ -38,9 +38,11 @@ export default function PermissionLisitngs({
 
   const {
     data: permissions,
+    totalItems,
+    pageSize,
     showSkeleton,
     fetchError,
-  } = useStartFetch(getAllPermissionsFn, startFetchPermissions, setStartFetchPermissions);
+  } = usePermissions(startFetchPermissions, setStartFetchPermissions);
 
   if (fetchError)
     return <ClientErrorUI errorMessage={fetchError} retry={setStartFetchPermissions} />;
@@ -127,6 +129,15 @@ export default function PermissionLisitngs({
           </TableBody>
         </Table>
       </div>
+      
+      {/* Pagination */}
+      {hasPermission && !showSkeleton && permissions.length > 0 && (
+        <TablePagination
+          totalItems={totalItems}
+          itemsPerPage={pageSize}
+          className="mb-8"
+        />
+      )}
     </>
   );
 }

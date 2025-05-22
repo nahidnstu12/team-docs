@@ -1,6 +1,6 @@
 import { PrismaClient } from "@/generated/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { withOptimize } from "@prisma/extension-optimize";
+// import { withOptimize } from "@prisma/extension-optimize";
 
 // Create a global reference to reuse Prisma client
 const globalForPrisma = global;
@@ -12,24 +12,28 @@ let prisma;
 const basePrisma = globalForPrisma.prisma || new PrismaClient();
 
 // Apply extensions conditionally
-if (process.env.DATABASE_URL?.startsWith("prisma+postgres://") && process.env.OPTIMIZE_API_KEY) {
+if (process.env.DATABASE_URL?.startsWith("prisma+postgres://")) {
   // Use both Accelerate and Optimize when both are configured
-  prisma = basePrisma.$extends(withAccelerate()).$extends(
-    withOptimize({
-      apiKey: process.env.OPTIMIZE_API_KEY,
-    })
-  );
-} else if (process.env.DATABASE_URL?.startsWith("prisma+postgres://")) {
-  // Use only Accelerate
   prisma = basePrisma.$extends(withAccelerate());
-} else if (process.env.OPTIMIZE_API_KEY) {
-  // Use only Optimize
-  prisma = basePrisma.$extends(
-    withOptimize({
-      apiKey: process.env.OPTIMIZE_API_KEY,
-    })
-  );
-} else {
+  //   .$extends(
+  //   withOptimize({
+  //     apiKey: process.env.OPTIMIZE_API_KEY,
+  //   })
+  // );
+}
+// else if (process.env.DATABASE_URL?.startsWith("prisma+postgres://")) {
+//   // Use only Accelerate
+//   prisma = basePrisma.$extends(withAccelerate());
+// }
+// else if (process.env.OPTIMIZE_API_KEY) {
+//   // Use only Optimize
+//   prisma = basePrisma.$extends(
+//     withOptimize({
+//       apiKey: process.env.OPTIMIZE_API_KEY,
+//     })
+//   );
+// }
+else {
   // Use regular Prisma client without extensions
   prisma = basePrisma;
 }

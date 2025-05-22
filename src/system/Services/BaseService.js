@@ -28,12 +28,31 @@ export class BaseService {
     }
   }
 
-  static async getAllResources({ where = {}, orderBy = { createdAt: "desc" } }) {
+  static async countResources({ where = {} }) {
     try {
-      const allResources = await this.model.findMany({
+      const count = await this.model.count({ where });
+      return count;
+    } catch (error) {
+      Logger.error(error.message, "failed countResources on BaseService");
+      return 0;
+    }
+  }
+  
+  static async getAllResources({ where = {}, orderBy = { createdAt: "desc" }, pagination = null }) {
+    try {
+      const queryOptions = {
         ...(where && { where }),
         orderBy,
-      });
+      };
+      
+      // Add pagination if provided
+      if (pagination) {
+        const { skip, take } = pagination;
+        queryOptions.skip = skip;
+        queryOptions.take = take;
+      }
+      
+      const allResources = await this.model.findMany(queryOptions);
 
       if (this.dto && typeof this.dto.toCollection === "function") {
         return this.dto.toCollection(allResources);
@@ -42,6 +61,7 @@ export class BaseService {
       return allResources;
     } catch (error) {
       Logger.error(error.message, "failed getAllResources on BaseService");
+      return [];
     }
   }
 }
