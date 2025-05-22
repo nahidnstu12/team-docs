@@ -46,17 +46,17 @@ export default function PermissionLisitngs({
     showSkeleton,
     fetchError,
   } = usePermissions(startFetchPermissions, setStartFetchPermissions);
-  
+
   // Function to render sort indicator icons
   const renderSortIcon = (column) => {
     if (column === sortBy) {
       return sortOrder === "asc" ? (
-        <ChevronUp className="ml-2 h-4 w-4" />
+        <ChevronUp className="ml-2 w-4 h-4" />
       ) : (
-        <ChevronDown className="ml-2 h-4 w-4" />
+        <ChevronDown className="ml-2 w-4 h-4" />
       );
     }
-    return <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />;
+    return <ArrowUpDown className="ml-2 w-4 h-4 opacity-50" />;
   };
 
   if (fetchError)
@@ -82,11 +82,11 @@ export default function PermissionLisitngs({
           </CreateButtonShared>
         </div>
       </section>
-      <div className="overflow-auto rounded-2xl border shadow-lg bg-background">
-        <Table>
+      <div className="overflow-auto relative rounded-2xl border shadow-lg bg-background">
+        <Table className="overflow-scroll">
           <TableHeader className="sticky top-0 z-10 bg-muted">
             <TableRow className="text-lg font-semibold tracking-wide">
-              <TableHead 
+              <TableHead
                 className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
                 onClick={() => handleSort("name")}
               >
@@ -95,7 +95,7 @@ export default function PermissionLisitngs({
                   {renderSortIcon("name")}
                 </div>
               </TableHead>
-              <TableHead 
+              <TableHead
                 className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
                 onClick={() => handleSort("scope")}
               >
@@ -160,14 +160,10 @@ export default function PermissionLisitngs({
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Pagination */}
       {hasPermission && !showSkeleton && permissions.length > 0 && (
-        <TablePagination
-          totalItems={totalItems}
-          itemsPerPage={pageSize}
-          className="mb-8"
-        />
+        <TablePagination totalItems={totalItems} itemsPerPage={pageSize} className="mb-8" />
       )}
     </>
   );

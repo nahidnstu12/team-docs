@@ -95,90 +95,95 @@ export default function ProjectListings({
 
       {/* Project List */}
       <section className="mt-8 space-y-4">
-        <Table>
-          <TableHeader className="sticky top-0 z-10 bg-muted">
-            <TableRow className="text-lg font-semibold tracking-wide">
-              <TableHead
-                className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
-                onClick={() => handleSort("name")}
-              >
-                <div className="flex items-center">
-                  Name
-                  {renderSortIcon("name")}
-                </div>
-              </TableHead>
-              <TableHead className="w-[300px] px-6 py-4">Description</TableHead>
-              <TableHead className="w-[320px] text-center px-6 py-4">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {/* If no roles exist */}
-            {!hasProjects ? (
-              <TableRow>
-                <TableCell colSpan={4} className="py-10 text-lg text-center text-muted-foreground">
-                  No projects found.
-                </TableCell>
-              </TableRow>
-            ) : showSkeleton || projects.length === 0 ? (
-              /* If still loading */
-              <ProjectTableLoading />
-            ) : (
-              /* If roles are loaded */
-              projects.map((project) => (
-                <TableRow
-                  key={project.id}
-                  className="transition-colors duration-200 hover:bg-muted"
+        <div className="overflow-auto relative rounded-2xl border shadow-lg bg-background">
+          <Table className="overflow-scroll">
+            <TableHeader className="sticky top-0 z-10 bg-muted">
+              <TableRow className="text-lg font-semibold tracking-wide">
+                <TableHead
+                  className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                  onClick={() => handleSort("name")}
                 >
-                  {/* Your table cells content */}
-                  <TableCell className="px-6 py-5 text-base font-semibold">
-                    {project.name}
-                  </TableCell>
-                  <TableCell className="px-6 py-5 text-base text-muted-foreground">
-                    {project.description || (
-                      <span className="text-sm italic text-gray-400">No description</span>
-                    )}
-                  </TableCell>
+                  <div className="flex items-center">
+                    Name
+                    {renderSortIcon("name")}
+                  </div>
+                </TableHead>
+                <TableHead className="w-[300px] px-6 py-4">Description</TableHead>
+                <TableHead className="w-[320px] text-center px-6 py-4">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
 
-                  <TableCell className="flex gap-3 justify-center items-center px-6 py-5">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex gap-1 items-center cursor-pointer"
-                      onClick={() => {
-                        router.push(`/projects/${project.slug}/editor`);
-                        router.refresh();
-                      }}
-                    >
-                      <LayoutTemplate className="w-4 h-4" /> View
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex gap-1 items-center bg-yellow-100 cursor-pointer"
-                      onClick={() => handleEditClick(project)}
-                    >
-                      <Edit className="w-4 h-4" /> Edit
-                    </Button>
-                    <Link href={`/projects/${project.slug}/assign-dev`}>
+            <TableBody>
+              {/* If no roles exist */}
+              {!hasProjects ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    className="py-10 text-lg text-center text-muted-foreground"
+                  >
+                    No projects found.
+                  </TableCell>
+                </TableRow>
+              ) : showSkeleton || projects.length === 0 ? (
+                /* If still loading */
+                <ProjectTableLoading />
+              ) : (
+                /* If roles are loaded */
+                projects.map((project) => (
+                  <TableRow
+                    key={project.id}
+                    className="transition-colors duration-200 hover:bg-muted"
+                  >
+                    {/* Your table cells content */}
+                    <TableCell className="px-6 py-5 text-base font-semibold">
+                      {project.name}
+                    </TableCell>
+                    <TableCell className="px-6 py-5 text-base text-muted-foreground">
+                      {project.description || (
+                        <span className="text-sm italic text-gray-400">No description</span>
+                      )}
+                    </TableCell>
+
+                    <TableCell className="flex gap-3 justify-center items-center px-6 py-5">
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex gap-1 items-center bg-green-100 cursor-pointer"
+                        className="flex gap-1 items-center cursor-pointer"
+                        onClick={() => {
+                          router.push(`/projects/${project.slug}/editor`);
+                          router.refresh();
+                        }}
                       >
-                        <UsersRound className="w-4 h-4" /> Assign Dev
+                        <LayoutTemplate className="w-4 h-4" /> View
                       </Button>
-                    </Link>
-                    <DeleteConfirmationDialog
-                      project={project}
-                      setStartFetchProjects={setStartFetchProjects}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex gap-1 items-center bg-yellow-100 cursor-pointer"
+                        onClick={() => handleEditClick(project)}
+                      >
+                        <Edit className="w-4 h-4" /> Edit
+                      </Button>
+                      <Link href={`/projects/${project.slug}/assign-dev`}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex gap-1 items-center bg-green-100 cursor-pointer"
+                        >
+                          <UsersRound className="w-4 h-4" /> Assign Dev
+                        </Button>
+                      </Link>
+                      <DeleteConfirmationDialog
+                        project={project}
+                        setStartFetchProjects={setStartFetchProjects}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </section>
 
       {/* Pagination */}

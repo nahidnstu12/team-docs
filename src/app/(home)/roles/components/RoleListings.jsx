@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -9,11 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { 
-  ArrowUpDown, 
-  ChevronDown, 
-  ChevronUp 
-} from "lucide-react";
+import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -53,17 +49,17 @@ export default function RoleListings({
     openPermissionAssignDialog,
     setOpenPermissionAssignDialog,
   } = useRoles(shouldStartFetchRoles, setShouldStartFetchRoles);
-  
+
   // Function to render sort indicator icons
   const renderSortIcon = (column) => {
     if (column === sortBy) {
       return sortOrder === "asc" ? (
-        <ChevronUp className="ml-2 h-4 w-4" />
+        <ChevronUp className="ml-2 w-4 h-4" />
       ) : (
-        <ChevronDown className="ml-2 h-4 w-4" />
+        <ChevronDown className="ml-2 w-4 h-4" />
       );
     }
-    return <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />;
+    return <ArrowUpDown className="ml-2 w-4 h-4 opacity-50" />;
   };
 
   // State for editing role
@@ -96,11 +92,11 @@ export default function RoleListings({
           <CreateButtonShared onClick={() => setIsDialogOpen(true)}>Create Role</CreateButtonShared>
         </div>
       </section>
-      <div className="overflow-auto rounded-2xl border shadow-lg bg-background">
-        <Table>
+      <div className="overflow-auto relative rounded-2xl border shadow-lg bg-background">
+        <Table className="overflow-scroll">
           <TableHeader className="sticky top-0 z-10 bg-muted">
             <TableRow className="text-lg font-semibold tracking-wide">
-              <TableHead 
+              <TableHead
                 className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
                 onClick={() => handleSort("name")}
               >
@@ -110,11 +106,11 @@ export default function RoleListings({
                 </div>
               </TableHead>
               <TableHead className="w-[300px] px-6 py-4">Description</TableHead>
-              <TableHead 
+              <TableHead
                 className="w-[100px] text-center px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
                 onClick={() => handleSort("isSystem")}
               >
-                <div className="flex items-center justify-center">
+                <div className="flex justify-center items-center">
                   System?
                   {renderSortIcon("isSystem")}
                 </div>
@@ -195,14 +191,10 @@ export default function RoleListings({
           </TableBody>
         </Table>
       </div>
-      
+
       {/* Pagination */}
       {hasRoles && !showSkeleton && allRoles.length > 0 && (
-        <TablePagination
-          totalItems={totalItems}
-          itemsPerPage={pageSize}
-          className="mb-8"
-        />
+        <TablePagination totalItems={totalItems} itemsPerPage={pageSize} className="mb-8" />
       )}
     </>
   );
