@@ -5,15 +5,22 @@ import { Session } from "@/lib/Session";
 import { PermissionServices } from "@/system/Services/PermissionServices";
 
 /**
- * Server action to fetch all permissions with pagination support
- * @param {Object} options - Pagination options
+ * Server action to fetch all permissions with pagination and sorting support
+ * @param {Object} options - Pagination and sorting options
  * @param {number} options.page - Current page number (1-indexed)
  * @param {number} options.pageSize - Number of items per page
- * @returns {Promise<{data: Array, totalItems: number, totalPages: number}>}
+ * @param {string} options.sortBy - Field to sort by (e.g., 'name', 'scope')
+ * @param {string} options.sortOrder - Sort direction ('asc' or 'desc')
+ * @returns {Promise<{data: Array, totalItems: number, totalPages: number, sortBy: string, sortOrder: string}>}
  */
 export async function getAllPermissionsFn(options = {}) {
 	const session = await Session.getCurrentUser();
-	const { page = 1, pageSize = 10 } = options;
+	const { 
+		page = 1, 
+		pageSize = 10,
+		sortBy = 'name',
+		sortOrder = 'asc'
+	} = options;
 
 	const whereClause = { ownerId: session.id };
 
@@ -25,10 +32,14 @@ export async function getAllPermissionsFn(options = {}) {
 	const take = pageSize;
 	const totalPages = Math.ceil(totalItems / pageSize);
 
-	// Get paginated data
+	// Prepare sort options
+	const orderBy = { [sortBy]: sortOrder };
+
+	// Get paginated and sorted data
 	const permissions = await PermissionServices.getAllResources({ 
 		where: whereClause,
-		pagination: { skip, take }
+		pagination: { skip, take },
+		orderBy
 	});
 
 	return {
@@ -36,6 +47,8 @@ export async function getAllPermissionsFn(options = {}) {
 		totalItems,
 		totalPages,
 		currentPage: page,
-		pageSize
+		pageSize,
+		sortBy,
+		sortOrder
 	};
 }

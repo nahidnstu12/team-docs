@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import TableLoading from "@/components/loading/TableLoading";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
@@ -40,9 +40,24 @@ export default function PermissionLisitngs({
     data: permissions,
     totalItems,
     pageSize,
+    sortBy,
+    sortOrder,
+    handleSort,
     showSkeleton,
     fetchError,
   } = usePermissions(startFetchPermissions, setStartFetchPermissions);
+  
+  // Function to render sort indicator icons
+  const renderSortIcon = (column) => {
+    if (column === sortBy) {
+      return sortOrder === "asc" ? (
+        <ChevronUp className="ml-2 h-4 w-4" />
+      ) : (
+        <ChevronDown className="ml-2 h-4 w-4" />
+      );
+    }
+    return <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />;
+  };
 
   if (fetchError)
     return <ClientErrorUI errorMessage={fetchError} retry={setStartFetchPermissions} />;
@@ -71,8 +86,24 @@ export default function PermissionLisitngs({
         <Table>
           <TableHeader className="sticky top-0 z-10 bg-muted">
             <TableRow className="text-lg font-semibold tracking-wide">
-              <TableHead className="w-[160px] px-6 py-4">Name</TableHead>
-              <TableHead className="w-[160px] px-6 py-4">Scope</TableHead>
+              <TableHead 
+                className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                onClick={() => handleSort("name")}
+              >
+                <div className="flex items-center">
+                  Name
+                  {renderSortIcon("name")}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                onClick={() => handleSort("scope")}
+              >
+                <div className="flex items-center">
+                  Scope
+                  {renderSortIcon("scope")}
+                </div>
+              </TableHead>
               <TableHead className="w-[480px] px-6 py-4">Description</TableHead>
               <TableHead className="w-[320px] text-center px-6 py-4">Actions</TableHead>
             </TableRow>

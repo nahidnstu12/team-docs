@@ -4,15 +4,22 @@ import { Session } from "@/lib/Session";
 import { ProjectService } from "@/system/Services/ProjectServices";
 
 /**
- * Server action to fetch all projects with pagination support
- * @param {Object} options - Pagination options
+ * Server action to fetch all projects with pagination and sorting support
+ * @param {Object} options - Pagination and sorting options
  * @param {number} options.page - Current page number (1-indexed)
  * @param {number} options.pageSize - Number of items per page
- * @returns {Promise<{data: Array, totalItems: number, totalPages: number}>}
+ * @param {string} options.sortBy - Field to sort by (currently only 'name')
+ * @param {string} options.sortOrder - Sort direction ('asc' or 'desc')
+ * @returns {Promise<{data: Array, totalItems: number, totalPages: number, sortBy: string, sortOrder: string}>}
  */
 export async function getAllProjectsFn(options = {}) {
 	const workspaceId = await Session.getWorkspaceIdForUser();
-	const { page = 1, pageSize = 10 } = options;
+	const { 
+		page = 1, 
+		pageSize = 10,
+		sortBy = 'name',
+		sortOrder = 'asc'
+	} = options;
 
 	const whereClause = { workspaceId };
 
@@ -24,10 +31,14 @@ export async function getAllProjectsFn(options = {}) {
 	const take = pageSize;
 	const totalPages = Math.ceil(totalItems / pageSize);
 
-	// Get paginated data
+	// Prepare sort options
+	const orderBy = { [sortBy]: sortOrder };
+
+	// Get paginated and sorted data
 	const projects = await ProjectService.getAllResources({ 
 		where: whereClause,
-		pagination: { skip, take }
+		pagination: { skip, take },
+		orderBy
 	});
 
 	return {
@@ -35,6 +46,8 @@ export async function getAllProjectsFn(options = {}) {
 		totalItems,
 		totalPages,
 		currentPage: page,
-		pageSize
+		pageSize,
+		sortBy,
+		sortOrder
 	};
 }

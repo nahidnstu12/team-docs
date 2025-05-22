@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
+import { 
   Table,
   TableBody,
   TableCell,
@@ -9,6 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { 
+  ArrowUpDown, 
+  ChevronDown, 
+  ChevronUp 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Pencil } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -39,12 +44,27 @@ export default function RoleListings({
     data: allRoles,
     totalItems,
     pageSize,
+    sortBy,
+    sortOrder,
+    handleSort,
     fetchError,
     showSkeleton,
     selectedRoleId,
     openPermissionAssignDialog,
     setOpenPermissionAssignDialog,
   } = useRoles(shouldStartFetchRoles, setShouldStartFetchRoles);
+  
+  // Function to render sort indicator icons
+  const renderSortIcon = (column) => {
+    if (column === sortBy) {
+      return sortOrder === "asc" ? (
+        <ChevronUp className="ml-2 h-4 w-4" />
+      ) : (
+        <ChevronDown className="ml-2 h-4 w-4" />
+      );
+    }
+    return <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />;
+  };
 
   // State for editing role
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -80,9 +100,25 @@ export default function RoleListings({
         <Table>
           <TableHeader className="sticky top-0 z-10 bg-muted">
             <TableRow className="text-lg font-semibold tracking-wide">
-              <TableHead className="w-[160px] px-6 py-4">Name</TableHead>
+              <TableHead 
+                className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                onClick={() => handleSort("name")}
+              >
+                <div className="flex items-center">
+                  Name
+                  {renderSortIcon("name")}
+                </div>
+              </TableHead>
               <TableHead className="w-[300px] px-6 py-4">Description</TableHead>
-              <TableHead className="w-[100px] text-center px-6 py-4">System?</TableHead>
+              <TableHead 
+                className="w-[100px] text-center px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+                onClick={() => handleSort("isSystem")}
+              >
+                <div className="flex items-center justify-center">
+                  System?
+                  {renderSortIcon("isSystem")}
+                </div>
+              </TableHead>
               <TableHead className="w-[320px] text-center px-6 py-4">Actions</TableHead>
             </TableRow>
           </TableHeader>
