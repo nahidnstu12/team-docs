@@ -1,5 +1,4 @@
 services:
-  # Development environment
   team-docs-local:
     build:
       context: .
@@ -23,26 +22,18 @@ services:
     # networks:
     #   - postgres-network
 
-  # Prisma Studio
   prisma-studio:
-    build:
-      context: .
+    image: oven/bun:1.2.14-alpine
+    working_dir: /app
     env_file:
       - .env
-    environment:
-      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKVlJNUTAzNTAxWEhYSjI4UjhYNU1KNk0iLCJ0ZW5hbnRfaWQiOiIzZGFiODExOTI1MGFhYmMwN2E4Y2M0MDMyYTUzYjYyYjc1NGNjZTY5Zjg0OTQ4MDRhMjBiZGRkN2VhYTU4YmM3IiwiaW50ZXJuYWxfc2VjcmV0IjoiZmU3ZmU5OGMtZjNhNi00NTNhLThlYjctYmQ5NmQwZGIwMmUyIn0.Oxu3Ta_FSPHy2wRpmOnH5omVf-grLp4wD1B5hQAxU3g
     volumes:
       - .:/app
     ports:
       - "5555:5555"
     command:
       ["bunx", "prisma", "studio", "--port", "5555", "--hostname", "0.0.0.0", "--browser", "none"]
-    # depends_on:
-    #   - team-docs-postgres
-    # networks:
-    #   - postgres-network
 
-  # Production environment
   team-docs-prod:
     build:
       context: .

@@ -5,8 +5,5 @@ docker-compose.yml
 .gitignore
 .vscode
 *.log
-*.env
-Dockerfile*
-docker-compose*
-
-# We want to COPY the node_modules folder to Docker
+.env
+node_modules
