@@ -27,11 +27,14 @@ deploy:
 # -----------------------
 
 # Run development environment
-dev-docker:
-	docker compose up --build team-docs-local prisma-studio
+dev:
+	docker compose up team-docs-local prisma-studio
+
+dev-build:
+	docker compose build team-docs-local
 
 # Run production environment
-prod-docker:
+prod-build:
 	docker compose up --build team-docs-prod prisma-studio
 
 # View Postgres logs
