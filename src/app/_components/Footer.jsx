@@ -12,22 +12,7 @@ export default function Footer() {
               <span className="text-xl font-bold">Team Docs</span>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
-            <div>
-              <h3 className="mb-4 font-semibold">Product</h3>
-              <ul className="space-y-2">
-                {productLinks.map((link, index) => (
-                  <li key={index}>
-                    <Link
-                      href={link.href}
-                      className="transition-colors text-muted-foreground hover:text-foreground"
-                    >
-                      {link.text}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="grid grid-cols-2 gap-10">
             <div>
               <h3 className="mb-4 font-semibold">Community</h3>
               <ul className="space-y-2">
@@ -58,21 +43,6 @@ export default function Footer() {
                 ))}
               </ul>
             </div>
-            <div>
-              <h3 className="mb-4 font-semibold">Compare</h3>
-              <ul className="space-y-2">
-                {compareLinks.map((link, index) => (
-                  <li key={index}>
-                    <Link
-                      href={link.href}
-                      className="transition-colors text-muted-foreground hover:text-foreground"
-                    >
-                      {link.text}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
         <div className="pt-8 mt-16 text-sm border-t border-muted text-muted-foreground">
@@ -83,31 +53,14 @@ export default function Footer() {
   );
 }
 
-const productLinks = [
-  { text: "Guide", href: "/guide" },
-  { text: "Changelog", href: "/changelog" },
-  { text: "Integrations", href: "/integrations" },
-  { text: "Download", href: "/download" },
-  { text: "Pricing", href: "/pricing" },
-  { text: "Status", href: "/status" },
-];
-
 const communityLinks = [
   { text: "Contact Us", href: "/contact" },
-  { text: "GitHub", href: "https://github.com/teamdocs" },
-  { text: "Discuss", href: "/discuss" },
-  { text: "Twitter", href: "https://twitter.com/teamdocs" },
+  { text: "Email", href: "mailto:contact@teamdocs.com" },
+  { text: "WhatsApp", href: "https://wa.me/1234567890" },
+  { text: "Telegram", href: "https://t.me/teamdocs" },
 ];
 
 const companyLinks = [
   { text: "About", href: "/about" },
-  { text: "Privacy", href: "/privacy" },
   { text: "Terms of Use", href: "/terms" },
-  { text: "DPA", href: "/dpa" },
-  { text: "Climate Impact", href: "/climate" },
-];
-
-const compareLinks = [
-  { text: "Confluence", href: "/compare/confluence" },
-  { text: "Google Docs", href: "/compare/google-docs" },
 ];

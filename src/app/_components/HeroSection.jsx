@@ -5,7 +5,7 @@ import Image from "next/image";
 import projectEditorUI from "./../../../assets/project-editor.png";
 import Link from "next/link";
 
-export default function HeroSection() {
+export default function HeroSection({ session }) {
   return (
     <section className="container px-4 py-16 mx-auto md:py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -35,7 +35,6 @@ export default function HeroSection() {
           <Button size="lg" asChild>
             <Link href="/auth/signup">Get Started for Free →</Link>
           </Button>
-          <p className="mt-3 text-muted-foreground">30-day trial, no credit card required</p>
         </motion.div>
       </div>
       <motion.div
