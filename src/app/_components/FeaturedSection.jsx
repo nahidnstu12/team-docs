@@ -51,24 +51,9 @@ const features = [
       "Manage the knowledge base with read & write permissions, user groups, guest users, public sharing, and more…",
   },
   {
-    title: "20+ Integrations",
-    description:
-      "Simple integrations into tools you use every day like Slack, Figma, Loom and many more. Can't find the integration you need? There is an open API too.",
-  },
-  {
-    title: "In your language",
-    description:
-      "Team Docs has RTL support and includes translations for 20 languages including French, Spanish, German, Korean, and Chinese.",
-  },
-  {
     title: "Built in public",
     description:
       "Team Docs is updated with new features and fixes regularly, checkout our public changelog to see how things are progressing!",
-  },
-  {
-    title: "Open source",
-    description:
-      "Team Docs' source code is public, and development is completed in the open. Prefer to host on your own infrastructure? No problem.",
   },
   {
     title: "Customizable",

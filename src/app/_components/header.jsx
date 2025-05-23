@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Settings } from "lucide-react";
 import { signOut } from "next-auth/react";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 /**
  * Header component that displays navigation and auth state
@@ -88,14 +89,16 @@ export default function Header({ session }) {
                 </div>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings" className="flex w-full cursor-pointer">
-                    <Settings className="mr-2 w-4 h-4" />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
+              <ComingSoonWrapper enabled>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" className="flex w-full cursor-pointer">
+                      <Settings className="mr-2 w-4 h-4" />
+                      <span>Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </ComingSoonWrapper>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer text-destructive focus:text-destructive"
@@ -108,14 +111,8 @@ export default function Header({ session }) {
           </DropdownMenu>
         ) : (
           <>
-            <Link
-              href="/auth/signin"
-              className="font-medium text-muted-foreground hover:text-foreground"
-            >
-              Sign In
-            </Link>
-            <Button asChild>
-              <Link href="/auth/signup">Sign Up</Link>
+            <Button>
+              <Link href="/auth/signin">Sign In</Link>
             </Button>
           </>
         )}

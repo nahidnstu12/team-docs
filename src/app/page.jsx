@@ -12,7 +12,7 @@ export default async function LandingPage() {
       <Header session={session} />
       <HeroSection session={session} />
       <FeaturedSection />
-      <CTASection />
+      {/* <CTASection /> */}
       <Footer />
     </main>
   );
