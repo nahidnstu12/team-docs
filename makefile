@@ -10,7 +10,7 @@ push:
 	docker compose exec team-docs-local bunx prisma db push
 
 # Generate Prisma client
-local_generate:
+generate:
 	docker compose exec team-docs-local bunx prisma generate
 
 # Reset DB (DANGEROUS)
@@ -45,7 +45,7 @@ build-prod:
 up:
 	docker compose up
 
-down: 
+stop: 
 	docker compose down
 
 build: 
