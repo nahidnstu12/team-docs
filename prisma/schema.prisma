@@ -17,6 +17,7 @@ model User {
   email       String   @unique
   password    String
   isActive    Boolean  @default(true)
+  status      String   @default("inactive") // New field for registration status
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   workspaceId String?
@@ -110,6 +111,7 @@ model Workspace {
   slug        String // URL-friendly identifier
   description String?
   logo        String? // URL to logo image
+  status      String   @default("inactive") // New field for registration status
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   ownerId     String   @unique

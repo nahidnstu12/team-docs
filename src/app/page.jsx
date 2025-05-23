@@ -1,7 +1,7 @@
 import Header from "./_components/header";
 import HeroSection from "./_components/HeroSection";
 import FeaturedSection from "./_components/FeaturedSection";
-import CTASection from "./_components/CTASection";
+// import CTASection from "./_components/CTASection";
 import Footer from "./_components/Footer";
 import { Session } from "@/lib/Session";
 

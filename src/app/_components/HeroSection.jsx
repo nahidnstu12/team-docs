@@ -3,9 +3,19 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import projectEditorUI from "./../../../assets/project-editor.png";
-import Link from "next/link";
+import dynamic from "next/dynamic";
+import { useRegistrationStore } from "./store/useRegistrationStore";
 
-export default function HeroSection({ session }) {
+// Dynamically import the registration dialog
+const RegistrationDialog = dynamic(
+  () => import("./registration"),
+  {
+    ssr: false,
+  }
+);
+
+export default function HeroSection() {
+  const { openDialog } = useRegistrationStore();
   return (
     <section className="container px-4 py-16 mx-auto md:py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -32,9 +42,10 @@ export default function HeroSection({ session }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Button size="lg" asChild>
-            <Link href="/auth/signup">Get Started for Free →</Link>
+          <Button size="lg" onClick={openDialog}>
+            Get Started for Free →
           </Button>
+          <RegistrationDialog />
         </motion.div>
       </div>
       <motion.div

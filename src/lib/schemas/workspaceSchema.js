@@ -10,4 +10,13 @@ export const WorkspaceSchema = z.object({
 			(val) => !val || val.length >= 10,
 			"Description must be at least 10 characters."
 		),
+	status: z
+		.string()
+		.default("inactive")
+		.optional(),
+});
+
+export const RegistrationWorkspaceSchema = WorkspaceSchema.omit({ slug: true }).extend({
+	name: z.string().min(3, "Workspace name must be at least 3 characters."),
+	description: z.string().optional(),
 });
