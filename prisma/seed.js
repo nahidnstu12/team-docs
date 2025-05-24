@@ -47,7 +47,6 @@ async function main() {
 			ownerId: adminUser.id,
 		},
 	});
-
 	console.log("✅ Created workspace");
 
 	// assign workspace to admin user
@@ -60,10 +59,10 @@ async function main() {
 		},
 	});
 
-	console.log("✅ Assigned workspace to admin user");
+	// console.log("✅ Assigned workspace to admin user");
 
 	// 2. Create two projects
-	const projects = await Promise.all([
+	await Promise.all([
 		prisma.project.create({
 			data: {
 				name: "School Demo",
@@ -87,7 +86,7 @@ async function main() {
 	console.log("✅ Created projects");
 
 	// 3. Create specific user with workspace assignment
-	const specificUser = await prisma.user.create({
+	await prisma.user.create({
 		data: {
 			username: "user1",
 			email: "user1@example.com",
@@ -101,7 +100,7 @@ async function main() {
 	console.log("✅ Created specific user");
 
 	// 4. Create 9 more users
-	const additionalUsers = await Promise.all(
+	await Promise.all(
 		Array.from({ length: 9 }).map(() =>
 			prisma.user.create({
 				data: {

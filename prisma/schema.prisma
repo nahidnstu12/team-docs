@@ -46,7 +46,6 @@ model User {
 
 // ==================== RBAC (Role-Based Access Control) ====================
 
-// Global roles that define sets of permissions
 model Role {
   id          String   @id @default(cuid())
   name        String
@@ -66,7 +65,6 @@ model Role {
   @@unique([ownerId, name]) // ✅ name must be unique only within same user
 }
 
-// Permission definitions
 model Permission {
   id          String   @id @default(cuid())
   name        String // e.g., "create:page", "update:project", etc.
@@ -86,7 +84,6 @@ model Permission {
   @@unique([ownerId, name])
 }
 
-// Many-to-many relationship between Role and Permission
 model RolePermissionAssignment {
   id           String   @id @default(cuid())
   roleId       String
@@ -129,7 +126,6 @@ model Workspace {
   @@index([ownerId])
 }
 
-// Many-to-many relationship between User and Workspace with Role
 model WorkspaceMember {
   id          String   @id @default(cuid())
   workspaceId String
@@ -175,7 +171,6 @@ model Project {
   @@index([ownerId])
 }
 
-// Many-to-many relationship between User and Project with Role
 model ProjectMember {
   id        String   @id @default(cuid())
   projectId String
@@ -194,7 +189,6 @@ model ProjectMember {
   @@index([roleId])
 }
 
-// New model for direct user permissions in projects
 model ProjectUserPermission {
   id           String   @id @default(cuid())
   projectId    String
@@ -264,7 +258,6 @@ model Page {
   @@index([lastUpdatedBy])
 }
 
-// For page version history tracking
 model PageVersion {
   id        String   @id @default(cuid())
   pageId    String
@@ -279,7 +272,6 @@ model PageVersion {
   @@index([createdBy])
 }
 
-// For tracking who has specific access to a page
 model PageShare {
   id        String    @id @default(cuid())
   pageId    String

@@ -8,7 +8,7 @@ export default async function ProjectPage() {
 	let workspaceId = session.workspaceId;
 
 	if (workspaceId === null)
-		workspaceId = await Session.getWorkspaceId(session.workspaceId);
+		workspaceId = await Session.getWorkspaceId(session.id);
 
 	const hasProjects = await ProjectService.hasResource({
 		where: { workspaceId },
