@@ -54,6 +54,7 @@ export class BaseService {
       
       const allResources = await this.model.findMany(queryOptions);
 
+
       if (this.dto && typeof this.dto.toCollection === "function") {
         return this.dto.toCollection(allResources);
       }

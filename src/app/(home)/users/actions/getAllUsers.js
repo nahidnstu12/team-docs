@@ -9,7 +9,7 @@ export async function getAllUsersFn() {
 
 	const users = await UserServices.getAllResources({ where: { workspaceId } });
 
-	Logger.debug(users);
+	Logger.debug("users>>", users.length);
 
 	return users;
 }
