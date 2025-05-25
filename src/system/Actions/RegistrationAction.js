@@ -34,6 +34,7 @@ class RegistrationAction extends BaseAction {
       // Hash the password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(result.data.password, salt);
+      // TODO: use transaction to create user and workspace
       
       // Create the user with inactive status
       const user = await UserModel.create({

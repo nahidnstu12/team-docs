@@ -4,6 +4,7 @@ export class UserDTO {
 			id: user.id,
 			username: user.username,
 			email: user.email,
+			isActive: user.isActive,
 			createdAt: user.createdAt.toISOString(),
 			updatedAt: user.updatedAt.toISOString(),
 		};
