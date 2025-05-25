@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useActionState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -14,15 +17,16 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 import { signin } from "./signinAction";
 import { signInSchema } from "./signinSchema";
-import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
 	const router = useRouter();
-	const [message, formAction, isPending] = useActionState(signin, {
-		message: "",
+
+	const [formState, formAction, isPending] = useActionState(signin, {
+		message: null,
 		errors: null,
 	});
 
@@ -33,87 +37,125 @@ export default function SignInForm() {
 			password: "",
 		},
 	});
+
 	useEffect(() => {
-		if (message?.errors) {
-			Object.entries(message.errors).forEach(([field, messages]) => {
+		if (!formState) return;
+
+		if (formState?.errors) {
+			Object.entries(formState.errors).forEach(([field, message]) => {
 				form.setError(field, {
 					type: "server",
-					message: Array.isArray(messages) ? messages[0] : messages,
+					message: Array.isArray(message) ? message[0] : message,
 				});
 			});
+
+			if (formState.data) {
+				form.reset(formState.data, { keepErrors: true });
+			}
 
 			form.setValue("password", "");
 		}
 
-		if (message?.type === "success" && message.redirectTo) {
-			router.push(message.redirectTo);
+		if (formState?.type === "success") {
+			router.push(formState.redirectTo);
 		}
-	}, [message, form]);
+	}, [formState, form, router]);
 
 	return (
-		<Form {...form}>
-			<form action={formAction} className="space-y-6">
-				<FormField
-					control={form.control}
-					name="email"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-lg">Email</FormLabel>
-							<FormControl>
-								<Input
-									placeholder="your@email.com"
-									{...field}
-									className="h-12 text-lg"
-									onChange={(e) => {
-										form.clearErrors("email");
-										field.onChange(e);
-									}}
-								/>
-							</FormControl>
-							<FormMessage className="text-base" />
-						</FormItem>
-					)}
-				/>
+		<div className="w-full max-w-md mx-auto">
+			{formState?.type === "success" ? (
+				<Card className="border-blue-200 shadow-xl animate-pulse">
+					<CardHeader className="text-center">
+						<CardTitle className="text-xl text-blue-600">
+							Signin is in Process...
+						</CardTitle>
+					</CardHeader>
+					<CardContent className="flex flex-col items-center justify-center py-6 space-y-4">
+						<Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+						<p className="text-sm text-center text-gray-600">
+							Redirecting to your Homepage. Please wait...
+						</p>
+					</CardContent>
+				</Card>
+			) : (
+				<Form {...form}>
+					<form action={formAction} className="space-y-6">
+						{/* Email Field */}
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-lg">Email</FormLabel>
+									<FormControl>
+										<Input
+											type="email"
+											placeholder="your@email.com"
+											className="h-12 text-lg"
+											{...field}
+											onChange={(e) => {
+												form.clearErrors("email");
+												field.onChange(e);
+											}}
+										/>
+									</FormControl>
+									<FormMessage className="text-base" />
+								</FormItem>
+							)}
+						/>
 
-				<FormField
-					control={form.control}
-					name="password"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-lg">Password</FormLabel>
-							<FormControl>
-								<Input
-									type="password"
-									placeholder="••••••••"
-									{...field}
-									className="h-12 text-lg"
-									onChange={(e) => {
-										form.clearErrors("password");
-										field.onChange(e);
-									}}
-								/>
-							</FormControl>
-							<FormMessage className="text-base" />
-						</FormItem>
-					)}
-				/>
+						{/* Password Field */}
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-lg">Password</FormLabel>
+									<FormControl>
+										<Input
+											type="password"
+											placeholder="••••••••"
+											className="h-12 text-lg"
+											{...field}
+											onChange={(e) => {
+												form.clearErrors("password");
+												field.onChange(e);
+											}}
+										/>
+									</FormControl>
+									<FormMessage className="text-base" />
+								</FormItem>
+							)}
+						/>
 
-				{message?.errors?.form && (
-					<p className="text-red-600 mb-2 text-sm">{message.errors.form}</p>
-				)}
+						{/* Global form-level errors */}
+						{formState?.errors?._form && (
+							<div className="space-y-1 text-sm text-red-500">
+								{formState.errors._form.map((msg, index) => (
+									<p key={index}>{msg}</p>
+								))}
+							</div>
+						)}
 
-				<SubmitButton isPending={isPending} />
+						{/* Submit Button */}
+						<SubmitButton isPending={isPending} />
 
-				<div className="text-center pt-4">
-					<p className="text-sm text-muted-foreground">
-						Don't have an account?{" "}
-						<Link href="/auth/signup" className="text-blue-600 hover:underline">
-							Sign up
-						</Link>
-					</p>
-				</div>
-			</form>
-		</Form>
+						{/* Navigation */}
+						<div className="pt-4 text-center">
+							<p className="text-sm text-muted-foreground">
+								Don&apos;t have an account?{" "}
+								<Link
+									href="/auth/signup"
+									className="text-blue-600 hover:underline"
+								>
+									Sign up
+								</Link>
+							</p>
+						</div>
+					</form>
+				</Form>
+			)}
+		</div>
 	);
 }
 
@@ -124,7 +166,7 @@ function SubmitButton({ isPending }) {
 			className="w-full h-12 text-lg font-semibold"
 			disabled={isPending}
 		>
-			{isPending && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+			{isPending && <Loader2 className="w-5 h-5 mr-2 animate-spin" />}
 			Sign In
 		</Button>
 	);

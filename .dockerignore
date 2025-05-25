@@ -4,4 +4,8 @@ Dockerfile
 docker-compose.yml
 .git
 .gitignore
-
+.vscode
+*.log
+*.env
+Dockerfile*
+docker-compose*

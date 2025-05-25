@@ -1,0 +1,9 @@
+/* 📄 Paragraph container (optional baseline) */
+.tiptap > p {
+	@apply leading-relaxed text-base text-foreground;
+}
+
+/* 🧱 Inline code element styled like Notion */
+.tiptap > p > code {
+	@apply px-2 py-1 bg-zinc-200/50 text-rose-600 font-mono text-sm rounded-xs dark:bg-zinc-800 dark:text-rose-400;
+}

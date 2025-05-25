@@ -27,15 +27,13 @@
 		"baseUrl": ".", // This sets the base directory for resolving paths
 		"paths": {
 			"@/*": [
-				"./*"
+				"./src/*"
 			] // Maps "@/..." to the root directory
 		}
 	},
 	"include": [
-		"app/**/*",
+		"src/**/*",
 		"components/**/*",
-		"lib/**/*",
-		"pages/**/*",
 		"prisma/**/*",
 		".next/types/**/*.ts"
 	],
