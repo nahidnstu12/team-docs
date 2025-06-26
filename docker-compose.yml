@@ -6,9 +6,6 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKVlJNUTAzNTAxWEhYSjI4UjhYNU1KNk0iLCJ0ZW5hbnRfaWQiOiIzZGFiODExOTI1MGFhYmMwN2E4Y2M0MDMyYTUzYjYyYjc1NGNjZTY5Zjg0OTQ4MDRhMjBiZGRkN2VhYTU4YmM3IiwiaW50ZXJuYWxfc2VjcmV0IjoiZmU3ZmU5OGMtZjNhNi00NTNhLThlYjctYmQ5NmQwZGIwMmUyIn0.Oxu3Ta_FSPHy2wRpmOnH5omVf-grLp4wD1B5hQAxU3g
-      - NEXTAUTH_URL=http://localhost:3000
-      - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
@@ -23,7 +20,7 @@ services:
     #   - postgres-network
 
   prisma-studio:
-    image: oven/bun:1.2.14-alpine
+    image: node:20-alpine
     working_dir: /app
     env_file:
       - .env
@@ -31,8 +28,14 @@ services:
       - .:/app
     ports:
       - "5555:5555"
-    command:
-      ["bunx", "prisma", "studio", "--port", "5555", "--hostname", "0.0.0.0", "--browser", "none"]
+    command: >
+      sh -c "
+      # echo '[Prisma] Running prisma dev...' && \
+      # npx prisma dev &
+
+      echo '[Studio] Running prisma studio...' && \
+      npx prisma studio --port 5555 --hostname 0.0.0.0 --browser none
+      "
 
   team-docs-prod:
     build:

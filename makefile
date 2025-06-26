@@ -34,7 +34,7 @@ dev:
 	docker compose up team-docs-local prisma-studio
 
 build-dev:
-	docker compose build team-docs-local
+	docker compose build --no-cache team-docs-local prisma-studio
 
 # Run production environment
 build-prod:
@@ -45,7 +45,7 @@ build-prod:
 up:
 	docker compose up
 
-stop: 
+down: 
 	docker compose down
 
 build: 
