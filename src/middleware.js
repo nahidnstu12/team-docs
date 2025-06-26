@@ -44,15 +44,15 @@ export default auth(async function middleware(request) {
     });
   }
 
-  // // ✅ Redirect not-logged-in users from protected pages (except / and /auth)
-  // if (!session && !pathname.startsWith("/auth")) {
-  //   return NextResponse.redirect(new URL("/auth/signin", request.url));
-  // }
+  // ✅ Redirect not-logged-in users from protected pages (except / and /auth)
+  if (!session && !pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL("/auth/signin", request.url));
+  }
 
-  // // ✅ Optional: redirect / to /home if logged in
-  // if (session && pathname === "/") {
-  //   return NextResponse.redirect(new URL("/home", request.url));
-  // }
+  // ✅ Optional: redirect / to /home if logged in
+  if (session && pathname === "/") {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
 
   // ✅ Allow to continue
   return NextResponse.next({

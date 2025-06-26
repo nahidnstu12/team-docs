@@ -213,7 +213,7 @@ model ProjectUserPermission {
 
 model Section {
   id          String   @id @default(cuid())
-  name        String   @unique
+  name        String
   description String?
   projectId   String
   ownerId     String
@@ -226,6 +226,7 @@ model Section {
   creator User    @relation("sectionCreator", fields: [ownerId], references: [id])
   pages   Page[]
 
+  @@unique([name, projectId])
   @@index([projectId])
   @@index([ownerId])
 }
@@ -255,6 +256,7 @@ model Page {
   versions    PageVersion[]
   pageShares  PageShare[]
 
+  @@unique([title, sectionId])
   @@index([sectionId])
   @@index([ownerId])
   @@index([lastUpdatedBy])

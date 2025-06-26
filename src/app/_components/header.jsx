@@ -34,10 +34,10 @@ export default function Header({ session }) {
 
   return (
     <header className="container flex justify-between items-center px-4 py-6 mx-auto">
-      <div className="flex items-center">
+      <Link href="/" className="flex items-center">
         <Image src="/logo.svg" alt="Team Docs Logo" width={36} height={36} className="mr-2" />
         <span className="text-xl font-bold">Team Docs</span>
-      </div>
+      </Link>
       {/* <nav className="hidden space-x-8 md:flex">
         <Link
           href="#features"
