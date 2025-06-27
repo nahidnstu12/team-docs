@@ -7,6 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -65,48 +66,90 @@ export default function Header({ session }) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative p-0 w-10 h-10 rounded-full focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="relative p-0 w-10 h-10 rounded-full focus-visible:ring-0 focus-visible:ring-offset-0 transition-all hover:scale-105 hover:shadow-sm"
+                aria-label="User menu"
               >
-                <Avatar className="w-10 h-10 border border-border">
-                  <AvatarImage src={session.image} alt={session.username || "User"} />
-                  <AvatarFallback className="text-sm font-medium">
+                <Avatar className="w-10 h-10 border border-border/50 shadow-sm">
+                  <AvatarImage
+                    src={session.image}
+                    alt={session.username || "User"}
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="text-sm font-medium bg-primary/5">
                     {getInitials(session.username)}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <div className="flex gap-2 items-center py-2">
-                <div className="flex justify-center items-center">
-                  <Avatar className="w-7 h-7 border border-border">
-                    <AvatarImage src={session.image} alt={session.username || "User"} />
-                    <AvatarFallback className="text-sm font-medium"></AvatarFallback>
+            <DropdownMenuContent
+              className="w-64 p-0 overflow-hidden shadow-lg border-border/50"
+              align="end"
+              forceMount
+              sideOffset={8}
+            >
+              {/* User Profile Section */}
+              <div className="bg-muted/30 px-4 py-3 border-b border-border/30">
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-10 h-10 border-2 border-background shadow-sm">
+                    <AvatarImage
+                      src={session.image}
+                      alt={session.username || "User"}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-sm font-medium bg-primary/5">
+                      {getInitials(session.username)}
+                    </AvatarFallback>
                   </Avatar>
+                  <div className="flex flex-col">
+                    <p className="text-sm font-semibold truncate">{session.username || "User"}</p>
+                    <p className="text-xs truncate text-muted-foreground max-w-[180px]">
+                      {session.email || ""}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex flex-col -space-y-0.5">
-                  <p className="text-sm font-medium">{session.username || "User"}</p>
-                  <p className="text-xs truncate text-muted-foreground">{session.email || ""}</p>
+                <div className="mt-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full h-8 text-xs bg-background/80 border-border/50 hover:bg-background transition-colors"
+                  >
+                    View Profile
+                  </Button>
                 </div>
               </div>
-              <DropdownMenuSeparator />
-              <ComingSoonWrapper enabled>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings" className="flex w-full cursor-pointer">
-                      <Settings className="mr-2 w-4 h-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </ComingSoonWrapper>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer text-destructive focus:text-destructive"
-                onSelect={() => signOut({ callbackUrl: "/" })}
-              >
-                <LogOut className="mr-2 w-4 h-4" />
-                <span>Sign out</span>
-              </DropdownMenuItem>
+
+              {/* Account Settings Section */}
+              <div className="p-2">
+                <DropdownMenuLabel className="px-2 text-xs font-medium text-muted-foreground">
+                  Account
+                </DropdownMenuLabel>
+                <ComingSoonWrapper enabled>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      asChild
+                      className="px-2 py-1.5 cursor-pointer rounded-md transition-colors hover:bg-muted focus:bg-muted"
+                    >
+                      <Link href="/settings" className="flex w-full items-center">
+                        <Settings className="mr-2 w-4 h-4 text-muted-foreground" />
+                        <span>Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </ComingSoonWrapper>
+              </div>
+
+              <DropdownMenuSeparator className="my-0.5" />
+
+              {/* Sign Out Section */}
+              <div className="p-2">
+                <DropdownMenuItem
+                  className="px-2 py-1.5 cursor-pointer rounded-md transition-colors hover:bg-destructive/10 focus:bg-destructive/10 text-destructive focus:text-destructive"
+                  onSelect={() => signOut({ callbackUrl: "/" })}
+                >
+                  <LogOut className="mr-2 w-4 h-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
