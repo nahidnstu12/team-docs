@@ -52,8 +52,6 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
     fetchPermissions();
   }, [projectId]);
 
-  console.log("permissions", { permissions, users, projectId, projectName });
-
   // Filter users by name or email
   const filteredUsers =
     users?.length > 0

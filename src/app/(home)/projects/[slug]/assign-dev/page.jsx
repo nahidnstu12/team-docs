@@ -1,5 +1,6 @@
 import { ProjectService } from "@/system/Services/ProjectServices";
 import AssignDevClient from "./components/AssignDevClient";
+import ProjectInitializer from "./components/ProjectInitializer";
 
 export default async function AssignDevPage({ params }) {
 	const { slug } = await params;
@@ -7,6 +8,7 @@ export default async function AssignDevPage({ params }) {
 
 	return (
 		<div className="container mx-auto">
+			<ProjectInitializer project={project} />
 			<AssignDevClient project={project} />
 		</div>
 	);

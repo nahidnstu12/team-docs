@@ -22,7 +22,6 @@ import {
 import ProjectTableLoading from "./ProjectTableLoading";
 import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Logger from "@/lib/Logger";
 import ProjectEditDrawer from "./ProjectEditDrawer";
@@ -164,15 +163,17 @@ export default function ProjectListings({
                       >
                         <Edit className="w-4 h-4" /> Edit
                       </Button>
-                      <Link href={`/projects/${project.slug}/assign-dev`}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex gap-1 items-center bg-green-100 cursor-pointer"
-                        >
-                          <UsersRound className="w-4 h-4" /> Assign Dev
-                        </Button>
-                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex gap-1 items-center bg-green-100 cursor-pointer"
+                        onClick={() => {
+                          router.push(`/projects/${project.slug}/assign-dev`);
+                          router.refresh();
+                        }}
+                      >
+                        <UsersRound className="w-4 h-4" /> Assign Dev
+                      </Button>
                       <DeleteConfirmationDialog
                         project={project}
                         setStartFetchProjects={setStartFetchProjects}

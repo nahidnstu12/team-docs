@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@/provider/ThemeProvider";
 import MainHeader from "@/components/layout/MainHeader";
+import RouteChangeHandler from "@/components/layout/RouteChangeHandler";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -25,6 +26,7 @@ export default async function HomeLayout({ children }) {
             {/* <Sidebar /> */}
             <MainSidebar />
             <div className="flex overflow-hidden flex-col flex-1 pl-3 md:pl-6">
+              <RouteChangeHandler />
               <MainHeader />
               <Toaster position="top-right" richColors />
               <main className="flex-1 overflow-auto p-2 md:p-4 pl-0 md:pl-0 min-h-[80vh]">
