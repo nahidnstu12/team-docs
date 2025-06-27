@@ -1,45 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import projectEditorUI from "./../../../assets/project-editor.png";
-import dynamic from "next/dynamic";
-import { useRegistrationStore } from "./store/useRegistrationStore";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-// Dynamically import the registration dialog
-const RegistrationDialog = dynamic(() => import("./registration"), {
-  ssr: false,
-});
+import ActionButton from "./ActionButton";
 
 export default function HeroSection({ isAuthenticated, workspaceId, workspaceStatus }) {
-  const { openDialog } = useRegistrationStore();
-  const router = useRouter();
-  const [buttonText, setButtonText] = useState("Get Started for Free →");
-
-  // Check user authentication and workspace status
-  useEffect(() => {
-    const checkUserStatus = async () => {
-      if (isAuthenticated) {
-        if (workspaceId) {
-          if (workspaceStatus === "active") {
-            setButtonText("Visit your workspace →");
-            router.push(`/workspace/${workspaceId}`);
-          } else if (workspaceStatus === "inactive") {
-            setButtonText("Your Request are Processing. Please wait...");
-          }
-        } else {
-          setButtonText("Create your workspace →");
-        }
-      } else {
-        setButtonText("Get Started for Free →");
-      }
-    };
-
-    checkUserStatus();
-  }, [router, isAuthenticated, workspaceId, workspaceStatus]);
-
   return (
     <section className="container px-4 py-16 mx-auto md:py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -66,10 +31,11 @@ export default function HeroSection({ isAuthenticated, workspaceId, workspaceSta
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Button size="lg" onClick={openDialog} disabled={workspaceStatus === "inactive"}>
-            {buttonText}
-          </Button>
-          <RegistrationDialog isAuthenticated={isAuthenticated} />
+          <ActionButton
+            isAuthenticated={isAuthenticated}
+            workspaceId={workspaceId}
+            workspaceStatus={workspaceStatus}
+          />
         </motion.div>
       </div>
       <motion.div

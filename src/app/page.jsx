@@ -21,7 +21,11 @@ export default async function LandingPage() {
         workspaceId={workspaceId}
         workspaceStatus={workspaceStatus}
       />
-      <FeaturedSection />
+      <FeaturedSection
+        isAuthenticated={isAuthenticated}
+        workspaceId={workspaceId}
+        workspaceStatus={workspaceStatus}
+      />
       <Footer />
     </main>
   );
