@@ -21,30 +21,42 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
 
-const registrationSchema = z.object({
-  // User fields
-  username: RegistrationUserSchema.shape.username,
-  email: RegistrationUserSchema.shape.email,
-  password: RegistrationUserSchema.shape.password,
-
-  // Workspace fields
-  workspaceName: RegistrationWorkspaceSchema.shape.name,
-  workspaceDescription: RegistrationWorkspaceSchema.shape.description,
-});
-
 export default function RegistrationDialog({ isAuthenticated }) {
   const { isOpen, closeDialog } = useRegistrationStore();
 
-  const defaultValues = useMemo(
-    () => ({
+  const defaultValues = useMemo(() => {
+    if (isAuthenticated) {
+      return {
+        workspaceName: "",
+        workspaceDescription: "",
+      };
+    }
+
+    return {
       username: "",
       email: "",
       password: "",
       workspaceName: "",
       workspaceDescription: "",
-    }),
-    []
-  );
+    };
+  }, [isAuthenticated]);
+
+  const registrationSchema = useMemo(() => {
+    if (isAuthenticated) {
+      return z.object({
+        workspaceName: RegistrationWorkspaceSchema.shape.name,
+        workspaceDescription: RegistrationWorkspaceSchema.shape.description,
+      });
+    }
+
+    return z.object({
+      username: RegistrationUserSchema.shape.username,
+      email: RegistrationUserSchema.shape.email,
+      password: RegistrationUserSchema.shape.password,
+      workspaceName: RegistrationWorkspaceSchema.shape.name,
+      workspaceDescription: RegistrationWorkspaceSchema.shape.description,
+    });
+  }, [isAuthenticated]);
 
   const successToast = useMemo(
     () => ({
