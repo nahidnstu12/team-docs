@@ -7,10 +7,12 @@ import { Session } from "@/lib/Session";
 
 export default async function LandingPage() {
   const session = await Session.getCurrentUser();
+  const isAuthenticated = await Session.isAuthenticated();
+  const workspaceId = await Session.getWorkspaceIdForUser();
   return (
     <main className="min-h-screen bg-background">
       <Header session={session} />
-      <HeroSection session={session} />
+      <HeroSection isAuthenticated={isAuthenticated} workspaceId={workspaceId} />
       <FeaturedSection />
       {/* <CTASection /> */}
       <Footer />
