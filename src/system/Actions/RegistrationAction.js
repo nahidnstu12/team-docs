@@ -10,63 +10,91 @@ import Logger from "@/lib/Logger";
 import slugify from "slugify";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
 import bcrypt from "bcryptjs";
+import { Session } from "@/lib/Session";
 
 class RegistrationAction extends BaseAction {
   static get schema() {
-    return z.object({
-      // User information
-      username: RegistrationUserSchema.shape.username,
-      email: RegistrationUserSchema.shape.email,
-      password: RegistrationUserSchema.shape.password,
-      
-      // Workspace information
-      workspaceName: RegistrationWorkspaceSchema.shape.name,
-      workspaceDescription: RegistrationWorkspaceSchema.shape.description,
-    });
+    return z
+      .object({
+        username: RegistrationUserSchema.shape.username.optional(),
+        email: RegistrationUserSchema.shape.email.optional(),
+        password: RegistrationUserSchema.shape.password.optional(),
+        workspaceName: RegistrationWorkspaceSchema.shape.name,
+        workspaceDescription: RegistrationWorkspaceSchema.shape.description,
+      })
+      .refine(
+        (data) =>
+          (data.username && data.email && data.password) ||
+          (!data.username && !data.email && !data.password),
+        {
+          message: "User fields must be either all provided or all omitted",
+          path: ["username"],
+        }
+      );
   }
 
-  static async register(formData) {
+  static async register(formData, session = null) {
     const result = await this.execute(formData);
-    
+
     if (!result.success) return result;
-    
+
     try {
-      // Hash the password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(result.data.password, salt);
-      
-      // Create the user with inactive status
-      const user = await UserModel.create({
-        username: result.data.username,
-        email: result.data.email,
-        password: hashedPassword,
-        status: "inactive",
-      });
+      const { username, email, password, workspaceName, workspaceDescription } = result.data;
 
-      // Create workspace with inactive status
+      let userId;
+
+      if (username && email && password) {
+        // Case 1: User is registering (unauthenticated)
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = await UserModel.create({
+          username,
+          email,
+          password: hashedPassword,
+          status: "inactive",
+        });
+        userId = user.id;
+      } else if (session) {
+        // Case 2: Authenticated user is creating a workspace
+        userId = session.id;
+      } else {
+        return {
+          success: false,
+          type: "error",
+          errors: {
+            _form: ["Missing user information or not authenticated."],
+          },
+        };
+      }
+
+      // Create the workspace
       const workspace = await WorkspaceModel.create({
-        name: result.data.workspaceName,
-        slug: slugify(result.data.workspaceName, { lower: true }),
-        description: result.data.workspaceDescription || "",
+        name: workspaceName,
+        slug: slugify(workspaceName, { lower: true }),
+        description: workspaceDescription || "",
         status: "inactive",
-        ownerId: user.id,
+        ownerId: userId,
       });
 
-      // In a real app, send confirmation email here
-      // await sendConfirmationEmail(user.email);
+      // Update user with newly created workspace ID
+      await UserModel.update({
+        where: { id: userId },
+        data: { workspaceId: workspace.id },
+      });
 
       return {
         success: true,
         type: "success",
         message: "Registration submitted successfully. Please check your email for confirmation.",
         data: {
-          userId: user.id,
+          userId,
           workspaceId: workspace.id,
         },
       };
     } catch (error) {
-      Logger.error(error.message, `Registration failed`);
-      
+      Logger.error(error.message, "Registration failed");
+
       if (error.code) {
         return PrismaErrorFormatter.handle(error, result.data, [
           "username",
@@ -80,7 +108,9 @@ class RegistrationAction extends BaseAction {
       return {
         success: false,
         type: "error",
-        errors: { _form: ["Registration failed. Please try again later."] },
+        errors: {
+          _form: ["Registration failed. Please try again later."],
+        },
         data: result.data,
       };
     }
@@ -88,5 +118,6 @@ class RegistrationAction extends BaseAction {
 }
 
 export async function registerNewUser(prevState, formData) {
-  return await RegistrationAction.register(formData);
+  const session = await Session.getCurrentUser();
+  return await RegistrationAction.register(formData, session);
 }

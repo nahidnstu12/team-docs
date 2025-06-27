@@ -13,7 +13,7 @@ const RegistrationDialog = dynamic(() => import("./registration"), {
   ssr: false,
 });
 
-export default function HeroSection({ isAuthenticated, workspaceId }) {
+export default function HeroSection({ isAuthenticated, workspaceId, workspaceStatus }) {
   const { openDialog } = useRegistrationStore();
   const router = useRouter();
   const [buttonText, setButtonText] = useState("Get Started for Free →");
@@ -23,21 +23,22 @@ export default function HeroSection({ isAuthenticated, workspaceId }) {
     const checkUserStatus = async () => {
       if (isAuthenticated) {
         if (workspaceId) {
-          // User has a workspace
-          setButtonText("Visit your workspace →");
-          router.push(`/workspace/${workspaceId}`);
+          if (workspaceStatus === "active") {
+            setButtonText("Visit your workspace →");
+            router.push(`/workspace/${workspaceId}`);
+          } else if (workspaceStatus === "inactive") {
+            setButtonText("Your Request are Processing. Please wait...");
+          }
         } else {
-          // Authenticated but no workspace
           setButtonText("Create your workspace →");
         }
       } else {
-        // Guest user
         setButtonText("Get Started for Free →");
       }
     };
 
     checkUserStatus();
-  }, [router, isAuthenticated, workspaceId]);
+  }, [router, isAuthenticated, workspaceId, workspaceStatus]);
 
   return (
     <section className="container px-4 py-16 mx-auto md:py-24">
@@ -65,7 +66,7 @@ export default function HeroSection({ isAuthenticated, workspaceId }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Button size="lg" onClick={openDialog}>
+          <Button size="lg" onClick={openDialog} disabled={workspaceStatus === "inactive"}>
             {buttonText}
           </Button>
           <RegistrationDialog isAuthenticated={isAuthenticated} />
