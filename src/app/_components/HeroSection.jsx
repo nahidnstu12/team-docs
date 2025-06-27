@@ -9,12 +9,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Dynamically import the registration dialog
-const RegistrationDialog = dynamic(
-  () => import("./registration"),
-  {
-    ssr: false,
-  }
-);
+const RegistrationDialog = dynamic(() => import("./registration"), {
+  ssr: false,
+});
 
 export default function HeroSection({ isAuthenticated, workspaceId }) {
   const { openDialog } = useRegistrationStore();
@@ -71,7 +68,7 @@ export default function HeroSection({ isAuthenticated, workspaceId }) {
           <Button size="lg" onClick={openDialog}>
             {buttonText}
           </Button>
-          <RegistrationDialog />
+          <RegistrationDialog isAuthenticated={isAuthenticated} />
         </motion.div>
       </div>
       <motion.div

@@ -32,7 +32,7 @@ const registrationSchema = z.object({
   workspaceDescription: RegistrationWorkspaceSchema.shape.description,
 });
 
-export default function RegistrationDialog() {
+export default function RegistrationDialog({ isAuthenticated }) {
   const { isOpen, closeDialog } = useRegistrationStore();
 
   const defaultValues = useMemo(
@@ -75,7 +75,11 @@ export default function RegistrationDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
-      <DialogContent className="w-full !max-w-[70vw] h-[85vh] max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className={`w-full ${
+          isAuthenticated ? "!max-w-[40vw]" : "!max-w-[70vw]"
+        } h-[85vh] max-h-[90vh] overflow-y-auto`}
+      >
         <DialogHeader className="space-y-1 text-center">
           <DialogTitle className="text-3xl font-semibold leading-3 text-center">
             Get Started
@@ -93,57 +97,9 @@ export default function RegistrationDialog() {
         )}
 
         <form action={formAction} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 w-full md:grid-cols-2">
-            {/* Left side - User information */}
-            <div className="space-y-4">
-              <h3 className="pb-2 text-xl font-semibold border-b">User Information</h3>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  placeholder="johndoe"
-                  className="h-11"
-                  {...register("username")}
-                />
-                {errors.username && (
-                  <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="john@example.com"
-                  className="h-11"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••••"
-                  className="h-11"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Right side - Workspace information */}
+          {isAuthenticated ? (
             <div className="space-y-4">
               <h3 className="pb-2 text-xl font-semibold border-b">Workspace Information</h3>
-
               <div className="space-y-1.5">
                 <Label htmlFor="workspaceName">Workspace Name</Label>
                 <Input
@@ -156,7 +112,6 @@ export default function RegistrationDialog() {
                   <p className="mt-1 text-sm text-red-500">{errors.workspaceName.message}</p>
                 )}
               </div>
-
               <div className="space-y-1.5">
                 <Label htmlFor="workspaceDescription">
                   Description <span className="text-muted-foreground">(optional)</span>
@@ -172,11 +127,89 @@ export default function RegistrationDialog() {
                 )}
               </div>
             </div>
-          </div>
-
+          ) : (
+            <div className="grid grid-cols-1 gap-6 w-full md:grid-cols-2">
+              <div className="space-y-4">
+                <h3 className="pb-2 text-xl font-semibold border-b">User Information</h3>
+                <div className="space-y-1.5">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    placeholder="johndoe"
+                    className="h-11"
+                    {...register("username")}
+                  />
+                  {errors.username && (
+                    <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    className="h-11"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••••"
+                    className="h-11"
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h3 className="pb-2 text-xl font-semibold border-b">Workspace Information</h3>
+                <div className="space-y-1.5">
+                  <Label htmlFor="workspaceName">Workspace Name</Label>
+                  <Input
+                    id="workspaceName"
+                    placeholder="My Team"
+                    className="h-11"
+                    {...register("workspaceName")}
+                  />
+                  {errors.workspaceName && (
+                    <p className="mt-1 text-sm text-red-500">{errors.workspaceName.message}</p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="workspaceDescription">
+                    Description <span className="text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Textarea
+                    id="workspaceDescription"
+                    placeholder="A brief description of your team or organization"
+                    className="min-h-[120px]"
+                    {...register("workspaceDescription")}
+                  />
+                  {errors.workspaceDescription && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.workspaceDescription.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex justify-center pt-2">
             <Button type="submit" size="lg" disabled={isSubmitDisabled} className="min-w-[220px]">
-              {isPending ? "Processing..." : "Create Account"}
+              {isPending
+                ? "Processing..."
+                : isAuthenticated
+                ? "Create Workspace"
+                : "Create Account"}
             </Button>
           </div>
         </form>
