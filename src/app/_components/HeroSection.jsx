@@ -5,6 +5,9 @@ import Image from "next/image";
 import projectEditorUI from "./../../../assets/project-editor.png";
 import dynamic from "next/dynamic";
 import { useRegistrationStore } from "./store/useRegistrationStore";
+import { Session } from "@/lib/Session";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Dynamically import the registration dialog
 const RegistrationDialog = dynamic(
@@ -16,6 +19,35 @@ const RegistrationDialog = dynamic(
 
 export default function HeroSection() {
   const { openDialog } = useRegistrationStore();
+  const router = useRouter();
+  const [buttonText, setButtonText] = useState("Get Started for Free →");
+  const [buttonAction, setButtonAction] = useState(openDialog);
+
+  // Check user authentication and workspace status
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      const isAuthenticated = await Session.isAuthenticated();
+      if (isAuthenticated) {
+        const workspaceId = await Session.getWorkspaceIdForUser();
+        if (workspaceId) {
+          // User has a workspace
+          setButtonText("Visit your workspace →");
+          setButtonAction(() => () => router.push(`/workspace/${workspaceId}`));
+        } else {
+          // Authenticated but no workspace
+          setButtonText("Create your workspace →");
+          setButtonAction(openDialog);
+        }
+      } else {
+        // Guest user
+        setButtonText("Get Started for Free →");
+        setButtonAction(openDialog);
+      }
+    };
+
+    checkUserStatus();
+  }, [openDialog, router]);
+
   return (
     <section className="container px-4 py-16 mx-auto md:py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -42,8 +74,8 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Button size="lg" onClick={openDialog}>
-            Get Started for Free →
+          <Button size="lg" onClick={buttonAction}>
+            {buttonText}
           </Button>
           <RegistrationDialog />
         </motion.div>
