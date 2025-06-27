@@ -166,9 +166,9 @@ export default function FeaturedSection({ isAuthenticated, workspaceId, workspac
                         </CarouselItem>
                       ))}
                     </CarouselContent>
-                    <div className="flex justify-center mt-4">
-                      <CarouselPrevious className="relative static left-auto mx-1" />
-                      <CarouselNext className="relative static right-auto mx-1" />
+                    <div className="flex justify-center gap-2 mt-4">
+                      <CarouselPrevious className="mx-1" />
+                      <CarouselNext className="mx-1" />
                     </div>
                   </Carousel>
                 </TabsContent>
