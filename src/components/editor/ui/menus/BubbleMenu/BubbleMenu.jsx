@@ -2,32 +2,32 @@
 
 import React, { useState, useEffect } from "react";
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react";
-import { 
-  Bold, 
-  Italic, 
-  Underline, 
-  Strikethrough, 
-  Subscript, 
+import {
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  Subscript,
   Superscript,
   Highlighter,
   Link,
   Palette,
-  MoreHorizontal
+  MoreHorizontal,
 } from "lucide-react";
-import { ColorPickerPanel } from "../../ColorPickerPanel";
+import ColorPickerPanel from "../../ColorPickerPanel";
 import { BUBBLE_MENU_CONFIG } from "../../../core/EditorConfig";
 
 /**
  * Bubble Menu Component
  * Context-sensitive formatting toolbar that appears when text is selected
- * 
+ *
  * @fileoverview This component provides a floating toolbar with formatting
  * options that appears when text is selected in the editor.
  */
 
 /**
  * BubbleMenu Component
- * 
+ *
  * @param {Object} props - Component props
  * @param {Object} props.editor - TipTap editor instance
  * @param {string} props.instanceId - Editor instance identifier
@@ -35,13 +35,7 @@ import { BUBBLE_MENU_CONFIG } from "../../../core/EditorConfig";
  * @param {string} props.className - Additional CSS classes
  * @param {Function} props.onLinkClick - Callback for link button click
  */
-export const BubbleMenu = ({ 
-  editor, 
-  instanceId,
-  config = {},
-  className = "",
-  onLinkClick,
-}) => {
+export const BubbleMenu = ({ editor, instanceId, config = {}, className = "", onLinkClick }) => {
   const [showColorPanel, setShowColorPanel] = useState(false);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
 
@@ -266,10 +260,7 @@ export const BubbleMenu = ({
       {/* Color picker panel */}
       {showColorPanel && (
         <div className="absolute top-full left-0 mt-2 z-10">
-          <ColorPickerPanel
-            editor={editor}
-            onClose={() => setShowColorPanel(false)}
-          />
+          <ColorPickerPanel editor={editor} onClose={() => setShowColorPanel(false)} />
         </div>
       )}
 
@@ -287,7 +278,11 @@ export const BubbleMenu = ({
               className={`
                 flex items-center gap-2 px-3 py-2 text-sm rounded-md transition
                 hover:bg-gray-100 dark:hover:bg-zinc-800
-                ${editor.isActive("subscript") ? "bg-blue-100 text-blue-600" : "text-gray-700 dark:text-gray-300"}
+                ${
+                  editor.isActive("subscript")
+                    ? "bg-blue-100 text-blue-600"
+                    : "text-gray-700 dark:text-gray-300"
+                }
               `}
             >
               <Subscript className="w-4 h-4" />
@@ -304,7 +299,11 @@ export const BubbleMenu = ({
               className={`
                 flex items-center gap-2 px-3 py-2 text-sm rounded-md transition
                 hover:bg-gray-100 dark:hover:bg-zinc-800
-                ${editor.isActive("superscript") ? "bg-blue-100 text-blue-600" : "text-gray-700 dark:text-gray-300"}
+                ${
+                  editor.isActive("superscript")
+                    ? "bg-blue-100 text-blue-600"
+                    : "text-gray-700 dark:text-gray-300"
+                }
               `}
             >
               <Superscript className="w-4 h-4" />

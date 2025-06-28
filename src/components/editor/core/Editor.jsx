@@ -3,21 +3,22 @@
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { useEditorContext } from "./EditorProvider";
-import { getInstanceConfig } from "./EditorConfig";
+import { DEFAULT_EDITOR_CONFIG, getInstanceConfig } from "./EditorConfig";
 import { ExtensionRegistry } from "../extensions";
 import { Spinner } from "@/components/ui/spinner";
+import StarterKit from "@tiptap/starter-kit";
 
 /**
  * Main TipTap Editor Component
  * Centralized editor with modular extension system
- * 
+ *
  * @fileoverview This is the core editor component that integrates with the
  * EditorProvider and manages TipTap editor instances with a modular extension system.
  */
 
 /**
  * Editor Component
- * 
+ *
  * @param {Object} props - Component props
  * @param {string} props.instanceId - Unique identifier for this editor instance
  * @param {Object} props.initialContent - Initial content for the editor
@@ -49,189 +50,300 @@ export const Editor = ({
 }) => {
   // Get editor context
   const editorContext = useEditorContext();
-  
+
   // Local state
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+  const [loadedExtensions, setLoadedExtensions] = useState([]);
+
   // Refs
   const editorRef = useRef(null);
   const saveCallbackRef = useRef(onSave);
-  
+
   // Update save callback ref when prop changes
   useEffect(() => {
     saveCallbackRef.current = onSave;
   }, [onSave]);
-  
-  // Get instance-specific configuration
-  const instanceConfig = getInstanceConfig(instanceId, {
-    ...editorContext.config,
-    ...config,
-    editorProps: {
-      ...editorContext.config.editorProps,
-      ...config.editorProps,
-      editable: () => editable,
-    },
-  });
+
+  // Get instance-specific configuration with comprehensive null safety
+  let instanceConfig;
+  try {
+    console.log("Creating instanceConfig...");
+    console.log("editorContext:", editorContext);
+    console.log("DEFAULT_EDITOR_CONFIG:", DEFAULT_EDITOR_CONFIG);
+    console.log("config:", config);
+
+    instanceConfig = getInstanceConfig(instanceId, {
+      ...(editorContext?.config || DEFAULT_EDITOR_CONFIG || {}),
+      ...config,
+      editorProps: {
+        ...(editorContext?.config?.editorProps || DEFAULT_EDITOR_CONFIG?.editorProps || {}),
+        ...(config?.editorProps || {}),
+        editable: () => editable,
+      },
+    });
+
+    console.log("instanceConfig created successfully:", instanceConfig);
+  } catch (error) {
+    console.error("❌ Error creating instanceConfig:", error);
+    console.error("Error stack:", error.stack);
+
+    // Create a minimal fallback config
+    instanceConfig = {
+      autofocus: true,
+      editorProps: {
+        attributes: {
+          class: "focus:outline-none max-w-none prose prose-lg",
+        },
+        editable: () => editable,
+      },
+    };
+    console.log("Using fallback instanceConfig:", instanceConfig);
+  }
+
+  // Debug logging for configuration issues
+  if (process.env.NODE_ENV === "development") {
+    console.log("=== COMPREHENSIVE EDITOR DEBUG ===");
+    console.log("instanceId:", instanceId);
+    console.log("editorContext:", editorContext);
+    console.log("editorContext?.config:", editorContext?.config);
+    console.log("DEFAULT_EDITOR_CONFIG:", DEFAULT_EDITOR_CONFIG);
+    console.log("userConfig:", config);
+    console.log("instanceConfig:", instanceConfig);
+    console.log("loadedExtensions:", loadedExtensions);
+    console.log("loadedExtensionsCount:", loadedExtensions.length);
+    console.log("isLoading:", isLoading);
+    console.log("error:", error);
+    console.log("=== END DEBUG ===");
+
+    if (!instanceConfig) {
+      console.error("❌ Editor instanceConfig is null/undefined for instance:", instanceId);
+    }
+
+    if (!DEFAULT_EDITOR_CONFIG) {
+      console.error("❌ DEFAULT_EDITOR_CONFIG is null/undefined!");
+    }
+
+    if (!editorContext) {
+      console.error("❌ editorContext is null/undefined!");
+    }
+  }
 
   /**
    * Save handler for this editor instance
    * @param {Object} content - Editor content to save
    * @returns {Promise<void>}
    */
-  const handleSave = useCallback(async (content) => {
-    if (saveCallbackRef.current) {
-      try {
-        await saveCallbackRef.current(content, instanceId);
-      } catch (error) {
-        console.error(`Save failed for editor ${instanceId}:`, error);
-        throw error;
+  const handleSave = useCallback(
+    async (content) => {
+      if (saveCallbackRef.current) {
+        try {
+          await saveCallbackRef.current(content, instanceId);
+        } catch (error) {
+          console.error(`Save failed for editor ${instanceId}:`, error);
+          throw error;
+        }
       }
-    }
-  }, [instanceId]);
+    },
+    [instanceId]
+  );
 
-  /**
-   * Load extensions for this editor instance
-   * @returns {Promise<Array>} Array of TipTap extensions
-   */
-  const loadExtensions = useCallback(async () => {
-    try {
-      // Load base extensions
-      const baseExtensions = await ExtensionRegistry.getBaseExtensions();
-      
-      // Load additional extensions if specified
-      const additionalExtensions = await Promise.all(
-        extensions.map(ext => {
-          if (typeof ext === "string") {
-            return ExtensionRegistry.getExtension(ext);
-          }
-          return Promise.resolve(ext);
-        })
-      );
-      
-      return [...baseExtensions, ...additionalExtensions.filter(Boolean)];
-    } catch (error) {
-      console.error("Failed to load extensions:", error);
-      setError(error);
-      return [];
-    }
-  }, [extensions]);
-
-  // Initialize TipTap editor
-  const editor = useEditor({
-    ...instanceConfig,
-    content: initialContent,
-    extensions: [], // Will be set after loading
-    onCreate: ({ editor }) => {
-      editorRef.current = editor;
-      setIsInitialized(true);
-      
-      // Register with context
-      editorContext.registerEditor(instanceId, editor, handleSave);
-      
-      // Focus if configured
-      if (instanceConfig.autofocus) {
-        editor.commands.focus("end");
-      }
-    },
-    onUpdate: ({ editor }) => {
-      // Call onChange callback if provided
-      if (onChange) {
-        onChange(editor.getJSON(), instanceId);
-      }
-    },
-    onFocus: ({ editor, event }) => {
-      if (onFocus) {
-        onFocus(editor, event, instanceId);
-      }
-    },
-    onBlur: ({ editor, event }) => {
-      if (onBlur) {
-        onBlur(editor, event, instanceId);
-      }
-    },
-    onDestroy: () => {
-      // Unregister from context
-      editorContext.unregisterEditor(instanceId);
-      setIsInitialized(false);
-    },
-  });
-
-  // Load extensions and configure editor
+  // Load extensions on component mount
   useEffect(() => {
     let isMounted = true;
-    
-    const initializeEditor = async () => {
+
+    const loadExtensions = async () => {
+      console.log("=== Extension Loading Debug ===");
+      console.log("Starting extension loading...");
+      console.log("ExtensionRegistry:", ExtensionRegistry);
+
       try {
         setIsLoading(true);
         setError(null);
-        
-        // Load extensions
-        const loadedExtensions = await loadExtensions();
-        
-        if (!isMounted) return;
-        
-        // Configure editor with extensions
-        if (editor && loadedExtensions.length > 0) {
-          // Recreate editor with extensions
-          editor.destroy();
-          
-          // Create new editor with extensions
-          const newEditor = useEditor({
-            ...instanceConfig,
-            content: initialContent,
-            extensions: loadedExtensions,
-            onCreate: ({ editor }) => {
-              editorRef.current = editor;
-              setIsInitialized(true);
-              
-              // Register with context
-              editorContext.registerEditor(instanceId, editor, handleSave);
-              
-              // Focus if configured
-              if (instanceConfig.autofocus) {
-                editor.commands.focus("end");
-              }
-            },
-            onUpdate: ({ editor }) => {
-              if (onChange) {
-                onChange(editor.getJSON(), instanceId);
-              }
-            },
-            onFocus: ({ editor, event }) => {
-              if (onFocus) {
-                onFocus(editor, event, instanceId);
-              }
-            },
-            onBlur: ({ editor, event }) => {
-              if (onBlur) {
-                onBlur(editor, event, instanceId);
-              }
-            },
-            onDestroy: () => {
-              editorContext.unregisterEditor(instanceId);
-              setIsInitialized(false);
-            },
-          });
+
+        // Load base extensions with debugging
+        console.log("Calling ExtensionRegistry.getBaseExtensions()...");
+        const baseExtensions = await ExtensionRegistry.getBaseExtensions();
+        console.log("Base extensions loaded:", baseExtensions);
+        console.log("Base extensions count:", baseExtensions?.length || 0);
+
+        // Load additional extensions if specified
+        console.log("Loading additional extensions:", extensions);
+        const additionalExtensions = await Promise.all(
+          extensions.map(async (ext) => {
+            if (typeof ext === "string") {
+              console.log("Loading extension by name:", ext);
+              const loaded = await ExtensionRegistry.loadExtension(ext);
+              console.log("Loaded extension:", ext, loaded);
+              return loaded;
+            }
+            console.log("Using direct extension:", ext);
+            return Promise.resolve(ext);
+          })
+        );
+
+        const allExtensions = [...(baseExtensions || []), ...additionalExtensions.filter(Boolean)];
+        console.log("All extensions combined:", allExtensions);
+        console.log("Total extensions count:", allExtensions.length);
+
+        if (isMounted) {
+          setLoadedExtensions(allExtensions);
+          setIsLoading(false);
+          console.log("Extensions set in state successfully");
         }
-        
-        setIsLoading(false);
       } catch (error) {
         if (isMounted) {
-          console.error("Failed to initialize editor:", error);
+          console.error("Failed to load extensions:", error);
+          console.error("Error details:", error.message, error.stack);
           setError(error);
-          setIsLoading(false);
+
+          // Try to set basic fallback extensions
+          console.log("Attempting to use fallback extensions...");
+          try {
+            // Import basic TipTap extensions directly as fallback
+            const { StarterKit } = await import("@tiptap/starter-kit");
+            const fallbackExtensions = [StarterKit];
+            console.log("Fallback extensions loaded successfully:", fallbackExtensions);
+            setLoadedExtensions(fallbackExtensions);
+            setIsLoading(false);
+            setError(null); // Clear error since fallback worked
+          } catch (fallbackError) {
+            console.error("Fallback extensions also failed:", fallbackError);
+            setLoadedExtensions([]);
+            setIsLoading(false);
+          }
         }
       }
     };
-    
-    initializeEditor();
-    
+
+    loadExtensions();
+
     return () => {
       isMounted = false;
     };
-  }, [instanceId, extensions, initialContent]); // Re-run when key props change
+  }, [extensions]);
+
+  // Create editor configuration with fallback
+  const createEditorConfig = useCallback(async () => {
+    console.log("=== Creating Editor Config ===");
+    console.log("loadedExtensions.length:", loadedExtensions.length);
+    console.log("loadedExtensions:", loadedExtensions);
+
+    let extensionsToUse = loadedExtensions;
+
+    // If no extensions loaded, try to load StarterKit directly
+    if (extensionsToUse.length === 0) {
+      console.log("No extensions loaded, trying direct StarterKit import...");
+      try {
+        const { StarterKit } = await import("@tiptap/starter-kit");
+        extensionsToUse = [StarterKit];
+        console.log("Direct StarterKit import successful:", extensionsToUse);
+      } catch (error) {
+        console.error("Direct StarterKit import failed:", error);
+        // Don't return null, wait for extensions to load properly
+        // This prevents the schema error by ensuring we never initialize without extensions
+        console.log("Waiting for extensions to load properly...");
+        return null;
+      }
+    }
+
+    // Ensure we have at least one extension before proceeding
+    if (extensionsToUse.length === 0) {
+      console.log("No extensions available, cannot create editor config");
+      return null;
+    }
+
+    return {
+      content: initialContent || "",
+      extensions: extensionsToUse,
+      editorProps: {
+        attributes: {
+          class: "focus:outline-none max-w-none prose prose-lg",
+        },
+      },
+      onCreate: ({ editor }) => {
+        console.log("Editor created successfully");
+        editorRef.current = editor;
+        setIsInitialized(true);
+        editorContext?.registerEditor?.(instanceId, editor, handleSave);
+
+        // Safe autofocus implementation
+        try {
+          const shouldAutofocus =
+            instanceConfig?.autofocus ?? DEFAULT_EDITOR_CONFIG?.autofocus ?? true;
+          if (shouldAutofocus) {
+            // Use setTimeout to ensure DOM is ready
+            setTimeout(() => {
+              if (editor && !editor.isDestroyed) {
+                editor.commands.focus("end");
+              }
+            }, 100);
+          }
+        } catch (error) {
+          console.warn("Autofocus failed:", error);
+        }
+      },
+      onUpdate: ({ editor }) => {
+        if (onChange) {
+          onChange(editor.getJSON(), instanceId);
+        }
+      },
+      onFocus: ({ editor, event }) => {
+        if (onFocus) {
+          onFocus(editor, event, instanceId);
+        }
+      },
+      onBlur: ({ editor, event }) => {
+        if (onBlur) {
+          onBlur(editor, event, instanceId);
+        }
+      },
+      onDestroy: () => {
+        editorContext?.unregisterEditor?.(instanceId);
+        setIsInitialized(false);
+      },
+    };
+  }, [
+    loadedExtensions,
+    initialContent,
+    instanceConfig,
+    instanceId,
+    handleSave,
+    onChange,
+    onFocus,
+    onBlur,
+    editorContext,
+  ]);
+
+  // Use the configuration
+  const [editorConfig, setEditorConfig] = useState(null);
+
+  useEffect(() => {
+    const initConfig = async () => {
+      const config = await createEditorConfig();
+      console.log("=== useEditor Debug ===");
+      console.log("loadedExtensions.length:", loadedExtensions.length);
+      console.log("editorConfig:", config);
+      setEditorConfig(config);
+    };
+
+    initConfig();
+  }, [createEditorConfig, loadedExtensions.length]);
+
+  // Don't use fallback config - always wait for proper extensions
+  // TipTap requires proper extensions to function, empty extensions cause schema errors
+
+  const editor = useEditor(
+    editorConfig
+      ? editorConfig
+      : {
+          immediatelyRender: false,
+          extensions: [StarterKit], // Use StarterKit as fallback to provide basic schema
+          content: null,
+        }, // Provide minimal config when editorConfig is null
+    [editorConfig] // Dependencies for re-initialization
+  );
 
   // Cleanup on unmount
   useEffect(() => {
@@ -243,12 +355,15 @@ export const Editor = ({
   }, [editor]);
 
   // Handle loading state
-  if (isLoading) {
+  if (isLoading || !editorConfig) {
     return (
       <div className="flex items-center justify-center min-h-[200px] bg-gray-50/50 rounded-md">
-        <Spinner className="text-primary" size="large">
-          <span className="ml-2 text-sm text-gray-600">Loading editor...</span>
-        </Spinner>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <span className="mt-2 text-sm text-gray-600 block">
+            {isLoading ? "Loading extensions..." : "Preparing editor..."}
+          </span>
+        </div>
       </div>
     );
   }
@@ -290,18 +405,15 @@ export const Editor = ({
       {...props}
     >
       {/* Render child components (menus, toolbars, etc.) */}
-      {React.Children.map(children, child => {
+      {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child, { editor, instanceId });
         }
         return child;
       })}
-      
+
       {/* Main editor content */}
-      <EditorContent
-        editor={editor}
-        className="editor-content"
-      />
+      <EditorContent editor={editor} className="editor-content" />
     </div>
   );
 };

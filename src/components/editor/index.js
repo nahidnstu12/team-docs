@@ -1,11 +1,17 @@
 /**
  * TipTap Editor System
  * Centralized export point for the modular TipTap editor implementation
- * 
+ *
  * @fileoverview This module provides a centralized export point for all
  * editor components, hooks, services, and utilities. It follows the new
  * modular architecture designed for scalability and maintainability.
  */
+
+import Editor from "./core/Editor";
+import { EditorProvider } from "./core/EditorProvider";
+import EditorService from "./services/EditorService";
+import BubbleMenu from "./ui/BubbleMenu";
+import SlashMenu from "./ui/menus/SlashMenu";
 
 // Core editor components
 export { Editor } from "./core/Editor";
@@ -13,7 +19,12 @@ export { EditorProvider, useEditorContext, useEditorInstance } from "./core/Edit
 export * from "./core/EditorConfig";
 
 // Extension system
-export { ExtensionRegistry, registerExtension, loadExtension, getBaseExtensions } from "./extensions";
+export {
+  ExtensionRegistry,
+  registerExtension,
+  loadExtension,
+  getBaseExtensions,
+} from "./extensions";
 export * from "./extensions/custom";
 
 // UI Components
@@ -32,12 +43,12 @@ export { EditorService } from "./services/EditorService";
 export * from "./ui/commands";
 
 // Utilities
-export * from "./utils";
+// export * from "./utils";
 
 /**
  * Complete Editor System
  * Pre-configured editor with all features enabled
- * 
+ *
  * @param {Object} props - Editor props
  * @returns {JSX.Element} Complete editor system
  */
@@ -49,18 +60,15 @@ export const CompleteEditor = ({
   onChange,
   config = {},
   className = "",
+  editable = true,
   ...props
 }) => {
   return (
-    <EditorProvider
-      config={config}
-      onSave={onSave}
-      onChange={onChange}
-      autoSave={true}
-    >
+    <EditorProvider config={config} onSave={onSave} onChange={onChange} autoSave={true}>
       <Editor
         instanceId={instanceId}
         initialContent={initialContent}
+        editable={editable}
         className={`complete-editor ${className}`}
         {...props}
       >
@@ -74,7 +82,7 @@ export const CompleteEditor = ({
 /**
  * Minimal Editor
  * Basic editor without menus for simple use cases
- * 
+ *
  * @param {Object} props - Editor props
  * @returns {JSX.Element} Minimal editor
  */
@@ -100,23 +108,15 @@ export const MinimalEditor = ({
 /**
  * Editor with Custom Configuration
  * Factory function to create editor with specific configuration
- * 
+ *
  * @param {Object} defaultConfig - Default configuration
  * @returns {Function} Configured editor component
  */
 export const createConfiguredEditor = (defaultConfig = {}) => {
-  return function ConfiguredEditor({
-    config = {},
-    ...props
-  }) {
+  return function ConfiguredEditor({ config = {}, ...props }) {
     const mergedConfig = { ...defaultConfig, ...config };
-    
-    return (
-      <CompleteEditor
-        config={mergedConfig}
-        {...props}
-      />
-    );
+
+    return <CompleteEditor config={mergedConfig} {...props} />;
   };
 };
 
