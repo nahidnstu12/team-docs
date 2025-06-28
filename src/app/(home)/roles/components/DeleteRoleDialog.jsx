@@ -15,10 +15,11 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { deleteRoleAction } from "@/system/Actions/RoleActions";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/useToast";
 import Logger from "@/lib/Logger";
 
 export default function DeleteRoleDialog({ role, setShouldStartFetchRoles }) {
+  const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -30,21 +31,18 @@ export default function DeleteRoleDialog({ role, setShouldStartFetchRoles }) {
       const result = await deleteRoleAction(null, role.id);
 
       if (result.success) {
-        toast.success("Role deleted", {
-          description: "Role has been successfully deleted.",
-        });
+        toast.showDeleteSuccess("Role");
         setIsOpen(false);
         setShouldStartFetchRoles(true);
       } else {
-        toast.error("Failed to delete role", {
-          description: result.errors?._form?.[0] || "An error occurred while deleting the role.",
-        });
+        toast.error(
+          "Failed to delete role",
+          result.errors?._form?.[0] || "An error occurred while deleting the role."
+        );
       }
     } catch (error) {
       Logger.error(error.message, "Failed to delete role:");
-      toast.error("Failed to delete role", {
-        description: "An unexpected error occurred.",
-      });
+      toast.error("Failed to delete role", "An unexpected error occurred.");
     } finally {
       setIsDeleting(false);
     }
