@@ -1,7 +1,7 @@
 /**
  * Extension Registry
  * Centralized extension management system for TipTap editor
- * 
+ *
  * @fileoverview This module provides a centralized registry for managing
  * TipTap extensions with lazy loading, dependency management, and modular organization.
  */
@@ -50,7 +50,7 @@ class ExtensionRegistryClass {
     this.categories = new Map();
     this.loadedExtensions = new Set();
     this.dependencies = new Map();
-    
+
     // Initialize with base extensions
     this.initializeBaseExtensions();
   }
@@ -101,9 +101,11 @@ class ExtensionRegistryClass {
       config: { nested: true },
     });
     this.register("ordered-list", OrderedList, EXTENSION_CATEGORIES.BLOCKS);
-    this.register("code-block", CodeBlockLowlight, EXTENSION_CATEGORIES.BLOCKS, {
-      config: { lowlight },
-    });
+    this.register(
+      "code-block",
+      CodeBlockLowlight.configure({ lowlight }),
+      EXTENSION_CATEGORIES.BLOCKS
+    );
 
     // Utility extensions
     this.register("text-align", TextAlign, EXTENSION_CATEGORIES.UTILITIES, {
@@ -197,11 +199,11 @@ class ExtensionRegistryClass {
     try {
       // Load dependencies first
       const dependencies = this.dependencies.get(name) || [];
-      await Promise.all(dependencies.map(dep => this.loadExtension(dep)));
+      await Promise.all(dependencies.map((dep) => this.loadExtension(dep)));
 
       // Load the extension
       let extension = extensionInfo.extension;
-      
+
       // Handle lazy loading
       if (extensionInfo.lazy && typeof extension === "function") {
         extension = await extension();
@@ -225,16 +227,16 @@ class ExtensionRegistryClass {
    */
   createExtensionInstance(extensionInfo) {
     const { extension, config } = extensionInfo;
-    
+
     // Handle different extension types
     if (typeof extension === "function") {
       // Extension class with configure method
-      if (extension.configure && Object.keys(config).length > 0) {
+      if (extension.configure) {
         return extension.configure(config);
       }
       return extension;
     }
-    
+
     // Extension instance
     return extension;
   }
@@ -245,7 +247,7 @@ class ExtensionRegistryClass {
    * @returns {Promise<Array>} Array of loaded extensions
    */
   async loadExtensions(names) {
-    const loadPromises = names.map(name => this.loadExtension(name));
+    const loadPromises = names.map((name) => this.loadExtension(name));
     const results = await Promise.all(loadPromises);
     return results.filter(Boolean); // Remove null results
   }
@@ -259,14 +261,14 @@ class ExtensionRegistryClass {
     const markExtensions = this.getByCategory(EXTENSION_CATEGORIES.MARKS);
     const blockExtensions = this.getByCategory(EXTENSION_CATEGORIES.BLOCKS);
     const utilityExtensions = this.getByCategory(EXTENSION_CATEGORIES.UTILITIES);
-    
+
     const allBaseExtensions = [
       ...baseExtensions,
       ...markExtensions,
       ...blockExtensions,
       ...utilityExtensions,
     ];
-    
+
     return this.loadExtensions(allBaseExtensions);
   }
 
@@ -317,10 +319,7 @@ class ExtensionRegistryClass {
       loaded: this.loadedExtensions.size,
       categories: this.categories.size,
       byCategory: Object.fromEntries(
-        Array.from(this.categories.entries()).map(([cat, exts]) => [
-          cat,
-          exts.size,
-        ])
+        Array.from(this.categories.entries()).map(([cat, exts]) => [cat, exts.size])
       ),
     };
   }
