@@ -224,104 +224,77 @@ export const Editor = ({
     };
   }, [extensions]);
 
-  // Create editor configuration with fallback
-  const createEditorConfig = useCallback(async () => {
-    console.log("=== Creating Editor Config ===");
-    console.log("loadedExtensions.length:", loadedExtensions.length);
-    console.log("loadedExtensions:", loadedExtensions);
-
-    let extensionsToUse = loadedExtensions;
-
-    // If no extensions loaded, try to load StarterKit directly
-    if (extensionsToUse.length === 0) {
-      console.log("No extensions loaded, trying direct StarterKit import...");
-      try {
-        const { StarterKit } = await import("@tiptap/starter-kit");
-        extensionsToUse = [StarterKit];
-        console.log("Direct StarterKit import successful:", extensionsToUse);
-      } catch (error) {
-        console.error("Direct StarterKit import failed:", error);
-        // Don't return null, wait for extensions to load properly
-        // This prevents the schema error by ensuring we never initialize without extensions
-        console.log("Waiting for extensions to load properly...");
-        return null;
-      }
-    }
-
-    // Ensure we have at least one extension before proceeding
-    if (extensionsToUse.length === 0) {
-      console.log("No extensions available, cannot create editor config");
-      return null;
-    }
-
-    return {
-      content: initialContent || "",
-      extensions: extensionsToUse,
-      editorProps: {
-        attributes: {
-          class: "focus:outline-none max-w-none prose prose-lg",
-        },
-      },
-      onCreate: ({ editor }) => {
-        console.log("Editor created successfully");
-        editorRef.current = editor;
-        setIsInitialized(true);
-        editorContext?.registerEditor?.(instanceId, editor, handleSave);
-
-        // Safe autofocus implementation
-        try {
-          const shouldAutofocus =
-            instanceConfig?.autofocus ?? DEFAULT_EDITOR_CONFIG?.autofocus ?? true;
-          if (shouldAutofocus) {
-            // Use setTimeout to ensure DOM is ready
-            setTimeout(() => {
-              if (editor && !editor.isDestroyed) {
-                editor.commands.focus("end");
-              }
-            }, 100);
-          }
-        } catch (error) {
-          console.warn("Autofocus failed:", error);
-        }
-      },
-      onUpdate: ({ editor }) => {
-        if (onChange) {
-          onChange(editor.getJSON(), instanceId);
-        }
-      },
-      onFocus: ({ editor, event }) => {
-        if (onFocus) {
-          onFocus(editor, event, instanceId);
-        }
-      },
-      onBlur: ({ editor, event }) => {
-        if (onBlur) {
-          onBlur(editor, event, instanceId);
-        }
-      },
-      onDestroy: () => {
-        editorContext?.unregisterEditor?.(instanceId);
-        setIsInitialized(false);
-      },
-    };
-  }, [
-    loadedExtensions,
-    initialContent,
-    instanceConfig,
-    instanceId,
-    handleSave,
-    onChange,
-    onFocus,
-    onBlur,
-    editorContext,
-  ]);
-
   // Use the configuration
   const [editorConfig, setEditorConfig] = useState(null);
 
   useEffect(() => {
     const initConfig = async () => {
-      const config = await createEditorConfig();
+      // Only proceed if we have loaded extensions
+      if (loadedExtensions.length === 0) {
+        console.log("No extensions loaded yet, waiting...");
+        return;
+      }
+
+      console.log("Creating editor config with extensions:", loadedExtensions.length);
+
+      // Ensure we have at least one extension before proceeding
+      if (loadedExtensions.length === 0) {
+        console.log("No extensions available, cannot create editor config");
+        setEditorConfig(null);
+        return;
+      }
+
+      const config = {
+        content: initialContent || "",
+        extensions: loadedExtensions,
+        editorProps: {
+          attributes: {
+            class: "focus:outline-none max-w-none prose prose-lg",
+          },
+        },
+        onCreate: ({ editor }) => {
+          console.log("Editor created successfully");
+          editorRef.current = editor;
+          setIsInitialized(true);
+          editorContext?.registerEditor?.(instanceId, editor, handleSave);
+
+          // Safe autofocus implementation
+          try {
+            const shouldAutofocus =
+              instanceConfig?.autofocus ?? DEFAULT_EDITOR_CONFIG?.autofocus ?? true;
+            if (shouldAutofocus) {
+              // Use setTimeout to ensure DOM is ready
+              setTimeout(() => {
+                if (editor && !editor.isDestroyed) {
+                  editor.commands.focus("end");
+                }
+              }, 100);
+            }
+          } catch (error) {
+            console.warn("Autofocus failed:", error);
+          }
+        },
+        onUpdate: ({ editor }) => {
+          if (onChange) {
+            onChange(editor.getJSON(), instanceId);
+          }
+        },
+        onFocus: ({ editor, event }) => {
+          if (onFocus) {
+            onFocus(editor, event, instanceId);
+          }
+        },
+        onBlur: ({ editor, event }) => {
+          if (onBlur) {
+            onBlur(editor, event, instanceId);
+          }
+        },
+        onDestroy: () => {
+          editorContext?.unregisterEditor?.(instanceId);
+          setIsInitialized(false);
+        },
+      };
+
       console.log("=== useEditor Debug ===");
       console.log("loadedExtensions.length:", loadedExtensions.length);
       console.log("editorConfig:", config);
@@ -329,7 +302,17 @@ export const Editor = ({
     };
 
     initConfig();
-  }, [createEditorConfig, loadedExtensions.length]);
+  }, [
+    loadedExtensions,
+    instanceId,
+    initialContent,
+    instanceConfig,
+    handleSave,
+    onChange,
+    onFocus,
+    onBlur,
+    editorContext,
+  ]);
 
   // Don't use fallback config - always wait for proper extensions
   // TipTap requires proper extensions to function, empty extensions cause schema errors
