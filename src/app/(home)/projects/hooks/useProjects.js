@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useStartFetch } from "@/hooks/useStartFetch";
 import { getAllProjectsFn } from "../actions/getAllProjects";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -22,6 +22,11 @@ export function useProjects(
 	const pageSize = 10; // Items per page
 	const sortBy = searchParams.get("sortBy") || "name";
 	const sortOrder = searchParams.get("sortOrder") || "asc";
+
+	// Effect to trigger refetch when URL params change
+	useEffect(() => {
+		setShouldStartFetchProjects(true);
+	}, [currentPage, sortBy, sortOrder, setShouldStartFetchProjects]);
 
 	// Function to update sort parameters in the URL
 	const updateSort = useCallback((newSortBy, newSortOrder) => {
@@ -48,9 +53,8 @@ export function useProjects(
 			updateSort(column, "asc");
 		}
 		
-		// Trigger refetch with new sort parameters
-		setShouldStartFetchProjects(true);
-	}, [sortBy, sortOrder, setShouldStartFetchProjects, updateSort]);
+
+	}, [sortBy, sortOrder, updateSort]);
 
 	// Use memoized callback to prevent recreation of function on every render
 	const fetchProjectsWithPagination = useCallback(async () => {
