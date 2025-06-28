@@ -20,7 +20,7 @@ import TablePagination from "@/components/shared/TablePagination";
 import { usePermissions } from "../hooks/usePermissions";
 import Logger from "@/lib/Logger";
 
-export default function PermissionLisitngs({
+export default function PermissionListings({
   hasPermission,
   setIsDialogOpen,
   startFetchPermissions,

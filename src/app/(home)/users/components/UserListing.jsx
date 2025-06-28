@@ -11,44 +11,45 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
-import { getAllUsersFn } from "../actions/getAllUsers";
 import TableLoading from "@/components/loading/TableLoading";
-import { useEffect, useState } from "react";
+import { useUsers } from "../hooks/useUsers";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
+import TablePagination from "@/components/shared/TablePagination";
+import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 
-export default function UserLisitngs({
-	userId,
+export default function UserListings({
 	setIsDialogOpen,
 	shouldRefetch,
 	setShouldRefetch,
 }) {
-	const [users, setUsers] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const {
+		data: users,
+		totalItems,
+		pageSize,
+		sortBy,
+		sortOrder,
+		handleSort,
+		fetchError,
+		showSkeleton: isLoading,
+	} = useUsers(shouldRefetch, setShouldRefetch);
 
-	const fetchUsers = async () => {
-		try {
-			setIsLoading(true);
-			setError(null);
-			const data = await getAllUsersFn();
-			setUsers(data || []);
-		} catch (err) {
-			setError(err.message || "Failed to fetch users");
-		} finally {
-			setIsLoading(false);
-			setShouldRefetch(false);
+	// Function to render sort indicator icons
+	const renderSortIcon = (column) => {
+		if (column === sortBy) {
+			return sortOrder === "asc" ? (
+				<ChevronUp className="ml-2 w-4 h-4" />
+			) : (
+				<ChevronDown className="ml-2 w-4 h-4" />
+			);
 		}
+		return <ArrowUpDown className="ml-2 w-4 h-4 opacity-50" />;
 	};
 
-	useEffect(() => {
-		fetchUsers();
-	}, [shouldRefetch]);
-
-	if (error) {
+	if (fetchError) {
 		return (
 			<ClientErrorUI
-				errorMessage={error}
+				errorMessage={fetchError}
 				retry={() => setShouldRefetch(true)}
 			/>
 		);
@@ -70,8 +71,24 @@ export default function UserLisitngs({
 				<Table>
 					<TableHeader className="sticky top-0 z-10 bg-muted">
 						<TableRow className="text-lg font-semibold tracking-wide">
-							<TableHead className="w-[160px] px-6 py-4">Name</TableHead>
-							<TableHead className="w-[160px] px-6 py-4">Email</TableHead>
+							<TableHead
+						className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+						onClick={() => handleSort("username")}
+					>
+						<div className="flex items-center">
+							Name
+							{renderSortIcon("username")}
+						</div>
+					</TableHead>
+					<TableHead
+						className="w-[160px] px-6 py-4 cursor-pointer hover:bg-muted/80 transition-colors"
+						onClick={() => handleSort("email")}
+					>
+						<div className="flex items-center">
+							Email
+							{renderSortIcon("email")}
+						</div>
+					</TableHead>
 							<TableHead className="w-[480px] px-6 py-4">Role</TableHead>
 							<TableHead className="w-[320px] text-center px-6 py-4">
 								Actions
@@ -139,6 +156,13 @@ export default function UserLisitngs({
 					</TableBody>
 				</Table>
 			</div>
+			{users.length > 0 && (
+				<TablePagination
+					totalItems={totalItems}
+					itemsPerPage={pageSize}
+					className="mt-6 mb-8"
+				/>
+			)}
 		</>
 	);
 }
