@@ -2,7 +2,7 @@ import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { Button } from "../ui/button";
 import { SidebarTrigger } from "../ui/sidebar";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Eye, Upload, MoreVertical, Check } from "lucide-react";
+import { Eye, Upload, MoreVertical, Check } from "lucide-react";
 import { usePreviewStore } from "@/app/(home)/projects/[slug]/editor/store/usePreviewStore";
 import {
   DropdownMenu,

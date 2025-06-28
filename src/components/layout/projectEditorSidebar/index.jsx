@@ -2,7 +2,7 @@
 
 import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import HomeButton from "./components/HomeButton";
+import GoBackButton from "./components/GoBackButton";
 import SectionList from "./components/SectionList";
 import CreateSectionButton from "./components/CreateSectionButton";
 
@@ -13,7 +13,7 @@ export default function ProjectEditorSidebar() {
     <Sidebar className="bg-white border-r">
       <SidebarContent className="flex flex-col h-full">
         <div className="px-2 pt-3">
-          <HomeButton />
+          <GoBackButton />
         </div>
 
         <div className="px-3">
