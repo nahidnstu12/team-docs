@@ -6,6 +6,11 @@ import { useEditorContext } from "./EditorProvider";
 import { DEFAULT_EDITOR_CONFIG, getInstanceConfig } from "./EditorConfig";
 
 import StarterKit from "@tiptap/starter-kit";
+import Highlight from "@tiptap/extension-highlight";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Color from "@tiptap/extension-color";
+import TextStyle from "@tiptap/extension-text-style";
 
 /**
  * Main TipTap Editor Component
@@ -154,7 +159,19 @@ const EditorComponent = ({
   const stableEditorConfig = useMemo(
     () => ({
       immediatelyRender: false,
-      extensions: [StarterKit], // Always use StarterKit for stability
+      extensions: [
+        StarterKit, // Always use StarterKit for stability
+        TextStyle, // Required for Color extension
+        Color, // Add color support for ColorPickerPanel
+        Highlight.configure({ multicolor: true }), // Add highlight support for BubbleMenu
+        Underline, // Add underline support for BubbleMenu
+        Link.configure({
+          openOnClick: false, // Don't open links when clicking in editor
+          HTMLAttributes: {
+            class: "text-blue-600 underline hover:text-blue-800",
+          },
+        }), // Add link support for BubbleMenu
+      ],
       content: initialContent || "",
       editorProps: {
         attributes: {
