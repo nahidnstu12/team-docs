@@ -50,7 +50,12 @@ const SlashMenuComponent = ({
     searchQuery,
     setSearchQuery,
     selectedPosition,
+    setSelectedPosition,
+    selectedIndex,
+    setSelectedIndex,
     menuPosition,
+    isUsingKeyboard,
+    setIsUsingKeyboard,
   } = useSlashCommand(
     editor,
     onOpenChange,
@@ -63,6 +68,13 @@ const SlashMenuComponent = ({
 
   // Set up dismiss behavior
   const dismiss = useDismiss(context);
+
+  // Helper function to calculate global index from group and item indices
+  const calculateGlobalIndex = (groupIndex, itemIndex) => {
+    return (
+      groupedItems.slice(0, groupIndex).reduce((acc, g) => acc + g.items.length, 0) + itemIndex
+    );
+  };
   const { getFloatingProps } = useInteractions([dismiss]);
 
   // Refs for item navigation
@@ -161,14 +173,24 @@ const SlashMenuComponent = ({
                             }
                           }}
                           onClick={item.command}
+                          onMouseEnter={() => {
+                            // Switch to mouse mode and sync selection
+                            setIsUsingKeyboard(false);
+                            const globalIndex = calculateGlobalIndex(groupIndex, itemIndex);
+                            setSelectedPosition({ groupIndex, itemIndex });
+                            setSelectedIndex(globalIndex);
+                          }}
                           className={`
                             w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg transition-all duration-150
-                            hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-zinc-800
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
                             ${
                               isSelected
                                 ? "bg-blue-50 border border-blue-200 dark:bg-zinc-800 dark:border-zinc-600"
-                                : "border border-transparent"
+                                : `border border-transparent ${
+                                    !isUsingKeyboard
+                                      ? "hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-zinc-800"
+                                      : ""
+                                  }`
                             }
                           `}
                         >

@@ -46,6 +46,7 @@ export const useSlashCommand = (
   const [menuOpenedAt, setMenuOpenedAt] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [savedCursorPosition, setSavedCursorPosition] = useState(null);
+  const [isUsingKeyboard, setIsUsingKeyboard] = useState(true); // Track input method
 
   // Floating UI setup
   const { refs, floatingStyles, context } = useFloating({
@@ -181,6 +182,9 @@ export const useSlashCommand = (
     console.log("📍 Navigate down called, totalItems:", totalItems, "currentIndex:", selectedIndex);
     if (totalItems === 0) return;
 
+    // Mark as keyboard navigation
+    setIsUsingKeyboard(true);
+
     const newIndex = (selectedIndex + 1) % totalItems;
     const newPosition = getPositionFromIndex(newIndex);
 
@@ -192,6 +196,9 @@ export const useSlashCommand = (
   const navigateUp = useCallback(() => {
     console.log("📍 Navigate up called, totalItems:", totalItems, "currentIndex:", selectedIndex);
     if (totalItems === 0) return;
+
+    // Mark as keyboard navigation
+    setIsUsingKeyboard(true);
 
     const newIndex = selectedIndex === 0 ? totalItems - 1 : selectedIndex - 1;
     const newPosition = getPositionFromIndex(newIndex);
@@ -396,8 +403,12 @@ export const useSlashCommand = (
     searchQuery,
     setSearchQuery,
     selectedPosition,
+    setSelectedPosition,
     selectedIndex,
+    setSelectedIndex,
     totalItems,
     menuPosition,
+    isUsingKeyboard,
+    setIsUsingKeyboard,
   };
 };
