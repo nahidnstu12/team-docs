@@ -32,6 +32,7 @@ export { default as BubbleMenu } from "./ui/BubbleMenu";
 export { SlashMenu } from "./ui/menus/SlashMenu";
 export { ColorPickerPanel } from "./ui/ColorPickerPanel";
 export { default as LinkEditDialog } from "./ui/LinkEditDialog";
+export { default as LinkCreateDialog } from "./ui/LinkCreateDialog";
 export { Toolbar } from "./ui/Toolbar";
 
 // Hooks

@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import ColorPickerPanel from "./ColorPickerPanel";
 import LinkEditDialog from "./LinkEditDialog";
+import LinkCreateDialog from "./LinkCreateDialog";
 import { useLinkEditor } from "../hooks/useLinkEditor";
 
 export default function BubbleMenu({ editor }) {
@@ -108,13 +109,10 @@ export default function BubbleMenu({ editor }) {
         onClick={() => {
           if (editor.isActive("link")) {
             // If text is already a link, open edit dialog
-            linkEditor.openLinkDialog();
+            linkEditor.openLinkEditDialog();
           } else {
-            // If no link, create new one with prompt (fallback)
-            const url = window.prompt("Enter URL");
-            if (url) {
-              editor.chain().focus().setLink({ href: url }).run();
-            }
+            // If no link, open create dialog
+            linkEditor.openLinkCreateDialog();
           }
         }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300
@@ -144,8 +142,9 @@ export default function BubbleMenu({ editor }) {
         </div>
       )}
 
-      {/* Link Edit Dialog */}
-      <LinkEditDialog {...linkEditor.dialogProps} />
+      {/* Link Dialogs */}
+      <LinkEditDialog {...linkEditor.editDialogProps} />
+      <LinkCreateDialog {...linkEditor.createDialogProps} />
     </TiptapBubbleMenu>
   );
 }
