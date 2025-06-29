@@ -28,9 +28,10 @@ export {
 export * from "./extensions/custom";
 
 // UI Components
-export { BubbleMenu } from "./ui/menus/BubbleMenu";
+export { default as BubbleMenu } from "./ui/BubbleMenu";
 export { SlashMenu } from "./ui/menus/SlashMenu";
 export { ColorPickerPanel } from "./ui/ColorPickerPanel";
+export { default as LinkEditDialog } from "./ui/LinkEditDialog";
 export { Toolbar } from "./ui/Toolbar";
 
 // Hooks

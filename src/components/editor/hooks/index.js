@@ -11,6 +11,7 @@ import { useEditorContext, useEditorInstance } from "../core/EditorProvider";
 import { useSlashCommand } from "../ui/menus/SlashMenu";
 import { useEditorContent } from "./useEditorContent";
 import { useTiptapEditor } from "./useTiptapEditor";
+import { useLinkEditor } from "./useLinkEditor";
 
 // Core editor hooks
 export { useEditorContext, useEditorInstance } from "../core/EditorProvider";
@@ -24,6 +25,9 @@ export { useTiptapEditor } from "./useTiptapEditor";
 // Content management hooks
 export { useEditorContent } from "./useEditorContent";
 
+// Link editing hooks
+export { useLinkEditor } from "./useLinkEditor";
+
 // Default export with all hooks
 export default {
   useEditorContext,
@@ -31,4 +35,5 @@ export default {
   useSlashCommand,
   useTiptapEditor,
   useEditorContent,
+  useLinkEditor,
 };

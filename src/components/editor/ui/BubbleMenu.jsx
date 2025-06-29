@@ -11,9 +11,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ColorPickerPanel from "./ColorPickerPanel";
+import LinkEditDialog from "./LinkEditDialog";
+import { useLinkEditor } from "../hooks/useLinkEditor";
 
 export default function BubbleMenu({ editor }) {
   const [showColorPanel, setShowColorPanel] = useState(false);
+  const linkEditor = useLinkEditor(editor);
 
   if (!editor) return null;
 
@@ -103,13 +106,21 @@ export default function BubbleMenu({ editor }) {
       <button
         type="button"
         onClick={() => {
-          const previousUrl = editor.getAttributes("link").href;
-          const url = window.prompt("Enter URL", previousUrl);
-          if (url) {
-            editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+          if (editor.isActive("link")) {
+            // If text is already a link, open edit dialog
+            linkEditor.openLinkDialog();
+          } else {
+            // If no link, create new one with prompt (fallback)
+            const url = window.prompt("Enter URL");
+            if (url) {
+              editor.chain().focus().setLink({ href: url }).run();
+            }
           }
         }}
-        className="p-2 text-gray-600 transition rounded-lg hover:bg-blue-100 hover:text-black dark:text-gray-300 dark:hover:bg-zinc-800"
+        className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300
+			hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800
+			focus:outline-none focus:ring-2 focus:ring-blue-200
+			active:bg-blue-50  ${editor.isActive("link") ? "bg-blue-100 text-blue-600" : ""}`}
       >
         <Link className="w-5 h-5" />
       </button>
@@ -132,6 +143,9 @@ export default function BubbleMenu({ editor }) {
           <ColorPickerPanel editor={editor} onClose={() => setShowColorPanel(false)} />
         </div>
       )}
+
+      {/* Link Edit Dialog */}
+      <LinkEditDialog {...linkEditor.dialogProps} />
     </TiptapBubbleMenu>
   );
 }

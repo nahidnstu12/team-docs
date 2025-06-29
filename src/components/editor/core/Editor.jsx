@@ -166,9 +166,9 @@ const EditorComponent = ({
         Highlight.configure({ multicolor: true }), // Add highlight support for BubbleMenu
         Underline, // Add underline support for BubbleMenu
         Link.configure({
-          openOnClick: false, // Don't open links when clicking in editor
+          openOnClick: false, // We'll handle clicks manually for editing
           HTMLAttributes: {
-            class: "text-blue-600 underline hover:text-blue-800",
+            class: "text-blue-600 underline hover:text-blue-800 cursor-pointer",
           },
         }), // Add link support for BubbleMenu
       ],
