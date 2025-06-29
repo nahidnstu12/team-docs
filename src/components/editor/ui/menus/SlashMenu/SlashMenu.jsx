@@ -61,9 +61,6 @@ const SlashMenuComponent = ({
     config
   );
 
-  // Debug floating styles
-  console.log("🎨 Floating styles:", floatingStyles);
-
   // Set up dismiss behavior
   const dismiss = useDismiss(context);
   const { getFloatingProps } = useInteractions([dismiss]);
@@ -96,22 +93,18 @@ const SlashMenuComponent = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          ref={refs.setFloating}
           style={{
-            // Use manual positioning instead of Floating UI
+            // Pure manual positioning - no Floating UI interference
             position: "absolute",
             left: `${menuPosition.x}px`,
             top: `${menuPosition.y}px`,
             minWidth: "360px",
             maxWidth: "420px",
             zIndex: 50,
-            // Fallback to Floating UI if manual position is not set
-            ...(menuPosition.x === 0 && menuPosition.y === 0 ? floatingStyles : {}),
           }}
           // Make the menu focusable and auto-focus when it opens
           tabIndex={-1}
           autoFocus
-          {...getFloatingProps()}
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}

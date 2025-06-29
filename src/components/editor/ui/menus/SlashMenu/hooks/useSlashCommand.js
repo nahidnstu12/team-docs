@@ -45,6 +45,7 @@ export const useSlashCommand = (
   });
   const [menuOpenedAt, setMenuOpenedAt] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [savedCursorPosition, setSavedCursorPosition] = useState(null);
 
   // Floating UI setup
   const { refs, floatingStyles, context } = useFloating({
@@ -200,12 +201,39 @@ export const useSlashCommand = (
     setSelectedPosition(newPosition);
   }, [totalItems, selectedIndex, getPositionFromIndex]);
 
+  // Focus restoration helper (defined first)
+  const restoreEditorFocus = useCallback(() => {
+    console.log("🔄 Restoring editor focus to position:", savedCursorPosition);
+
+    // Multiple approaches to ensure focus is restored
+    setTimeout(() => {
+      // Approach 1: Use TipTap's focus command
+      editor.commands.focus();
+
+      // Approach 2: Focus the editor DOM element directly
+      if (editor.view && editor.view.dom) {
+        editor.view.dom.focus();
+      }
+
+      // Approach 3: Restore cursor position if saved
+      if (savedCursorPosition !== null) {
+        editor.commands.setTextSelection(savedCursorPosition);
+      }
+
+      console.log("✅ Editor focus restored, isFocused:", editor.isFocused);
+    }, 10); // Small delay to ensure menu is closed first
+  }, [editor, savedCursorPosition]);
+
   const executeSelectedCommand = useCallback(() => {
     const selectedItem = getSelectedItem();
     if (selectedItem) {
+      console.log("✅ Executing command:", selectedItem.title);
       selectedItem.command();
+      // Close menu and restore focus after command execution
+      setIsOpen(false);
+      restoreEditorFocus();
     }
-  }, [getSelectedItem]);
+  }, [getSelectedItem, restoreEditorFocus]);
 
   // Keyboard event handler using document events (TipTap editor.on doesn't work for this)
   useEffect(() => {
@@ -231,13 +259,15 @@ export const useSlashCommand = (
           if (textBefore === "/") {
             // Get slash position for menu positioning
             const pos = editor.view.coordsAtPos(from - 1);
-            console.log("📍 Cursor position:", pos);
+
+            // Save cursor position for focus restoration
+            setSavedCursorPosition(from);
 
             // Set manual position for direct CSS positioning
             const menuX = pos.left;
             const menuY = pos.bottom + 8; // 8px below cursor
             setMenuPosition({ x: menuX, y: menuY });
-            console.log("🎯 Setting menu position:", { x: menuX, y: menuY });
+            console.log("🎯 Menu opened at position:", { x: menuX, y: menuY });
 
             // Still create virtual element for Floating UI as fallback
             const virtualElement = {
@@ -283,10 +313,8 @@ export const useSlashCommand = (
           e.preventDefault();
           console.log("🚪 Closing menu and returning focus to editor");
           setIsOpen(false);
-          // Return focus to editor
-          setTimeout(() => {
-            editor.commands.focus();
-          }, 0);
+          // Restore editor focus
+          restoreEditorFocus();
         }
         return; // Don't process other keys when menu is open
       }
@@ -298,7 +326,7 @@ export const useSlashCommand = (
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [editor, isOpen, navigateDown, navigateUp, executeSelectedCommand, refs]);
+  }, [editor, isOpen, navigateDown, navigateUp, executeSelectedCommand, refs, restoreEditorFocus]);
 
   // Close menu when editor loses focus or selection changes significantly
   useEffect(() => {
@@ -348,6 +376,16 @@ export const useSlashCommand = (
       // editor.off("blur", handleBlur);
     };
   }, [editor, isOpen, menuOpenedAt]);
+
+  // Restore focus whenever menu closes
+  useEffect(() => {
+    if (!isOpen && savedCursorPosition !== null) {
+      console.log("🔄 Menu closed, restoring focus");
+      restoreEditorFocus();
+      // Clear saved position after restoring
+      setSavedCursorPosition(null);
+    }
+  }, [isOpen, savedCursorPosition, restoreEditorFocus]);
 
   return {
     isOpen,
