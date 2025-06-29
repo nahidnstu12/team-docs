@@ -127,12 +127,26 @@ export default function BubbleMenu({ editor }) {
       <button
         type="button"
         onClick={() => setShowColorPanel((prev) => !prev)}
-        className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
-		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
+        className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300
+		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800
 		focus:outline-none focus:ring-2 focus:ring-blue-200
-		active:bg-blue-50  ${showColorPanel ? "bg-pink-100 text-pink-600" : ""}`}
+		active:bg-blue-50 relative ${showColorPanel ? "bg-pink-100 text-pink-600" : ""}`}
       >
         <PaintBucket className="w-5 h-5" />
+        {/* Color indicator dot */}
+        {(() => {
+          const currentColor = editor.getAttributes("textStyle")?.color;
+          if (currentColor) {
+            return (
+              <div
+                className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border border-white shadow-sm"
+                style={{ backgroundColor: currentColor }}
+                title={`Current color: ${currentColor}`}
+              />
+            );
+          }
+          return null;
+        })()}
       </button>
 
       {/* Color Picker Panel */}
