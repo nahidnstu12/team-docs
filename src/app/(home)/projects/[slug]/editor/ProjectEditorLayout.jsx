@@ -9,7 +9,7 @@ import { usePreviewStore } from "./store/usePreviewStore";
 import { savePageContent } from "./actions/savePageContent";
 import { fetchPageContent } from "./actions/fetchPageContent";
 import { toast } from "sonner";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { Spinner } from "@/components/ui/spinner";
 
 /**
@@ -40,7 +40,7 @@ function EnhancedEditor({ pageId }) {
     [pageId]
   );
 
-  // Handle content changes
+  // Handle content changes - memoized to prevent infinite loops
   const handleChange = useCallback((content, instanceId) => {
     // Store the current content for saving
     setPageContent(content);
@@ -98,23 +98,29 @@ function EnhancedEditor({ pageId }) {
     }
   }, [pageId, pageContent, handleSave]);
 
-  // Editor configuration
-  const editorConfig = {
-    autofocus: true,
-    characterLimit: 50000,
-    placeholder: {
-      text: "Start writing your documentation...",
-    },
-    editorProps: {
-      attributes: {
-        class: "focus:outline-none max-w-none",
+  // Memoize instanceId to prevent recreation
+  const instanceId = useMemo(() => `page-editor-${pageId}`, [pageId]);
+
+  // Editor configuration - memoized to prevent infinite loops
+  const editorConfig = useMemo(
+    () => ({
+      autofocus: true,
+      characterLimit: 50000,
+      placeholder: {
+        text: "Start writing your documentation...",
       },
-      editable: () => !isPreviewMode,
-    },
-    autoSave: {
-      enabled: false, // We handle saving manually
-    },
-  };
+      editorProps: {
+        attributes: {
+          class: "focus:outline-none max-w-none",
+        },
+        editable: () => !isPreviewMode,
+      },
+      autoSave: {
+        enabled: false, // We handle saving manually
+      },
+    }),
+    [isPreviewMode]
+  );
 
   if (isLoading) {
     return (
@@ -134,7 +140,7 @@ function EnhancedEditor({ pageId }) {
         } max-w-none ${isPreviewMode ? "preview-mode" : ""}`}
       >
         <CompleteEditor
-          instanceId={`page-editor-${pageId}`}
+          instanceId={instanceId}
           pageId={pageId}
           initialContent={pageContent}
           onSave={handleSave}

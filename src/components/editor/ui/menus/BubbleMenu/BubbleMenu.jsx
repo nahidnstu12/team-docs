@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react";
 import {
   Bold,
@@ -35,16 +35,16 @@ import { BUBBLE_MENU_CONFIG } from "../../../core/EditorConfig";
  * @param {string} props.className - Additional CSS classes
  * @param {Function} props.onLinkClick - Callback for link button click
  */
-export const BubbleMenu = ({ editor, instanceId, config = {}, className = "", onLinkClick }) => {
+const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", onLinkClick }) => {
   const [showColorPanel, setShowColorPanel] = useState(false);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
 
-  // Merge configuration with defaults
-  const menuConfig = { ...BUBBLE_MENU_CONFIG, ...config };
+  // Memoize configuration to prevent recreation
+  const menuConfig = useMemo(() => ({ ...BUBBLE_MENU_CONFIG, ...config }), [config]);
 
-  // Handle ESC key press to close panels
+  // Handle ESC key press to close panels - memoized to prevent infinite loops
   useEffect(() => {
-    if (!editor) return;
+    if (!editor?.view?.dom) return;
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -58,17 +58,19 @@ export const BubbleMenu = ({ editor, instanceId, config = {}, className = "", on
     editorDom.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      editorDom.removeEventListener("keydown", handleKeyDown);
+      if (editorDom) {
+        editorDom.removeEventListener("keydown", handleKeyDown);
+      }
     };
-  }, [editor]);
+  }, [editor?.view?.dom]); // Only depend on the DOM element, not the entire editor object
 
   // Don't render if editor is not available
   if (!editor) return null;
 
   /**
-   * Handle link button click
+   * Handle link button click - memoized to prevent recreation
    */
-  const handleLinkClick = () => {
+  const handleLinkClick = useCallback(() => {
     if (onLinkClick) {
       onLinkClick(editor, instanceId);
     } else {
@@ -78,23 +80,23 @@ export const BubbleMenu = ({ editor, instanceId, config = {}, className = "", on
         editor.chain().focus().setLink({ href: url }).run();
       }
     }
-  };
+  }, [onLinkClick, editor, instanceId]);
 
   /**
-   * Toggle color panel
+   * Toggle color panel - memoized to prevent recreation
    */
-  const toggleColorPanel = () => {
+  const toggleColorPanel = useCallback(() => {
     setShowColorPanel(!showColorPanel);
     setShowMoreOptions(false);
-  };
+  }, [showColorPanel]);
 
   /**
-   * Toggle more options panel
+   * Toggle more options panel - memoized to prevent recreation
    */
-  const toggleMoreOptions = () => {
+  const toggleMoreOptions = useCallback(() => {
     setShowMoreOptions(!showMoreOptions);
     setShowColorPanel(false);
-  };
+  }, [showMoreOptions]);
 
   return (
     <TiptapBubbleMenu
@@ -315,5 +317,8 @@ export const BubbleMenu = ({ editor, instanceId, config = {}, className = "", on
     </TiptapBubbleMenu>
   );
 };
+
+// Memoize the component to prevent unnecessary re-renders
+export const BubbleMenu = React.memo(BubbleMenuComponent);
 
 export default BubbleMenu;

@@ -8,7 +8,7 @@ import { useSlashCommand } from "./hooks/useSlashCommand";
 /**
  * Slash Command Menu Component
  * Notion-like command palette triggered by typing '/'
- * 
+ *
  * @fileoverview This component provides a command palette interface
  * that appears when users type '/' in the editor, offering quick access
  * to various formatting and content insertion options.
@@ -16,7 +16,7 @@ import { useSlashCommand } from "./hooks/useSlashCommand";
 
 /**
  * SlashMenu Component
- * 
+ *
  * @param {Object} props - Component props
  * @param {Object} props.editor - TipTap editor instance
  * @param {string} props.instanceId - Editor instance identifier
@@ -28,7 +28,7 @@ import { useSlashCommand } from "./hooks/useSlashCommand";
  * @param {Object} props.config - Slash menu configuration overrides
  * @param {string} props.className - Additional CSS classes
  */
-export const SlashMenu = ({
+const SlashMenuComponent = ({
   editor,
   instanceId,
   open,
@@ -50,11 +50,11 @@ export const SlashMenu = ({
     setSearchQuery,
     selectedPosition,
   } = useSlashCommand(
-    editor, 
-    onOpenChange, 
-    open, 
-    setInitialText, 
-    setInitialUrl, 
+    editor,
+    onOpenChange,
+    open,
+    setInitialText,
+    setInitialUrl,
     setDialogMode,
     config
   );
@@ -91,9 +91,9 @@ export const SlashMenu = ({
       {isOpen && (
         <motion.div
           ref={refs.setFloating}
-          style={{ 
-            ...floatingStyles, 
-            minWidth: "360px", 
+          style={{
+            ...floatingStyles,
+            minWidth: "360px",
             maxWidth: "420px",
             zIndex: 50,
           }}
@@ -141,8 +141,8 @@ export const SlashMenu = ({
                   {/* Group items */}
                   <div className="space-y-1 px-2">
                     {group.items.map((item, itemIndex) => {
-                      const isSelected = 
-                        selectedPosition.groupIndex === groupIndex && 
+                      const isSelected =
+                        selectedPosition.groupIndex === groupIndex &&
                         selectedPosition.itemIndex === itemIndex;
 
                       return (
@@ -158,9 +158,10 @@ export const SlashMenu = ({
                             w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg transition-all duration-150
                             hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-zinc-800
                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
-                            ${isSelected 
-                              ? "bg-blue-50 border border-blue-200 dark:bg-zinc-800 dark:border-zinc-600" 
-                              : "border border-transparent"
+                            ${
+                              isSelected
+                                ? "bg-blue-50 border border-blue-200 dark:bg-zinc-800 dark:border-zinc-600"
+                                : "border border-transparent"
                             }
                           `}
                         >
@@ -208,5 +209,8 @@ export const SlashMenu = ({
     </AnimatePresence>
   );
 };
+
+// Memoize the component to prevent unnecessary re-renders
+export const SlashMenu = React.memo(SlashMenuComponent);
 
 export default SlashMenu;

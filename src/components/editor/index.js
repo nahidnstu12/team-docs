@@ -54,7 +54,7 @@ export * from "./ui/commands";
  */
 export const CompleteEditor = ({
   instanceId = "default",
-  pageId,
+  pageId, // eslint-disable-line no-unused-vars
   initialContent,
   onSave,
   onChange,

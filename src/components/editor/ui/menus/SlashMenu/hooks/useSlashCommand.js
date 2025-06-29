@@ -1,26 +1,19 @@
 /**
  * useSlashCommand Hook
  * Manages slash command menu state and behavior
- * 
+ *
  * @fileoverview This hook handles the logic for the slash command menu,
  * including positioning, keyboard navigation, search filtering, and command execution.
  */
 
-import { useState, useEffect, useMemo } from "react";
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  size,
-} from "@floating-ui/react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useFloating, autoUpdate, offset, flip, shift, size } from "@floating-ui/react";
 import { SLASH_COMMAND_CONFIG } from "../../../../core/EditorConfig";
 import { getBaseCommands } from "../../../commands";
 
 /**
  * useSlashCommand Hook
- * 
+ *
  * @param {Object} editor - TipTap editor instance
  * @param {Function} onOpenChange - External dialog state change handler
  * @param {boolean} open - External dialog open state
@@ -78,27 +71,29 @@ export const useSlashCommand = (
     if (!menuGroups.length) return [];
 
     const query = searchQuery.toLowerCase().trim();
-    
+
     if (!query) {
       return menuGroups;
     }
 
     // Filter items based on search query
     const filteredGroups = menuGroups
-      .map(group => ({
+      .map((group) => ({
         ...group,
-        items: group.items.filter(item => {
+        items: group.items.filter((item) => {
           const searchableText = [
             item.title,
             item.subtitle,
             item.shortcut,
-            ...(item.keywords || [])
-          ].join(" ").toLowerCase();
-          
+            ...(item.keywords || []),
+          ]
+            .join(" ")
+            .toLowerCase();
+
           return searchableText.includes(query);
         }),
       }))
-      .filter(group => group.items.length > 0);
+      .filter((group) => group.items.length > 0);
 
     return filteredGroups;
   }, [menuGroups, searchQuery]);
@@ -117,36 +112,35 @@ export const useSlashCommand = (
     }
   }, [groupedItems]);
 
-  // Initialize commands when editor is available
-  useEffect(() => {
-    if (!editor) return;
+  // Memoize commands to prevent recreation on every render
+  const commands = useMemo(() => {
+    if (!editor) return [];
 
-    const commands = getBaseCommands(
-      editor,
-      onOpenChange,
-      setInitialText,
-      setInitialUrl,
-      setDialogMode
-    ).map((group) => ({
-      ...group,
-      items: group.items.map((item) => ({
-        ...item,
-        command: () => {
-          const { from } = editor.state.selection;
-          // Remove the slash character
-          editor
-            .chain()
-            .deleteRange({ from: from - 1, to: from })
-            .run();
-          // Execute the command
-          item.command();
-          setIsOpen(false);
-        },
-      })),
-    }));
-
-    setMenuGroups(commands);
+    return getBaseCommands(editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode).map(
+      (group) => ({
+        ...group,
+        items: group.items.map((item) => ({
+          ...item,
+          command: () => {
+            const { from } = editor.state.selection;
+            // Remove the slash character
+            editor
+              .chain()
+              .deleteRange({ from: from - 1, to: from })
+              .run();
+            // Execute the command
+            item.command();
+            setIsOpen(false);
+          },
+        })),
+      })
+    );
   }, [editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode]);
+
+  // Update menu groups when commands change
+  useEffect(() => {
+    setMenuGroups(commands);
+  }, [commands]);
 
   // Keyboard event handler
   useEffect(() => {
@@ -213,7 +207,7 @@ export const useSlashCommand = (
 
       const newIndex = (selectedIndex + 1) % totalItems;
       const newPosition = getPositionFromIndex(newIndex);
-      
+
       setSelectedIndex(newIndex);
       setSelectedPosition(newPosition);
     };
@@ -223,7 +217,7 @@ export const useSlashCommand = (
 
       const newIndex = selectedIndex === 0 ? totalItems - 1 : selectedIndex - 1;
       const newPosition = getPositionFromIndex(newIndex);
-      
+
       setSelectedIndex(newIndex);
       setSelectedPosition(newPosition);
     };
@@ -238,20 +232,20 @@ export const useSlashCommand = (
     // Helper to get position from flat index
     const getPositionFromIndex = (index) => {
       let currentIndex = 0;
-      
+
       for (let groupIndex = 0; groupIndex < groupedItems.length; groupIndex++) {
         const group = groupedItems[groupIndex];
-        
+
         if (currentIndex + group.items.length > index) {
           return {
             groupIndex,
             itemIndex: index - currentIndex,
           };
         }
-        
+
         currentIndex += group.items.length;
       }
-      
+
       return { groupIndex: 0, itemIndex: 0 };
     };
 
@@ -259,7 +253,7 @@ export const useSlashCommand = (
     const getSelectedItem = () => {
       const group = groupedItems[selectedPosition.groupIndex];
       if (!group) return null;
-      
+
       return group.items[selectedPosition.itemIndex];
     };
 
@@ -269,15 +263,7 @@ export const useSlashCommand = (
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [
-    editor,
-    isOpen,
-    selectedIndex,
-    selectedPosition,
-    totalItems,
-    groupedItems,
-    refs,
-  ]);
+  }, [editor, isOpen, selectedIndex, selectedPosition, totalItems, groupedItems, refs]);
 
   // Close menu when editor loses focus or selection changes significantly
   useEffect(() => {
@@ -286,7 +272,7 @@ export const useSlashCommand = (
     const handleSelectionUpdate = () => {
       const { from } = editor.state.selection;
       const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
-      
+
       // Close menu if slash is removed or cursor moves away
       if (isOpen && textBefore !== "/") {
         setIsOpen(false);
