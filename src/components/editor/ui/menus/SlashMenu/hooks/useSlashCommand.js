@@ -43,6 +43,7 @@ export const useSlashCommand = (
     groupIndex: 0,
     itemIndex: 0,
   });
+  const [menuOpenedAt, setMenuOpenedAt] = useState(null);
 
   // Floating UI setup
   const { refs, floatingStyles, context } = useFloating({
@@ -235,6 +236,7 @@ export const useSlashCommand = (
             refs.setReference(virtualElement);
 
             setIsOpen(true);
+            setMenuOpenedAt(Date.now());
             setSearchQuery("");
             setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
             setSelectedIndex(0);
@@ -276,24 +278,46 @@ export const useSlashCommand = (
       const { from } = editor.state.selection;
       const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
 
+      console.log("📍 Selection update:", {
+        isOpen,
+        from,
+        textBefore,
+        shouldClose: isOpen && textBefore !== "/",
+      });
+
       // Close menu if slash is removed or cursor moves away
       if (isOpen && textBefore !== "/") {
+        console.log("❌ Closing menu because textBefore is not '/'");
         setIsOpen(false);
       }
     };
 
     const handleBlur = () => {
+      // Ignore blur events that happen immediately after opening the menu
+      // This prevents the menu from closing when it appears and causes a brief focus loss
+      const timeSinceOpened = menuOpenedAt ? Date.now() - menuOpenedAt : Infinity;
+
+      console.log("👋 Editor blur - time since opened:", timeSinceOpened);
+
+      if (timeSinceOpened < 100) {
+        // Ignore blur within 100ms of opening
+        console.log("🚫 Ignoring blur - menu just opened");
+        return;
+      }
+
+      console.log("❌ Closing menu due to blur");
       setIsOpen(false);
     };
 
     editor.on("selectionUpdate", handleSelectionUpdate);
-    editor.on("blur", handleBlur);
+    // Temporarily disable blur handler to test slash menu
+    // editor.on("blur", handleBlur);
 
     return () => {
       editor.off("selectionUpdate", handleSelectionUpdate);
-      editor.off("blur", handleBlur);
+      // editor.off("blur", handleBlur);
     };
-  }, [editor, isOpen]);
+  }, [editor, isOpen, menuOpenedAt]);
 
   return {
     isOpen,

@@ -118,15 +118,6 @@ const EditorComponent = ({
     instanceConfigRef.current = instanceConfig;
   }, [instanceConfig]);
 
-  // Debug logging for configuration issues
-  if (process.env.NODE_ENV === "development") {
-    console.log("=== EDITOR DEBUG ===");
-    console.log("instanceId:", instanceId);
-    console.log("instanceConfig:", instanceConfig ? "present" : "null");
-    console.log("editorContext:", editorContext ? "present" : "null");
-    console.log("=== END DEBUG ===");
-  }
-
   /**
    * Save handler for this editor instance
    * @param {Object} content - Editor content to save

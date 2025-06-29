@@ -3,7 +3,7 @@
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
 import NoSectionUI from "./components/NoSectionUI";
 import NoPageSelectedUI from "./components/NoPageSelectedUI";
-import { EditorService, useEditorContext } from "@/components/editor";
+import { EditorService } from "@/components/editor";
 import dynamic from "next/dynamic";
 
 // Dynamically import the CompleteEditor to prevent SSR issues
@@ -25,75 +25,8 @@ import { useProjectStore } from "../../store/useProjectStore";
 import { usePreviewStore } from "./store/usePreviewStore";
 import { fetchPageContent } from "./actions/fetchPageContent";
 import { toast } from "sonner";
-import { useCallback, useEffect, useState, useRef, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { Spinner } from "@/components/ui/spinner";
-
-/**
- * Editor Content Manager - handles save logic with editor context access
- */
-function EditorContentManager({ pageId, pageContent, handleSave, instanceId }) {
-  const editorContext = useEditorContext();
-
-  console.log("🎯 EditorContentManager rendered with:", {
-    pageId,
-    instanceId,
-    hasContent: !!pageContent,
-    hasContext: !!editorContext,
-  });
-
-  // Register save handler with project store
-  useEffect(() => {
-    if (pageId && instanceId) {
-      console.log(
-        "🔧 Registering save handler for pageId:",
-        pageId,
-        "instanceId:",
-        instanceId,
-        "with content:",
-        !!pageContent
-      );
-      useProjectStore.getState().setSaveHandler(() => {
-        console.log("🚀 Save handler called! Current pageContent:", pageContent);
-
-        // Always try to get the latest content from the editor instance first
-        let contentToSave = null;
-
-        if (editorContext) {
-          console.log("🔍 Getting latest content from editor context...");
-          try {
-            const editorInstance = editorContext.getEditor(instanceId);
-            if (editorInstance) {
-              contentToSave = editorInstance.getJSON();
-              console.log(
-                "📄 Got latest content from editor:",
-                JSON.stringify(contentToSave).substring(0, 200) + "..."
-              );
-            } else {
-              console.warn("❌ No editor instance found for instanceId:", instanceId);
-            }
-          } catch (error) {
-            console.error("❌ Failed to get content from editor context:", error);
-          }
-        }
-
-        // Fallback to pageContent if editor content is not available
-        if (!contentToSave) {
-          console.log("🔄 Falling back to pageContent state");
-          contentToSave = pageContent;
-        }
-
-        // Save the current content
-        if (contentToSave) {
-          handleSave(contentToSave);
-        } else {
-          console.warn("⚠️ No content available to save from either editor or state");
-        }
-      });
-    }
-  }, [pageId, instanceId, pageContent, handleSave, editorContext]);
-
-  return null; // This component doesn't render anything
-}
 
 /**
  * Enhanced Editor Component with Store Integration
@@ -103,7 +36,6 @@ function EnhancedEditor({ pageId }) {
   const [pageContent, setPageContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const isPreviewMode = usePreviewStore((state) => state.isPageInPreviewMode(pageId));
-  const editorRef = useRef(null);
 
   // Handle content saving (manual save - shows toast)
   const handleSave = useCallback(
@@ -217,14 +149,7 @@ function EnhancedEditor({ pageId }) {
         config={editorConfig}
         className="w-full p-0 min-h-[500px]"
         editable={!isPreviewMode}
-      >
-        <EditorContentManager
-          pageId={pageId}
-          instanceId={instanceId}
-          pageContent={pageContent}
-          handleSave={handleSave}
-        />
-      </CompleteEditor>
+      ></CompleteEditor>
     </div>
   );
 }
