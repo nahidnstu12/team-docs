@@ -77,22 +77,25 @@ export const EditorProvider = ({
         saveCallbacks.current.set(instanceId, saveCallback);
       }
 
-      // Set up change listener for auto-save
-      if (autoSave && editor) {
+      // Set up change listener (always, not just for auto-save)
+      if (editor) {
         const handleUpdate = () => {
           setHasUnsavedChanges(true);
 
-          // Clear existing timer
-          if (autoSaveTimer.current) {
-            clearTimeout(autoSaveTimer.current);
+          // Auto-save logic (only if enabled)
+          if (autoSave) {
+            // Clear existing timer
+            if (autoSaveTimer.current) {
+              clearTimeout(autoSaveTimer.current);
+            }
+
+            // Set new timer
+            autoSaveTimer.current = setTimeout(() => {
+              handleAutoSave(instanceId);
+            }, autoSaveDelay);
           }
 
-          // Set new timer
-          autoSaveTimer.current = setTimeout(() => {
-            handleAutoSave(instanceId);
-          }, autoSaveDelay);
-
-          // Call onChange callback if provided
+          // Call onChange callback if provided (always, regardless of autoSave)
           if (onChange) {
             onChange(editor.getJSON(), instanceId);
           }
