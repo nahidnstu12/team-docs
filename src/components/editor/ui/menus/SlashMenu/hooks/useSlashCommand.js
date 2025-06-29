@@ -66,28 +66,36 @@ export const useSlashCommand = (
 
   // Memoize commands to prevent recreation on every render (defined first)
   const commands = useMemo(() => {
-    if (!editor) return [];
+    if (!editor) {
+      return [];
+    }
 
-    return getBaseCommands(editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode).map(
-      (group) => ({
-        ...group,
-        items: group.items.map((item) => ({
-          ...item,
-          command: () => {
-            const { from } = editor.state.selection;
-            // Remove the slash character
-            editor
-              .chain()
-              .deleteRange({ from: from - 1, to: from })
-              .run();
-            // Execute the command
-            item.command();
-            setIsOpen(false);
-          },
-        })),
-      })
+    const baseCommands = getBaseCommands(
+      editor,
+      onOpenChange || (() => {}),
+      setInitialText || (() => {}),
+      setInitialUrl || (() => {}),
+      setDialogMode || (() => {})
     );
-  }, [editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode]);
+
+    return baseCommands.map((group) => ({
+      ...group,
+      items: group.items.map((item) => ({
+        ...item,
+        command: () => {
+          const { from } = editor.state.selection;
+          // Remove the slash character
+          editor
+            .chain()
+            .deleteRange({ from: from - 1, to: from })
+            .run();
+          // Execute the command
+          item.command();
+          setIsOpen(false);
+        },
+      })),
+    }));
+  }, [editor]); // Only depend on editor, not the function props
 
   // Filter and group items based on search query
   const groupedItems = useMemo(() => {
@@ -192,12 +200,13 @@ export const useSlashCommand = (
     }
   }, [getSelectedItem]);
 
-  // Keyboard event handler using editor's event system
+  // Keyboard event handler using document events (TipTap editor.on doesn't work for this)
   useEffect(() => {
     if (!editor) return;
 
-    const handleKeyDown = ({ event }) => {
-      const e = event;
+    const handleKeyDown = (e) => {
+      // Only handle if editor is focused
+      if (!editor.isFocused) return;
 
       // Handle slash key to open menu
       if (e.key === "/") {
@@ -251,11 +260,11 @@ export const useSlashCommand = (
       }
     };
 
-    // Use editor's event system instead of document events
-    editor.on("keydown", handleKeyDown);
+    // Use document events instead of editor events
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      editor.off("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [editor, isOpen, navigateDown, navigateUp, executeSelectedCommand, refs]);
 

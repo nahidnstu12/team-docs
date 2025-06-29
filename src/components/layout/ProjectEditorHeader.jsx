@@ -46,7 +46,15 @@ export default function ProjectEditorHeader({ selectedPage, projectName }) {
         {selectedPage && (
           <div className="flex gap-2 items-center mr-4 ml-auto">
             <Button
-              onClick={() => saveHandler && saveHandler()}
+              onClick={() => {
+                console.log("💾 Save button clicked! SaveHandler exists:", !!saveHandler);
+                if (saveHandler) {
+                  console.log("🚀 Calling saveHandler...");
+                  saveHandler();
+                } else {
+                  console.warn("❌ No saveHandler available");
+                }
+              }}
               className="px-6 py-2 bg-green-400 cursor-pointer hover:bg-green-500"
             >
               Save

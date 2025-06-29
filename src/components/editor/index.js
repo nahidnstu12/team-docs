@@ -63,6 +63,7 @@ export const CompleteEditor = ({
   config = {},
   className = "",
   editable = true,
+  children,
   ...props
 }) => {
   return (
@@ -76,6 +77,7 @@ export const CompleteEditor = ({
       >
         <BubbleMenu />
         <SlashMenu />
+        {children}
       </Editor>
     </EditorProvider>
   );

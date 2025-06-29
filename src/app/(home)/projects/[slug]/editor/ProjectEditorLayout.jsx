@@ -3,13 +3,71 @@
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
 import NoSectionUI from "./components/NoSectionUI";
 import NoPageSelectedUI from "./components/NoPageSelectedUI";
-import { CompleteEditor, EditorService } from "@/components/editor";
+import { CompleteEditor, EditorService, useEditorContext } from "@/components/editor";
 import { useProjectStore } from "../../store/useProjectStore";
 import { usePreviewStore } from "./store/usePreviewStore";
 import { fetchPageContent } from "./actions/fetchPageContent";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { Spinner } from "@/components/ui/spinner";
+
+/**
+ * Editor Content Manager - handles save logic with editor context access
+ */
+function EditorContentManager({ pageId, pageContent, handleSave, instanceId }) {
+  const editorContext = useEditorContext();
+
+  console.log("🎯 EditorContentManager rendered with:", {
+    pageId,
+    instanceId,
+    hasContent: !!pageContent,
+    hasContext: !!editorContext,
+  });
+
+  // Register save handler with project store
+  useEffect(() => {
+    if (pageId && instanceId) {
+      console.log(
+        "🔧 Registering save handler for pageId:",
+        pageId,
+        "instanceId:",
+        instanceId,
+        "with content:",
+        !!pageContent
+      );
+      useProjectStore.getState().setSaveHandler(() => {
+        console.log("🚀 Save handler called! Current pageContent:", pageContent);
+
+        // Try to get content from the editor context if pageContent is null
+        let contentToSave = pageContent;
+
+        if (!contentToSave && editorContext) {
+          console.log("🔍 Trying to get content from editor context...");
+          try {
+            const editorInstance = editorContext.getEditor(instanceId);
+            if (editorInstance) {
+              contentToSave = editorInstance.getJSON();
+              console.log("📄 Got content from editor context:", contentToSave);
+            } else {
+              console.warn("❌ No editor instance found for instanceId:", instanceId);
+            }
+          } catch (error) {
+            console.error("❌ Failed to get content from editor context:", error);
+          }
+        }
+
+        // Save the current content
+        if (contentToSave) {
+          handleSave(contentToSave);
+        } else {
+          console.warn("⚠️ No content available to save from either state or editor");
+        }
+      });
+    }
+  }, [pageId, instanceId, pageContent, handleSave, editorContext]);
+
+  return null; // This component doesn't render anything
+}
 
 /**
  * Enhanced Editor Component with Store Integration
@@ -25,13 +83,15 @@ function EnhancedEditor({ pageId }) {
   const handleSave = useCallback(
     async (content) => {
       try {
-        await EditorService.saveContent({
+        console.log("💾 Saving content:", { pageId, content, contentType: typeof content });
+        const result = await EditorService.saveContent({
           pageId,
           content,
           showToast: true, // Show toast for manual saves
         });
+        console.log("✅ Save result:", result);
       } catch (error) {
-        console.error("Error saving content:", error);
+        console.error("❌ Error saving content:", error);
         // Error toast is handled by EditorService when showToast=true
       }
     },
@@ -40,6 +100,7 @@ function EnhancedEditor({ pageId }) {
 
   // Handle content changes - memoized to prevent infinite loops
   const handleChange = useCallback((content, instanceId) => {
+    console.log("📝 Content changed:", { content, instanceId, contentType: typeof content });
     // Store the current content for saving
     setPageContent(content);
   }, []);
@@ -83,18 +144,6 @@ function EnhancedEditor({ pageId }) {
       isMounted = false;
     };
   }, [pageId]);
-
-  // Register save handler with project store
-  useEffect(() => {
-    if (pageId) {
-      useProjectStore.getState().setSaveHandler(() => {
-        // Save the current content
-        if (pageContent) {
-          handleSave(pageContent);
-        }
-      });
-    }
-  }, [pageId, pageContent, handleSave]);
 
   // Memoize instanceId to prevent recreation
   const instanceId = useMemo(() => `page-editor-${pageId}`, [pageId]);
@@ -141,7 +190,14 @@ function EnhancedEditor({ pageId }) {
         config={editorConfig}
         className="w-full p-0 min-h-[500px]"
         editable={!isPreviewMode}
-      />
+      >
+        <EditorContentManager
+          pageId={pageId}
+          instanceId={instanceId}
+          pageContent={pageContent}
+          handleSave={handleSave}
+        />
+      </CompleteEditor>
     </div>
   );
 }
