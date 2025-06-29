@@ -44,15 +44,17 @@ export const useSlashCommand = (
     itemIndex: 0,
   });
   const [menuOpenedAt, setMenuOpenedAt] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
   // Floating UI setup
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
+    strategy: "absolute", // Use absolute positioning
     middleware: [
       offset(slashConfig.offset),
       flip(),
-      shift(),
+      shift({ padding: 8 }),
       size({
         apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
@@ -62,7 +64,7 @@ export const useSlashCommand = (
       }),
     ],
     whileElementsMounted: autoUpdate,
-    placement: slashConfig.placement,
+    placement: "bottom-start", // Explicitly set placement
   });
 
   // Memoize commands to prevent recreation on every render (defined first)
@@ -219,17 +221,25 @@ export const useSlashCommand = (
           if (textBefore === "/") {
             // Get slash position for menu positioning
             const pos = editor.view.coordsAtPos(from - 1);
+            console.log("📍 Cursor position:", pos);
 
+            // Set manual position for direct CSS positioning
+            const menuX = pos.left;
+            const menuY = pos.bottom + 8; // 8px below cursor
+            setMenuPosition({ x: menuX, y: menuY });
+            console.log("🎯 Setting menu position:", { x: menuX, y: menuY });
+
+            // Still create virtual element for Floating UI as fallback
             const virtualElement = {
               getBoundingClientRect: () => ({
                 width: 0,
                 height: 0,
-                x: pos.right,
-                y: pos.bottom,
-                top: pos.bottom,
-                right: pos.right,
+                x: pos.left,
+                y: pos.top,
+                top: pos.top,
+                right: pos.left,
                 bottom: pos.bottom,
-                left: pos.right,
+                left: pos.left,
               }),
             };
 
@@ -330,5 +340,6 @@ export const useSlashCommand = (
     selectedPosition,
     selectedIndex,
     totalItems,
+    menuPosition,
   };
 };

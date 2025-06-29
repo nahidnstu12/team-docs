@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDismiss, useInteractions } from "@floating-ui/react";
 import { useSlashCommand } from "./hooks/useSlashCommand";
@@ -49,6 +50,7 @@ const SlashMenuComponent = ({
     searchQuery,
     setSearchQuery,
     selectedPosition,
+    menuPosition,
   } = useSlashCommand(
     editor,
     onOpenChange,
@@ -58,6 +60,9 @@ const SlashMenuComponent = ({
     setDialogMode,
     config
   );
+
+  // Debug floating styles
+  console.log("🎨 Floating styles:", floatingStyles);
 
   // Set up dismiss behavior
   const dismiss = useDismiss(context);
@@ -86,16 +91,22 @@ const SlashMenuComponent = ({
   // Don't render if editor is not available
   if (!editor) return null;
 
-  return (
+  // Render the menu in a portal to avoid CSS conflicts
+  const menuContent = (
     <AnimatePresence>
       {isOpen && (
         <motion.div
           ref={refs.setFloating}
           style={{
-            ...floatingStyles,
+            // Use manual positioning instead of Floating UI
+            position: "absolute",
+            left: `${menuPosition.x}px`,
+            top: `${menuPosition.y}px`,
             minWidth: "360px",
             maxWidth: "420px",
             zIndex: 50,
+            // Fallback to Floating UI if manual position is not set
+            ...(menuPosition.x === 0 && menuPosition.y === 0 ? floatingStyles : {}),
           }}
           {...getFloatingProps()}
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -208,6 +219,9 @@ const SlashMenuComponent = ({
       )}
     </AnimatePresence>
   );
+
+  // Render in portal to avoid CSS positioning conflicts
+  return typeof document !== "undefined" ? createPortal(menuContent, document.body) : null;
 };
 
 // Memoize the component to prevent unnecessary re-renders
