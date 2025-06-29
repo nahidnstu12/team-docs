@@ -1,7 +1,7 @@
 /**
  * Editor Service
  * Laravel-like service class for editor business logic
- * 
+ *
  * @fileoverview This service handles all editor-related business logic including
  * content management, validation, transformation, and persistence operations.
  */
@@ -21,7 +21,7 @@ class BaseService {
    */
   static handleError(error, operation = "operation") {
     console.error(`${this.name} - ${operation} failed:`, error);
-    
+
     return {
       success: false,
       error: error.message || `${operation} failed`,
@@ -51,8 +51,8 @@ class BaseService {
    * @throws {Error} If required parameters are missing
    */
   static validateRequired(params, required) {
-    const missing = required.filter(key => !params.hasOwnProperty(key) || params[key] == null);
-    
+    const missing = required.filter((key) => !params.hasOwnProperty(key) || params[key] == null);
+
     if (missing.length > 0) {
       throw new Error(`Missing required parameters: ${missing.join(", ")}`);
     }
@@ -70,9 +70,10 @@ export class EditorService extends BaseService {
    * @param {string} params.pageId - Page identifier
    * @param {Object} params.content - Editor content (TipTap JSON)
    * @param {Object} params.metadata - Additional metadata
+   * @param {boolean} params.showToast - Whether to show success/error toast (default: false)
    * @returns {Promise<Object>} Save result
    */
-  static async saveContent({ pageId, content, metadata = {} }) {
+  static async saveContent({ pageId, content, metadata = {}, showToast = false }) {
     try {
       this.validateRequired({ pageId, content }, ["pageId", "content"]);
 
@@ -98,18 +99,26 @@ export class EditorService extends BaseService {
       };
 
       // Import save action dynamically to avoid circular dependencies
-      const { savePageContent } = await import("@/app/(home)/projects/[slug]/editor/actions/savePageContent");
-      
+      const { savePageContent } = await import(
+        "@/app/(home)/projects/[slug]/editor/actions/savePageContent"
+      );
+
       const result = await savePageContent(saveData);
 
       if (result.success) {
-        toast.success(result.message || "Content saved successfully");
+        // Only show toast if explicitly requested (manual save)
+        if (showToast) {
+          toast.success(result.message || "Content saved successfully");
+        }
         return this.createSuccessResponse(result.page, result.message);
       } else {
         throw new Error(result.message || "Save operation failed");
       }
     } catch (error) {
-      toast.error(error.message || "Failed to save content");
+      // Always show error toasts for user awareness
+      if (showToast) {
+        toast.error(error.message || "Failed to save content");
+      }
       return this.handleError(error, "save content");
     }
   }
@@ -124,22 +133,27 @@ export class EditorService extends BaseService {
       this.validateRequired({ pageId }, ["pageId"]);
 
       // Import fetch action dynamically
-      const { fetchPageContent } = await import("@/app/(home)/projects/[slug]/editor/actions/fetchPageContent");
-      
+      const { fetchPageContent } = await import(
+        "@/app/(home)/projects/[slug]/editor/actions/fetchPageContent"
+      );
+
       const result = await fetchPageContent(pageId);
 
       if (result) {
         // Transform content for editor
         const transformedContent = this.transformContentForEditor(result.content);
-        
-        return this.createSuccessResponse({
-          content: transformedContent,
-          metadata: {
-            lastModified: result.updatedAt,
-            wordCount: this.getWordCount(transformedContent),
-            characterCount: this.getCharacterCount(transformedContent),
+
+        return this.createSuccessResponse(
+          {
+            content: transformedContent,
+            metadata: {
+              lastModified: result.updatedAt,
+              wordCount: this.getWordCount(transformedContent),
+              characterCount: this.getCharacterCount(transformedContent),
+            },
           },
-        }, "Content loaded successfully");
+          "Content loaded successfully"
+        );
       } else {
         throw new Error("Page not found");
       }
@@ -170,7 +184,8 @@ export class EditorService extends BaseService {
 
     // Validate content size
     const contentString = JSON.stringify(content);
-    if (contentString.length > 1000000) { // 1MB limit
+    if (contentString.length > 1000000) {
+      // 1MB limit
       errors.push("Content size exceeds maximum limit");
     }
 
@@ -192,7 +207,7 @@ export class EditorService extends BaseService {
    */
   static containsDangerousContent(content) {
     const contentString = JSON.stringify(content);
-    
+
     // Check for script tags, event handlers, etc.
     const dangerousPatterns = [
       /<script/i,
@@ -203,7 +218,7 @@ export class EditorService extends BaseService {
       /<embed/i,
     ];
 
-    return dangerousPatterns.some(pattern => pattern.test(contentString));
+    return dangerousPatterns.some((pattern) => pattern.test(contentString));
   }
 
   /**
@@ -269,7 +284,7 @@ export class EditorService extends BaseService {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeObject(item));
+      return obj.map((item) => this.sanitizeObject(item));
     }
 
     const sanitized = {};
@@ -291,7 +306,7 @@ export class EditorService extends BaseService {
   static getWordCount(content) {
     const text = this.extractTextFromContent(content);
     if (!text.trim()) return 0;
-    
+
     return text.trim().split(/\s+/).length;
   }
 
@@ -322,9 +337,7 @@ export class EditorService extends BaseService {
     }
 
     if (content.content && Array.isArray(content.content)) {
-      return content.content
-        .map(node => this.extractTextFromContent(node))
-        .join(" ");
+      return content.content.map((node) => this.extractTextFromContent(node)).join(" ");
     }
 
     return "";
@@ -341,12 +354,12 @@ export class EditorService extends BaseService {
       switch (format.toLowerCase()) {
         case "text":
           return this.extractTextFromContent(content);
-        
+
         case "markdown":
           // This would require a TipTap to Markdown converter
           // For now, return text format
           return this.extractTextFromContent(content);
-        
+
         case "html":
         default:
           // This would require a TipTap to HTML converter
@@ -393,10 +406,7 @@ export class EditorService extends BaseService {
     }
 
     if (content.content && Array.isArray(content.content)) {
-      count += content.content.reduce(
-        (sum, node) => sum + this.countNodesByType(node, types),
-        0
-      );
+      count += content.content.reduce((sum, node) => sum + this.countNodesByType(node, types), 0);
     }
 
     return count;

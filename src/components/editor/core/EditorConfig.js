@@ -34,7 +34,7 @@ export const DEFAULT_EDITOR_CONFIG = {
 
   // Auto-save settings
   autoSave: {
-    enabled: true,
+    enabled: false, // Disabled for manual save control and future versioning
     delay: 2000, // 2 seconds
   },
 

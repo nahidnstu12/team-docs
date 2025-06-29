@@ -11,6 +11,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
+import { Placeholder } from "@tiptap/extension-placeholder";
 
 /**
  * Main TipTap Editor Component
@@ -171,11 +172,45 @@ const EditorComponent = ({
             class: "text-blue-600 underline hover:text-blue-800 cursor-pointer",
           },
         }), // Add link support for BubbleMenu
+        Placeholder.configure({
+          placeholder: ({ node }) => {
+            if (node.type.name === "heading") {
+              return `Heading ${node.attrs.level}`;
+            }
+            return "Type '/' for commands or start writing...";
+          },
+          showOnlyWhenEditable: true,
+          showOnlyCurrent: false,
+        }), // Add placeholder support
       ],
       content: initialContent || "",
       editorProps: {
         attributes: {
-          class: "focus:outline-none max-w-none prose prose-lg",
+          class: "focus:outline-none max-w-none prose prose-lg min-h-[500px]",
+        },
+        handleClick: (view, pos, event) => {
+          // Allow clicking anywhere in the editor to focus it (like Notion/VSCode)
+          try {
+            const { state, dispatch } = view;
+            const { doc, schema } = state;
+
+            // If clicking beyond content, move cursor to end of document
+            if (pos >= doc.content.size) {
+              const endPos = doc.content.size;
+              const $pos = doc.resolve(endPos);
+              const tr = state.tr.setSelection(schema.selection.near($pos, -1));
+              dispatch(tr);
+              return true;
+            }
+
+            // Default behavior for clicking on content
+            return false;
+          } catch (error) {
+            console.warn("Click handler error:", error);
+            // Fallback: just focus the editor
+            view.focus();
+            return true;
+          }
         },
       },
       onCreate: ({ editor }) => {
@@ -225,6 +260,20 @@ const EditorComponent = ({
 
   const editor = useEditor(stableEditorConfig);
 
+  // Handle clicking in editor container to focus (must be before early returns)
+  const handleContainerClick = useCallback(
+    (e) => {
+      if (editor && !editor.isDestroyed) {
+        const editorElement = e.currentTarget.querySelector(".ProseMirror");
+        if (editorElement && !editorElement.contains(e.target)) {
+          // Clicked outside editor content but inside container - focus at end
+          editor.commands.focus("end");
+        }
+      }
+    },
+    [editor]
+  );
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -248,9 +297,10 @@ const EditorComponent = ({
 
   return (
     <div
-      className={`editor-container ${className}`}
+      className={`editor-container ${className} min-h-[500px] cursor-text`}
       style={style}
       data-editor-id={instanceId}
+      onClick={handleContainerClick}
       {...props}
     >
       {/* Render child components (menus, toolbars, etc.) */}

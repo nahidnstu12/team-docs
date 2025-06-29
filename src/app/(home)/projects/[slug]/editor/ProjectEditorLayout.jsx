@@ -3,10 +3,9 @@
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
 import NoSectionUI from "./components/NoSectionUI";
 import NoPageSelectedUI from "./components/NoPageSelectedUI";
-import { CompleteEditor } from "@/components/editor";
+import { CompleteEditor, EditorService } from "@/components/editor";
 import { useProjectStore } from "../../store/useProjectStore";
 import { usePreviewStore } from "./store/usePreviewStore";
-import { savePageContent } from "./actions/savePageContent";
 import { fetchPageContent } from "./actions/fetchPageContent";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState, useRef, useMemo } from "react";
@@ -22,19 +21,18 @@ function EnhancedEditor({ pageId }) {
   const isPreviewMode = usePreviewStore((state) => state.isPageInPreviewMode(pageId));
   const editorRef = useRef(null);
 
-  // Handle content saving
+  // Handle content saving (manual save - shows toast)
   const handleSave = useCallback(
     async (content) => {
       try {
-        const result = await savePageContent({ pageId, content: JSON.stringify(content) });
-        if (result.success) {
-          toast.success("Content saved successfully");
-        } else {
-          toast.error(result.message || "Failed to save content");
-        }
+        await EditorService.saveContent({
+          pageId,
+          content,
+          showToast: true, // Show toast for manual saves
+        });
       } catch (error) {
         console.error("Error saving content:", error);
-        toast.error("Failed to save content");
+        // Error toast is handled by EditorService when showToast=true
       }
     },
     [pageId]
@@ -134,22 +132,16 @@ function EnhancedEditor({ pageId }) {
 
   return (
     <div className="mt-6 w-full">
-      <div
-        className={`w-full p-4 px-0 rounded-md ${
-          !isPreviewMode ? "cursor-text" : "cursor-default"
-        } max-w-none ${isPreviewMode ? "preview-mode" : ""}`}
-      >
-        <CompleteEditor
-          instanceId={instanceId}
-          pageId={pageId}
-          initialContent={pageContent}
-          onSave={handleSave}
-          onChange={handleChange}
-          config={editorConfig}
-          className="w-full p-0 min-h-[500px]"
-          editable={!isPreviewMode}
-        />
-      </div>
+      <CompleteEditor
+        instanceId={instanceId}
+        pageId={pageId}
+        initialContent={pageContent}
+        onSave={handleSave}
+        onChange={handleChange}
+        config={editorConfig}
+        className="w-full p-0 min-h-[500px]"
+        editable={!isPreviewMode}
+      />
     </div>
   );
 }

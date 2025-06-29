@@ -66,7 +66,7 @@ export const CompleteEditor = ({
   ...props
 }) => {
   return (
-    <EditorProvider config={config} onSave={onSave} onChange={onChange} autoSave={true}>
+    <EditorProvider config={config} onSave={onSave} onChange={onChange} autoSave={false}>
       <Editor
         instanceId={instanceId}
         initialContent={initialContent}
