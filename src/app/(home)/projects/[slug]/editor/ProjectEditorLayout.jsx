@@ -3,7 +3,24 @@
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
 import NoSectionUI from "./components/NoSectionUI";
 import NoPageSelectedUI from "./components/NoPageSelectedUI";
-import { CompleteEditor, EditorService, useEditorContext } from "@/components/editor";
+import { EditorService, useEditorContext } from "@/components/editor";
+import dynamic from "next/dynamic";
+
+// Dynamically import the CompleteEditor to prevent SSR issues
+const CompleteEditor = dynamic(
+  () => import("@/components/editor").then((mod) => ({ default: mod.CompleteEditor })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center min-h-[500px] bg-gray-50/50 rounded-md">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+          <span className="text-sm text-gray-600">Loading editor...</span>
+        </div>
+      </div>
+    ),
+  }
+);
 import { useProjectStore } from "../../store/useProjectStore";
 import { usePreviewStore } from "./store/usePreviewStore";
 import { fetchPageContent } from "./actions/fetchPageContent";
@@ -38,16 +55,19 @@ function EditorContentManager({ pageId, pageContent, handleSave, instanceId }) {
       useProjectStore.getState().setSaveHandler(() => {
         console.log("🚀 Save handler called! Current pageContent:", pageContent);
 
-        // Try to get content from the editor context if pageContent is null
-        let contentToSave = pageContent;
+        // Always try to get the latest content from the editor instance first
+        let contentToSave = null;
 
-        if (!contentToSave && editorContext) {
-          console.log("🔍 Trying to get content from editor context...");
+        if (editorContext) {
+          console.log("🔍 Getting latest content from editor context...");
           try {
             const editorInstance = editorContext.getEditor(instanceId);
             if (editorInstance) {
               contentToSave = editorInstance.getJSON();
-              console.log("📄 Got content from editor context:", contentToSave);
+              console.log(
+                "📄 Got latest content from editor:",
+                JSON.stringify(contentToSave).substring(0, 200) + "..."
+              );
             } else {
               console.warn("❌ No editor instance found for instanceId:", instanceId);
             }
@@ -56,11 +76,17 @@ function EditorContentManager({ pageId, pageContent, handleSave, instanceId }) {
           }
         }
 
+        // Fallback to pageContent if editor content is not available
+        if (!contentToSave) {
+          console.log("🔄 Falling back to pageContent state");
+          contentToSave = pageContent;
+        }
+
         // Save the current content
         if (contentToSave) {
           handleSave(contentToSave);
         } else {
-          console.warn("⚠️ No content available to save from either state or editor");
+          console.warn("⚠️ No content available to save from either editor or state");
         }
       });
     }
@@ -101,6 +127,7 @@ function EnhancedEditor({ pageId }) {
   // Handle content changes - memoized to prevent infinite loops
   const handleChange = useCallback((content, instanceId) => {
     console.log("📝 Content changed:", { content, instanceId, contentType: typeof content });
+    console.log("📝 Content preview:", JSON.stringify(content).substring(0, 200) + "...");
     // Store the current content for saving
     setPageContent(content);
   }, []);
