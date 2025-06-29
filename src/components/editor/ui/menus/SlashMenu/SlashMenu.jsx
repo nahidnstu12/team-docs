@@ -108,6 +108,9 @@ const SlashMenuComponent = ({
             // Fallback to Floating UI if manual position is not set
             ...(menuPosition.x === 0 && menuPosition.y === 0 ? floatingStyles : {}),
           }}
+          // Make the menu focusable and auto-focus when it opens
+          tabIndex={-1}
+          autoFocus
           {...getFloatingProps()}
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}

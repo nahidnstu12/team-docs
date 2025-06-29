@@ -177,21 +177,25 @@ export const useSlashCommand = (
 
   // Navigation helpers (defined after helper functions)
   const navigateDown = useCallback(() => {
+    console.log("📍 Navigate down called, totalItems:", totalItems, "currentIndex:", selectedIndex);
     if (totalItems === 0) return;
 
     const newIndex = (selectedIndex + 1) % totalItems;
     const newPosition = getPositionFromIndex(newIndex);
 
+    console.log("📍 Moving to index:", newIndex, "position:", newPosition);
     setSelectedIndex(newIndex);
     setSelectedPosition(newPosition);
   }, [totalItems, selectedIndex, getPositionFromIndex]);
 
   const navigateUp = useCallback(() => {
+    console.log("📍 Navigate up called, totalItems:", totalItems, "currentIndex:", selectedIndex);
     if (totalItems === 0) return;
 
     const newIndex = selectedIndex === 0 ? totalItems - 1 : selectedIndex - 1;
     const newPosition = getPositionFromIndex(newIndex);
 
+    console.log("📍 Moving to index:", newIndex, "position:", newPosition);
     setSelectedIndex(newIndex);
     setSelectedPosition(newPosition);
   }, [totalItems, selectedIndex, getPositionFromIndex]);
@@ -208,11 +212,17 @@ export const useSlashCommand = (
     if (!editor) return;
 
     const handleKeyDown = (e) => {
-      // Only handle if editor is focused
-      if (!editor.isFocused) return;
+      console.log(
+        "🔍 SlashMenu: Key pressed:",
+        e.key,
+        "isOpen:",
+        isOpen,
+        "editorFocused:",
+        editor?.isFocused
+      );
 
-      // Handle slash key to open menu
-      if (e.key === "/") {
+      // Handle slash key to open menu (only when editor is focused)
+      if (e.key === "/" && editor?.isFocused) {
         // Defer to next tick to allow slash to appear in doc
         setTimeout(() => {
           const { from } = editor.state.selection;
@@ -254,21 +264,31 @@ export const useSlashCommand = (
         }, 0);
       }
 
-      // Handle navigation when menu is open
+      // Handle navigation when menu is open (don't check editor focus here)
       if (isOpen) {
+        console.log("🎮 Menu navigation key:", e.key);
         if (e.key === "ArrowDown") {
           e.preventDefault();
+          console.log("⬇️ Navigating down");
           navigateDown();
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
+          console.log("⬆️ Navigating up");
           navigateUp();
         } else if (e.key === "Enter") {
           e.preventDefault();
+          console.log("✅ Executing command");
           executeSelectedCommand();
         } else if (e.key === "Escape") {
           e.preventDefault();
+          console.log("🚪 Closing menu and returning focus to editor");
           setIsOpen(false);
+          // Return focus to editor
+          setTimeout(() => {
+            editor.commands.focus();
+          }, 0);
         }
+        return; // Don't process other keys when menu is open
       }
     };
 
