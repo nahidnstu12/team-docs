@@ -190,27 +190,8 @@ const EditorComponent = ({
         },
         handleClick: (view, pos, event) => {
           // Allow clicking anywhere in the editor to focus it (like Notion/VSCode)
-          try {
-            const { state, dispatch } = view;
-            const { doc, schema } = state;
-
-            // If clicking beyond content, move cursor to end of document
-            if (pos >= doc.content.size) {
-              const endPos = doc.content.size;
-              const $pos = doc.resolve(endPos);
-              const tr = state.tr.setSelection(schema.selection.near($pos, -1));
-              dispatch(tr);
-              return true;
-            }
-
-            // Default behavior for clicking on content
-            return false;
-          } catch (error) {
-            console.warn("Click handler error:", error);
-            // Fallback: just focus the editor
-            view.focus();
-            return true;
-          }
+          // Return false to allow default behavior and not interfere with other events
+          return false;
         },
       },
       onCreate: ({ editor }) => {

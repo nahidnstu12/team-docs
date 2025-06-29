@@ -31,11 +31,11 @@ import { useSlashCommand } from "./hooks/useSlashCommand";
 const SlashMenuComponent = ({
   editor,
   instanceId,
-  open,
-  onOpenChange,
-  setInitialText,
-  setInitialUrl,
-  setDialogMode,
+  open = false,
+  onOpenChange = () => {},
+  setInitialText = () => {},
+  setInitialUrl = () => {},
+  setDialogMode = () => {},
   config = {},
   className = "",
 }) => {

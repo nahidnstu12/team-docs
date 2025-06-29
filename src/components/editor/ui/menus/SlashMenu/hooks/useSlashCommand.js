@@ -39,8 +39,6 @@ export const useSlashCommand = (
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [menuItems, setMenuItems] = useState([]);
-  const [menuGroups, setMenuGroups] = useState([]);
   const [selectedPosition, setSelectedPosition] = useState({
     groupIndex: 0,
     itemIndex: 0,
@@ -66,53 +64,7 @@ export const useSlashCommand = (
     placement: slashConfig.placement,
   });
 
-  // Filter and group items based on search query
-  const groupedItems = useMemo(() => {
-    if (!menuGroups.length) return [];
-
-    const query = searchQuery.toLowerCase().trim();
-
-    if (!query) {
-      return menuGroups;
-    }
-
-    // Filter items based on search query
-    const filteredGroups = menuGroups
-      .map((group) => ({
-        ...group,
-        items: group.items.filter((item) => {
-          const searchableText = [
-            item.title,
-            item.subtitle,
-            item.shortcut,
-            ...(item.keywords || []),
-          ]
-            .join(" ")
-            .toLowerCase();
-
-          return searchableText.includes(query);
-        }),
-      }))
-      .filter((group) => group.items.length > 0);
-
-    return filteredGroups;
-  }, [menuGroups, searchQuery]);
-
-  // Calculate total items for navigation
-  const totalItems = useMemo(() => {
-    return groupedItems.reduce((total, group) => total + group.items.length, 0);
-  }, [groupedItems]);
-
-  // Update selected position when items change
-  useEffect(() => {
-    if (groupedItems.length > 0) {
-      // Reset to first item when search changes
-      setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
-      setSelectedIndex(0);
-    }
-  }, [groupedItems]);
-
-  // Memoize commands to prevent recreation on every render
+  // Memoize commands to prevent recreation on every render (defined first)
   const commands = useMemo(() => {
     if (!editor) return [];
 
@@ -137,17 +89,115 @@ export const useSlashCommand = (
     );
   }, [editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode]);
 
-  // Update menu groups when commands change
-  useEffect(() => {
-    setMenuGroups(commands);
-  }, [commands]);
+  // Filter and group items based on search query
+  const groupedItems = useMemo(() => {
+    if (!commands.length) return [];
 
-  // Keyboard event handler
+    const query = searchQuery.toLowerCase().trim();
+
+    if (!query) {
+      return commands;
+    }
+
+    // Filter items based on search query
+    const filteredGroups = commands
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => {
+          const searchableText = [
+            item.title,
+            item.subtitle,
+            item.shortcut,
+            ...(item.keywords || []),
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          return searchableText.includes(query);
+        }),
+      }))
+      .filter((group) => group.items.length > 0);
+
+    return filteredGroups;
+  }, [commands, searchQuery]);
+
+  // Calculate total items for navigation
+  const totalItems = useMemo(() => {
+    return groupedItems.reduce((total, group) => total + group.items.length, 0);
+  }, [groupedItems]);
+
+  // Reset selection when search query changes
+  useEffect(() => {
+    setSelectedPosition({ groupIndex: 0, itemIndex: 0 });
+    setSelectedIndex(0);
+  }, [searchQuery]);
+
+  // Use commands directly instead of storing in state to avoid infinite loops
+
+  // Helper functions (defined first to avoid hoisting issues)
+  const getPositionFromIndex = useCallback(
+    (index) => {
+      let currentIndex = 0;
+
+      for (let groupIndex = 0; groupIndex < groupedItems.length; groupIndex++) {
+        const group = groupedItems[groupIndex];
+
+        if (currentIndex + group.items.length > index) {
+          return {
+            groupIndex,
+            itemIndex: index - currentIndex,
+          };
+        }
+
+        currentIndex += group.items.length;
+      }
+
+      return { groupIndex: 0, itemIndex: 0 };
+    },
+    [groupedItems]
+  );
+
+  const getSelectedItem = useCallback(() => {
+    const group = groupedItems[selectedPosition.groupIndex];
+    if (!group) return null;
+
+    return group.items[selectedPosition.itemIndex];
+  }, [groupedItems, selectedPosition]);
+
+  // Navigation helpers (defined after helper functions)
+  const navigateDown = useCallback(() => {
+    if (totalItems === 0) return;
+
+    const newIndex = (selectedIndex + 1) % totalItems;
+    const newPosition = getPositionFromIndex(newIndex);
+
+    setSelectedIndex(newIndex);
+    setSelectedPosition(newPosition);
+  }, [totalItems, selectedIndex, getPositionFromIndex]);
+
+  const navigateUp = useCallback(() => {
+    if (totalItems === 0) return;
+
+    const newIndex = selectedIndex === 0 ? totalItems - 1 : selectedIndex - 1;
+    const newPosition = getPositionFromIndex(newIndex);
+
+    setSelectedIndex(newIndex);
+    setSelectedPosition(newPosition);
+  }, [totalItems, selectedIndex, getPositionFromIndex]);
+
+  const executeSelectedCommand = useCallback(() => {
+    const selectedItem = getSelectedItem();
+    if (selectedItem) {
+      selectedItem.command();
+    }
+  }, [getSelectedItem]);
+
+  // Keyboard event handler using editor's event system
   useEffect(() => {
     if (!editor) return;
 
-    const onKeyDown = (e) => {
-      if (!editor.isFocused) return;
+    const handleKeyDown = ({ event }) => {
+      const e = event;
 
       // Handle slash key to open menu
       if (e.key === "/") {
@@ -201,69 +251,13 @@ export const useSlashCommand = (
       }
     };
 
-    // Navigation helpers
-    const navigateDown = () => {
-      if (totalItems === 0) return;
-
-      const newIndex = (selectedIndex + 1) % totalItems;
-      const newPosition = getPositionFromIndex(newIndex);
-
-      setSelectedIndex(newIndex);
-      setSelectedPosition(newPosition);
-    };
-
-    const navigateUp = () => {
-      if (totalItems === 0) return;
-
-      const newIndex = selectedIndex === 0 ? totalItems - 1 : selectedIndex - 1;
-      const newPosition = getPositionFromIndex(newIndex);
-
-      setSelectedIndex(newIndex);
-      setSelectedPosition(newPosition);
-    };
-
-    const executeSelectedCommand = () => {
-      const selectedItem = getSelectedItem();
-      if (selectedItem) {
-        selectedItem.command();
-      }
-    };
-
-    // Helper to get position from flat index
-    const getPositionFromIndex = (index) => {
-      let currentIndex = 0;
-
-      for (let groupIndex = 0; groupIndex < groupedItems.length; groupIndex++) {
-        const group = groupedItems[groupIndex];
-
-        if (currentIndex + group.items.length > index) {
-          return {
-            groupIndex,
-            itemIndex: index - currentIndex,
-          };
-        }
-
-        currentIndex += group.items.length;
-      }
-
-      return { groupIndex: 0, itemIndex: 0 };
-    };
-
-    // Helper to get selected item
-    const getSelectedItem = () => {
-      const group = groupedItems[selectedPosition.groupIndex];
-      if (!group) return null;
-
-      return group.items[selectedPosition.itemIndex];
-    };
-
-    // Add event listener
-    document.addEventListener("keydown", onKeyDown);
+    // Use editor's event system instead of document events
+    editor.on("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", onKeyDown);
+      editor.off("keydown", handleKeyDown);
     };
-  }, [editor, isOpen, selectedIndex, selectedPosition, totalItems, groupedItems, refs]);
+  }, [editor, isOpen, navigateDown, navigateUp, executeSelectedCommand, refs]);
 
   // Close menu when editor loses focus or selection changes significantly
   useEffect(() => {
