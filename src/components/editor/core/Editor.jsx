@@ -12,6 +12,14 @@ import Link from "@tiptap/extension-link";
 import Color from "@tiptap/extension-color";
 import TextStyle from "@tiptap/extension-text-style";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import TextAlign from "@tiptap/extension-text-align";
+import { all, createLowlight } from "lowlight";
+
+// Create lowlight instance for syntax highlighting
+const lowlight = createLowlight(all);
 
 /**
  * Main TipTap Editor Component
@@ -152,7 +160,10 @@ const EditorComponent = ({
     () => ({
       immediatelyRender: false,
       extensions: [
-        StarterKit, // Always use StarterKit for stability
+        StarterKit.configure({
+          // Disable the basic codeBlock since we're using CodeBlockLowlight
+          codeBlock: false,
+        }), // Always use StarterKit for stability
         TextStyle, // Required for Color extension
         Color, // Add color support for ColorPickerPanel
         Highlight.configure({ multicolor: true }), // Add highlight support for BubbleMenu
@@ -163,6 +174,23 @@ const EditorComponent = ({
             class: "text-blue-600 underline hover:text-blue-800 cursor-pointer",
           },
         }), // Add link support for BubbleMenu
+        // Task list extensions
+        TaskList.configure({
+          nested: true,
+        }),
+        TaskItem.configure({
+          nested: true,
+        }),
+        // Code block with syntax highlighting
+        CodeBlockLowlight.configure({
+          lowlight,
+          defaultLanguage: "plaintext",
+        }),
+        // Text alignment extension
+        TextAlign.configure({
+          types: ["heading", "paragraph"],
+          alignments: ["left", "center", "right", "justify"],
+        }),
         Placeholder.configure({
           placeholder: ({ node }) => {
             if (node.type.name === "heading") {

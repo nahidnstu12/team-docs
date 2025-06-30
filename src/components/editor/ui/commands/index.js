@@ -1,7 +1,7 @@
 /**
  * Editor Commands
  * Centralized command definitions for slash menu and shortcuts
- * 
+ *
  * @fileoverview This module provides command definitions for the editor's
  * slash menu system, organized by categories with icons, shortcuts, and keywords.
  */
@@ -11,9 +11,6 @@ import {
   Heading1,
   Heading2,
   Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
   List,
   ListOrdered,
   CheckSquare,
@@ -32,6 +29,8 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Undo,
+  Redo,
 } from "lucide-react";
 
 /**
@@ -76,30 +75,6 @@ export const getBaseCommands = (
         shortcut: "###",
         keywords: ["h3", "heading3", "small heading", "subsection"],
         command: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-      },
-      {
-        title: "Heading 4",
-        subtitle: "Extra small heading",
-        icon: <Heading4 className="w-5 h-5" />,
-        shortcut: "####",
-        keywords: ["h4", "heading4", "tiny heading"],
-        command: () => editor.chain().focus().toggleHeading({ level: 4 }).run(),
-      },
-      {
-        title: "Heading 5",
-        subtitle: "Minimal heading",
-        icon: <Heading5 className="w-5 h-5" />,
-        shortcut: "#####",
-        keywords: ["h5", "heading5", "minimal heading"],
-        command: () => editor.chain().focus().toggleHeading({ level: 5 }).run(),
-      },
-      {
-        title: "Heading 6",
-        subtitle: "Smallest heading",
-        icon: <Heading6 className="w-5 h-5" />,
-        shortcut: "######",
-        keywords: ["h6", "heading6", "smallest heading"],
-        command: () => editor.chain().focus().toggleHeading({ level: 6 }).run(),
       },
     ],
   },
@@ -164,28 +139,28 @@ export const getBaseCommands = (
       },
     ],
   },
-  {
-    group: "Media & Links",
-    items: [
-      {
-        title: "Link",
-        subtitle: "Add a link to text",
-        icon: <Link className="w-5 h-5" />,
-        keywords: ["link", "url", "href", "anchor", "reference"],
-        command: () => {
-          const selectedText = editor.state.doc.textBetween(
-            editor.state.selection.from,
-            editor.state.selection.to
-          );
-          
-          setInitialText(selectedText || "");
-          setInitialUrl("");
-          setDialogMode("create");
-          onOpenChange(true);
-        },
-      },
-    ],
-  },
+  // {
+  //   group: "Media & Links",
+  //   items: [
+  //     {
+  //       title: "Link",
+  //       subtitle: "Add a link to text",
+  //       icon: <Link className="w-5 h-5" />,
+  //       keywords: ["link", "url", "href", "anchor", "reference"],
+  //       command: () => {
+  //         const selectedText = editor.state.doc.textBetween(
+  //           editor.state.selection.from,
+  //           editor.state.selection.to
+  //         );
+  //
+  //         setInitialText(selectedText || "");
+  //         setInitialUrl("");
+  //         setDialogMode("create");
+  //         onOpenChange(true);
+  //       },
+  //     },
+  //   ],
+  // },
   {
     group: "Formatting",
     items: [
@@ -279,6 +254,27 @@ export const getBaseCommands = (
       },
     ],
   },
+  {
+    group: "Actions",
+    items: [
+      {
+        title: "Undo",
+        subtitle: "Undo last action",
+        icon: <Undo className="w-5 h-5" />,
+        shortcut: "⌘Z",
+        keywords: ["undo", "revert", "back", "previous"],
+        command: () => editor.chain().focus().undo().run(),
+      },
+      {
+        title: "Redo",
+        subtitle: "Redo last action",
+        icon: <Redo className="w-5 h-5" />,
+        shortcut: "⌘Y",
+        keywords: ["redo", "forward", "next", "repeat"],
+        command: () => editor.chain().focus().redo().run(),
+      },
+    ],
+  },
 ];
 
 /**
@@ -306,8 +302,8 @@ export const getCommandsByCategory = (
     setInitialUrl,
     setDialogMode
   );
-  
-  const group = allCommands.find(g => g.group.toLowerCase() === category.toLowerCase());
+
+  const group = allCommands.find((g) => g.group.toLowerCase() === category.toLowerCase());
   return group ? group.items : [];
 };
 
@@ -336,25 +332,22 @@ export const searchCommands = (
     setInitialUrl,
     setDialogMode
   );
-  
+
   const searchTerm = query.toLowerCase().trim();
   if (!searchTerm) return allCommands;
-  
+
   return allCommands
-    .map(group => ({
+    .map((group) => ({
       ...group,
-      items: group.items.filter(item => {
-        const searchableText = [
-          item.title,
-          item.subtitle,
-          item.shortcut,
-          ...(item.keywords || [])
-        ].join(" ").toLowerCase();
-        
+      items: group.items.filter((item) => {
+        const searchableText = [item.title, item.subtitle, item.shortcut, ...(item.keywords || [])]
+          .join(" ")
+          .toLowerCase();
+
         return searchableText.includes(searchTerm);
       }),
     }))
-    .filter(group => group.items.length > 0);
+    .filter((group) => group.items.length > 0);
 };
 
 export default {
