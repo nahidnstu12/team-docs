@@ -96,7 +96,7 @@ export const useSlashCommand = (
             .run();
           // Execute the command
           item.command();
-          setIsOpen(false);
+          // Don't close menu here - let executeSelectedCommand handle it
         },
       })),
     }));
@@ -235,12 +235,44 @@ export const useSlashCommand = (
     const selectedItem = getSelectedItem();
     if (selectedItem) {
       console.log("✅ Executing command:", selectedItem.title);
-      selectedItem.command();
-      // Close menu and restore focus after command execution
+
+      // For keyboard execution, call the original command directly (like mouse click)
+      // First remove the slash character
+      const { from } = editor.state.selection;
+      editor
+        .chain()
+        .deleteRange({ from: from - 1, to: from })
+        .run();
+
+      // Find the original command from baseCommands
+      const baseCommands = getBaseCommands(
+        editor,
+        onOpenChange || (() => {}),
+        setInitialText || (() => {}),
+        setInitialUrl || (() => {}),
+        setDialogMode || (() => {})
+      );
+
+      // Find the original command
+      let originalCommand = null;
+      for (const group of baseCommands) {
+        const foundItem = group.items.find((item) => item.title === selectedItem.title);
+        if (foundItem) {
+          originalCommand = foundItem.command;
+          break;
+        }
+      }
+
+      if (originalCommand) {
+        originalCommand();
+      } else {
+        // Fallback to wrapped command
+        selectedItem.command();
+      }
+
       setIsOpen(false);
-      restoreEditorFocus();
     }
-  }, [getSelectedItem, restoreEditorFocus]);
+  }, [getSelectedItem, editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode]);
 
   // Keyboard event handler using document events (TipTap editor.on doesn't work for this)
   useEffect(() => {
@@ -396,6 +428,7 @@ export const useSlashCommand = (
 
   return {
     isOpen,
+    setIsOpen,
     groupedItems,
     floatingStyles,
     refs,

@@ -8,6 +8,7 @@ import {
   PaintBucket,
   Strikethrough,
   Underline,
+  RotateCcw,
 } from "lucide-react";
 import { useState } from "react";
 import ColorPickerPanel from "./ColorPickerPanel";
@@ -29,7 +30,7 @@ export default function BubbleMenu({ editor }) {
         placement: "top",
         onHide: () => setShowColorPanel(false), // Close color panel when menu hides
       }}
-      className="w-[360px] z-50 flex items-center gap-2 px-2 py-2 bg-white border border-gray-200 shadow-xl rounded-xl dark:border-zinc-700 dark:bg-zinc-900"
+      className="w-[420px] z-50 flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 shadow-xl rounded-xl dark:border-zinc-700 dark:bg-zinc-900"
     >
       {/* Bold */}
       <button
@@ -123,7 +124,7 @@ export default function BubbleMenu({ editor }) {
         <Link className="w-5 h-5" />
       </button>
 
-      {/* 🎨 Color Picker at End */}
+      {/* 🎨 Color Picker */}
       <button
         type="button"
         onClick={() => setShowColorPanel((prev) => !prev)}
@@ -147,6 +148,32 @@ export default function BubbleMenu({ editor }) {
           }
           return null;
         })()}
+      </button>
+
+      {/* Unstyle - Remove all formatting */}
+      <button
+        type="button"
+        onClick={() => {
+          editor
+            .chain()
+            .focus()
+            .unsetBold()
+            .unsetItalic()
+            .unsetUnderline()
+            .unsetStrike()
+            .unsetHighlight()
+            .unsetCode()
+            .unsetLink()
+            .unsetColor()
+            .run();
+        }}
+        className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300
+			hover:bg-red-100 hover:text-black dark:hover:bg-zinc-800
+			focus:outline-none focus:ring-2 focus:ring-red-200
+			active:bg-red-50`}
+        title="Remove all formatting"
+      >
+        <RotateCcw className="w-5 h-5" />
       </button>
 
       {/* Color Picker Panel */}

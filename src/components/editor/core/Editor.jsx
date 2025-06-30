@@ -18,6 +18,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import TextAlign from "@tiptap/extension-text-align";
 import { all, createLowlight } from "lowlight";
 import { Toggle, ToggleSummary } from "../extensions/toggle";
+import { TrailingNode } from "../extensions/trailing-node/trailing-node-extension";
 
 // Create lowlight instance for syntax highlighting
 const lowlight = createLowlight(all);
@@ -197,15 +198,38 @@ const EditorComponent = ({
           defaultOpen: true,
         }),
         ToggleSummary,
+        // Trailing node to ensure users can always escape blocks
+        TrailingNode.configure({
+          node: "paragraph",
+          notAfter: [], // Always add trailing node for escape mechanism
+        }),
         Placeholder.configure({
-          placeholder: ({ node }) => {
+          placeholder: ({ node, editor, pos }) => {
             if (node.type.name === "heading") {
               return `Heading ${node.attrs.level}`;
             }
+            if (node.type.name === "toggleSummary") {
+              return "Toggle";
+            }
+
+            // Check if this paragraph is inside a toggle
+            const isInToggle =
+              node.type.name === "paragraph" && node.attrs && node.attrs.parentType === "toggle";
+            if (isInToggle) {
+              return "Empty toggle. Click or press space to add content.";
+            }
+
+            // For trailing nodes and regular paragraphs
+            if (node.type.name === "paragraph") {
+              return "Type '/' for commands or start writing...";
+            }
+
             return "Type '/' for commands or start writing...";
           },
           showOnlyWhenEditable: true,
-          showOnlyCurrent: false,
+          showOnlyCurrent: true, // Only show placeholder for currently focused empty node
+          includeChildren: true,
+          emptyNodeClass: "is-empty",
         }), // Add placeholder support
       ],
       content: initialContent || "",
@@ -232,7 +256,9 @@ const EditorComponent = ({
           if (shouldAutofocus) {
             setTimeout(() => {
               if (editor && !editor.isDestroyed) {
-                editor.commands.focus("end");
+                // Focus at start for empty documents, end for documents with content
+                const isEmpty = editor.isEmpty;
+                editor.commands.focus(isEmpty ? "start" : "end");
               }
             }, 100);
           }
@@ -272,8 +298,10 @@ const EditorComponent = ({
       if (editor && !editor.isDestroyed) {
         const editorElement = e.currentTarget.querySelector(".ProseMirror");
         if (editorElement && !editorElement.contains(e.target)) {
-          // Clicked outside editor content but inside container - focus at end
-          editor.commands.focus("end");
+          // Clicked outside editor content but inside container
+          // Focus at start if empty, otherwise at end
+          const isEmpty = editor.isEmpty;
+          editor.commands.focus(isEmpty ? "start" : "end");
         }
       }
     },

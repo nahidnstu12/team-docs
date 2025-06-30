@@ -1,18 +1,20 @@
-p.is-editor-empty:first-child::before {
-	content: attr(data-placeholder);
-	color: #9ca3af;
-	font-size: 1.8rem;
-	font-weight: 200;
-	line-height: 1.75rem;
-	position: absolute;
-	pointer-events: none;
-	height: 0;
-	white-space: nowrap;
-	opacity: 0.6;
+/* Placeholder for all empty paragraphs - TipTap handles focus with is-empty class */
+p.is-empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  font-size: 1rem; /* Normal size */
+  font-weight: 400; /* Normal weight */
+  line-height: 1.5rem; /* Normal line height */
+  position: absolute;
+  pointer-events: none;
+  height: 0;
+  white-space: nowrap;
+  opacity: 0.6;
+  float: left;
 }
 
-p.is-editor-empty {
-	caret-color: #9ca3af; /* Matches placeholder tone */
-	font-size: 2rem; /* Ensure it matches placeholder */
-	line-height: 1.75rem;
+p.is-empty {
+  caret-color: #374151; /* Normal cursor color */
+  font-size: 1rem; /* Normal font size */
+  line-height: 1.5rem; /* Normal line height */
 }

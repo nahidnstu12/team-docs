@@ -58,7 +58,9 @@ export const getBaseCommands = (
         icon: <Heading1 className="w-5 h-5" />,
         shortcut: "#",
         keywords: ["h1", "heading1", "title", "main heading", "section title", "big text"],
-        command: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+        command: () => {
+          editor.chain().focus().toggleHeading({ level: 1 }).focus().run();
+        },
       },
       {
         title: "Heading 2",
@@ -66,7 +68,9 @@ export const getBaseCommands = (
         icon: <Heading2 className="w-5 h-5" />,
         shortcut: "##",
         keywords: ["h2", "heading2", "subheading", "subtitle", "medium heading"],
-        command: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+        command: () => {
+          editor.chain().focus().toggleHeading({ level: 2 }).focus().run();
+        },
       },
       {
         title: "Heading 3",
@@ -74,7 +78,9 @@ export const getBaseCommands = (
         icon: <Heading3 className="w-5 h-5" />,
         shortcut: "###",
         keywords: ["h3", "heading3", "small heading", "subsection"],
-        command: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+        command: () => {
+          editor.chain().focus().toggleHeading({ level: 3 }).focus().run();
+        },
       },
     ],
   },
@@ -167,38 +173,38 @@ export const getBaseCommands = (
         keywords: ["text", "paragraph", "normal", "body", "remove heading"],
         command: () => editor.chain().focus().clearNodes().setParagraph().run(),
       },
-      {
-        title: "Bold",
-        subtitle: "Bold your text",
-        icon: <BoldIcon className="w-5 h-5" />,
-        shortcut: "⌘B",
-        keywords: ["bold", "strong", "emphasis", "weight", "b"],
-        command: () => editor.chain().focus().toggleBold().run(),
-      },
-      {
-        title: "Italic",
-        subtitle: "Italicize your text",
-        icon: <ItalicIcon className="w-5 h-5" />,
-        shortcut: "⌘I",
-        keywords: ["italic", "em", "slanted", "i"],
-        command: () => editor.chain().focus().toggleItalic().run(),
-      },
-      {
-        title: "Underline",
-        subtitle: "Underline your text",
-        icon: <UnderlineIcon className="w-5 h-5" />,
-        shortcut: "⌘U",
-        keywords: ["underline", "u", "underlined"],
-        command: () => editor.chain().focus().toggleUnderline().run(),
-      },
-      {
-        title: "Strikethrough",
-        subtitle: "Cross out your text",
-        icon: <Strikethrough className="w-5 h-5" />,
-        shortcut: "⌘⇧X",
-        keywords: ["strikethrough", "strike", "cross", "delete", "remove"],
-        command: () => editor.chain().focus().toggleStrike().run(),
-      },
+      // {
+      //   title: "Bold",
+      //   subtitle: "Bold your text",
+      //   icon: <BoldIcon className="w-5 h-5" />,
+      //   shortcut: "⌘B",
+      //   keywords: ["bold", "strong", "emphasis", "weight", "b"],
+      //   command: () => editor.chain().focus().toggleBold().run(),
+      // },
+      // {
+      //   title: "Italic",
+      //   subtitle: "Italicize your text",
+      //   icon: <ItalicIcon className="w-5 h-5" />,
+      //   shortcut: "⌘I",
+      //   keywords: ["italic", "em", "slanted", "i"],
+      //   command: () => editor.chain().focus().toggleItalic().run(),
+      // },
+      // {
+      //   title: "Underline",
+      //   subtitle: "Underline your text",
+      //   icon: <UnderlineIcon className="w-5 h-5" />,
+      //   shortcut: "⌘U",
+      //   keywords: ["underline", "u", "underlined"],
+      //   command: () => editor.chain().focus().toggleUnderline().run(),
+      // },
+      // {
+      //   title: "Strikethrough",
+      //   subtitle: "Cross out your text",
+      //   icon: <Strikethrough className="w-5 h-5" />,
+      //   shortcut: "⌘⇧X",
+      //   keywords: ["strikethrough", "strike", "cross", "delete", "remove"],
+      //   command: () => editor.chain().focus().toggleStrike().run(),
+      // },
       // {
       //   title: "Highlight",
       //   subtitle: "Highlight your text",

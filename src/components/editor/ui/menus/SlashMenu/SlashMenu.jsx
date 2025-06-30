@@ -43,6 +43,7 @@ const SlashMenuComponent = ({
   // Use the slash command hook for menu logic
   const {
     isOpen,
+    setIsOpen,
     groupedItems,
     floatingStyles,
     refs,

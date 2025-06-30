@@ -13,6 +13,7 @@ import {
   Link,
   Palette,
   MoreHorizontal,
+  RotateCcw,
 } from "lucide-react";
 import ColorPickerPanel from "../../ColorPickerPanel";
 import { BUBBLE_MENU_CONFIG } from "../../../core/EditorConfig";
@@ -110,8 +111,8 @@ const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", 
       }}
       className={`
         bubble-menu
-        w-auto max-w-[400px] z-50 flex items-center gap-1 px-2 py-2 
-        bg-white border border-gray-200 shadow-xl rounded-xl 
+        w-auto max-w-[480px] z-50 flex items-center gap-1 px-3 py-2
+        bg-white border border-gray-200 shadow-xl rounded-xl
         dark:border-zinc-700 dark:bg-zinc-900
         ${className}
       `}
@@ -226,8 +227,8 @@ const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", 
           type="button"
           onClick={handleLinkClick}
           className={`
-            p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
-            hover:bg-green-100 hover:text-black dark:hover:bg-zinc-800 
+            p-2 rounded-lg transition text-gray-600 dark:text-gray-300
+            hover:bg-green-100 hover:text-black dark:hover:bg-zinc-800
             focus:outline-none focus:ring-2 focus:ring-green-200
             active:bg-green-50
             ${editor.isActive("link") ? "bg-green-100 text-green-600" : ""}
@@ -247,8 +248,8 @@ const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", 
           type="button"
           onClick={toggleMoreOptions}
           className={`
-            p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
-            hover:bg-gray-100 hover:text-black dark:hover:bg-zinc-800 
+            p-2 rounded-lg transition text-gray-600 dark:text-gray-300
+            hover:bg-gray-100 hover:text-black dark:hover:bg-zinc-800
             focus:outline-none focus:ring-2 focus:ring-gray-200
             active:bg-gray-50
             ${showMoreOptions ? "bg-gray-100 text-gray-600" : ""}
@@ -256,6 +257,38 @@ const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", 
           title="More Options"
         >
           <MoreHorizontal className="w-4 h-4" />
+        </button>
+
+        {/* Separator */}
+        <div className="w-px h-6 bg-gray-200 dark:bg-zinc-700 mx-1" />
+
+        {/* Unstyle - Remove all formatting */}
+        <button
+          type="button"
+          onClick={() => {
+            editor
+              .chain()
+              .focus()
+              .unsetBold()
+              .unsetItalic()
+              .unsetUnderline()
+              .unsetStrike()
+              .unsetHighlight()
+              .unsetSubscript()
+              .unsetSuperscript()
+              .unsetLink()
+              .unsetColor()
+              .run();
+          }}
+          className={`
+            p-2 rounded-lg transition text-gray-600 dark:text-gray-300
+            hover:bg-red-100 hover:text-black dark:hover:bg-zinc-800
+            focus:outline-none focus:ring-2 focus:ring-red-200
+            active:bg-red-50
+          `}
+          title="Remove all formatting"
+        >
+          <RotateCcw className="w-4 h-4" />
         </button>
       </div>
 
