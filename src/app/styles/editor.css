@@ -6,6 +6,7 @@
 @import "./editor/quote.css";
 @import "./editor/numberlist.css";
 @import "./editor/linebreak.css";
-@import "./editor/details.css";
+/* @import "./editor/details.css"; */ /* Removed - replaced with toggle.css */
+@import "./editor/toggle.css";
 @import "./editor/Link.css";
 @import "./editor/placeholder.css";

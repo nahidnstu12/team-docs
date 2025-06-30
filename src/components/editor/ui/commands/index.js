@@ -127,15 +127,11 @@ export const getBaseCommands = (
         command: () => editor.chain().focus().toggleCodeBlock().run(),
       },
       {
-        title: "Details",
-        subtitle: "Collapsible content section",
+        title: "Toggle",
+        subtitle: "Collapsible content block",
         icon: <ListCollapse className="w-5 h-5" />,
-        keywords: ["details", "toggle", "summary", "collapsible", "accordion"],
-        command: () => {
-          if (editor.commands.insertDetails) {
-            editor.chain().focus().insertDetails().run();
-          }
-        },
+        keywords: ["toggle", "collapsible", "dropdown", "accordion", "fold", "expand", "collapse"],
+        command: () => editor.chain().focus().insertToggle().run(),
       },
     ],
   },
@@ -203,22 +199,22 @@ export const getBaseCommands = (
         keywords: ["strikethrough", "strike", "cross", "delete", "remove"],
         command: () => editor.chain().focus().toggleStrike().run(),
       },
-      {
-        title: "Highlight",
-        subtitle: "Highlight your text",
-        icon: <Highlighter className="w-5 h-5" />,
-        shortcut: "⌘⇧H",
-        keywords: ["highlight", "mark", "marker", "yellow", "background"],
-        command: () => editor.chain().focus().toggleHighlight().run(),
-      },
-      {
-        title: "Inline Code",
-        subtitle: "Monospace text",
-        icon: <Code className="w-5 h-5" />,
-        shortcut: "`",
-        keywords: ["code", "inline", "monospace", "backtick", "mono"],
-        command: () => editor.chain().focus().toggleCode().run(),
-      },
+      // {
+      //   title: "Highlight",
+      //   subtitle: "Highlight your text",
+      //   icon: <Highlighter className="w-5 h-5" />,
+      //   shortcut: "⌘⇧H",
+      //   keywords: ["highlight", "mark", "marker", "yellow", "background"],
+      //   command: () => editor.chain().focus().toggleHighlight().run(),
+      // },
+      // {
+      //   title: "Inline Code",
+      //   subtitle: "Monospace text",
+      //   icon: <Code className="w-5 h-5" />,
+      //   shortcut: "`",
+      //   keywords: ["code", "inline", "monospace", "backtick", "mono"],
+      //   command: () => editor.chain().focus().toggleCode().run(),
+      // },
     ],
   },
   {

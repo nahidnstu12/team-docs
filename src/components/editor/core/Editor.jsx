@@ -17,6 +17,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import TextAlign from "@tiptap/extension-text-align";
 import { all, createLowlight } from "lowlight";
+import { Toggle, ToggleSummary } from "../extensions/toggle";
 
 // Create lowlight instance for syntax highlighting
 const lowlight = createLowlight(all);
@@ -191,6 +192,11 @@ const EditorComponent = ({
           types: ["heading", "paragraph"],
           alignments: ["left", "center", "right", "justify"],
         }),
+        // Toggle extensions (Notion-like collapsible blocks)
+        Toggle.configure({
+          defaultOpen: true,
+        }),
+        ToggleSummary,
         Placeholder.configure({
           placeholder: ({ node }) => {
             if (node.type.name === "heading") {

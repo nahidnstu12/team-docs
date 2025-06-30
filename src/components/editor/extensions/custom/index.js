@@ -1,21 +1,21 @@
 /**
  * Custom Extensions Index
  * Exports all custom TipTap extensions
- * 
+ *
  * @fileoverview This module provides a centralized export point for all
  * custom TipTap extensions, including color, details, links, and behavior extensions.
  */
 
 // Import custom extensions
 export { ColorExtensions } from "../color";
-export { Details, DetailsSummary } from "../details";
+// export { Details, DetailsSummary } from "../details"; // Removed - replaced with Toggle
 export { CustomLink } from "../link";
 export { ClearMarksOnEnter } from "../clearMarkStyles";
 export { ResetMarksOnDelete } from "../ResetMarksOnDelete";
 
 // Re-export for convenience
 export * from "../color";
-export * from "../details";
+// export * from "../details"; // Removed - replaced with Toggle
 export * from "../link";
 export * from "../clearMarkStyles";
 export * from "../ResetMarksOnDelete";
@@ -27,8 +27,7 @@ export * from "../ResetMarksOnDelete";
 export const getAllCustomExtensions = () => {
   return [
     ...ColorExtensions,
-    Details,
-    DetailsSummary,
+    // Details, DetailsSummary, // Removed - replaced with Toggle
     CustomLink,
     ClearMarksOnEnter,
     ResetMarksOnDelete,
@@ -43,11 +42,11 @@ export const CUSTOM_EXTENSION_CONFIGS = {
   color: {
     multicolor: true,
   },
-  details: {
-    HTMLAttributes: {
-      class: "details-block",
-    },
-  },
+  // details: { // Removed - replaced with Toggle
+  //   HTMLAttributes: {
+  //     class: "details-block",
+  //   },
+  // },
   link: {
     openOnClick: false,
     HTMLAttributes: {
@@ -57,7 +56,7 @@ export const CUSTOM_EXTENSION_CONFIGS = {
     },
   },
   clearMarksOnEnter: {
-    skipNodeTypes: ["codeBlock", "blockquote", "details", "taskItem"],
+    skipNodeTypes: ["codeBlock", "blockquote", "toggle", "taskItem"],
   },
   resetMarksOnDelete: {
     enabled: true,
@@ -71,28 +70,23 @@ export const CUSTOM_EXTENSION_CONFIGS = {
 export const registerCustomExtensions = (registry) => {
   // Register color extensions
   ColorExtensions.forEach((extension, index) => {
-    registry.register(
-      `color-${index}`,
-      extension,
-      "custom",
-      {
-        config: CUSTOM_EXTENSION_CONFIGS.color,
-        category: "formatting",
-      }
-    );
+    registry.register(`color-${index}`, extension, "custom", {
+      config: CUSTOM_EXTENSION_CONFIGS.color,
+      category: "formatting",
+    });
   });
 
-  // Register details extensions
-  registry.register("details", Details, "custom", {
-    config: CUSTOM_EXTENSION_CONFIGS.details,
-    category: "blocks",
-  });
+  // Register details extensions - REMOVED (replaced with Toggle)
+  // registry.register("details", Details, "custom", {
+  //   config: CUSTOM_EXTENSION_CONFIGS.details,
+  //   category: "blocks",
+  // });
 
-  registry.register("details-summary", DetailsSummary, "custom", {
-    config: {},
-    category: "blocks",
-    dependencies: ["details"],
-  });
+  // registry.register("details-summary", DetailsSummary, "custom", {
+  //   config: {},
+  //   category: "blocks",
+  //   dependencies: ["details"],
+  // });
 
   // Register link extension
   registry.register("custom-link", CustomLink, "custom", {
