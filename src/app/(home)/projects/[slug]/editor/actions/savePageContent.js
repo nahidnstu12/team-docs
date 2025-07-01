@@ -1,8 +1,6 @@
 "use server";
 
-import Logger from "@/lib/Logger";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 
 export async function savePageContent({ pageId, content }) {
   try {

@@ -96,8 +96,7 @@ const EditorComponent = ({
   // Memoize instance configuration to prevent recreation on every render
   const instanceConfig = useMemo(() => {
     try {
-      console.log("Creating instanceConfig...");
-
+      // Merge context config, default config, and component-specific config
       return getInstanceConfig(instanceId, {
         ...(editorContext?.config || DEFAULT_EDITOR_CONFIG || {}),
         ...config,
@@ -108,9 +107,7 @@ const EditorComponent = ({
         },
       });
     } catch (error) {
-      console.error("❌ Error creating instanceConfig:", error);
-
-      // Create a minimal fallback config
+      // Create minimal fallback configuration if config creation fails
       return {
         autofocus: true,
         editorProps: {
@@ -139,7 +136,7 @@ const EditorComponent = ({
         try {
           await saveCallbackRef.current(content, instanceId);
         } catch (error) {
-          console.error(`Save failed for editor ${instanceId}:`, error);
+          // Re-throw error to allow parent components to handle save failures
           throw error;
         }
       }
@@ -249,13 +246,13 @@ const EditorComponent = ({
         },
       },
       onCreate: ({ editor }) => {
-        console.log("Editor created successfully");
+        // Store editor reference for component access
         editorRef.current = editor;
 
-        // Register editor with context using ref
+        // Register editor instance with context for global management
         editorContextRef.current?.registerEditor?.(instanceId, editor, handleSaveRef.current);
 
-        // Safe autofocus implementation using ref
+        // Implement autofocus behavior based on configuration
         try {
           const shouldAutofocus = instanceConfigRef.current?.autofocus ?? true;
           if (shouldAutofocus) {
@@ -268,7 +265,7 @@ const EditorComponent = ({
             }, 100);
           }
         } catch (error) {
-          console.warn("Autofocus failed:", error);
+          // Silently handle autofocus failures - not critical for editor functionality
         }
       },
       onUpdate: ({ editor }) => {
@@ -287,9 +284,9 @@ const EditorComponent = ({
         }
       },
       onDestroy: () => {
-        console.log(`🔥 Editor onDestroy called for instanceId: ${instanceId}`);
+        // Unregister editor from context when component unmounts
+        // This prevents memory leaks and ensures proper cleanup
         editorContextRef.current?.unregisterEditor?.(instanceId);
-        console.log(`✅ Editor cleanup completed for instanceId: ${instanceId}`);
       },
     }),
     [instanceId, initialContent]

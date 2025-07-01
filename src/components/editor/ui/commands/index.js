@@ -59,7 +59,7 @@ export const getBaseCommands = (
         shortcut: "#",
         keywords: ["h1", "heading1", "title", "main heading", "section title", "big text"],
         command: () => {
-          editor.chain().focus().toggleHeading({ level: 1 }).focus().run();
+          editor.chain().toggleHeading({ level: 1 }).run();
         },
       },
       {
@@ -69,7 +69,7 @@ export const getBaseCommands = (
         shortcut: "##",
         keywords: ["h2", "heading2", "subheading", "subtitle", "medium heading"],
         command: () => {
-          editor.chain().focus().toggleHeading({ level: 2 }).focus().run();
+          editor.chain().toggleHeading({ level: 2 }).run();
         },
       },
       {
@@ -79,7 +79,7 @@ export const getBaseCommands = (
         shortcut: "###",
         keywords: ["h3", "heading3", "small heading", "subsection"],
         command: () => {
-          editor.chain().focus().toggleHeading({ level: 3 }).focus().run();
+          editor.chain().toggleHeading({ level: 3 }).run();
         },
       },
     ],
@@ -93,7 +93,7 @@ export const getBaseCommands = (
         icon: <List className="w-5 h-5" />,
         shortcut: "-",
         keywords: ["bullet", "list", "unordered", "ul", "bullets", "items"],
-        command: () => editor.chain().focus().toggleBulletList().run(),
+        command: () => editor.chain().toggleBulletList().run(),
       },
       {
         title: "Numbered List",
@@ -101,7 +101,7 @@ export const getBaseCommands = (
         icon: <ListOrdered className="w-5 h-5" />,
         shortcut: "1.",
         keywords: ["numbered", "ordered", "list", "ol", "numbers", "sequence"],
-        command: () => editor.chain().focus().toggleOrderedList().run(),
+        command: () => editor.chain().toggleOrderedList().run(),
       },
       {
         title: "Task List",
@@ -109,7 +109,7 @@ export const getBaseCommands = (
         icon: <CheckSquare className="w-5 h-5" />,
         shortcut: "[]",
         keywords: ["task", "todo", "checkbox", "checklist", "tasks", "check"],
-        command: () => editor.chain().focus().toggleTaskList().run(),
+        command: () => editor.chain().toggleTaskList().run(),
       },
     ],
   },
@@ -122,7 +122,7 @@ export const getBaseCommands = (
         icon: <Quote className="w-5 h-5" />,
         shortcut: ">",
         keywords: ["quote", "blockquote", "quote block", "inset", "citation"],
-        command: () => editor.chain().focus().toggleBlockquote().run(),
+        command: () => editor.chain().toggleBlockquote().run(),
       },
       {
         title: "Code Block",
@@ -130,14 +130,14 @@ export const getBaseCommands = (
         icon: <Braces className="w-5 h-5" />,
         shortcut: "```",
         keywords: ["code", "codeblock", "pre", "syntax", "developer", "snippet"],
-        command: () => editor.chain().focus().toggleCodeBlock().run(),
+        command: () => editor.chain().toggleCodeBlock().run(),
       },
       {
         title: "Toggle",
         subtitle: "Collapsible content block",
         icon: <ListCollapse className="w-5 h-5" />,
         keywords: ["toggle", "collapsible", "dropdown", "accordion", "fold", "expand", "collapse"],
-        command: () => editor.chain().focus().insertToggle().run(),
+        command: () => editor.chain().insertToggle().run(),
       },
     ],
   },
@@ -171,7 +171,7 @@ export const getBaseCommands = (
         subtitle: "Paragraph style text",
         icon: <TextIcon className="w-5 h-5" />,
         keywords: ["text", "paragraph", "normal", "body", "remove heading"],
-        command: () => editor.chain().focus().clearNodes().setParagraph().run(),
+        command: () => editor.chain().clearNodes().setParagraph().run(),
       },
       // {
       //   title: "Bold",
@@ -231,28 +231,28 @@ export const getBaseCommands = (
         subtitle: "Align text to the left",
         icon: <AlignLeft className="w-5 h-5" />,
         keywords: ["align", "left", "alignment", "justify"],
-        command: () => editor.chain().focus().setTextAlign("left").run(),
+        command: () => editor.chain().setTextAlign("left").run(),
       },
       {
         title: "Align Center",
         subtitle: "Center align text",
         icon: <AlignCenter className="w-5 h-5" />,
         keywords: ["align", "center", "middle", "alignment"],
-        command: () => editor.chain().focus().setTextAlign("center").run(),
+        command: () => editor.chain().setTextAlign("center").run(),
       },
       {
         title: "Align Right",
         subtitle: "Align text to the right",
         icon: <AlignRight className="w-5 h-5" />,
         keywords: ["align", "right", "alignment"],
-        command: () => editor.chain().focus().setTextAlign("right").run(),
+        command: () => editor.chain().setTextAlign("right").run(),
       },
       {
         title: "Justify",
         subtitle: "Justify text alignment",
         icon: <AlignJustify className="w-5 h-5" />,
         keywords: ["align", "justify", "full", "alignment"],
-        command: () => editor.chain().focus().setTextAlign("justify").run(),
+        command: () => editor.chain().setTextAlign("justify").run(),
       },
     ],
   },
@@ -265,7 +265,7 @@ export const getBaseCommands = (
         icon: <Undo className="w-5 h-5" />,
         shortcut: "⌘Z",
         keywords: ["undo", "revert", "back", "previous"],
-        command: () => editor.chain().focus().undo().run(),
+        command: () => editor.chain().undo().run(),
       },
       {
         title: "Redo",
@@ -273,7 +273,7 @@ export const getBaseCommands = (
         icon: <Redo className="w-5 h-5" />,
         shortcut: "⌘Y",
         keywords: ["redo", "forward", "next", "repeat"],
-        command: () => editor.chain().focus().redo().run(),
+        command: () => editor.chain().redo().run(),
       },
     ],
   },

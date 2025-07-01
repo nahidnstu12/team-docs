@@ -118,9 +118,7 @@ export const EditorProvider = ({
    */
   const unregisterEditor = useCallback(
     (instanceId) => {
-      console.log(`🔄 unregisterEditor called for instanceId: ${instanceId}`);
-
-      // Guard: Check if the editor actually exists before trying to remove it
+      // Check if the editor exists before attempting to remove it
       let editorExists = false;
       setEditors((prev) => {
         editorExists = prev.has(instanceId);
@@ -128,30 +126,26 @@ export const EditorProvider = ({
       });
 
       if (!editorExists) {
-        console.warn(`⚠️ Attempted to unregister non-existent editor: ${instanceId}`);
-        return; // Early return to prevent infinite loops
+        // Silently return if editor doesn't exist to prevent infinite loops
+        return;
       }
 
-      console.log(`✅ Proceeding to unregister editor: ${instanceId}`);
-
+      // Remove editor from registry and clean up associated resources
       setEditors((prev) => {
         const newMap = new Map(prev);
         newMap.delete(instanceId);
-
-        console.log(`📊 Editors after deletion: ${newMap.size} remaining`);
 
         // Clear auto-save timer if this was the last editor
         if (newMap.size === 0 && autoSaveTimer.current) {
           clearTimeout(autoSaveTimer.current);
           autoSaveTimer.current = null;
-          console.log(`🧹 Cleared auto-save timer (no editors remaining)`);
         }
 
         return newMap;
       });
 
+      // Clean up save callback for this instance
       saveCallbacks.current.delete(instanceId);
-      console.log(`🗑️ Removed save callback for: ${instanceId}`);
     },
     [] // Remove the dependency on editors.size to prevent infinite loops
   );
@@ -230,7 +224,7 @@ export const EditorProvider = ({
       });
 
       if (!saveCallback || !editor) {
-        console.warn(`No save callback or editor found for instance: ${instanceId}`);
+        // Return false if save callback or editor not found
         return false;
       }
 
@@ -249,7 +243,7 @@ export const EditorProvider = ({
 
         return true;
       } catch (error) {
-        console.error("Manual save failed:", error);
+        // Handle manual save errors gracefully
         return false;
       } finally {
         setIsSaving(false);
@@ -296,7 +290,7 @@ export const EditorProvider = ({
       });
 
       if (!editor) {
-        console.warn(`No editor found for instance: ${instanceId}`);
+        // Silently return if editor instance not found
         return;
       }
 
@@ -313,7 +307,7 @@ export const EditorProvider = ({
           onLoad(content, instanceId);
         }
       } catch (error) {
-        console.error("Failed to load content:", error);
+        // Handle content loading errors gracefully
       } finally {
         setIsLoading(false);
       }
@@ -335,10 +329,11 @@ export const EditorProvider = ({
       });
 
       if (!editor) {
-        console.warn(`No editor found for instance: ${instanceId}`);
+        // Silently return if editor instance not found
         return;
       }
 
+      // Clear editor content and focus for continued editing
       editor.commands.clearContent();
       editor.commands.focus();
       setHasUnsavedChanges(true);
@@ -361,7 +356,7 @@ export const EditorProvider = ({
       });
 
       if (!editor) {
-        console.warn(`No editor found for instance: ${instanceId}`);
+        // Silently return if editor instance not found
         return;
       }
 

@@ -76,7 +76,7 @@ export default function LinkEditDialog({
       toast.success("Link updated successfully");
       onOpenChange(false);
     } catch (error) {
-      console.error("Error updating link:", error);
+      // Handle link update errors gracefully
       toast.error("Failed to update link");
     } finally {
       setIsLoading(false);
@@ -99,7 +99,7 @@ export default function LinkEditDialog({
       toast.success("Link removed successfully");
       onOpenChange(false);
     } catch (error) {
-      console.error("Error removing link:", error);
+      // Handle link removal errors gracefully
       toast.error("Failed to remove link");
     }
   };
@@ -110,9 +110,6 @@ export default function LinkEditDialog({
   const handleVisit = () => {
     if (linkUrl) {
       let url = linkUrl.trim();
-
-      // Debug: Log the original URL
-      console.log("Original URL:", url);
 
       // Clean up any double protocols that might have been added
       if (url.startsWith("https://https://") || url.startsWith("http://https://")) {
@@ -131,8 +128,6 @@ export default function LinkEditDialog({
       ) {
         url = `https://${url}`;
       }
-
-      console.log("Final URL:", url);
       window.open(url, "_blank", "noopener,noreferrer");
     }
   };
@@ -145,7 +140,7 @@ export default function LinkEditDialog({
       await navigator.clipboard.writeText(linkUrl);
       toast.success("Link copied to clipboard");
     } catch (error) {
-      console.error("Error copying link:", error);
+      // Handle clipboard copy failure gracefully
       toast.error("Failed to copy link");
     }
   };

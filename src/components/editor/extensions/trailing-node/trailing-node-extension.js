@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core";
-import { Plugin, PluginKey } from "prosemirror-state";
+import { Plugin, PluginKey, TextSelection } from "prosemirror-state";
 
 /**
  * Trailing Node Extension
@@ -20,7 +20,7 @@ export const TrailingNode = Extension.create({
     const plugin = new Plugin({
       key: new PluginKey("trailingNode"),
       appendTransaction: (transactions, oldState, newState) => {
-        const { doc, tr } = newState;
+        const { doc, tr, selection } = newState;
         const endPosition = doc.content.size;
         const lastNode = doc.lastChild;
 
@@ -40,7 +40,33 @@ export const TrailingNode = Extension.create({
         const nodeType = newState.schema.nodes[this.options.node];
         if (nodeType) {
           const newParagraph = nodeType.create();
-          return tr.insert(endPosition, newParagraph);
+          const newTr = tr.insert(endPosition, newParagraph);
+
+          // CRITICAL FIX: Preserve the original selection position to prevent cursor jumping
+          // Only preserve if the selection is not intentionally at the very end
+          // This maintains the escape mechanism while fixing cursor positioning
+          if (selection.from < endPosition) {
+            // Try to preserve the exact selection using mapping
+            try {
+              const mappedSelection = selection.map(newTr.doc, newTr.mapping);
+              newTr.setSelection(mappedSelection);
+            } catch (e) {
+              // If mapping fails, try to set selection at the original position
+              try {
+                const resolvedPos = newTr.doc.resolve(
+                  Math.min(selection.from, newTr.doc.content.size)
+                );
+                if (resolvedPos) {
+                  newTr.setSelection(new TextSelection(resolvedPos));
+                }
+              } catch (mappingError) {
+                // If selection mapping fails, let TipTap handle cursor positioning
+                // This is a fallback case that rarely occurs in normal usage
+              }
+            }
+          }
+
+          return newTr;
         }
       },
       state: {

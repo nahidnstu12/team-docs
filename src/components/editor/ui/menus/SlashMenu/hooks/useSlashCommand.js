@@ -89,13 +89,36 @@ export const useSlashCommand = (
         ...item,
         command: () => {
           const { from } = editor.state.selection;
-          // Remove the slash character
+          const cursorPosition = from - 1; // Position where cursor should be after command
+
+          // Remove the slash character first
           editor
             .chain()
             .deleteRange({ from: from - 1, to: from })
             .run();
-          // Execute the command
+
+          // Execute the original command (which may include its own focus calls)
           item.command();
+
+          // Preserve cursor positioning after command execution
+          // setTimeout ensures this runs after all ProseMirror transactions complete
+          setTimeout(() => {
+            if (editor && !editor.isDestroyed) {
+              try {
+                // Calculate target cursor position within document bounds
+                const doc = editor.state.doc;
+                const targetPos = Math.min(cursorPosition, doc.content.size);
+                const resolvedPos = doc.resolve(targetPos);
+
+                // Set text selection at the calculated position to maintain cursor placement
+                editor.commands.setTextSelection(targetPos);
+              } catch (error) {
+                // Fallback to basic focus if cursor positioning fails
+                editor.commands.focus();
+              }
+            }
+          }, 0);
+
           // Don't close menu here - let executeSelectedCommand handle it
         },
       })),
@@ -177,68 +200,57 @@ export const useSlashCommand = (
     return group.items[selectedPosition.itemIndex];
   }, [groupedItems, selectedPosition]);
 
-  // Navigation helpers (defined after helper functions)
+  // Navigation helpers for keyboard menu interaction
   const navigateDown = useCallback(() => {
-    console.log("📍 Navigate down called, totalItems:", totalItems, "currentIndex:", selectedIndex);
+    // Skip navigation if no items are available
     if (totalItems === 0) return;
 
-    // Mark as keyboard navigation
+    // Enable keyboard navigation mode for proper hover state management
     setIsUsingKeyboard(true);
 
+    // Calculate next index with wraparound (circular navigation)
     const newIndex = (selectedIndex + 1) % totalItems;
     const newPosition = getPositionFromIndex(newIndex);
 
-    console.log("📍 Moving to index:", newIndex, "position:", newPosition);
+    // Update selection state to reflect new position
     setSelectedIndex(newIndex);
     setSelectedPosition(newPosition);
   }, [totalItems, selectedIndex, getPositionFromIndex]);
 
   const navigateUp = useCallback(() => {
-    console.log("📍 Navigate up called, totalItems:", totalItems, "currentIndex:", selectedIndex);
+    // Skip navigation if no items are available
     if (totalItems === 0) return;
 
-    // Mark as keyboard navigation
+    // Enable keyboard navigation mode for proper hover state management
     setIsUsingKeyboard(true);
 
+    // Calculate previous index with wraparound (circular navigation)
     const newIndex = selectedIndex === 0 ? totalItems - 1 : selectedIndex - 1;
     const newPosition = getPositionFromIndex(newIndex);
 
-    console.log("📍 Moving to index:", newIndex, "position:", newPosition);
+    // Update selection state to reflect new position
     setSelectedIndex(newIndex);
     setSelectedPosition(newPosition);
   }, [totalItems, selectedIndex, getPositionFromIndex]);
 
-  // Focus restoration helper (defined first)
+  // Focus restoration helper for when menu closes
   const restoreEditorFocus = useCallback(() => {
-    console.log("🔄 Restoring editor focus to position:", savedCursorPosition);
-
-    // Multiple approaches to ensure focus is restored
-    setTimeout(() => {
-      // Approach 1: Use TipTap's focus command
+    // Restore focus to editor after menu interaction
+    // This ensures the editor remains focused for continued typing
+    if (editor && !editor.isDestroyed) {
+      // Simple focus restoration - cursor positioning is handled by other mechanisms
       editor.commands.focus();
-
-      // Approach 2: Focus the editor DOM element directly
-      if (editor.view && editor.view.dom) {
-        editor.view.dom.focus();
-      }
-
-      // Approach 3: Restore cursor position if saved
-      if (savedCursorPosition !== null) {
-        editor.commands.setTextSelection(savedCursorPosition);
-      }
-
-      console.log("✅ Editor focus restored, isFocused:", editor.isFocused);
-    }, 10); // Small delay to ensure menu is closed first
+    }
   }, [editor, savedCursorPosition]);
 
   const executeSelectedCommand = useCallback(() => {
     const selectedItem = getSelectedItem();
     if (selectedItem) {
-      console.log("✅ Executing command:", selectedItem.title);
-
-      // For keyboard execution, call the original command directly (like mouse click)
-      // First remove the slash character
+      // Calculate cursor position before command execution for later restoration
       const { from } = editor.state.selection;
+      const cursorPosition = from - 1; // Target position after slash removal and command execution
+
+      // First remove the slash character
       editor
         .chain()
         .deleteRange({ from: from - 1, to: from })
@@ -270,6 +282,24 @@ export const useSlashCommand = (
         selectedItem.command();
       }
 
+      // Restore cursor position after command execution
+      // setTimeout ensures this runs after all command transactions complete
+      setTimeout(() => {
+        if (editor && !editor.isDestroyed) {
+          try {
+            // Calculate safe cursor position within document bounds
+            const doc = editor.state.doc;
+            const targetPos = Math.min(cursorPosition, doc.content.size);
+
+            // Set text selection to maintain cursor at intended position
+            editor.commands.setTextSelection(targetPos);
+          } catch (error) {
+            // Fallback to basic focus if positioning fails
+            editor.commands.focus();
+          }
+        }
+      }, 0);
+
       setIsOpen(false);
     }
   }, [getSelectedItem, editor, onOpenChange, setInitialText, setInitialUrl, setDialogMode]);
@@ -279,34 +309,27 @@ export const useSlashCommand = (
     if (!editor) return;
 
     const handleKeyDown = (e) => {
-      console.log(
-        "🔍 SlashMenu: Key pressed:",
-        e.key,
-        "isOpen:",
-        isOpen,
-        "editorFocused:",
-        editor?.isFocused
-      );
+      // Process keyboard events for slash menu interaction
 
       // Handle slash key to open menu (only when editor is focused)
       if (e.key === "/" && editor?.isFocused) {
-        // Defer to next tick to allow slash to appear in doc
+        // Defer to next tick to allow slash character to appear in document
         setTimeout(() => {
           const { from } = editor.state.selection;
           const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
 
+          // Verify slash was actually inserted before opening menu
           if (textBefore === "/") {
-            // Get slash position for menu positioning
+            // Calculate menu position based on slash character coordinates
             const pos = editor.view.coordsAtPos(from - 1);
 
-            // Save cursor position for focus restoration
+            // Store cursor position for focus restoration when menu closes
             setSavedCursorPosition(from);
 
-            // Set manual position for direct CSS positioning
+            // Position menu 8px below cursor for optimal user experience
             const menuX = pos.left;
-            const menuY = pos.bottom + 8; // 8px below cursor
+            const menuY = pos.bottom + 8;
             setMenuPosition({ x: menuX, y: menuY });
-            console.log("🎯 Menu opened at position:", { x: menuX, y: menuY });
 
             // Still create virtual element for Floating UI as fallback
             const virtualElement = {
@@ -333,29 +356,27 @@ export const useSlashCommand = (
         }, 0);
       }
 
-      // Handle navigation when menu is open (don't check editor focus here)
+      // Handle keyboard navigation when menu is open
       if (isOpen) {
-        console.log("🎮 Menu navigation key:", e.key);
         if (e.key === "ArrowDown") {
           e.preventDefault();
-          console.log("⬇️ Navigating down");
+          // Navigate to next menu item with circular wraparound
           navigateDown();
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
-          console.log("⬆️ Navigating up");
+          // Navigate to previous menu item with circular wraparound
           navigateUp();
         } else if (e.key === "Enter") {
           e.preventDefault();
-          console.log("✅ Executing command");
+          // Execute the currently selected command
           executeSelectedCommand();
         } else if (e.key === "Escape") {
           e.preventDefault();
-          console.log("🚪 Closing menu and returning focus to editor");
+          // Close menu and return focus to editor
           setIsOpen(false);
-          // Restore editor focus
           restoreEditorFocus();
         }
-        return; // Don't process other keys when menu is open
+        return; // Prevent other key processing when menu is open
       }
     };
 
@@ -375,34 +396,24 @@ export const useSlashCommand = (
       const { from } = editor.state.selection;
       const textBefore = editor.state.doc.textBetween(from - 1, from, "\n");
 
-      console.log("📍 Selection update:", {
-        isOpen,
-        from,
-        textBefore,
-        shouldClose: isOpen && textBefore !== "/",
-      });
-
-      // Close menu if slash is removed or cursor moves away
+      // Close menu if slash character is removed or cursor moves away from slash
+      // This ensures menu only stays open when user is actively typing after slash
       if (isOpen && textBefore !== "/") {
-        console.log("❌ Closing menu because textBefore is not '/'");
         setIsOpen(false);
       }
     };
 
     const handleBlur = () => {
-      // Ignore blur events that happen immediately after opening the menu
-      // This prevents the menu from closing when it appears and causes a brief focus loss
+      // Prevent menu from closing immediately after opening due to brief focus loss
+      // This improves UX by avoiding menu flicker when it first appears
       const timeSinceOpened = menuOpenedAt ? Date.now() - menuOpenedAt : Infinity;
 
-      console.log("👋 Editor blur - time since opened:", timeSinceOpened);
-
       if (timeSinceOpened < 100) {
-        // Ignore blur within 100ms of opening
-        console.log("🚫 Ignoring blur - menu just opened");
+        // Ignore blur events within 100ms of menu opening
         return;
       }
 
-      console.log("❌ Closing menu due to blur");
+      // Close menu when editor loses focus after the grace period
       setIsOpen(false);
     };
 
@@ -416,15 +427,18 @@ export const useSlashCommand = (
     };
   }, [editor, isOpen, menuOpenedAt]);
 
-  // Restore focus whenever menu closes
+  // Restore editor focus when menu closes
   useEffect(() => {
     if (!isOpen && savedCursorPosition !== null) {
-      console.log("🔄 Menu closed, restoring focus");
-      restoreEditorFocus();
+      // Restore focus to editor after menu interaction completes
+      // Cursor positioning is handled by other mechanisms in the editor
+      if (editor && !editor.isDestroyed) {
+        editor.commands.focus();
+      }
       // Clear saved position after restoring
       setSavedCursorPosition(null);
     }
-  }, [isOpen, savedCursorPosition, restoreEditorFocus]);
+  }, [isOpen, savedCursorPosition, editor]);
 
   return {
     isOpen,

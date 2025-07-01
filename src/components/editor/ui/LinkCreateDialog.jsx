@@ -89,8 +89,7 @@ export default function LinkCreateDialog({
       cleanUrl = `https://${cleanUrl}`;
     }
 
-    console.log("Original URL:", linkUrl);
-    console.log("Cleaned URL:", cleanUrl);
+    // Process URL for link creation
 
     setIsLoading(true);
 
@@ -103,7 +102,7 @@ export default function LinkCreateDialog({
       toast.success("Link created successfully");
       onOpenChange(false);
     } catch (error) {
-      console.error("Error creating link:", error);
+      // Handle link creation errors gracefully
       toast.error("Failed to create link");
     } finally {
       setIsLoading(false);

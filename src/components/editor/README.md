@@ -39,7 +39,7 @@ import { CompleteEditor } from "@/components/editor";
 export default function MyPage() {
   const handleSave = async (content, instanceId) => {
     // Save content to your backend
-    console.log("Saving content:", content);
+    await saveToBackend(content, instanceId);
   };
 
   return (
@@ -68,7 +68,7 @@ export default function MultiEditorPage() {
         <BubbleMenu />
         <SlashMenu />
       </Editor>
-      
+
       <Editor instanceId="editor-2">
         <BubbleMenu />
       </Editor>
@@ -98,6 +98,7 @@ export default function MultiEditorPage() {
 ### 🎨 UI Components
 
 #### Slash Menu
+
 - Triggered by typing `/`
 - Searchable command palette
 - Keyboard navigation (↑↓ arrows, Enter, Escape)
@@ -105,12 +106,14 @@ export default function MultiEditorPage() {
 - Grouped commands by category
 
 #### Bubble Menu
+
 - Appears when text is selected
 - Context-sensitive formatting options
 - Color picker integration
 - Expandable more options panel
 
 #### Toolbar (Optional)
+
 - Traditional toolbar interface
 - All formatting options
 - Font family selection
@@ -125,19 +128,19 @@ const editorConfig = {
   // Basic settings
   autofocus: true,
   characterLimit: 10000,
-  
+
   // Placeholder
   placeholder: {
     text: "Type '/' for commands...",
     showOnlyWhenEditable: true,
   },
-  
+
   // Auto-save
   autoSave: {
     enabled: true,
     delay: 2000, // 2 seconds
   },
-  
+
   // Editor attributes
   editorProps: {
     attributes: {
@@ -160,7 +163,10 @@ ExtensionRegistry.register("my-extension", MyExtension, "custom", {
 
 // Load specific extensions
 const extensions = await ExtensionRegistry.loadExtensions([
-  "bold", "italic", "heading", "my-extension"
+  "bold",
+  "italic",
+  "heading",
+  "my-extension",
 ]);
 ```
 
@@ -174,14 +180,8 @@ Access the global editor context:
 import { useEditorContext } from "@/components/editor";
 
 function MyComponent() {
-  const {
-    registerEditor,
-    saveEditor,
-    isLoading,
-    isSaving,
-    hasUnsavedChanges,
-  } = useEditorContext();
-  
+  const { registerEditor, saveEditor, isLoading, isSaving, hasUnsavedChanges } = useEditorContext();
+
   // Use context methods...
 }
 ```
@@ -194,14 +194,8 @@ Work with a specific editor instance:
 import { useEditorInstance } from "@/components/editor";
 
 function MyComponent() {
-  const {
-    editor,
-    save,
-    loadContent,
-    clearContent,
-    focus,
-  } = useEditorInstance("my-editor-id");
-  
+  const { editor, save, loadContent, clearContent, focus } = useEditorInstance("my-editor-id");
+
   // Use instance methods...
 }
 ```
@@ -227,7 +221,7 @@ function MyComponent() {
     autoSave: true,
     onSave: handleSave,
   });
-  
+
   // Use content management...
 }
 ```
@@ -287,29 +281,31 @@ import { ExtensionRegistry } from "@/components/editor";
 
 const MyCustomExtension = Node.create({
   name: "myCustomNode",
-  
+
   addOptions() {
     return {
       HTMLAttributes: {},
     };
   },
-  
+
   parseHTML() {
     return [{ tag: "my-custom-element" }];
   },
-  
+
   renderHTML({ HTMLAttributes }) {
     return ["my-custom-element", HTMLAttributes, 0];
   },
-  
+
   addCommands() {
     return {
-      insertMyCustomNode: () => ({ commands }) => {
-        return commands.insertContent({
-          type: this.name,
-          attrs: {},
-        });
-      },
+      insertMyCustomNode:
+        () =>
+        ({ commands }) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs: {},
+          });
+        },
     };
   },
 });
@@ -361,7 +357,7 @@ test("renders editor with placeholder", () => {
       config={{ placeholder: { text: "Test placeholder" } }}
     />
   );
-  
+
   expect(screen.getByText("Test placeholder")).toBeInTheDocument();
 });
 ```

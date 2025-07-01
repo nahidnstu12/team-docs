@@ -38,7 +38,12 @@ export default function BubbleMenu({ editor }) {
       {/* Bold */}
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          editor.chain().toggleBold().run();
+          // Restore selection after formatting
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
 		focus:outline-none focus:ring-2 focus:ring-blue-200
@@ -50,7 +55,12 @@ export default function BubbleMenu({ editor }) {
       {/* Italic */}
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          editor.chain().toggleItalic().run();
+          // Restore selection after formatting
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
 		focus:outline-none focus:ring-2 focus:ring-blue-200
@@ -62,7 +72,12 @@ export default function BubbleMenu({ editor }) {
       {/* Underline */}
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          editor.chain().toggleUnderline().run();
+          // Restore selection after formatting
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
 		focus:outline-none focus:ring-2 focus:ring-blue-200
@@ -74,7 +89,12 @@ export default function BubbleMenu({ editor }) {
       {/* Strikethrough */}
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleStrike().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          editor.chain().toggleStrike().run();
+          // Restore selection after formatting
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
 		focus:outline-none focus:ring-2 focus:ring-blue-200
@@ -86,7 +106,12 @@ export default function BubbleMenu({ editor }) {
       {/* Inline Code */}
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleCode().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          editor.chain().toggleCode().run();
+          // Restore selection after formatting
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
 		focus:outline-none focus:ring-2 focus:ring-blue-200
@@ -98,7 +123,12 @@ export default function BubbleMenu({ editor }) {
       {/* Highlight */}
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleHighlight().run()}
+        onClick={() => {
+          const { from, to } = editor.state.selection;
+          editor.chain().toggleHighlight().run();
+          // Restore selection after formatting
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300 
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800 
 		focus:outline-none focus:ring-2 focus:ring-blue-200
@@ -161,9 +191,9 @@ export default function BubbleMenu({ editor }) {
       <button
         type="button"
         onClick={() => {
+          const { from, to } = editor.state.selection;
           editor
             .chain()
-            .focus()
             .unsetBold()
             .unsetItalic()
             .unsetUnderline()
@@ -173,6 +203,8 @@ export default function BubbleMenu({ editor }) {
             .unsetLink()
             .unsetColor()
             .run();
+          // Restore selection after unstyling
+          setTimeout(() => editor.commands.setTextSelection({ from, to }), 0);
         }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300
 			hover:bg-red-100 hover:text-black dark:hover:bg-zinc-800

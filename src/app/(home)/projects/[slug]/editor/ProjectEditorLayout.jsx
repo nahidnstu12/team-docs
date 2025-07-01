@@ -41,26 +41,11 @@ function EnhancedEditor({ pageId }) {
   const handleSave = useCallback(
     async (content) => {
       try {
-        console.log("💾 Saving content:", {
-          pageId,
-          content,
-          contentType: typeof content,
-          contentStringified: JSON.stringify(content).substring(0, 500) + "...",
-        });
-        const result = await EditorService.saveContent({
+        await EditorService.saveContent({
           pageId,
           content,
           showToast: true, // Show toast for manual saves
         });
-        console.log("✅ Save result:", result);
-
-        // Verify what was actually saved
-        if (result && result.content) {
-          console.log(
-            "🔍 Verified saved content:",
-            JSON.stringify(result.content).substring(0, 200) + "..."
-          );
-        }
       } catch (error) {
         console.error("❌ Error saving content:", error);
         // Error toast is handled by EditorService when showToast=true
@@ -70,34 +55,19 @@ function EnhancedEditor({ pageId }) {
   );
 
   // Handle content changes - memoized to prevent infinite loops
-  const handleChange = useCallback((content, instanceId) => {
-    console.log("📝 Content changed called!");
-    console.log("📝 Content details:", {
-      content,
-      instanceId,
-      contentType: typeof content,
-      hasContent: !!content,
-      isObject: typeof content === "object",
-      keys: typeof content === "object" ? Object.keys(content || {}) : "not object",
-    });
-    console.log("📝 Content preview:", JSON.stringify(content).substring(0, 200) + "...");
-    // Store the current content for saving
+  const handleChange = useCallback((content) => {
     setPageContent(content);
-    console.log("📝 pageContent state updated");
   }, []);
 
   // Register save handler with project store
   useEffect(() => {
     if (pageId) {
-      console.log("🔧 Registering save handler for pageId:", pageId);
       useProjectStore.getState().setSaveHandler(() => {
-        console.log("🚀 Save handler called! Current pageContent:", pageContent);
-
         // Save the current content
         if (pageContent) {
           handleSave(pageContent);
         } else {
-          console.warn("⚠️ No content available to save");
+          toast.error("No content available to save");
         }
       });
     }
@@ -118,26 +88,20 @@ function EnhancedEditor({ pageId }) {
 
         if (pageData?.content) {
           try {
+            // Try to parse content as json
             const parsedContent = JSON.parse(pageData.content);
-            console.log("📖 Loaded content from DB:", {
-              contentType: typeof parsedContent,
-              contentPreview: JSON.stringify(parsedContent).substring(0, 200) + "...",
-              rawContent: pageData.content.substring(0, 200) + "...",
-            });
             setPageContent(parsedContent);
-          } catch (parseError) {
-            console.warn("Failed to parse content as JSON, using as text:", parseError);
-            console.log("📖 Using raw content:", pageData.content.substring(0, 200) + "...");
+          } catch (error) {
+            // If parsing fails, use the raw content
             setPageContent(pageData.content);
           }
         } else {
-          console.log("📖 No content found in DB for pageId:", pageId);
+          // No content found
           setPageContent(null);
         }
         setIsLoading(false);
       } catch (error) {
         if (!isMounted) return;
-        console.error("Error fetching page content:", error);
         toast.error("Failed to load page content");
         setIsLoading(false);
       }

@@ -137,24 +137,19 @@ export function useLinkEditor(editor) {
     (newLinkData) => {
       if (!editor) return;
 
-      console.log("Updating link with data:", newLinkData);
-      console.log("Current link data:", linkData);
-
       try {
-        // Use simpler approach for updates too
+        // Extend selection to cover entire link mark
         editor.chain().focus().extendMarkRange("link").run();
 
-        // If text changed, replace it
+        // Replace text content if it has changed
         if (newLinkData.text && newLinkData.text !== linkData.text) {
-          console.log("Updating link text");
           editor.chain().focus().insertContent(newLinkData.text).run();
         }
 
-        // Update the URL using toggleLink (this will update existing link)
-        console.log("Updating link URL");
+        // Update the link URL while preserving text selection
         editor.chain().focus().extendMarkRange("link").toggleLink({ href: newLinkData.href }).run();
       } catch (error) {
-        console.error("Error updating link:", error);
+        // Silently handle link update errors - user can retry
       }
     },
     [editor, linkData.text]
@@ -176,43 +171,20 @@ export function useLinkEditor(editor) {
         cleanUrl = cleanUrl.replace("http:://", "http://");
       }
 
-      console.log("Creating link with data:", { ...newLinkData, href: cleanUrl });
-      console.log("Selected text:", selectedText);
-      console.log("Editor state:", editor.state.selection);
-
+      // Create link with cleaned URL data
       try {
-        // COMPREHENSIVE DEBUGGING - Let's see what's actually happening
-        console.log("=== LINK CREATION DEBUG START ===");
-        console.log(
-          "Editor extensions:",
-          editor.extensionManager.extensions.map((ext) => ext.name)
-        );
-        console.log("Schema marks:", Object.keys(editor.schema.marks));
-        console.log("Has link mark in schema:", !!editor.schema.marks.link);
-        console.log("Available commands:", Object.keys(editor.commands));
-        console.log("Can set link:", typeof editor.commands.setLink === "function");
-        console.log("Current HTML before link:", editor.getHTML());
-        console.log("Current document JSON:", JSON.stringify(editor.getJSON(), null, 2));
-
-        // Use standard TipTap commands now that CustomLink is removed
-        console.log("Using standard TipTap link commands");
+        // Create link using standard TipTap link commands
 
         if (selectedText) {
-          // We have selected text - apply the link to it
-          console.log("Applying link to selected text");
-          console.log("Current selection before link:", editor.state.selection);
-
-          // First, ensure we have the right selection
+          // Apply link to selected text
           const { from, to } = editor.state.selection;
-          console.log("Selection positions:", { from, to });
-          console.log("Selected text from positions:", editor.state.doc.textBetween(from, to));
 
-          // Try a different approach - select the text first, then apply link
+          // Find and select the target text, then apply link
           const result = editor
             .chain()
             .focus()
             .command(({ tr, state }) => {
-              // Find the text "test" in the document and select it
+              // Search for the selected text in the document
               const doc = state.doc;
               let textFound = false;
               let textFrom = 0;
@@ -227,8 +199,7 @@ export function useLinkEditor(editor) {
                 }
               });
 
-              console.log("Found text at positions:", { textFrom, textTo, textFound });
-
+              // Set selection to found text position
               if (textFound) {
                 tr.setSelection(state.selection.constructor.create(state.doc, textFrom, textTo));
                 return true;
@@ -238,21 +209,15 @@ export function useLinkEditor(editor) {
             .setLink({ href: cleanUrl })
             .run();
 
-          console.log("Link application result:", result);
-          console.log("Is link active after application:", editor.isActive("link"));
-          console.log("Link attributes after application:", editor.getAttributes("link"));
-
-          // If text is different, replace it
+          // Replace text content if it differs from selected text
           if (newLinkData.text !== selectedText) {
-            console.log("Replacing text content");
             editor.chain().focus().insertContent(newLinkData.text).run();
           }
         } else {
           // No selected text - insert new text with link
-          console.log("Inserting new link text");
           const currentPos = editor.state.selection.from;
 
-          // Insert the text and immediately apply link
+          // Insert text and apply link in one operation
           const result = editor
             .chain()
             .focus()
@@ -264,27 +229,11 @@ export function useLinkEditor(editor) {
             .toggleLink({ href: cleanUrl })
             .run();
 
-          console.log("Link creation result:", result);
-
-          // Move cursor after the link
+          // Position cursor after the newly created link
           editor.commands.setTextSelection(currentPos + newLinkData.text.length);
         }
-
-        // Check the final HTML output immediately
-        console.log("Immediate HTML after link creation:", editor.getHTML());
-        console.log(
-          "Immediate JSON after link creation:",
-          JSON.stringify(editor.getJSON(), null, 2)
-        );
-
-        // Also check after a short delay
-        setTimeout(() => {
-          console.log("Final editor HTML after delay:", editor.getHTML());
-          console.log("Final JSON after delay:", JSON.stringify(editor.getJSON(), null, 2));
-        }, 100);
       } catch (error) {
-        console.error("Error creating link:", error);
-        console.error("Error details:", error.stack);
+        // Silently handle link creation errors - user can retry
       }
     },
     [editor, selectedText]

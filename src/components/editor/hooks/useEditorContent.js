@@ -6,14 +6,14 @@ import { EditorService } from "../services/EditorService";
 /**
  * useEditorContent Hook
  * Manages editor content loading, saving, and state
- * 
+ *
  * @fileoverview This hook provides content management functionality
  * for TipTap editor instances, including loading, saving, and validation.
  */
 
 /**
  * useEditorContent Hook
- * 
+ *
  * @param {Object} options - Hook options
  * @param {string} options.pageId - Page identifier for content
  * @param {Object} options.initialContent - Initial content to load
@@ -60,44 +60,46 @@ export const useEditorContent = ({
    * @param {string} targetPageId - Page ID to load (defaults to current pageId)
    * @returns {Promise<boolean>} Success status
    */
-  const loadContent = useCallback(async (targetPageId = pageId) => {
-    if (!targetPageId) {
-      console.warn("No page ID provided for content loading");
-      return false;
-    }
+  const loadContent = useCallback(
+    async (targetPageId = pageId) => {
+      if (!targetPageId) {
+        return false;
+      }
 
-    try {
-      setIsLoading(true);
-      setError(null);
+      try {
+        setIsLoading(true);
+        setError(null);
 
-      const result = await EditorService.loadContent(targetPageId);
+        const result = await EditorService.loadContent(targetPageId);
 
-      if (result.success) {
-        setContent(result.data.content);
-        setMetadata(result.data.metadata || {});
-        setHasUnsavedChanges(false);
-        
-        if (loadCallbackRef.current) {
-          loadCallbackRef.current(result.data.content, targetPageId);
+        if (result.success) {
+          setContent(result.data.content);
+          setMetadata(result.data.metadata || {});
+          setHasUnsavedChanges(false);
+
+          if (loadCallbackRef.current) {
+            loadCallbackRef.current(result.data.content, targetPageId);
+          }
+
+          return true;
+        } else {
+          throw new Error(result.error || "Failed to load content");
         }
-        
-        return true;
-      } else {
-        throw new Error(result.error || "Failed to load content");
+      } catch (err) {
+        const errorMessage = err.message || "Failed to load content";
+        setError(errorMessage);
+
+        if (errorCallbackRef.current) {
+          errorCallbackRef.current(err, "load");
+        }
+
+        return false;
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err.message || "Failed to load content";
-      setError(errorMessage);
-      
-      if (errorCallbackRef.current) {
-        errorCallbackRef.current(err, "load");
-      }
-      
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [pageId]);
+    },
+    [pageId]
+  );
 
   /**
    * Save content to server
@@ -105,80 +107,85 @@ export const useEditorContent = ({
    * @param {Object} additionalMetadata - Additional metadata to include
    * @returns {Promise<boolean>} Success status
    */
-  const saveContent = useCallback(async (contentToSave = content, additionalMetadata = {}) => {
-    if (!pageId) {
-      console.warn("No page ID provided for content saving");
-      return false;
-    }
+  const saveContent = useCallback(
+    async (contentToSave = content, additionalMetadata = {}) => {
+      // Validate required parameters before attempting save
+      if (!pageId) {
+        return false;
+      }
 
-    if (!contentToSave) {
-      console.warn("No content provided for saving");
-      return false;
-    }
+      if (!contentToSave) {
+        return false;
+      }
 
-    try {
-      setIsSaving(true);
-      setError(null);
+      try {
+        setIsSaving(true);
+        setError(null);
 
-      const result = await EditorService.saveContent({
-        pageId,
-        content: contentToSave,
-        metadata: {
-          ...metadata,
-          ...additionalMetadata,
-        },
-      });
+        const result = await EditorService.saveContent({
+          pageId,
+          content: contentToSave,
+          metadata: {
+            ...metadata,
+            ...additionalMetadata,
+          },
+        });
 
-      if (result.success) {
-        setHasUnsavedChanges(false);
-        setLastSaved(new Date());
-        
-        if (saveCallbackRef.current) {
-          saveCallbackRef.current(contentToSave, pageId);
+        if (result.success) {
+          setHasUnsavedChanges(false);
+          setLastSaved(new Date());
+
+          if (saveCallbackRef.current) {
+            saveCallbackRef.current(contentToSave, pageId);
+          }
+
+          return true;
+        } else {
+          throw new Error(result.error || "Failed to save content");
         }
-        
-        return true;
-      } else {
-        throw new Error(result.error || "Failed to save content");
+      } catch (err) {
+        const errorMessage = err.message || "Failed to save content";
+        setError(errorMessage);
+
+        if (errorCallbackRef.current) {
+          errorCallbackRef.current(err, "save");
+        }
+
+        return false;
+      } finally {
+        setIsSaving(false);
       }
-    } catch (err) {
-      const errorMessage = err.message || "Failed to save content";
-      setError(errorMessage);
-      
-      if (errorCallbackRef.current) {
-        errorCallbackRef.current(err, "save");
-      }
-      
-      return false;
-    } finally {
-      setIsSaving(false);
-    }
-  }, [pageId, content, metadata]);
+    },
+    [pageId, content, metadata]
+  );
 
   /**
    * Update content and trigger auto-save if enabled
    * @param {Object} newContent - New content to set
    * @param {boolean} markAsChanged - Whether to mark as having unsaved changes
    */
-  const updateContent = useCallback((newContent, markAsChanged = true) => {
-    setContent(newContent);
-    
-    if (markAsChanged) {
-      setHasUnsavedChanges(true);
-      
-      // Clear existing auto-save timer
-      if (autoSaveTimer.current) {
-        clearTimeout(autoSaveTimer.current);
+  const updateContent = useCallback(
+    (newContent, markAsChanged = true) => {
+      setContent(newContent);
+
+      if (markAsChanged) {
+        setHasUnsavedChanges(true);
+
+        // Clear existing auto-save timer
+        if (autoSaveTimer.current) {
+          clearTimeout(autoSaveTimer.current);
+        }
+
+        // Set new auto-save timer if enabled
+        if (autoSave && pageId) {
+          autoSaveTimer.current = setTimeout(() => {
+            saveContent(newContent);
+          }, autoSaveDelay);
+        }
       }
-      
-      // Set new auto-save timer if enabled
-      if (autoSave && pageId) {
-        autoSaveTimer.current = setTimeout(() => {
-          saveContent(newContent);
-        }, autoSaveDelay);
-      }
-    }
-  }, [autoSave, autoSaveDelay, pageId, saveContent]);
+    },
+    [autoSave, autoSaveDelay, pageId, saveContent]
+  );
 
   /**
    * Clear content
@@ -214,7 +221,7 @@ export const useEditorContent = ({
         headingCount: 0,
       };
     }
-    
+
     return EditorService.getContentStats(content);
   }, [content]);
 
@@ -226,7 +233,7 @@ export const useEditorContent = ({
     if (!content) {
       return { isValid: true, errors: [] };
     }
-    
+
     return EditorService.validateContent(content);
   }, [content]);
 
@@ -258,7 +265,9 @@ export const useEditorContent = ({
           pageId,
           content,
           metadata,
-        }).catch(console.error);
+        }).catch(() => {
+          // Silently handle auto-save errors on unmount
+        });
       }
     };
   }, [hasUnsavedChanges, autoSave, pageId, content, metadata]);
@@ -272,20 +281,22 @@ export const useEditorContent = ({
     lastSaved,
     error,
     metadata,
-    
+
     // Content operations
     loadContent,
     saveContent,
     updateContent,
     clearContent,
     resetContent,
-    
+
     // Utilities
     getContentStats,
     validateContent,
-    
+
     // Status helpers
     isReady: !isLoading && !error,
-    isEmpty: !content || (typeof content === 'object' && (!content.content || content.content.length === 0)),
+    isEmpty:
+      !content ||
+      (typeof content === "object" && (!content.content || content.content.length === 0)),
   };
 };

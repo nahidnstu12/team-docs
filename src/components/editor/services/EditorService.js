@@ -20,7 +20,10 @@ class BaseService {
    * @returns {Object} Standardized error response
    */
   static handleError(error, operation = "operation") {
-    console.error(`${this.name} - ${operation} failed:`, error);
+    // Log error for debugging purposes in development
+    if (process.env.NODE_ENV === "development") {
+      console.error(`${this.name} - ${operation} failed:`, error);
+    }
 
     return {
       success: false,
