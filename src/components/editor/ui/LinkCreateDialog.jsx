@@ -68,36 +68,36 @@ export default function LinkCreateDialog({
       return;
     }
 
+    // Clean up the URL
+    let cleanUrl = linkUrl.trim();
+
+    // Fix common URL issues
+    if (cleanUrl.includes("https:://")) {
+      cleanUrl = cleanUrl.replace("https:://", "https://");
+    }
+    if (cleanUrl.includes("http:://")) {
+      cleanUrl = cleanUrl.replace("http:://", "http://");
+    }
+
+    // Add protocol if missing
+    if (
+      !cleanUrl.startsWith("http://") &&
+      !cleanUrl.startsWith("https://") &&
+      !cleanUrl.startsWith("mailto:") &&
+      !cleanUrl.startsWith("tel:")
+    ) {
+      cleanUrl = `https://${cleanUrl}`;
+    }
+
+    console.log("Original URL:", linkUrl);
+    console.log("Cleaned URL:", cleanUrl);
+
     setIsLoading(true);
 
     try {
-      // Create the link in the editor
-      if (editor && !editor.isDestroyed) {
-        if (selectedText) {
-          // If there was selected text, replace it with the new link
-          editor
-            .chain()
-            .focus()
-            .insertContent(linkText)
-            .setTextSelection({
-              from: editor.state.selection.from,
-              to: editor.state.selection.from + linkText.length,
-            })
-            .setLink({ href: linkUrl })
-            .run();
-        } else {
-          // If no selected text, insert new link
-          editor
-            .chain()
-            .focus()
-            .insertContent(`<a href="${linkUrl}">${linkText}</a>`)
-            .run();
-        }
-      }
-
-      // Call create callback
+      // Call create callback - let the hook handle the actual creation
       if (onCreate) {
-        onCreate({ text: linkText, href: linkUrl });
+        onCreate({ text: linkText, href: cleanUrl });
       }
 
       toast.success("Link created successfully");
@@ -188,9 +188,7 @@ export default function LinkCreateDialog({
               <p className="text-sm text-muted-foreground mb-1">Preview:</p>
               <div className="flex items-center gap-2">
                 <LinkIcon className="w-4 h-4 text-blue-600" />
-                <span className="text-blue-600 underline cursor-pointer">
-                  {linkText}
-                </span>
+                <span className="text-blue-600 underline cursor-pointer">{linkText}</span>
               </div>
             </div>
           )}
@@ -200,8 +198,8 @@ export default function LinkCreateDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleCreate} 
+          <Button
+            onClick={handleCreate}
             disabled={isLoading || !linkUrl.trim() || !linkText.trim()}
           >
             {isLoading ? "Creating..." : "Create Link"}

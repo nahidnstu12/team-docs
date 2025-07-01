@@ -174,7 +174,12 @@ const EditorComponent = ({
           openOnClick: false, // We'll handle clicks manually for editing
           HTMLAttributes: {
             class: "text-blue-600 underline hover:text-blue-800 cursor-pointer",
+            rel: "noopener noreferrer nofollow",
+            target: "_blank",
           },
+          linkOnPaste: true,
+          autolink: true,
+          protocols: ["http", "https", "ftp", "mailto"],
         }), // Add link support for BubbleMenu
         // Task list extensions
         TaskList.configure({

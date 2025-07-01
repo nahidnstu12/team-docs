@@ -68,24 +68,7 @@ export default function LinkEditDialog({
     setIsLoading(true);
 
     try {
-      // Update the link in the editor
-      if (editor && !editor.isDestroyed) {
-        // If text changed, update both text and link
-        if (linkText.trim() && linkText !== linkData.text) {
-          editor
-            .chain()
-            .focus()
-            .extendMarkRange("link")
-            .insertContent(linkText)
-            .setLink({ href: linkUrl })
-            .run();
-        } else {
-          // Just update the URL
-          editor.chain().focus().extendMarkRange("link").setLink({ href: linkUrl }).run();
-        }
-      }
-
-      // Call update callback
+      // Call update callback - let the hook handle the actual update
       if (onUpdate) {
         onUpdate({ text: linkText, href: linkUrl });
       }
@@ -126,11 +109,30 @@ export default function LinkEditDialog({
    */
   const handleVisit = () => {
     if (linkUrl) {
-      // Ensure URL has protocol - check for both http and https
       let url = linkUrl.trim();
-      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+
+      // Debug: Log the original URL
+      console.log("Original URL:", url);
+
+      // Clean up any double protocols that might have been added
+      if (url.startsWith("https://https://") || url.startsWith("http://https://")) {
+        url = url.replace(/^https?:\/\//, "");
+      }
+      if (url.startsWith("https://http://") || url.startsWith("http://http://")) {
+        url = url.replace(/^https?:\/\//, "");
+      }
+
+      // Add protocol if missing
+      if (
+        !url.startsWith("http://") &&
+        !url.startsWith("https://") &&
+        !url.startsWith("mailto:") &&
+        !url.startsWith("tel:")
+      ) {
         url = `https://${url}`;
       }
+
+      console.log("Final URL:", url);
       window.open(url, "_blank", "noopener,noreferrer");
     }
   };

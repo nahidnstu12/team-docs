@@ -37,34 +37,41 @@ export default function ColorPickerPanel({ editor, onClose }) {
   const currentTextColor = editor.getAttributes("textStyle")?.color;
   const currentHighlight = editor.getAttributes("highlight")?.color;
 
-  const applyTextColor = (color) => {
+  const applyTextColor = (color, event) => {
+    event?.stopPropagation();
     editor.chain().focus().setColor(color).run();
     onClose();
   };
 
-  const removeTextColor = () => {
+  const removeTextColor = (event) => {
+    event?.stopPropagation();
     editor.chain().focus().unsetColor().run();
     onClose();
   };
 
-  const applyHighlight = (color) => {
+  const applyHighlight = (color, event) => {
+    event?.stopPropagation();
     editor.chain().focus().toggleHighlight({ color }).run();
     onClose();
   };
 
-  const removeHighlight = () => {
+  const removeHighlight = (event) => {
+    event?.stopPropagation();
     editor.chain().focus().unsetHighlight().run();
     onClose();
   };
 
   return (
-    <div className="absolute left-0 top-2 z-50 w-[300px] p-4 bg-white border border-gray-200 rounded-xl shadow-2xl color-picker-panel space-y-4">
+    <div
+      className="absolute left-0 top-2 z-50 w-[300px] p-4 bg-white border border-gray-200 rounded-xl shadow-2xl color-picker-panel space-y-4"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div>
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-semibold text-gray-800">Text Color</p>
           {currentTextColor && (
             <button
-              onClick={removeTextColor}
+              onClick={(e) => removeTextColor(e)}
               className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
               title="Remove text color"
             >
@@ -76,7 +83,7 @@ export default function ColorPickerPanel({ editor, onClose }) {
         <div className="flex flex-wrap gap-3">
           {/* Default/No color option */}
           <button
-            onClick={removeTextColor}
+            onClick={(e) => removeTextColor(e)}
             className={`w-8 h-8 transition-all duration-150 border-2 rounded-full hover:ring-2 hover:ring-offset-2 hover:ring-gray-400 flex items-center justify-center ${
               !currentTextColor ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-white"
             }`}
@@ -88,7 +95,7 @@ export default function ColorPickerPanel({ editor, onClose }) {
           {textColors.map(({ name, color }) => (
             <button
               key={name}
-              onClick={() => applyTextColor(color)}
+              onClick={(e) => applyTextColor(color, e)}
               className={`w-8 h-8 transition-all duration-150 border-2 rounded-full hover:ring-2 hover:ring-offset-2 hover:ring-gray-400 ${
                 currentTextColor === color
                   ? "border-blue-500 ring-2 ring-blue-200"
@@ -106,7 +113,7 @@ export default function ColorPickerPanel({ editor, onClose }) {
           <p className="text-sm font-semibold text-gray-800">Highlight</p>
           {currentHighlight && (
             <button
-              onClick={removeHighlight}
+              onClick={(e) => removeHighlight(e)}
               className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
               title="Remove highlight"
             >
@@ -118,7 +125,7 @@ export default function ColorPickerPanel({ editor, onClose }) {
         <div className="flex flex-wrap gap-3">
           {/* Default/No highlight option */}
           <button
-            onClick={removeHighlight}
+            onClick={(e) => removeHighlight(e)}
             className={`w-8 h-8 transition-all duration-150 border-2 rounded-full hover:ring-2 hover:ring-offset-2 hover:ring-gray-400 flex items-center justify-center ${
               !currentHighlight ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-white"
             }`}
@@ -130,7 +137,7 @@ export default function ColorPickerPanel({ editor, onClose }) {
           {bgColors.map(({ name, color }) => (
             <button
               key={name}
-              onClick={() => applyHighlight(color)}
+              onClick={(e) => applyHighlight(color, e)}
               className={`w-8 h-8 transition-all duration-150 border-2 rounded-full hover:ring-2 hover:ring-offset-2 hover:ring-yellow-400 ${
                 currentHighlight === color
                   ? "border-blue-500 ring-2 ring-blue-200"

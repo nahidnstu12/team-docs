@@ -9,14 +9,14 @@
 // Import custom extensions
 export { ColorExtensions } from "../color";
 // export { Details, DetailsSummary } from "../details"; // Removed - replaced with Toggle
-export { CustomLink } from "../link";
+// export { CustomLink } from "../link"; // Removed - conflicts with standard Link extension
 export { ClearMarksOnEnter } from "../clearMarkStyles";
 export { ResetMarksOnDelete } from "../ResetMarksOnDelete";
 
 // Re-export for convenience
 export * from "../color";
 // export * from "../details"; // Removed - replaced with Toggle
-export * from "../link";
+// export * from "../link"; // Removed - conflicts with standard Link extension
 export * from "../clearMarkStyles";
 export * from "../ResetMarksOnDelete";
 
@@ -28,7 +28,7 @@ export const getAllCustomExtensions = () => {
   return [
     ...ColorExtensions,
     // Details, DetailsSummary, // Removed - replaced with Toggle
-    CustomLink,
+    // CustomLink, // Removed - conflicts with standard Link extension
     ClearMarksOnEnter,
     ResetMarksOnDelete,
   ];
@@ -88,11 +88,11 @@ export const registerCustomExtensions = (registry) => {
   //   dependencies: ["details"],
   // });
 
-  // Register link extension
-  registry.register("custom-link", CustomLink, "custom", {
-    config: CUSTOM_EXTENSION_CONFIGS.link,
-    category: "marks",
-  });
+  // Register link extension - REMOVED (conflicts with standard Link extension)
+  // registry.register("custom-link", CustomLink, "custom", {
+  //   config: CUSTOM_EXTENSION_CONFIGS.link,
+  //   category: "marks",
+  // });
 
   // Register behavior extensions
   registry.register("clear-marks-on-enter", ClearMarksOnEnter, "custom", {

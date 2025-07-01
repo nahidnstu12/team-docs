@@ -28,6 +28,9 @@ export default function BubbleMenu({ editor }) {
       tippyOptions={{
         duration: 150,
         placement: "top",
+        interactive: true,
+        interactiveBorder: 10,
+        hideOnClick: false,
         onHide: () => setShowColorPanel(false), // Close color panel when menu hides
       }}
       className="w-[420px] z-50 flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 shadow-xl rounded-xl dark:border-zinc-700 dark:bg-zinc-900"
@@ -127,7 +130,11 @@ export default function BubbleMenu({ editor }) {
       {/* 🎨 Color Picker */}
       <button
         type="button"
-        onClick={() => setShowColorPanel((prev) => !prev)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setShowColorPanel((prev) => !prev);
+        }}
         className={`p-2 rounded-lg transition text-gray-600 dark:text-gray-300
 		hover:bg-blue-100 hover:text-black dark:hover:bg-zinc-800
 		focus:outline-none focus:ring-2 focus:ring-blue-200

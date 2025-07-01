@@ -86,10 +86,16 @@ const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", 
   /**
    * Toggle color panel - memoized to prevent recreation
    */
-  const toggleColorPanel = useCallback(() => {
-    setShowColorPanel(!showColorPanel);
-    setShowMoreOptions(false);
-  }, [showColorPanel]);
+  const toggleColorPanel = useCallback(
+    (event) => {
+      // Prevent event from bubbling up and closing the bubble menu
+      event.preventDefault();
+      event.stopPropagation();
+      setShowColorPanel(!showColorPanel);
+      setShowMoreOptions(false);
+    },
+    [showColorPanel]
+  );
 
   /**
    * Toggle more options panel - memoized to prevent recreation
@@ -104,6 +110,10 @@ const BubbleMenuComponent = ({ editor, instanceId, config = {}, className = "", 
       editor={editor}
       tippyOptions={{
         ...menuConfig.tippyOptions,
+        // Prevent hiding when interacting with color panel or other interactive elements
+        interactive: true,
+        interactiveBorder: 10,
+        hideOnClick: false,
         onHide: () => {
           setShowColorPanel(false);
           setShowMoreOptions(false);
