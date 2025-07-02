@@ -1,10 +1,11 @@
 import { Session } from "@/lib/Session";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Building, Settings, Activity } from "lucide-react";
+import Logger from "@/lib/Logger";
 
 /**
  * Admin Dashboard Page
- * 
+ *
  * Main landing page for the admin panel providing:
  * - Overview of system statistics
  * - Quick access to main admin functions
@@ -14,6 +15,8 @@ export default async function AdminDashboard() {
   // Ensure user is authenticated (layout handles admin check)
   await Session.requireAuth();
   const user = await Session.getCurrentUser();
+
+  Logger.info(user, "User");
 
   return (
     <div className="p-6 space-y-6">
@@ -35,9 +38,7 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">
-              Coming soon
-            </p>
+            <p className="text-xs text-muted-foreground">Coming soon</p>
           </CardContent>
         </Card>
 
@@ -48,9 +49,7 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">
-              Awaiting approval
-            </p>
+            <p className="text-xs text-muted-foreground">Awaiting approval</p>
           </CardContent>
         </Card>
 
@@ -61,9 +60,7 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">
-              Currently active
-            </p>
+            <p className="text-xs text-muted-foreground">Currently active</p>
           </CardContent>
         </Card>
 
@@ -74,9 +71,7 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">Healthy</div>
-            <p className="text-xs text-muted-foreground">
-              All systems operational
-            </p>
+            <p className="text-xs text-muted-foreground">All systems operational</p>
           </CardContent>
         </Card>
       </div>
@@ -86,34 +81,22 @@ export default async function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Common administrative tasks
-            </CardDescription>
+            <CardDescription>Common administrative tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              • Review pending workspace requests
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • Manage user accounts
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • System configuration
-            </p>
+            <p className="text-sm text-muted-foreground">• Review pending workspace requests</p>
+            <p className="text-sm text-muted-foreground">• Manage user accounts</p>
+            <p className="text-sm text-muted-foreground">• System configuration</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Latest system events
-            </CardDescription>
+            <CardDescription>Latest system events</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Activity feed coming soon...
-            </p>
+            <p className="text-sm text-muted-foreground">Activity feed coming soon...</p>
           </CardContent>
         </Card>
       </div>

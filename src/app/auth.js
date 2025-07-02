@@ -42,6 +42,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.id = token.sub;
         session.user.username = token.username;
         session.user.workspaceId = token.workspaceId ?? null;
+        session.user.isSuperAdmin = token.isSuperAdmin;
       }
       return session;
     },
@@ -54,6 +55,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             id: true,
             username: true,
             workspaceId: true,
+            isSuperAdmin: true,
           },
         });
 
@@ -61,6 +63,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           token.sub = dbUser.id;
           token.username = dbUser.username;
           token.workspaceId = dbUser.workspaceId ?? null;
+          token.isSuperAdmin = dbUser.isSuperAdmin;
         }
       }
       return token;

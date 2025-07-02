@@ -33,7 +33,7 @@ async function main() {
     data: {
       username: "nishat",
       email: "nishatislam3108@gmail.com",
-      password: "12345678",
+      password: "$2b$10$NFBfr4vxrvrJ3BI7.Bqdge55rOXWwl6lYCaeUGKzEtfNB9MxaT8BO",
       isActive: true,
       status: "active",
       isSuperAdmin: true,
@@ -44,7 +44,7 @@ async function main() {
     data: {
       username: "admin",
       email: "admin@example.com",
-      password: "$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
+      password: "$2b$10$NFBfr4vxrvrJ3BI7.Bqdge55rOXWwl6lYCaeUGKzEtfNB9MxaT8BO",
       isActive: true,
       status: "active",
       isSuperAdmin: true,

@@ -36,7 +36,7 @@ model User {
   notifications     Notification[]
 
   // Optional relationships for admin use case
-  isSuperAdmin             Boolean                    @default(false) // For SaaS phase-2
+  isSuperAdmin             Boolean                    @default(false)
   Role                     Role[]
   Permission               Permission[]
   RolePermissionAssignment RolePermissionAssignment[]
