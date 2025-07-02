@@ -174,7 +174,7 @@ export default function ProjectEditorLayout({ hasSection }) {
 
       {!hasSection && <NoSectionUI />}
       {hasSection && !selectedPage && <NoPageSelectedUI />}
-      {selectedPage && <EnhancedEditor pageId={selectedPage} />}
+      {hasSection && selectedPage && <EnhancedEditor pageId={selectedPage} />}
     </>
   );
 }
