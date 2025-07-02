@@ -11,30 +11,30 @@ import { ActiveSectionProvider } from "./ActiveSectionContext";
 
 /**
  * Admin Sidebar Component
- * 
+ *
  * Main navigation sidebar for admin panel providing:
  * - Dashboard navigation
  * - Workspace management (including approval)
  * - User management
  * - System settings
  * - Admin-specific branding and footer
- * 
+ *
  * Uses the same patterns as the main sidebar but with admin-specific sections.
  */
 export default function AdminSidebar() {
   return (
     <ActiveSectionProvider>
       <Sidebar variant="floating" collapsible="offcanvas">
-        <SidebarHeader>
+        <SidebarHeader className="px-6 py-6">
           <AdminSidebarHeader />
         </SidebarHeader>
-        <SidebarContent className="px-4 pt-4 flex-1">
+        <SidebarContent className="px-6 pt-2 flex-1 space-y-6">
           <AdminDashboardSection sectionId="dashboard" />
           <WorkspaceManagementSection sectionId="workspace" />
           <UserManagementSection sectionId="users" />
           <SystemSettingsSection sectionId="settings" />
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className="px-6 py-6">
           <AdminFooter />
         </SidebarFooter>
       </Sidebar>

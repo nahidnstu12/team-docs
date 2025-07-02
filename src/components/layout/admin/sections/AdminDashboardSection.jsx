@@ -1,15 +1,22 @@
 "use client";
 
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { LayoutDashboard, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useActiveSection } from "../ActiveSectionContext";
 import { useEffect } from "react";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 /**
  * Admin Dashboard Section Component
- * 
+ *
  * Sidebar section for admin dashboard navigation including:
  * - Main dashboard overview
  * - Analytics and reporting (future)
@@ -32,7 +39,7 @@ export default function AdminDashboardSection({ sectionId }) {
       title: "Dashboard",
       icon: LayoutDashboard,
       href: "/admin",
-      description: "Admin overview and statistics"
+      description: "Admin overview and statistics",
     },
     {
       id: "analytics",
@@ -40,35 +47,42 @@ export default function AdminDashboardSection({ sectionId }) {
       icon: BarChart3,
       href: "/admin/analytics",
       description: "System analytics and reports",
-      disabled: true
-    }
+      disabled: true,
+    },
   ];
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-      <SidebarMenu>
+      <SidebarGroupLabel className="text-sm font-semibold mb-3">Dashboard</SidebarGroupLabel>
+      <SidebarMenu className="space-y-2">
         {menuItems.map((item) => (
           <SidebarMenuItem key={item.id}>
-            <SidebarMenuButton 
-              asChild={!item.disabled}
-              isActive={isActive(sectionId, item.id)}
-              disabled={item.disabled}
-              tooltip={item.description}
-            >
-              {item.disabled ? (
-                <div className="flex items-center">
-                  <item.icon className="h-4 w-4" />
+            {item.disabled ? (
+              <ComingSoonWrapper
+                enabled
+                tooltip={item.description}
+                className="h-12 text-sm px-2 w-full"
+              >
+                <SidebarMenuButton
+                  disabled
+                  className="h-12 text-sm px-2 w-full flex justify-start items-center"
+                >
+                  <item.icon className="h-5 w-5 mr-2" />
                   <span>{item.title}</span>
-                  <span className="ml-auto text-xs text-muted-foreground">Soon</span>
-                </div>
-              ) : (
+                </SidebarMenuButton>
+              </ComingSoonWrapper>
+            ) : (
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(sectionId, item.id)}
+                className="h-12 text-sm px-2 w-full"
+              >
                 <Link href={item.href}>
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-5 w-5 mr-2" />
                   <span>{item.title}</span>
                 </Link>
-              )}
-            </SidebarMenuButton>
+              </SidebarMenuButton>
+            )}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

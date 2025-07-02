@@ -8,10 +8,10 @@ import { Toaster } from "@/components/ui/sonner";
 
 /**
  * Conditional Admin Layout Component
- * 
+ *
  * Client-side layout wrapper that provides admin-specific layout structure.
  * This component handles the admin sidebar and header layout for all admin routes.
- * 
+ *
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child components to render
  * @param {boolean} props.defaultOpen - Default sidebar open state
@@ -22,7 +22,7 @@ export default function ConditionalAdminLayout({ children, defaultOpen, user }) 
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full admin-sidebar">
         <AdminSidebar />
         <div className="flex flex-1 flex-col overflow-hidden">
           <AdminHeader user={user} />

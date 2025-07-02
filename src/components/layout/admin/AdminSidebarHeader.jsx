@@ -1,11 +1,10 @@
 "use client";
 
-import { Shield, Crown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Crown } from "lucide-react";
 
 /**
  * Admin Sidebar Header Component
- * 
+ *
  * Header section of the admin sidebar displaying:
  * - Admin panel branding
  * - Visual indicators for admin access
@@ -13,16 +12,12 @@ import { Badge } from "@/components/ui/badge";
  */
 export default function AdminSidebarHeader() {
   return (
-    <div className="flex items-center space-x-2 px-4 py-3">
-      <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
-        <Crown className="h-4 w-4 text-blue-600" />
+    <div className="flex items-center space-x-4 border-b border-gray-200 py-2">
+      <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
+        <Crown className="h-6 w-6 text-blue-600" />
       </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-semibold">Admin Panel</span>
-        <Badge variant="secondary" className="text-xs w-fit">
-          <Shield className="h-3 w-3 mr-1" />
-          Super Admin
-        </Badge>
+      <div className="flex items-center justify-center flex-col">
+        <span className="text-3xl font-bold">Admin Panel</span>
       </div>
     </div>
   );

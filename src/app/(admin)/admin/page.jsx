@@ -1,7 +1,6 @@
 import { Session } from "@/lib/Session";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Building, Settings, Activity } from "lucide-react";
-import Logger from "@/lib/Logger";
 
 /**
  * Admin Dashboard Page
@@ -16,87 +15,85 @@ export default async function AdminDashboard() {
   await Session.requireAuth();
   const user = await Session.getCurrentUser();
 
-  Logger.info(user, "User");
-
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-lg text-muted-foreground">
             Welcome back, {user?.username}. Manage your platform from here.
           </p>
         </div>
       </div>
 
       {/* Quick Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="p-6">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-semibold">Total Users</CardTitle>
+            <Users className="h-6 w-6 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Coming soon</p>
+          <CardContent className="p-0">
+            <div className="text-3xl font-bold">--</div>
+            <p className="text-sm text-muted-foreground mt-2">Coming soon</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Workspaces</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
+        <Card className="p-6">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-semibold">Pending Workspaces</CardTitle>
+            <Building className="h-6 w-6 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Awaiting approval</p>
+          <CardContent className="p-0">
+            <div className="text-3xl font-bold">--</div>
+            <p className="text-sm text-muted-foreground mt-2">Awaiting approval</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Workspaces</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+        <Card className="p-6">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-semibold">Active Workspaces</CardTitle>
+            <Activity className="h-6 w-6 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--</div>
-            <p className="text-xs text-muted-foreground">Currently active</p>
+          <CardContent className="p-0">
+            <div className="text-3xl font-bold">--</div>
+            <p className="text-sm text-muted-foreground mt-2">Currently active</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Status</CardTitle>
-            <Settings className="h-4 w-4 text-muted-foreground" />
+        <Card className="p-6">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-semibold">System Status</CardTitle>
+            <Settings className="h-6 w-6 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">Healthy</div>
-            <p className="text-xs text-muted-foreground">All systems operational</p>
+          <CardContent className="p-0">
+            <div className="text-3xl font-bold text-green-600">Healthy</div>
+            <p className="text-sm text-muted-foreground mt-2">All systems operational</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks</CardDescription>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle className="text-xl font-semibold">Quick Actions</CardTitle>
+            <CardDescription className="text-base">Common administrative tasks</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">• Review pending workspace requests</p>
-            <p className="text-sm text-muted-foreground">• Manage user accounts</p>
-            <p className="text-sm text-muted-foreground">• System configuration</p>
+          <CardContent className="p-0 space-y-3">
+            <p className="text-base text-muted-foreground">• Review pending workspace requests</p>
+            <p className="text-base text-muted-foreground">• Manage user accounts</p>
+            <p className="text-base text-muted-foreground">• System configuration</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest system events</CardDescription>
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle className="text-xl font-semibold">Recent Activity</CardTitle>
+            <CardDescription className="text-base">Latest system events</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">Activity feed coming soon...</p>
+          <CardContent className="p-0">
+            <p className="text-base text-muted-foreground">Activity feed coming soon...</p>
           </CardContent>
         </Card>
       </div>

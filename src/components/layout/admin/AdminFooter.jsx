@@ -6,7 +6,7 @@ import Link from "next/link";
 
 /**
  * Admin Footer Component
- * 
+ *
  * Footer section of the admin sidebar providing:
  * - Quick link back to user panel
  * - Help and support access
@@ -14,22 +14,13 @@ import Link from "next/link";
  */
 export default function AdminFooter() {
   return (
-    <div className="px-4 py-3 space-y-2">
-      <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+    <div className="space-y-3 border-t border-gray-200 pt-2">
+      <Button variant="ghost" size="lg" className="w-full justify-start h-12 text-base" asChild>
         <Link href="/home">
-          <Home className="h-4 w-4 mr-2" />
+          <Home className="h-5 w-5 mr-3" />
           Back to User Panel
         </Link>
       </Button>
-      
-      <Button variant="ghost" size="sm" className="w-full justify-start">
-        <HelpCircle className="h-4 w-4 mr-2" />
-        Admin Help
-      </Button>
-      
-      <div className="text-xs text-muted-foreground text-center pt-2">
-        Admin Panel v1.0
-      </div>
     </div>
   );
 }

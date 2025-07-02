@@ -1,15 +1,22 @@
 "use client";
 
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { Settings, Database, Mail, Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useActiveSection } from "../ActiveSectionContext";
 import { useEffect } from "react";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 /**
  * System Settings Section Component
- * 
+ *
  * Sidebar section for system-level admin functions including:
  * - General system settings
  * - Database management
@@ -42,7 +49,7 @@ export default function SystemSettingsSection({ sectionId }) {
       icon: Settings,
       href: "/admin/settings",
       description: "Configure general system settings",
-      disabled: true
+      disabled: true,
     },
     {
       id: "database",
@@ -50,7 +57,7 @@ export default function SystemSettingsSection({ sectionId }) {
       icon: Database,
       href: "/admin/settings/database",
       description: "Database management and monitoring",
-      disabled: true
+      disabled: true,
     },
     {
       id: "email",
@@ -58,7 +65,7 @@ export default function SystemSettingsSection({ sectionId }) {
       icon: Mail,
       href: "/admin/settings/email",
       description: "Configure email notifications and SMTP",
-      disabled: true
+      disabled: true,
     },
     {
       id: "security",
@@ -66,35 +73,44 @@ export default function SystemSettingsSection({ sectionId }) {
       icon: Shield,
       href: "/admin/settings/security",
       description: "Security policies and configurations",
-      disabled: true
-    }
+      disabled: true,
+    },
   ];
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>System Settings</SidebarGroupLabel>
-      <SidebarMenu>
+      <SidebarGroupLabel className="text-base font-semibold mb-3">
+        System Settings
+      </SidebarGroupLabel>
+      <SidebarMenu className="space-y-2">
         {menuItems.map((item) => (
           <SidebarMenuItem key={item.id}>
-            <SidebarMenuButton 
-              asChild={!item.disabled}
-              isActive={isActive(sectionId, item.id)}
-              disabled={item.disabled}
-              tooltip={item.description}
-            >
-              {item.disabled ? (
-                <div className="flex items-center">
-                  <item.icon className="h-4 w-4" />
+            {item.disabled ? (
+              <ComingSoonWrapper
+                enabled
+                tooltip={item.description}
+                className="h-12 text-sm px-2 w-full"
+              >
+                <SidebarMenuButton
+                  disabled
+                  className="h-12 text-sm px-2 w-full flex justify-start items-center"
+                >
+                  <item.icon className="h-5 w-5 mr-3" />
                   <span>{item.title}</span>
-                  <span className="ml-auto text-xs text-muted-foreground">Soon</span>
-                </div>
-              ) : (
+                </SidebarMenuButton>
+              </ComingSoonWrapper>
+            ) : (
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(sectionId, item.id)}
+                className="h-12 text-sm px-2 w-full"
+              >
                 <Link href={item.href}>
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-5 w-5 mr-3" />
                   <span>{item.title}</span>
                 </Link>
-              )}
-            </SidebarMenuButton>
+              </SidebarMenuButton>
+            )}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

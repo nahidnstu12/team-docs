@@ -1,16 +1,23 @@
 "use client";
 
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { Building, CheckCircle, Clock, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useActiveSection } from "../ActiveSectionContext";
 import { useEffect } from "react";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 /**
  * Workspace Management Section Component
- * 
+ *
  * Sidebar section for workspace-related admin functions including:
  * - Workspace approval (main feature requested)
  * - All workspaces management
@@ -41,7 +48,7 @@ export default function WorkspaceManagementSection({ sectionId }) {
       href: "/admin/workspace-approval",
       description: "Review and approve pending workspace requests",
       badge: "3", // Dummy count for demonstration
-      badgeVariant: "destructive"
+      badgeVariant: "destructive",
     },
     {
       id: "all",
@@ -49,7 +56,7 @@ export default function WorkspaceManagementSection({ sectionId }) {
       icon: Building,
       href: "/admin/workspaces",
       description: "Manage all workspaces in the system",
-      disabled: true
+      disabled: true,
     },
     {
       id: "settings",
@@ -57,43 +64,52 @@ export default function WorkspaceManagementSection({ sectionId }) {
       icon: Settings,
       href: "/admin/workspace-settings",
       description: "Configure workspace policies and settings",
-      disabled: true
-    }
+      disabled: true,
+    },
   ];
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Workspace Management</SidebarGroupLabel>
-      <SidebarMenu>
+      <SidebarGroupLabel className="text-sm font-semibold mb-3">
+        Workspace Management
+      </SidebarGroupLabel>
+      <SidebarMenu className="space-y-2">
         {menuItems.map((item) => (
           <SidebarMenuItem key={item.id}>
-            <SidebarMenuButton 
-              asChild={!item.disabled}
-              isActive={isActive(sectionId, item.id)}
-              disabled={item.disabled}
-              tooltip={item.description}
-            >
-              {item.disabled ? (
-                <div className="flex items-center">
-                  <item.icon className="h-4 w-4" />
+            {item.disabled ? (
+              <ComingSoonWrapper
+                enabled
+                tooltip={item.description}
+                className="h-12 text-sm px-2 w-full"
+              >
+                <SidebarMenuButton
+                  disabled
+                  className="h-12 text-sm px-2 w-full flex justify-start items-center"
+                >
+                  <item.icon className="h-5 w-5 mr-2" />
                   <span>{item.title}</span>
-                  <span className="ml-auto text-xs text-muted-foreground">Soon</span>
-                </div>
-              ) : (
-                <Link href={item.href} className="flex items-center">
-                  <item.icon className="h-4 w-4" />
+                </SidebarMenuButton>
+              </ComingSoonWrapper>
+            ) : (
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(sectionId, item.id)}
+                className="h-12 text-sm px-2 w-full pl-4"
+              >
+                <Link href={item.href}>
+                  <item.icon className="h-5 w-5 mr-2" />
                   <span>{item.title}</span>
                   {item.badge && (
-                    <Badge 
-                      variant={item.badgeVariant || "secondary"} 
-                      className="ml-auto text-xs"
+                    <Badge
+                      variant={item.badgeVariant || "secondary"}
+                      className="ml-auto text-xs px-1 py-0"
                     >
                       {item.badge}
                     </Badge>
                   )}
                 </Link>
-              )}
-            </SidebarMenuButton>
+              </SidebarMenuButton>
+            )}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

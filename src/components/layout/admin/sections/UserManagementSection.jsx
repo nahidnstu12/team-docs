@@ -1,15 +1,22 @@
 "use client";
 
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import { Users, UserCheck, Shield } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useActiveSection } from "../ActiveSectionContext";
 import { useEffect } from "react";
+import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 
 /**
  * User Management Section Component
- * 
+ *
  * Sidebar section for user-related admin functions including:
  * - All users management
  * - User permissions and roles
@@ -39,7 +46,7 @@ export default function UserManagementSection({ sectionId }) {
       icon: Users,
       href: "/admin/users",
       description: "Manage all registered users",
-      disabled: true
+      disabled: true,
     },
     {
       id: "permissions",
@@ -47,7 +54,7 @@ export default function UserManagementSection({ sectionId }) {
       icon: UserCheck,
       href: "/admin/user-permissions",
       description: "Manage user roles and permissions",
-      disabled: true
+      disabled: true,
     },
     {
       id: "admins",
@@ -55,35 +62,44 @@ export default function UserManagementSection({ sectionId }) {
       icon: Shield,
       href: "/admin/admin-users",
       description: "Manage admin user accounts",
-      disabled: true
-    }
+      disabled: true,
+    },
   ];
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>User Management</SidebarGroupLabel>
-      <SidebarMenu>
+      <SidebarGroupLabel className="text-base font-semibold mb-3">
+        User Management
+      </SidebarGroupLabel>
+      <SidebarMenu className="space-y-2">
         {menuItems.map((item) => (
           <SidebarMenuItem key={item.id}>
-            <SidebarMenuButton 
-              asChild={!item.disabled}
-              isActive={isActive(sectionId, item.id)}
-              disabled={item.disabled}
-              tooltip={item.description}
-            >
-              {item.disabled ? (
-                <div className="flex items-center">
-                  <item.icon className="h-4 w-4" />
+            {item.disabled ? (
+              <ComingSoonWrapper
+                enabled
+                tooltip={item.description}
+                className="h-12 text-sm px-2 w-full"
+              >
+                <SidebarMenuButton
+                  disabled
+                  className="h-12 text-sm px-2 w-full flex justify-start items-center"
+                >
+                  <item.icon className="h-5 w-5 mr-3" />
                   <span>{item.title}</span>
-                  <span className="ml-auto text-xs text-muted-foreground">Soon</span>
-                </div>
-              ) : (
+                </SidebarMenuButton>
+              </ComingSoonWrapper>
+            ) : (
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(sectionId, item.id)}
+                className="h-12 text-sm px-2 w-full"
+              >
                 <Link href={item.href}>
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className="h-5 w-5 mr-3" />
                   <span>{item.title}</span>
                 </Link>
-              )}
-            </SidebarMenuButton>
+              </SidebarMenuButton>
+            )}
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
