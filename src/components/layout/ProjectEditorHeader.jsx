@@ -23,7 +23,6 @@ export default function ProjectEditorHeader({ selectedPage, projectName }) {
 
   const handleRedirect = () => {
     router.push("/projects");
-    router.refresh();
   };
 
   const handlePublish = () => {

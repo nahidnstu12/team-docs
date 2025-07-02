@@ -42,6 +42,8 @@ export default function ActionButton({ isAuthenticated, workspaceId, workspaceSt
       <Button size="lg" onClick={openDialog} disabled={workspaceStatus === "inactive"}>
         {buttonText}
       </Button>
+
+      {/* Render the registration dialog */}
       <RegistrationDialog isAuthenticated={isAuthenticated} />
     </>
   );

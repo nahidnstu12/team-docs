@@ -52,7 +52,7 @@ class RegistrationAction extends BaseAction {
           username,
           email,
           password: hashedPassword,
-          status: "inactive",
+          status: "active",
         });
         userId = user.id;
       } else if (session) {
