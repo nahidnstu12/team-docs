@@ -34,9 +34,7 @@ export default function AdminSidebar() {
           <UserManagementSection sectionId="users" />
           <SystemSettingsSection sectionId="settings" />
         </SidebarContent>
-        <SidebarFooter className="px-6 py-6">
-          <AdminFooter />
-        </SidebarFooter>
+        <SidebarFooter className="px-6 py-4">{/* <AdminFooter /> */}</SidebarFooter>
       </Sidebar>
     </ActiveSectionProvider>
   );

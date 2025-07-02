@@ -12,7 +12,7 @@ import { Crown } from "lucide-react";
  */
 export default function AdminSidebarHeader() {
   return (
-    <div className="flex items-center space-x-4 border-b border-gray-200 py-2">
+    <div className="flex items-end space-x-4 border-b border-gray-200 py-2">
       <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
         <Crown className="h-6 w-6 text-blue-600" />
       </div>

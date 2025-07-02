@@ -3,13 +3,13 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Settings, LogOut, User, Shield } from "lucide-react";
@@ -18,13 +18,13 @@ import Link from "next/link";
 
 /**
  * Admin Header Component
- * 
+ *
  * Header component for admin pages providing:
  * - Sidebar toggle functionality
  * - Admin panel branding
  * - User account dropdown with admin-specific options
  * - Quick access to admin settings
- * 
+ *
  * @param {Object} props - Component props
  * @param {Object} props.user - Current user object
  */
@@ -51,18 +51,13 @@ export default function AdminHeader({ user }) {
         <div className="flex items-center space-x-2">
           <Shield className="h-5 w-5 text-blue-600" />
           <h1 className="text-xl font-semibold">Admin Panel</h1>
-          <Badge variant="secondary" className="text-xs">
-            Super Admin
-          </Badge>
         </div>
       </div>
 
       <div className="flex items-center space-x-4">
         {/* Quick Actions */}
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/admin">
-            Dashboard
-          </Link>
+          <Link href="/admin">Dashboard</Link>
         </Button>
 
         {/* User Dropdown */}
@@ -79,9 +74,7 @@ export default function AdminHeader({ user }) {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {user?.username || "Admin"}
-                </p>
+                <p className="text-sm font-medium leading-none">{user?.username || "Admin"}</p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {user?.email || "admin@example.com"}
                 </p>
@@ -99,7 +92,7 @@ export default function AdminHeader({ user }) {
               <span>Admin Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="cursor-pointer text-red-600 focus:text-red-600"
               onClick={handleSignOut}
             >

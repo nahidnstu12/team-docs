@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Home, HelpCircle } from "lucide-react";
+import { Home } from "lucide-react";
 import Link from "next/link";
 
 /**
@@ -9,8 +9,6 @@ import Link from "next/link";
  *
  * Footer section of the admin sidebar providing:
  * - Quick link back to user panel
- * - Help and support access
- * - Consistent styling with main application footer
  */
 export default function AdminFooter() {
   return (
