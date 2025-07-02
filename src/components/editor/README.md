@@ -1,37 +1,50 @@
-# TipTap Editor System
+# 📝 TipTap Editor System - Notion-Like Rich Text Editor
 
-A comprehensive, modular TipTap rich text editor implementation for Next.js 15 with App Router, designed following Laravel-like service patterns and modern React best practices.
+A comprehensive, production-ready TipTap rich text editor implementation for Next.js 15 with App Router. Built with modern React patterns, Laravel-inspired service architecture, and designed to replicate Notion's editing experience.
+
+## 🎯 Project Vision
+
+**Goal**: Create a Notion-like editor that provides an intuitive, powerful writing experience with advanced features like slash commands, collapsible blocks, real-time formatting, and seamless content organization.
+
+**Current Status**: ✅ Core features implemented | 🚧 Advanced features in progress | 📋 Collaboration features planned
 
 ## 🏗️ Architecture Overview
 
-The editor system is organized into modular components that can be used independently or together:
+The editor system follows a modular, scalable architecture with clear separation of concerns:
 
 ```
 src/components/editor/
-├── core/                    # Core editor functionality
-│   ├── Editor.jsx          # Main editor component
-│   ├── EditorProvider.jsx  # Context provider
-│   └── EditorConfig.js     # Configuration constants
-├── extensions/             # TipTap extensions
-│   ├── index.js           # Extension registry
-│   ├── custom/            # Custom extensions
-│   ├── base/              # Base extensions
-│   ├── blocks/            # Block-level extensions
-│   └── marks/             # Inline formatting extensions
-├── ui/                    # UI components
-│   ├── menus/             # Menu components
-│   ├── dialogs/           # Dialog components
-│   ├── toolbars/          # Toolbar components
-│   └── panels/            # Side panels
-├── hooks/                 # Editor-specific hooks
-├── services/              # Business logic (Laravel-like)
-├── utils/                 # Utilities and helpers
-└── constants/             # Constants and configurations
+├── 📁 core/                    # Core editor functionality
+│   ├── Editor.jsx              # Main editor component with extension loading
+│   ├── EditorProvider.jsx      # Context provider for multi-editor management
+│   └── EditorConfig.js         # Configuration constants and defaults
+├── 📁 extensions/              # TipTap extensions (features)
+│   ├── index.js                # Extension registry and management
+│   ├── custom/                 # Custom-built extensions
+│   ├── toggle/                 # Notion-like collapsible blocks
+│   ├── trailing-node/          # Always-available escape mechanism
+│   ├── color/                  # Text and highlight colors
+│   └── link/                   # Enhanced link handling
+├── 📁 ui/                      # User interface components
+│   ├── menus/                  # Interactive menus
+│   │   ├── SlashMenu/          # Notion-style command palette
+│   │   └── BubbleMenu/         # Context-sensitive formatting
+│   ├── dialogs/                # Modal dialogs
+│   ├── ColorPickerPanel.jsx    # Color selection interface
+│   └── Toolbar.jsx             # Traditional toolbar (optional)
+├── 📁 hooks/                   # React hooks for editor functionality
+│   ├── useTiptapEditor.js      # Main editor hook with utilities
+│   ├── useLinkEditor.js        # Link creation/editing logic
+│   └── useSlashCommand.js      # Slash menu command handling
+├── 📁 services/                # Business logic (Laravel-inspired)
+│   └── EditorService.js        # Content operations and API integration
+├── 📁 utils/                   # Utility functions and helpers
+└── 📁 constants/               # Constants and type definitions
 ```
 
-## 🚀 Quick Start
+## 🚀 Quick Start Guide
 
-### Basic Usage
+### 🎯 Basic Implementation
 
 ```jsx
 import { CompleteEditor } from "@/components/editor";
@@ -48,7 +61,7 @@ export default function MyPage() {
       pageId="page-123"
       onSave={handleSave}
       config={{
-        placeholder: { text: "Start writing..." },
+        placeholder: { text: "Start writing or type '/' for commands..." },
         characterLimit: 10000,
       }}
     />
@@ -56,44 +69,55 @@ export default function MyPage() {
 }
 ```
 
-### With Provider (Multiple Editors)
+### 🔧 Advanced Implementation with Provider
 
 ```jsx
 import { EditorProvider, Editor, BubbleMenu, SlashMenu } from "@/components/editor";
 
-export default function MultiEditorPage() {
+export default function AdvancedEditor() {
   return (
-    <EditorProvider autoSave={true}>
-      <Editor instanceId="editor-1">
+    <EditorProvider>
+      <Editor
+        instanceId="advanced-editor"
+        extensions={[CustomExtension]}
+        config={{ autofocus: true }}
+      >
         <BubbleMenu />
         <SlashMenu />
-      </Editor>
-
-      <Editor instanceId="editor-2">
-        <BubbleMenu />
       </Editor>
     </EditorProvider>
   );
 }
 ```
 
-## 🎯 Features
+## ✨ Current Features & Capabilities
 
-### ✅ Implemented Features
+### 🎨 Rich Text Editing
 
-- **Rich Text Formatting**: Bold, italic, underline, strikethrough, subscript, superscript
-- **Text Styling**: Highlighting, colors, font families, text alignment
-- **Block Elements**: Headings (H1-H6), paragraphs, blockquotes, code blocks
-- **Lists**: Bullet lists, ordered lists, task lists (with nesting)
-- **Interactive Elements**: Links, collapsible details/summary sections
-- **Slash Commands**: Notion-like command palette with keyboard shortcuts
-- **Bubble Menu**: Context-sensitive formatting toolbar
-- **Auto-save**: Configurable auto-save with debouncing
-- **Content Validation**: XSS prevention and content structure validation
-- **Keyboard Navigation**: Full keyboard support for all features
-- **Responsive Design**: Mobile-first design with touch support
-- **Dark Mode**: Full dark mode support
+- **Text Formatting**: Bold, italic, underline, strikethrough, subscript, superscript
+- **Advanced Styling**: Text colors, highlight colors, font families
+- **Block Elements**: Headings (H1-H6), paragraphs, blockquotes, code blocks with syntax highlighting
+- **Lists**: Bullet lists, ordered lists, nested task lists with checkboxes
+- **Interactive Content**: Smart links with preview, collapsible toggle blocks
+- **Special Elements**: Horizontal rules, inline code, keyboard shortcuts
+
+### 🎯 Notion-Like Features
+
+- **Slash Commands**: Type `/` for instant access to all content types
+- **Bubble Menu**: Context-sensitive formatting toolbar on text selection
+- **Toggle Blocks**: Collapsible content sections with smooth animations
+- **Trailing Nodes**: Always-available escape mechanism from any block type
+- **Smart Placeholders**: Contextual placeholder text throughout the editor
+- **Keyboard Navigation**: Full keyboard support with intuitive shortcuts
+
+### 🔧 Technical Features
+
+- **Auto-save**: Configurable with debouncing (currently disabled for versioning)
+- **Content Validation**: XSS prevention and structure validation
 - **Performance**: Lazy loading, code splitting, optimized rendering
+- **Responsive Design**: Mobile-first with touch support
+- **Dark Mode**: Complete dark theme support
+- **Accessibility**: WCAG compliant with screen reader support
 
 ### 🎨 UI Components
 
@@ -362,18 +386,72 @@ test("renders editor with placeholder", () => {
 });
 ```
 
-## 📚 Migration Guide
+## 📚 Documentation
 
-See [MIGRATION.md](./MIGRATION.md) for detailed migration instructions from the old editor structure.
+### 📖 Complete Documentation Suite
+
+| Document                                           | Purpose                      | Audience             |
+| -------------------------------------------------- | ---------------------------- | -------------------- |
+| **[README.md](./README.md)**                       | Overview and quick start     | All developers       |
+| **[FEATURES.md](./FEATURES.md)**                   | Complete feature guide       | Users & developers   |
+| **[CONFIGURATION.md](./CONFIGURATION.md)**         | Configuration reference      | Developers           |
+| **[EXTENSIONS.md](./EXTENSIONS.md)**               | Extension development guide  | Extension developers |
+| **[DEVELOPMENT.md](./DEVELOPMENT.md)**             | Development workflow         | Contributors         |
+| **[NOTION-COMPARISON.md](./NOTION-COMPARISON.md)** | Feature comparison & roadmap | Product managers     |
+| **[API.md](./API.md)**                             | API reference                | Developers           |
+| **[ROADMAP.md](./ROADMAP.md)**                     | Future features & timeline   | All stakeholders     |
+
+### 🚀 Getting Started Resources
+
+1. **New to the Editor?** → Start with [README.md](./README.md)
+2. **Want to Use Features?** → Check [FEATURES.md](./FEATURES.md)
+3. **Need to Configure?** → See [CONFIGURATION.md](./CONFIGURATION.md)
+4. **Building Extensions?** → Read [EXTENSIONS.md](./EXTENSIONS.md)
+5. **Contributing Code?** → Follow [DEVELOPMENT.md](./DEVELOPMENT.md)
+6. **Planning Features?** → Review [NOTION-COMPARISON.md](./NOTION-COMPARISON.md)
+
+## 🎯 What's Next?
+
+### 🚧 Immediate Priorities (Next 4 weeks)
+
+1. **Tables** - Full table support with inline editing
+2. **Images** - Drag & drop image upload with resizing
+3. **Drag & Drop** - Block reordering with visual feedback
+4. **Callout Boxes** - Info/warning/error callout blocks
+
+### 📈 Progress Toward Notion-Like Experience
+
+- **Current**: ~60% of Notion's core features implemented
+- **Target**: 80% feature parity by end of quarter
+- **Focus**: Essential content creation features first
+
+See [NOTION-COMPARISON.md](./NOTION-COMPARISON.md) for detailed feature comparison and implementation roadmap.
 
 ## 🤝 Contributing
 
-1. Follow the established patterns
-2. Add JSDoc comments to all functions
-3. Include tests for new features
-4. Update documentation
-5. Follow the modular architecture
+### Development Workflow
+
+1. **Read** [DEVELOPMENT.md](./DEVELOPMENT.md) for setup and patterns
+2. **Check** [ROADMAP.md](./ROADMAP.md) for planned features
+3. **Follow** established architectural patterns
+4. **Add** comprehensive tests and documentation
+5. **Update** relevant documentation files
+
+### Code Standards
+
+- Follow Laravel-inspired service patterns
+- Add JSDoc comments to all functions
+- Include tests for new features
+- Update documentation with changes
+- Maintain modular architecture
+
+### Documentation Standards
+
+- Keep all documentation files up to date
+- Add examples for new features
+- Update configuration guides for new options
+- Include migration notes for breaking changes
 
 ## 📄 License
 
-This editor system is part of the team-docs project.
+This editor system is part of the team-docs project and follows the same licensing terms.
