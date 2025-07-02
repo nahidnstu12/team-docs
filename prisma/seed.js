@@ -28,13 +28,26 @@ async function main() {
   ]);
   console.log("✅ Cleaned up existing data");
 
+  // Create admin user
+  await prisma.user.create({
+    data: {
+      username: "nishat",
+      email: "nishatislam3108@gmail.com",
+      password: "12345678",
+      isActive: true,
+      status: "active",
+      isSuperAdmin: true,
+    },
+  });
+
   const adminUser = await prisma.user.create({
     data: {
       username: "admin",
       email: "admin@example.com",
       password: "$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
       isActive: true,
-      isSuperAdmin: false,
+      status: "active",
+      isSuperAdmin: true,
     },
   });
 

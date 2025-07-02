@@ -35,6 +35,18 @@ export default auth(async function middleware(request) {
     return NextResponse.redirect(new URL("/home", request.url));
   }
 
+  // ✅ PROTECT admin routes - require authentication (admin check to be implemented)
+  if (pathname.startsWith("/admin")) {
+    if (!session) {
+      return NextResponse.redirect(new URL("/auth/signin", request.url));
+    }
+
+    // TODO: Add admin privilege check here
+    // Note: Cannot use Prisma in middleware (edge runtime limitation)
+    // Consider using JWT claims or server-side protection in layout
+    // For now, all authenticated users can access admin (temporary)
+  }
+
   // ✅ Allow non-authenticated users to access landing page at root
   if (pathname === "/") {
     return NextResponse.next({
@@ -67,6 +79,7 @@ export const config = {
     "/", // root
     "/home", // main page
     "/auth/:path*", // must explicitly include auth
+    "/admin/:path*", // admin routes
     "/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)",
   ],
 };
