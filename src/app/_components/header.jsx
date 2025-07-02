@@ -39,26 +39,6 @@ export default function Header({ session }) {
         <Image src="/logo.svg" alt="Team Docs Logo" width={36} height={36} className="mr-2" />
         <span className="text-xl font-bold">Team Docs</span>
       </Link>
-      {/* <nav className="hidden space-x-8 md:flex">
-        <Link
-          href="#features"
-          className="transition-colors text-muted-foreground hover:text-foreground"
-        >
-          Features
-        </Link>
-        <Link
-          href="#pricing"
-          className="transition-colors text-muted-foreground hover:text-foreground"
-        >
-          Pricing
-        </Link>
-        <Link
-          href="#download"
-          className="transition-colors text-muted-foreground hover:text-foreground"
-        >
-          Download
-        </Link>
-      </nav> */}
 
       <div className="flex items-center space-x-4">
         {session ? (

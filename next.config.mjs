@@ -17,6 +17,7 @@ const nextConfig = {
   },
   experimental: {
     authInterrupts: true,
+    ppr: "incremental",
   },
   webpack: (config, { isServer }) => {
     if (isServer) {

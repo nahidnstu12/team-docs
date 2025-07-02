@@ -23,7 +23,6 @@ import ProjectTableLoading from "./ProjectTableLoading";
 import { useProjects } from "../hooks/useProjects";
 import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import { useRouter } from "next/navigation";
-import Logger from "@/lib/Logger";
 import ProjectEditDrawer from "./ProjectEditDrawer";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import TablePagination from "@/components/shared/TablePagination";
@@ -63,7 +62,6 @@ export default function ProjectListings({
   const [selectedProject, setSelectedProject] = useState(null);
 
   const handleEditClick = (project) => {
-    Logger.debug("Opening edit drawer for project", { projectId: project.id });
     setSelectedProject(project);
     setIsEditDrawerOpen(true);
   };

@@ -5,6 +5,8 @@ import Footer from "./_components/Footer";
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 
+export const experimental_ppr = true;
+
 export default async function LandingPage() {
   const session = await Session.getCurrentUser();
   const isAuthenticated = await Session.isAuthenticated();
