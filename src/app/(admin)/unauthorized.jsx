@@ -5,7 +5,7 @@ import Link from "next/link";
 
 /**
  * Admin Unauthorized Page
- * 
+ *
  * Page shown when users try to access admin routes without proper permissions.
  * Provides clear messaging and navigation options.
  */
@@ -19,13 +19,13 @@ export default function AdminUnauthorized() {
           </div>
           <CardTitle className="text-2xl text-yellow-600">Access Denied</CardTitle>
           <CardDescription>
-            You don't have permission to access the admin panel.
+            You don&apos;t have permission to access the admin panel.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Admin access is restricted to super administrators only. 
-            If you believe this is an error, please contact your system administrator.
+            Admin access is restricted to super administrators only. If you believe this is an
+            error, please contact your system administrator.
           </p>
           <div className="flex flex-col gap-2">
             <Button asChild>
@@ -35,9 +35,7 @@ export default function AdminUnauthorized() {
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/auth/signin">
-                Sign In with Different Account
-              </Link>
+              <Link href="/auth/signin">Sign In with Different Account</Link>
             </Button>
           </div>
         </CardContent>
