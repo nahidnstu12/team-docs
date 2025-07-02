@@ -2,9 +2,36 @@ import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey, TextSelection } from "prosemirror-state";
 
 /**
- * Trailing Node Extension
- * Ensures there's always a paragraph at the end of the document
- * Similar to Notion's behavior where you can always escape any block
+ * 🚪 TrailingNode Extension - The Escape Route
+ *
+ * This extension ensures users can ALWAYS escape from any block type.
+ * It's like having an emergency exit - no matter what block you're in,
+ * there's always a way to get out and continue writing.
+ *
+ * 🎯 What this extension does:
+ * - Adds a paragraph at the end of the document
+ * - Ensures users can always click to escape blocks
+ * - Prevents getting "trapped" in complex blocks like toggles or code blocks
+ * - Shows helpful placeholder text when focused
+ * - Maintains proper cursor positioning
+ *
+ * 💡 Why this is important:
+ * - Notion-like behavior: always have an escape route
+ * - Better UX: users never feel stuck
+ * - Accessibility: keyboard navigation always works
+ * - Consistency: predictable behavior across all block types
+ *
+ * 🔧 How it works:
+ * - Monitors document structure in real-time
+ * - Automatically adds trailing paragraph when needed
+ * - Handles focus management and cursor positioning
+ * - Integrates seamlessly with other extensions
+ *
+ * 📝 User experience:
+ * - Click below any content to start a new paragraph
+ * - Always see "start writing or / for commands" placeholder
+ * - Never get stuck in complex block structures
+ * - Smooth transitions between different content types
  */
 export const TrailingNode = Extension.create({
   name: "trailingNode",

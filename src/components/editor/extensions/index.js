@@ -1,9 +1,41 @@
 /**
- * Extension Registry
- * Centralized extension management system for TipTap editor
+ * 🔧 Extension Registry - The Extension Management System
  *
- * @fileoverview This module provides a centralized registry for managing
- * TipTap extensions with lazy loading, dependency management, and modular organization.
+ * This is the central hub for managing all TipTap extensions in your editor.
+ * Think of it as the "app store" for editor features - it handles loading,
+ * configuring, and organizing all the extensions that make your editor powerful.
+ *
+ * 🎯 What this registry provides:
+ * - Centralized extension management
+ * - Dynamic extension loading and configuration
+ * - Base extension sets for different editor types
+ * - Extension dependency management
+ * - Easy way to add/remove features
+ *
+ * 💡 Available extension categories:
+ * - Core: Essential extensions (StarterKit, TextStyle, etc.)
+ * - Formatting: Text styling (Color, Highlight, Underline, etc.)
+ * - Blocks: Content blocks (CodeBlock, Toggle, TaskList, etc.)
+ * - Interactive: User interaction (Link, TrailingNode, etc.)
+ * - Custom: Our own extensions (Toggle, TrailingNode, etc.)
+ *
+ * 🔧 How to use:
+ * ```javascript
+ * // Get all base extensions
+ * const extensions = getBaseExtensions();
+ *
+ * // Register a new extension
+ * registerExtension('myExtension', MyExtension);
+ *
+ * // Load specific extension
+ * const extension = loadExtension('myExtension');
+ * ```
+ *
+ * 🏗️ Architecture benefits:
+ * - Modular: Add/remove features easily
+ * - Maintainable: Centralized configuration
+ * - Flexible: Different extension sets for different use cases
+ * - Extensible: Easy to add custom extensions
  */
 
 import StarterKit from "@tiptap/starter-kit";

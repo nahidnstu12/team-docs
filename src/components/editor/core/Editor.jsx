@@ -24,29 +24,80 @@ import { TrailingNode } from "../extensions/trailing-node/trailing-node-extensio
 const lowlight = createLowlight(all);
 
 /**
- * Main TipTap Editor Component
- * Centralized editor with modular extension system
+ * 🎯 Main TipTap Editor Component - The Heart of the System
  *
- * @fileoverview This is the core editor component that integrates with the
- * EditorProvider and manages TipTap editor instances with a modular extension system.
+ * This is where the magic happens! This component is the actual editor that users type in.
+ * Think of it as the "engine" of a car - it does all the heavy lifting.
+ *
+ * 🏗️ What this component does:
+ * - Creates and manages the TipTap editor instance
+ * - Loads all the extensions (bold, italic, links, toggles, etc.)
+ * - Handles user interactions (typing, clicking, keyboard shortcuts)
+ * - Manages content loading and saving
+ * - Provides the editing surface where users create content
+ *
+ * 🔧 Key Features:
+ * - Modular extension system (easy to add/remove features)
+ * - Auto-focus and placeholder support
+ * - Character limits and word counting
+ * - Keyboard shortcuts (Ctrl+S for save, etc.)
+ * - Click-to-focus behavior (like Notion/VSCode)
+ * - Trailing nodes (always have an escape route from blocks)
+ *
+ * 💡 How it works:
+ * 1. Component mounts and creates TipTap editor instance
+ * 2. Registers itself with EditorProvider for global management
+ * 3. Loads initial content if provided
+ * 4. Sets up event listeners for user interactions
+ * 5. Renders the editing surface and any child components (menus, toolbars)
  */
 
 /**
- * Editor Component
+ * 📋 Editor Component Props - What you can customize
  *
- * @param {Object} props - Component props
- * @param {string} props.instanceId - Unique identifier for this editor instance
- * @param {Object} props.initialContent - Initial content for the editor
- * @param {Array} props.extensions - Additional extensions to load
- * @param {Object} props.config - Editor configuration overrides
- * @param {Function} props.onSave - Save callback function
- * @param {Function} props.onChange - Change callback function
- * @param {Function} props.onFocus - Focus callback function
- * @param {Function} props.onBlur - Blur callback function
- * @param {boolean} props.editable - Whether the editor is editable
- * @param {string} props.className - Additional CSS classes
- * @param {Object} props.style - Inline styles
- * @param {React.ReactNode} props.children - Child components (menus, toolbars, etc.)
+ * @param {string} instanceId - Unique ID for this editor (REQUIRED!)
+ *   - Think of this as the editor's "name tag"
+ *   - Must be unique if you have multiple editors on the same page
+ *   - Used for saving, loading, and managing editor state
+ *   - Example: "blog-post-editor", "comment-editor-123"
+ *
+ * @param {Object} initialContent - Starting content for the editor
+ *   - Should be in TipTap's JSON format (not HTML or plain text)
+ *   - Can be null/undefined for empty editor
+ *   - Example: { type: 'doc', content: [{ type: 'paragraph', content: [...] }] }
+ *
+ * @param {Array} extensions - Extra TipTap extensions to add (advanced usage)
+ *   - Most users won't need this - we include all common extensions by default
+ *   - Use this to add custom extensions you've built
+ *
+ * @param {Object} config - Configuration overrides
+ *   - Customize editor behavior (placeholder text, character limits, etc.)
+ *   - Merges with default configuration
+ *   - Example: { placeholder: { text: "Start writing..." }, characterLimit: 1000 }
+ *
+ * @param {Function} onSave - Called when user saves (Ctrl+S or save button)
+ *   - Receives the current content as parameter
+ *   - This is where you'd save to your database/API
+ *   - Example: (content) => saveToDatabase(content)
+ *
+ * @param {Function} onChange - Called every time content changes
+ *   - Receives the current content as parameter
+ *   - Useful for real-time features, auto-save, etc.
+ *   - Example: (content) => setUnsavedChanges(true)
+ *
+ * @param {Function} onFocus - Called when editor gains focus
+ * @param {Function} onBlur - Called when editor loses focus
+ *
+ * @param {boolean} editable - Whether users can edit the content
+ *   - true: Normal editing mode
+ *   - false: Read-only mode (like a preview)
+ *
+ * @param {string} className - Additional CSS classes for styling
+ * @param {Object} style - Inline styles (use className instead when possible)
+ *
+ * @param {ReactNode} children - Additional components to render inside editor
+ *   - Usually menus, toolbars, or custom UI elements
+ *   - These components automatically receive the editor instance as props
  */
 const EditorComponent = ({
   instanceId,
@@ -63,14 +114,15 @@ const EditorComponent = ({
   children,
   ...props
 }) => {
-  // Get editor context
+  // 🏗️ Get the global editor context (shared state and utilities)
   const editorContext = useEditorContext();
 
-  // No local state needed - editor handles its own initialization
+  // 📝 No local state needed - the TipTap editor manages its own state internally
+  // This keeps our component clean and lets TipTap handle the heavy lifting
 
-  // Refs
-  const editorRef = useRef(null);
-  const saveCallbackRef = useRef(onSave);
+  // 🔗 Refs for stable references that don't trigger re-renders
+  const editorRef = useRef(null); // Reference to the TipTap editor instance
+  const saveCallbackRef = useRef(onSave); // Stable reference to save function
 
   // Store callback refs to avoid dependencies in useEditor
   const onChangeRef = useRef(onChange);
@@ -154,56 +206,70 @@ const EditorComponent = ({
   // Don't use fallback config - always wait for proper extensions
   // TipTap requires proper extensions to function, empty extensions cause schema errors
 
-  // Create a stable base configuration that doesn't change
+  // 🔧 Create the editor configuration with all extensions
+  // This is where we define what features the editor has!
   const stableEditorConfig = useMemo(
     () => ({
+      // Don't render immediately - wait for proper setup
       immediatelyRender: false,
+
+      // 🎯 Extensions - These add all the functionality to your editor
       extensions: [
+        // 🏗️ StarterKit: The foundation (paragraphs, headings, bold, italic, etc.)
         StarterKit.configure({
-          // Disable the basic codeBlock since we're using CodeBlockLowlight
+          // We disable the basic code block because we use a fancier one below
           codeBlock: false,
-        }), // Always use StarterKit for stability
-        TextStyle, // Required for Color extension
-        Color, // Add color support for ColorPickerPanel
-        Highlight.configure({ multicolor: true }), // Add highlight support for BubbleMenu
-        Underline, // Add underline support for BubbleMenu
+        }),
+
+        // 🎨 Text styling extensions
+        TextStyle, // Required for color support
+        Color, // Text colors (red, blue, etc.)
+        Highlight.configure({ multicolor: true }), // Text highlighting (yellow, pink, etc.)
+        Underline, // Underline text support
+
+        // 🔗 Link extension - Makes text clickable
         Link.configure({
-          openOnClick: false, // We'll handle clicks manually for editing
+          openOnClick: false, // Don't open links when clicked (we handle this manually)
           HTMLAttributes: {
             class: "text-blue-600 underline hover:text-blue-800 cursor-pointer",
-            rel: "noopener noreferrer nofollow",
-            target: "_blank",
+            rel: "noopener noreferrer nofollow", // Security attributes
+            target: "_blank", // Open in new tab
           },
-          linkOnPaste: true,
-          autolink: true,
-          protocols: ["http", "https", "ftp", "mailto"],
-        }), // Add link support for BubbleMenu
-        // Task list extensions
+          linkOnPaste: true, // Auto-create links when pasting URLs
+          autolink: true, // Auto-detect URLs as you type
+          protocols: ["http", "https", "ftp", "mailto"], // Supported URL types
+        }),
+
+        // ✅ Task list extensions - For todo lists
         TaskList.configure({
-          nested: true,
+          nested: true, // Allow nested task lists
         }),
         TaskItem.configure({
-          nested: true,
+          nested: true, // Allow nested task items
         }),
-        // Code block with syntax highlighting
+
+        // 💻 Code block with syntax highlighting - For code snippets
         CodeBlockLowlight.configure({
-          lowlight,
-          defaultLanguage: "plaintext",
+          lowlight, // Syntax highlighter instance
+          defaultLanguage: "plaintext", // Default when no language specified
         }),
-        // Text alignment extension
+
+        // 📐 Text alignment extension - Left, center, right, justify
         TextAlign.configure({
-          types: ["heading", "paragraph"],
-          alignments: ["left", "center", "right", "justify"],
+          types: ["heading", "paragraph"], // Which elements can be aligned
+          alignments: ["left", "center", "right", "justify"], // Available alignments
         }),
-        // Toggle extensions (Notion-like collapsible blocks)
+
+        // 🔽 Toggle extensions - Notion-like collapsible blocks
         Toggle.configure({
-          defaultOpen: true,
+          defaultOpen: true, // New toggles start expanded
         }),
-        ToggleSummary,
-        // Trailing node to ensure users can always escape blocks
+        ToggleSummary, // The clickable header part of toggles
+
+        // 🚪 Trailing node - Always provides an "escape route" from blocks
         TrailingNode.configure({
-          node: "paragraph",
-          notAfter: [], // Always add trailing node for escape mechanism
+          node: "paragraph", // Add a paragraph at the end
+          notAfter: [], // Always add it (no exceptions)
         }),
         Placeholder.configure({
           placeholder: ({ node, editor, pos }) => {

@@ -7,12 +7,39 @@ import { useDismiss, useInteractions } from "@floating-ui/react";
 import { useSlashCommand } from "./hooks/useSlashCommand";
 
 /**
- * Slash Command Menu Component
- * Notion-like command palette triggered by typing '/'
+ * ⚡ SlashMenu - The Command Palette (Notion-Style)
  *
- * @fileoverview This component provides a command palette interface
- * that appears when users type '/' in the editor, offering quick access
- * to various formatting and content insertion options.
+ * This is the magic menu that appears when you type "/" in the editor!
+ * It's like having a command center at your fingertips.
+ *
+ * 🎯 What this component does:
+ * - Detects when user types "/" in the editor
+ * - Shows a searchable list of commands (headings, lists, code blocks, etc.)
+ * - Provides keyboard navigation (up/down arrows, Enter to select)
+ * - Filters commands as user types (e.g., "/head" shows heading options)
+ * - Inserts the selected content type at the cursor position
+ * - Handles smooth animations and positioning
+ *
+ * 💡 Available commands include:
+ * - Text blocks: Paragraph, headings (H1-H6)
+ * - Lists: Bullet lists, numbered lists, task lists
+ * - Special blocks: Code blocks, toggles, quotes
+ * - Advanced: Tables, dividers, etc.
+ *
+ * 🔧 How it works:
+ * 1. User types "/" - menu appears at cursor position
+ * 2. User can type to filter commands (e.g., "head" for headings)
+ * 3. User navigates with arrow keys or mouse hover
+ * 4. User presses Enter or clicks to select command
+ * 5. Selected command executes and menu disappears
+ * 6. ESC key cancels and returns focus to editor
+ *
+ * 🎨 Advanced features:
+ * - Smart positioning (avoids screen edges)
+ * - Smooth Framer Motion animations
+ * - Keyboard shortcuts displayed in menu
+ * - Search highlighting
+ * - Portal rendering for proper z-index layering
  */
 
 /**

@@ -1,37 +1,67 @@
+/**
+ * 🎨 BubbleMenu - The Floating Formatting Toolbar
+ *
+ * This is the menu that appears when you select text in the editor.
+ * It's like the formatting toolbar in Google Docs or Notion - it floats above your selection.
+ *
+ * 🎯 What this component does:
+ * - Appears automatically when text is selected
+ * - Provides quick access to formatting options (bold, italic, colors, etc.)
+ * - Handles link creation and editing
+ * - Shows color picker for text and highlight colors
+ * - Maintains selection after applying formatting
+ *
+ * 💡 Features included:
+ * - Text formatting: Bold, Italic, Underline, Strikethrough, Code
+ * - Colors: Text color and highlight color
+ * - Links: Create new links or edit existing ones
+ * - Unstyle: Remove all formatting from selected text
+ *
+ * 🔧 How it works:
+ * - TipTap automatically shows/hides this menu based on text selection
+ * - Each button applies formatting to the selected text
+ * - Color picker opens as a panel within the menu
+ * - Link dialogs open as separate modals
+ */
+
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react";
 import {
-  Bold,
-  Code,
-  Highlighter,
-  Italic,
-  Link,
-  PaintBucket,
-  Strikethrough,
-  Underline,
-  RotateCcw,
+  Bold, // Bold formatting icon
+  Code, // Inline code formatting icon
+  Highlighter, // Text highlighting icon
+  Italic, // Italic formatting icon
+  Link, // Link creation/editing icon
+  PaintBucket, // Text color icon
+  Strikethrough, // Strikethrough formatting icon
+  Underline, // Underline formatting icon
+  RotateCcw, // Remove formatting icon
 } from "lucide-react";
 import { useState } from "react";
-import ColorPickerPanel from "./ColorPickerPanel";
-import LinkEditDialog from "./LinkEditDialog";
-import LinkCreateDialog from "./LinkCreateDialog";
-import { useLinkEditor } from "../hooks/useLinkEditor";
+import ColorPickerPanel from "./ColorPickerPanel"; // Color selection component
+import LinkEditDialog from "./LinkEditDialog"; // Edit existing links
+import LinkCreateDialog from "./LinkCreateDialog"; // Create new links
+import { useLinkEditor } from "../hooks/useLinkEditor"; // Link management hook
 
 export default function BubbleMenu({ editor }) {
+  // 🎨 State for showing/hiding the color picker panel
   const [showColorPanel, setShowColorPanel] = useState(false);
+
+  // 🔗 Hook for managing link creation and editing
   const linkEditor = useLinkEditor(editor);
 
+  // 🚫 Don't render if no editor is available
   if (!editor) return null;
 
   return (
     <TiptapBubbleMenu
       editor={editor}
       tippyOptions={{
-        duration: 150,
-        placement: "top",
-        interactive: true,
-        interactiveBorder: 10,
-        hideOnClick: false,
-        onHide: () => setShowColorPanel(false), // Close color panel when menu hides
+        duration: 150, // Animation speed (milliseconds)
+        placement: "top", // Show above the selection
+        interactive: true, // Allow clicking inside the menu
+        interactiveBorder: 10, // Keep menu open when mouse is near
+        hideOnClick: false, // Don't hide when clicking buttons
+        onHide: () => setShowColorPanel(false), // Clean up color panel when menu hides
       }}
       className="w-[420px] z-50 flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 shadow-xl rounded-xl dark:border-zinc-700 dark:bg-zinc-900"
     >

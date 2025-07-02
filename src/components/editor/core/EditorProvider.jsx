@@ -12,11 +12,31 @@ import React, {
 import { DEFAULT_EDITOR_CONFIG, mergeConfig } from "./EditorConfig";
 
 /**
- * Editor Context
- * Provides centralized state management for the TipTap editor system
+ * 🏗️ Editor Context Provider - The Command Center
  *
- * @fileoverview This context provider manages editor state, configuration,
- * and provides utilities for editor instances throughout the application.
+ * This is like the "mission control" for all your editors. It manages multiple editor
+ * instances, handles saving/loading, and provides shared utilities.
+ *
+ * 🎯 What this provider does:
+ * - Manages multiple editor instances on the same page
+ * - Handles auto-save functionality (if enabled)
+ * - Provides shared configuration across all editors
+ * - Tracks unsaved changes and loading states
+ * - Offers utilities like "save all editors" or "focus specific editor"
+ *
+ * 💡 Why use a provider?
+ * - Avoid prop drilling (passing editor state through many components)
+ * - Share functionality between multiple editors
+ * - Centralized state management (easier to debug and maintain)
+ * - Global operations (save all, clear all, etc.)
+ *
+ * 📝 Example usage:
+ * ```jsx
+ * <EditorProvider onSave={handleSave} autoSave={false}>
+ *   <Editor instanceId="main-editor" />
+ *   <Editor instanceId="sidebar-notes" />
+ * </EditorProvider>
+ * ```
  */
 
 /**
@@ -26,17 +46,39 @@ import { DEFAULT_EDITOR_CONFIG, mergeConfig } from "./EditorConfig";
 const EditorContext = createContext(null);
 
 /**
- * Editor Provider Component
- * Manages global editor state and configuration
+ * 📋 EditorProvider Props - How to configure the provider
  *
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Child components
- * @param {Object} props.config - Editor configuration overrides
- * @param {Function} props.onSave - Save callback function
- * @param {Function} props.onLoad - Load callback function
- * @param {Function} props.onChange - Change callback function
- * @param {boolean} props.autoSave - Enable auto-save functionality
- * @param {number} props.autoSaveDelay - Auto-save delay in milliseconds
+ * @param {ReactNode} children - Your editor components and other UI
+ *   - Usually contains <Editor> components and related UI
+ *   - All children can access the editor context
+ *
+ * @param {Object} config - Global configuration for all editors
+ *   - Settings that apply to every editor in this provider
+ *   - Individual editors can still override these settings
+ *   - Example: { characterLimit: 5000, placeholder: { text: "Start writing..." } }
+ *
+ * @param {Function} onSave - Global save handler for all editors
+ *   - Called when any editor in this provider saves
+ *   - Receives (content, instanceId) as parameters
+ *   - Example: (content, editorId) => saveToDatabase(editorId, content)
+ *
+ * @param {Function} onLoad - Global load handler (currently unused but ready for future)
+ *   - Would be called when editors need to load content
+ *
+ * @param {Function} onChange - Global change handler for all editors
+ *   - Called whenever any editor content changes
+ *   - Useful for tracking unsaved changes across multiple editors
+ *   - Example: (content, editorId) => markAsUnsaved(editorId)
+ *
+ * @param {boolean} autoSave - Enable automatic saving
+ *   - true: Automatically saves after user stops typing (with delay)
+ *   - false: Only saves when user manually triggers save (Ctrl+S, save button)
+ *   - Default: true
+ *
+ * @param {number} autoSaveDelay - How long to wait before auto-saving (milliseconds)
+ *   - Only used when autoSave is true
+ *   - Default: 2000 (2 seconds)
+ *   - Prevents saving on every keystroke
  */
 export const EditorProvider = ({
   children,

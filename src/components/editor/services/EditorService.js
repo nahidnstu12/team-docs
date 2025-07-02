@@ -1,9 +1,42 @@
 /**
- * Editor Service
- * Laravel-like service class for editor business logic
+ * 🛠️ EditorService - The Business Logic Layer (Laravel-Style)
  *
- * @fileoverview This service handles all editor-related business logic including
- * content management, validation, transformation, and persistence operations.
+ * This service handles all the "behind the scenes" work for your editors.
+ * Think of it as your editor's personal assistant that handles saving, loading,
+ * validation, and other business operations.
+ *
+ * 🎯 What this service provides:
+ * - Content saving and loading operations
+ * - Data validation and sanitization
+ * - Content transformation (JSON ↔ HTML ↔ Markdown)
+ * - Error handling and logging
+ * - Caching and performance optimization
+ * - Integration with your backend APIs
+ *
+ * 💡 Why use a service pattern?
+ * - Separation of concerns (UI vs business logic)
+ * - Reusable across different components
+ * - Easier testing and maintenance
+ * - Consistent error handling
+ * - Centralized data operations
+ *
+ * 📝 Example usage:
+ * ```javascript
+ * // Save content
+ * await EditorService.save('editor-1', content);
+ *
+ * // Load content
+ * const content = await EditorService.load('editor-1');
+ *
+ * // Validate content
+ * const isValid = EditorService.validate(content);
+ * ```
+ *
+ * 🏗️ Laravel-inspired architecture:
+ * - Static methods for easy access
+ * - Consistent return formats
+ * - Built-in error handling
+ * - Chainable operations where appropriate
  */
 
 import { toast } from "sonner";

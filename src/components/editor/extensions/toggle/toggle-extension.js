@@ -2,12 +2,32 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { Plugin, PluginKey, TextSelection } from "prosemirror-state";
 
 /**
- * Toggle Extension for TipTap
- * Notion-like collapsible content blocks
+ * 🔽 Toggle Extension - Notion-Like Collapsible Blocks
  *
- * @fileoverview This extension provides toggle/collapsible functionality
- * similar to Notion's toggle blocks, with smooth animations and proper
- * keyboard navigation support.
+ * This extension creates collapsible content blocks just like in Notion.
+ * Users can click to expand/collapse sections, perfect for organizing content.
+ *
+ * 🎯 What this extension provides:
+ * - Collapsible content blocks with headers
+ * - Click to expand/collapse functionality
+ * - Smooth animations for open/close states
+ * - Keyboard navigation support
+ * - Nested content support (any content can go inside)
+ * - Persistent state (remembers if expanded or collapsed)
+ *
+ * 💡 How users interact with it:
+ * - Type "/" and select "Toggle" to create one
+ * - Click the arrow icon to expand/collapse
+ * - Type in the header area to set the title
+ * - Type in the content area when expanded
+ * - Use backspace at beginning of header to convert to normal text
+ *
+ * 🔧 Technical details:
+ * - Uses ProseMirror plugins for advanced functionality
+ * - Stores open/closed state in node attributes
+ * - Supports keyboard navigation and accessibility
+ * - Integrates with editor's undo/redo system
+ * - Handles focus management and cursor positioning
  */
 export const Toggle = Node.create({
   name: "toggle",
