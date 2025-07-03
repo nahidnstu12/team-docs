@@ -2,7 +2,7 @@ import { Session } from "@/lib/Session";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock, User, Calendar } from "lucide-react";
+import { CheckCircle, XCircle, Clock, User, Calendar, Eye } from "lucide-react";
 
 /**
  * Workspace Approval Page
@@ -61,7 +61,6 @@ export default async function WorkspaceApprovalPage() {
         </Badge>
       </div>
 
-      {/* Pending Workspaces List */}
       <div className="space-y-6">
         {pendingWorkspaces.length === 0 ? (
           <Card className="p-8">
@@ -77,78 +76,75 @@ export default async function WorkspaceApprovalPage() {
           </Card>
         ) : (
           pendingWorkspaces.map((workspace) => (
-            <Card
-              key={workspace.id}
-              className="border-l-4 border-l-yellow-500 p-8 hover:shadow-lg transition-shadow"
-            >
-              <CardHeader className="p-0 pb-6">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-3">
-                    <CardTitle className="flex items-center gap-3 text-2xl">
-                      {workspace.name}
-                      <Badge
-                        variant="outline"
-                        className="text-yellow-600 border-yellow-600 px-3 py-1 text-sm"
-                      >
-                        <Clock className="h-4 w-4 mr-2" />
-                        Pending
-                      </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-base leading-relaxed">
-                      {workspace.description}
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0 space-y-6">
-                {/* Owner Information */}
-                <div className="flex items-center gap-6 text-base text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    <span>{workspace.ownerName}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span>•</span>
-                    <span>{workspace.ownerEmail}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    <span>{new Date(workspace.createdAt).toLocaleDateString()}</span>
-                  </div>
+            <Card key={workspace.id} className="p-4 hover:shadow-lg transition-shadow">
+              <div className="flex gap-6">
+                <div className="w-4/5">
+                  <CardHeader className="p-0 pb-3">
+                    <div className="space-y-3">
+                      <CardTitle className="flex items-center gap-3 text-2xl">
+                        {workspace.name}
+                        <Badge
+                          variant="outline"
+                          className="text-yellow-600 border-yellow-600 px-3 py-1 text-sm"
+                        >
+                          <Clock className="h-4 w-4 mr-2" />
+                          Pending
+                        </Badge>
+                      </CardTitle>
+                      <CardDescription className="text-base leading-relaxed min-h-20">
+                        {workspace.description}
+                      </CardDescription>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-0">
+                    <div className="flex items-center gap-6 text-base text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <User className="h-5 w-5" />
+                        <span>{workspace.ownerName}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span>•</span>
+                        <span>{workspace.ownerEmail}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5" />
+                        <span>{new Date(workspace.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </CardContent>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  <Button size="lg" className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base">
-                    <CheckCircle className="h-5 w-5 mr-2" />
-                    Approve
+                <div className="w-1/5 flex flex-col items-center justify-center gap-4">
+                  <Button
+                    size="lg"
+                    className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base w-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  >
+                    <CheckCircle className="h-5 w-5 mr-2 ml-4" />
+                    <span className="font-medium">Approve</span>
                   </Button>
-                  <Button size="lg" variant="destructive" className="px-6 py-3 text-base">
+                  <Button
+                    size="lg"
+                    variant="destructive"
+                    className="px-6 py-3 text-base w-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  >
                     <XCircle className="h-5 w-5 mr-2" />
-                    Reject
+                    <span className="font-medium">Reject</span>
                   </Button>
-                  <Button size="lg" variant="outline" className="px-6 py-3 text-base">
-                    View Details
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="px-6 py-3 text-base w-full flex items-center justify-center shadow-md hover:shadow-lg border-2 transition-all duration-200 transform hover:scale-105 bg-white hover:bg-gray-50"
+                  >
+                    <Eye className="h-5 w-5 mr-2" />
+                    <span className="font-medium">Details</span>
                   </Button>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))
         )}
       </div>
-
-      {/* Future Implementation Note */}
-      <Card className="border-dashed p-8">
-        <CardContent className="py-8">
-          <div className="text-center space-y-4">
-            <h3 className="text-xl font-semibold text-muted-foreground">Coming Soon</h3>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Full workspace approval functionality will be implemented in the next phase. This
-              includes database integration, email notifications, and bulk actions.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
