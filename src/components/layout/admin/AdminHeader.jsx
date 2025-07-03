@@ -12,9 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Settings, LogOut, User, Shield } from "lucide-react";
+import { Settings, LogOut, User, Shield, RefreshCw } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { useAdminRefresh } from "@/components/layout/admin/AdminRefreshContext";
 
 /**
  * Admin Header Component
@@ -29,8 +32,21 @@ import Link from "next/link";
  * @param {Object} props.user - Current user object
  */
 export default function AdminHeader({ user }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const { triggerRefresh } = useAdminRefresh();
+
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
+  };
+
+  const handleRefresh = () => {
+    startTransition(() => {
+      // Trigger refresh for all admin components
+      triggerRefresh();
+      // Also refresh the page to get latest server data
+      router.refresh();
+    });
   };
 
   const getUserInitials = (user) => {
@@ -56,6 +72,17 @@ export default function AdminHeader({ user }) {
 
       <div className="flex items-center space-x-4">
         {/* Quick Actions */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={isPending}
+          className="flex items-center space-x-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isPending ? "animate-spin" : ""}`} />
+          <span>Refresh</span>
+        </Button>
+
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin">Dashboard</Link>
         </Button>

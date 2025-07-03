@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import MainSidebar from "@/components/layout/mainSidebar";
 import ConditionalMainHeader from "@/components/layout/ConditionalMainHeader";
-import { Toaster } from "@/components/ui/sonner";
 
 /**
  * Client-side conditional layout wrapper that handles layout switching
@@ -29,7 +28,6 @@ export default function ConditionalHomeLayout({ children, defaultOpen, workspace
         <MainSidebar />
         <div className="flex overflow-hidden flex-col flex-1 pl-3 md:pl-6">
           <ConditionalMainHeader workspace={workspace} />
-          <Toaster position="top-right" richColors />
           <main className="flex-1 overflow-auto p-2 md:p-4 pl-0 md:pl-0 min-h-[80vh]">
             {children}
           </main>

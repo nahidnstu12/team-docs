@@ -23,11 +23,7 @@ export default async function WorkspaceApprovalPage() {
   // Fetch pending workspaces from database
   const pendingWorkspaces = await WorkspaceService.getPendingWorkspaces();
 
-  // Function to refresh the page data after approval/rejection
-  const refreshData = async () => {
-    "use server";
-    revalidatePath("/admin/workspace-approval");
-  };
+  // Server actions handle revalidation automatically, no need for manual refresh
 
   return (
     <div className="p-8 space-y-8">
@@ -101,7 +97,6 @@ export default async function WorkspaceApprovalPage() {
                   {/* Approve Button with Dialog */}
                   <WorkspaceApprovalDialog
                     workspace={workspace}
-                    onSuccess={refreshData}
                     trigger={
                       <Button
                         size="lg"
@@ -116,7 +111,6 @@ export default async function WorkspaceApprovalPage() {
                   {/* Reject Button with Dialog */}
                   <WorkspaceRejectionDialog
                     workspace={workspace}
-                    onSuccess={refreshData}
                     trigger={
                       <Button
                         size="lg"

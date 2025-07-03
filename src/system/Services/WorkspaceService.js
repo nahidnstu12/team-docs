@@ -3,6 +3,7 @@ import { BaseService } from "./BaseService";
 import Logger from "@/lib/Logger";
 import { UserModel } from "../Models/UserModel";
 import { WorkspaceModel } from "../Models/WorkspaceModel";
+import { WorkspaceStatus } from "@prisma/client";
 
 export class WorkspaceService extends BaseService {
   static modelName = "workspace";
@@ -41,7 +42,7 @@ export class WorkspaceService extends BaseService {
   static async getPendingWorkspaces() {
     try {
       const pendingWorkspaces = await WorkspaceModel.findMany({
-        where: { status: "PENDING" },
+        where: { status: WorkspaceStatus.PENDING },
         include: {
           owner: {
             select: {
@@ -69,8 +70,9 @@ export class WorkspaceService extends BaseService {
   static async getPendingWorkspacesCount() {
     try {
       const count = await WorkspaceModel.count({
-        where: { status: "PENDING" },
+        where: { status: WorkspaceStatus.PENDING },
       });
+      Logger.info(`Found ${count} pending workspaces`, "Get pending workspaces count");
       return count;
     } catch (error) {
       Logger.error(error.message, "Get pending workspaces count failed");

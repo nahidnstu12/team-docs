@@ -15,6 +15,7 @@ import { XCircle, Loader2, AlertTriangle } from "lucide-react";
 import { rejectWorkspace } from "@/system/Actions/WorkspaceAction";
 import { toast } from "sonner";
 import Logger from "@/lib/Logger";
+import { useAdminRefresh } from "@/components/layout/admin/AdminRefreshContext";
 
 /**
  * Workspace Rejection Confirmation Dialog
@@ -25,6 +26,7 @@ import Logger from "@/lib/Logger";
 export default function WorkspaceRejectionDialog({ workspace, trigger, onSuccess }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { triggerRefresh } = useAdminRefresh();
 
   const handleReject = () => {
     startTransition(async () => {
@@ -32,21 +34,14 @@ export default function WorkspaceRejectionDialog({ workspace, trigger, onSuccess
         const result = await rejectWorkspace(workspace.id);
 
         if (result.success) {
-          toast.success("Workspace Rejected", {
-            description: result.message,
-            duration: 5000,
-          });
-
           setIsOpen(false);
-
-          // Call onSuccess callback to refresh the data
-          if (onSuccess) {
-            onSuccess();
-          }
+          toast.success("Workspace Rejected", result.message);
+          // Trigger refresh to update sidebar badge and other admin data
+          triggerRefresh();
         } else {
-          const errorMessage = result.errors?._form?.[0] || "Failed to reject workspace";
+          // Keep error toast for debugging
           toast.error("Rejection Failed", {
-            description: errorMessage,
+            description: result.errors?._form?.[0] || "Failed to reject workspace",
             duration: 5000,
           });
         }
@@ -74,15 +69,13 @@ export default function WorkspaceRejectionDialog({ workspace, trigger, onSuccess
             Reject Workspace
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
-            <p>
-              Are you sure you want to reject the workspace{" "}
-              <span className="font-semibold text-foreground">&quot;{workspace.name}&quot;</span>?
-            </p>
-            <p className="text-sm">
+            Are you sure you want to reject the workspace{" "}
+            <span className="font-semibold text-foreground">&quot;{workspace.name}&quot;</span>?
+            <span className="text-sm block mt-2">
               This action will mark the workspace as inactive and prevent the owner{" "}
               <span className="font-medium text-foreground">{workspace.owner?.username}</span> from
               accessing it. This action cannot be easily undone.
-            </p>
+            </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
 

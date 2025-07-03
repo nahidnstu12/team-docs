@@ -94,8 +94,8 @@ class WorkspaceAction extends BaseAction {
         data: { status: "ACTIVE" },
       });
 
-      // Revalidate the admin workspace approval page
-      revalidatePath("/admin/workspace-approval");
+      // Revalidate all admin routes to refresh sidebar badge and other data
+      revalidatePath("/admin", "layout");
 
       Logger.info(`Workspace ${workspace.name} approved by admin ${currentUser.username}`);
 
@@ -166,8 +166,8 @@ class WorkspaceAction extends BaseAction {
         data: { status: "INACTIVE" },
       });
 
-      // Revalidate the admin workspace approval page
-      revalidatePath("/admin/workspace-approval");
+      // Revalidate all admin routes to refresh sidebar badge and other data
+      revalidatePath("/admin", "layout");
 
       Logger.info(`Workspace ${workspace.name} rejected by admin ${currentUser.username}`);
 
@@ -194,6 +194,37 @@ class WorkspaceAction extends BaseAction {
       };
     }
   }
+
+  /**
+   * Get pending workspace count for admin sidebar badge
+   * @returns {Promise<Object>} Result object with count data
+   */
+  static async getPendingCount() {
+    try {
+      // Ensure user is authenticated and has admin privileges
+      await Session.requireAuth();
+
+      // Get the pending workspace count using WorkspaceService
+      const count = await WorkspaceService.getPendingWorkspacesCount();
+
+      Logger.info(`Retrieved pending workspace count: ${count}`, "Workspace count fetched");
+
+      return {
+        success: true,
+        type: "success",
+        data: { count },
+        message: "Pending workspace count retrieved successfully",
+      };
+    } catch (error) {
+      Logger.error(error.message, "Failed to get pending workspace count");
+
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to get pending workspace count"] },
+      };
+    }
+  }
 }
 
 export async function createWorkspace(prevState, formData) {
@@ -206,4 +237,8 @@ export async function approveWorkspace(workspaceId) {
 
 export async function rejectWorkspace(workspaceId) {
   return await WorkspaceAction.reject(workspaceId);
+}
+
+export async function getPendingWorkspaceCount() {
+  return await WorkspaceAction.getPendingCount();
 }

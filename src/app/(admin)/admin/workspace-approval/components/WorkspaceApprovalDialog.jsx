@@ -15,6 +15,7 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { approveWorkspace } from "@/system/Actions/WorkspaceAction";
 import { toast } from "sonner";
 import Logger from "@/lib/Logger";
+import { useAdminRefresh } from "@/components/layout/admin/AdminRefreshContext";
 
 /**
  * Workspace Approval Confirmation Dialog
@@ -25,6 +26,7 @@ import Logger from "@/lib/Logger";
 export default function WorkspaceApprovalDialog({ workspace, trigger, onSuccess }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const { triggerRefresh } = useAdminRefresh();
 
   const handleApprove = () => {
     startTransition(async () => {
@@ -32,21 +34,14 @@ export default function WorkspaceApprovalDialog({ workspace, trigger, onSuccess 
         const result = await approveWorkspace(workspace.id);
 
         if (result.success) {
-          toast.success("Workspace Approved", {
-            description: result.message,
-            duration: 5000,
-          });
-
           setIsOpen(false);
-
-          // Call onSuccess callback to refresh the data
-          if (onSuccess) {
-            onSuccess();
-          }
+          toast.success("Workspace Approved", result.message);
+          // Trigger refresh to update sidebar badge and other admin data
+          triggerRefresh();
         } else {
-          const errorMessage = result.errors?._form?.[0] || "Failed to approve workspace";
+          // Keep error toast for debugging
           toast.error("Approval Failed", {
-            description: errorMessage,
+            description: result.errors?._form?.[0] || "Failed to approve workspace",
             duration: 5000,
           });
         }
@@ -74,15 +69,13 @@ export default function WorkspaceApprovalDialog({ workspace, trigger, onSuccess 
             Approve Workspace
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-2">
-            <p>
-              Are you sure you want to approve the workspace{" "}
-              <span className="font-semibold text-foreground">&quot;{workspace.name}&quot;</span>?
-            </p>
-            <p className="text-sm">
+            Are you sure you want to approve the workspace{" "}
+            <span className="font-semibold text-foreground">&quot;{workspace.name}&quot;</span>?
+            <span className="text-sm block mt-2">
               This action will activate the workspace and allow the owner{" "}
               <span className="font-medium text-foreground">{workspace.owner?.username}</span> to
               start using it immediately.
-            </p>
+            </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
 

@@ -15,6 +15,7 @@ import { useActiveSection } from "../ActiveSectionContext";
 import { useEffect } from "react";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 import { usePendingWorkspaceCount } from "./hooks/usePendingWorkspaceCount";
+import { useAdminRefresh } from "@/components/layout/admin/AdminRefreshContext";
 
 /**
  * Workspace Management Section Component
@@ -27,7 +28,8 @@ import { usePendingWorkspaceCount } from "./hooks/usePendingWorkspaceCount";
 export default function WorkspaceManagementSection({ sectionId }) {
   const pathname = usePathname();
   const { setActive, isActive } = useActiveSection();
-  const { count: pendingCount, isLoading } = usePendingWorkspaceCount();
+  const { refreshTrigger } = useAdminRefresh();
+  const { count: pendingCount, isLoading } = usePendingWorkspaceCount(refreshTrigger);
 
   // Set active section based on current path
   useEffect(() => {

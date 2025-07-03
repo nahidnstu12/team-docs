@@ -63,4 +63,8 @@ export class BaseModel {
   static async findFirst({ where, include = {} }) {
     return await this.model.findFirst({ ...(where && { where }), ...(include && { include }) });
   }
+
+  static async count({ where }) {
+    return await this.model.count({ ...(where && { where }) });
+  }
 }

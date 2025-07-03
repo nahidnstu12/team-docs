@@ -1,50 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
+import { getPendingWorkspaceCount } from "@/system/Actions/WorkspaceAction";
 
 /**
  * Custom hook to fetch and manage pending workspace count
- * Used in the admin sidebar to show real-time badge count
+ * Used in the admin sidebar to show badge count
+ * Uses server action instead of API route for better performance
+ * Refreshes on page load and when refresh trigger changes
  */
-export function usePendingWorkspaceCount() {
+export function usePendingWorkspaceCount(refreshTrigger = 0) {
   const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        setIsLoading(true);
-        
-        // Create a server action to get the count
-        const response = await fetch("/api/admin/workspace-count", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        // Call server action to get the count
+        const result = await getPendingWorkspaceCount();
 
-        if (response.ok) {
-          const data = await response.json();
-          setCount(data.count || 0);
+        if (result && result.success) {
+          const newCount = result.data?.count || 0;
+          setCount(newCount);
         } else {
-          console.error("Failed to fetch pending workspace count");
+          console.error(
+            "Failed to fetch pending workspace count:",
+            result?.errors || "Unknown error"
+          );
           setCount(0);
         }
       } catch (error) {
         console.error("Error fetching pending workspace count:", error);
         setCount(0);
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    fetchCount();
+    // Fetch count when component mounts or refresh trigger changes
+    startTransition(() => {
+      fetchCount();
+    });
+  }, [refreshTrigger]); // Re-run when refreshTrigger changes
 
-    // Set up polling to refresh count every 30 seconds
-    const interval = setInterval(fetchCount, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return { count, isLoading };
+  return { count, isLoading: isPending };
 }

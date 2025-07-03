@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminSidebar from "@/components/layout/admin/AdminSidebar";
 import AdminHeader from "@/components/layout/admin/AdminHeader";
-import { Toaster } from "@/components/ui/sonner";
+import { AdminRefreshProvider } from "@/components/layout/admin/AdminRefreshContext";
 
 /**
  * Conditional Admin Layout Component
@@ -21,17 +21,16 @@ export default function ConditionalAdminLayout({ children, defaultOpen, user }) 
   const pathname = usePathname();
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
-      <div className="flex min-h-screen w-full admin-sidebar">
-        <AdminSidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <AdminHeader user={user} />
-          <main className="flex-1 overflow-auto bg-background">
-            <Toaster position="top-right" richColors />
-            {children}
-          </main>
+    <AdminRefreshProvider>
+      <SidebarProvider defaultOpen={defaultOpen}>
+        <div className="flex min-h-screen w-full admin-sidebar">
+          <AdminSidebar />
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <AdminHeader user={user} />
+            <main className="flex-1 overflow-auto bg-background">{children}</main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </AdminRefreshProvider>
   );
 }
