@@ -33,4 +33,85 @@ export class WorkspaceService extends BaseService {
       return null;
     }
   }
+
+  /**
+   * Get all pending workspaces with owner information for admin approval
+   * @returns {Array} Array of pending workspaces with owner details
+   */
+  static async getPendingWorkspaces() {
+    try {
+      const pendingWorkspaces = await WorkspaceModel.findMany({
+        where: { status: "PENDING" },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              createdAt: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return this.dto.toCollection(pendingWorkspaces);
+    } catch (error) {
+      Logger.error(error.message, "Get pending workspaces failed");
+      return [];
+    }
+  }
+
+  /**
+   * Get count of pending workspaces for badge display
+   * @returns {number} Count of pending workspaces
+   */
+  static async getPendingWorkspacesCount() {
+    try {
+      const count = await WorkspaceModel.count({
+        where: { status: "PENDING" },
+      });
+      return count;
+    } catch (error) {
+      Logger.error(error.message, "Get pending workspaces count failed");
+      return 0;
+    }
+  }
+
+  /**
+   * Get detailed workspace information including owner details
+   * @param {string} workspaceId - The workspace ID
+   * @returns {Object|null} Detailed workspace information or null if not found
+   */
+  static async getWorkspaceDetails(workspaceId) {
+    try {
+      const workspace = await WorkspaceModel.findUnique({
+        where: { id: workspaceId },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+              createdAt: true,
+              status: true,
+            },
+          },
+          _count: {
+            select: {
+              members: true,
+              projects: true,
+            },
+          },
+        },
+      });
+
+      if (!workspace) return null;
+
+      return this.dto.toResponse(workspace);
+    } catch (error) {
+      Logger.error(error.message, "Get workspace details failed");
+      return null;
+    }
+  }
 }

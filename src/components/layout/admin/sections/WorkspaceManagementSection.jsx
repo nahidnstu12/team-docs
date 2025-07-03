@@ -7,13 +7,14 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Building, CheckCircle, Clock, Settings } from "lucide-react";
+import { Building, Clock, Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useActiveSection } from "../ActiveSectionContext";
 import { useEffect } from "react";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
+import { usePendingWorkspaceCount } from "./hooks/usePendingWorkspaceCount";
 
 /**
  * Workspace Management Section Component
@@ -26,6 +27,7 @@ import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 export default function WorkspaceManagementSection({ sectionId }) {
   const pathname = usePathname();
   const { setActive, isActive } = useActiveSection();
+  const { count: pendingCount, isLoading } = usePendingWorkspaceCount();
 
   // Set active section based on current path
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function WorkspaceManagementSection({ sectionId }) {
       icon: Clock,
       href: "/admin/workspace-approval",
       description: "Review and approve pending workspace requests",
-      badge: "3", // Dummy count for demonstration
+      badge: isLoading ? "..." : pendingCount > 0 ? pendingCount.toString() : null,
       badgeVariant: "destructive",
     },
     {

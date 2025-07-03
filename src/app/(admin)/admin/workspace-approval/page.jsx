@@ -2,50 +2,32 @@ import { Session } from "@/lib/Session";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock, User, Calendar, Eye } from "lucide-react";
+import { CheckCircle, XCircle, Clock, User, Calendar, Eye, Mail } from "lucide-react";
+import { WorkspaceService } from "@/system/Services/WorkspaceService";
+import WorkspaceDetailsDialog from "./components/WorkspaceDetailsDialog";
+import WorkspaceApprovalDialog from "./components/WorkspaceApprovalDialog";
+import WorkspaceRejectionDialog from "./components/WorkspaceRejectionDialog";
+import { revalidatePath } from "next/cache";
+import Logger from "@/lib/Logger";
 
 /**
  * Workspace Approval Page
  *
  * Admin page for managing workspace approval requests.
- * Currently shows dummy content as placeholder for future implementation.
+ * Fetches real pending workspaces from database and provides approval/rejection functionality.
  */
 export default async function WorkspaceApprovalPage() {
   // Ensure user is authenticated (layout handles admin check)
   await Session.requireAuth();
 
-  // Dummy data for demonstration
-  const pendingWorkspaces = [
-    {
-      id: "1",
-      name: "Acme Corporation",
-      description:
-        "A leading technology company focused on innovative solutions for modern businesses.",
-      ownerName: "John Doe",
-      ownerEmail: "john.doe@acme.com",
-      createdAt: "2024-01-15T10:30:00Z",
-      status: "pending",
-    },
-    {
-      id: "2",
-      name: "TechStart Inc",
-      description: "Startup company developing cutting-edge mobile applications.",
-      ownerName: "Jane Smith",
-      ownerEmail: "jane.smith@techstart.com",
-      createdAt: "2024-01-14T14:20:00Z",
-      status: "pending",
-    },
-    {
-      id: "3",
-      name: "Creative Agency",
-      description:
-        "Full-service creative agency specializing in brand development and digital marketing.",
-      ownerName: "Mike Johnson",
-      ownerEmail: "mike@creativeagency.com",
-      createdAt: "2024-01-13T09:15:00Z",
-      status: "pending",
-    },
-  ];
+  // Fetch pending workspaces from database
+  const pendingWorkspaces = await WorkspaceService.getPendingWorkspaces();
+
+  // Function to refresh the page data after approval/rejection
+  const refreshData = async () => {
+    "use server";
+    revalidatePath("/admin/workspace-approval");
+  };
 
   return (
     <div className="p-8 space-y-8">
@@ -78,7 +60,7 @@ export default async function WorkspaceApprovalPage() {
           pendingWorkspaces.map((workspace) => (
             <Card key={workspace.id} className="p-4 hover:shadow-lg transition-shadow">
               <div className="flex gap-6">
-                <div className="w-4/5">
+                <div className="w-[95%]">
                   <CardHeader className="p-0 pb-3">
                     <div className="space-y-3">
                       <CardTitle className="flex items-center gap-3 text-2xl">
@@ -92,7 +74,7 @@ export default async function WorkspaceApprovalPage() {
                         </Badge>
                       </CardTitle>
                       <CardDescription className="text-base leading-relaxed min-h-20">
-                        {workspace.description}
+                        {workspace.description || "No description provided"}
                       </CardDescription>
                     </div>
                   </CardHeader>
@@ -101,11 +83,11 @@ export default async function WorkspaceApprovalPage() {
                     <div className="flex items-center gap-6 text-base text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <User className="h-5 w-5" />
-                        <span>{workspace.ownerName}</span>
+                        <span>{workspace.owner?.username}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span>•</span>
-                        <span>{workspace.ownerEmail}</span>
+                        <Mail className="h-5 w-5" />
+                        <span>{workspace.owner?.email}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
@@ -115,30 +97,52 @@ export default async function WorkspaceApprovalPage() {
                   </CardContent>
                 </div>
 
-                <div className="w-1/5 flex flex-col items-center justify-center gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base w-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  >
-                    <CheckCircle className="h-5 w-5 mr-2 ml-4" />
-                    <span className="font-medium">Approve</span>
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="destructive"
-                    className="px-6 py-3 text-base w-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  >
-                    <XCircle className="h-5 w-5 mr-2" />
-                    <span className="font-medium">Reject</span>
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="px-6 py-3 text-base w-full flex items-center justify-center shadow-md hover:shadow-lg border-2 transition-all duration-200 transform hover:scale-105 bg-white hover:bg-gray-50"
-                  >
-                    <Eye className="h-5 w-5 mr-2" />
-                    <span className="font-medium">Details</span>
-                  </Button>
+                <div className="w-[10%] flex flex-col items-center justify-center gap-4">
+                  {/* Approve Button with Dialog */}
+                  <WorkspaceApprovalDialog
+                    workspace={workspace}
+                    onSuccess={refreshData}
+                    trigger={
+                      <Button
+                        size="lg"
+                        className="bg-green-600 hover:bg-green-700 px-6 py-3 text-base w-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                      >
+                        <CheckCircle className="h-5 w-5 mr-1 translate-x-2" />
+                        <span className="font-medium pl-2">Approve</span>
+                      </Button>
+                    }
+                  />
+
+                  {/* Reject Button with Dialog */}
+                  <WorkspaceRejectionDialog
+                    workspace={workspace}
+                    onSuccess={refreshData}
+                    trigger={
+                      <Button
+                        size="lg"
+                        variant="destructive"
+                        className="px-6 py-3 text-base w-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                      >
+                        <XCircle className="h-5 w-5 mr-0 -translate-x-2" />
+                        <span className="font-medium">Reject</span>
+                      </Button>
+                    }
+                  />
+
+                  {/* Details Button with Dialog */}
+                  <WorkspaceDetailsDialog
+                    workspace={workspace}
+                    trigger={
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="px-6 py-3 text-base w-full flex items-center justify-center shadow-md hover:shadow-lg border-2 transition-all duration-200 transform hover:scale-105 bg-white hover:bg-gray-50"
+                      >
+                        <Eye className="h-5 w-5 mr-0 -translate-x-2" />
+                        <span className="font-medium">Details</span>
+                      </Button>
+                    }
+                  />
                 </div>
               </div>
             </Card>
