@@ -111,7 +111,7 @@ model Workspace {
   slug        String // URL-friendly identifier
   description String?
   logo        String? // URL to logo image
-  status      String   @default("inactive") // New field for registration status
+  status      WorkspaceStatus   @default(PENDING) // New field for registration status
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   ownerId     String   @unique
@@ -126,6 +126,12 @@ model Workspace {
 
   @@unique([ownerId, slug]) // ✅ slug must be unique only within this owner
   @@index([ownerId])
+}
+
+enum WorkspaceStatus {
+  ACTIVE
+  PENDING
+  INACTIVE
 }
 
 model WorkspaceMember {
@@ -160,6 +166,7 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   isArchived  Boolean  @default(false)
+  status      ProjectStatus @default(ACTIVE)
 
   // Relationships
   workspace       Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -171,6 +178,12 @@ model Project {
   @@unique([slug, name, ownerId])
   @@index([workspaceId])
   @@index([ownerId])
+}
+
+enum ProjectStatus {
+  ACTIVE
+  PENDING
+  INACTIVE
 }
 
 model ProjectMember {
