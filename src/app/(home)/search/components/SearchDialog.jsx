@@ -10,7 +10,7 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, FileText, Folder, File } from "lucide-react";
@@ -156,9 +156,9 @@ export default function SearchDialog({ open, onOpenChange }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
+        <DialogTitle className="text-lg font-semibold">Search</DialogTitle>
         <div className="space-y-4">
           <div className="space-y-2">
-            <h2 className="text-lg font-semibold">Search</h2>
             <Input
               placeholder="Search within projects, sections, pages..."
               value={query}
