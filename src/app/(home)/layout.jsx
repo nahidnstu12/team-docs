@@ -7,14 +7,35 @@ import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 
 export default async function HomeLayout({ children }) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  console.log(`[DEBUG] HomeLayout START - rendering server layout`);
 
-  // Fetch workspace data for the header
-  const workspaceId = await Session.getWorkspaceIdForUser();
-  const workspace = workspaceId
-    ? await WorkspaceService.getResource({ where: { id: workspaceId } })
-    : null;
+  let workspace = null;
+  let defaultOpen = false;
+
+  try {
+    const cookieStore = await cookies();
+    defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+    console.log(`[DEBUG] HomeLayout - defaultOpen: ${defaultOpen}`);
+
+    // Fetch workspace data for the header
+    const workspaceId = await Session.getWorkspaceIdForUser();
+    console.log(`[DEBUG] HomeLayout - workspaceId: ${workspaceId}`);
+
+    workspace = workspaceId
+      ? await WorkspaceService.getResource({ where: { id: workspaceId } })
+      : null;
+    console.log(`[DEBUG] HomeLayout - workspace:`, workspace?.name || "null");
+  } catch (error) {
+    console.error(`[DEBUG] HomeLayout ERROR:`, error);
+    // Continue with null workspace if there's an error
+    workspace = null;
+    defaultOpen = false;
+  }
+
+  console.log(`[DEBUG] HomeLayout - About to render ConditionalHomeLayout with:`, {
+    defaultOpen,
+    workspaceName: workspace?.name || "null",
+  });
 
   return (
     <SessionProvider>

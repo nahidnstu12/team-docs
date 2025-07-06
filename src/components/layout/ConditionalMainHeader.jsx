@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { SidebarTrigger } from "../ui/sidebar";
 import ProjectNameDisplay from "./ProjectNameDisplay";
+import SearchButton from "@/app/(home)/search/components/SearchButton";
 import { useEffect, useState } from "react";
 
 /**
@@ -13,6 +14,8 @@ import { useEffect, useState } from "react";
 export default function ConditionalMainHeader({ workspace }) {
   const pathname = usePathname();
   const [isAssignDevRoute, setIsAssignDevRoute] = useState(false);
+
+  console.log(`[DEBUG] ConditionalMainHeader render - pathname: ${pathname}`);
 
   useEffect(() => {
     // Check if current route is an assign-dev route
@@ -26,10 +29,14 @@ export default function ConditionalMainHeader({ workspace }) {
         <SidebarTrigger />
         <div className="flex items-center gap-2">
           <h1 className="text-xl font-semibold">{workspace?.name || "workspace name"}</h1>
-          {isAssignDevRoute && (
-            <ProjectNameDisplay />
-          )}
+          {isAssignDevRoute && <ProjectNameDisplay />}
         </div>
+      </div>
+
+      {/* Search button - only show in main layout */}
+      <div className="flex items-center">
+        {console.log(`[DEBUG] ConditionalMainHeader - rendering SearchButton`)}
+        <SearchButton />
       </div>
     </header>
   );
