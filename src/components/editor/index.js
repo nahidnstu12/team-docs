@@ -122,7 +122,13 @@ export const CompleteEditor = ({
   ...props
 }) => {
   return (
-    <EditorProvider config={config} onSave={onSave} onChange={onChange} autoSave={false}>
+    <EditorProvider
+      key={`editor-${instanceId}-${editable}-${showBubbleMenu}`}
+      config={config}
+      onSave={onSave}
+      onChange={onChange}
+      autoSave={false}
+    >
       <Editor
         instanceId={instanceId}
         initialContent={initialContent}

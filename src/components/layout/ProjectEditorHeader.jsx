@@ -45,13 +45,13 @@ export default function ProjectEditorHeader({
       <div id="project-header" className="flex items-center w-full min-h-12 py-2">
         <SidebarTrigger />
 
-        <div className="flex items-end gap-2 pl-3">
+        <div className="flex items-start gap-2 pl-3">
           <h1 className="text-3xl font-semibold cursor-pointer" onClick={handleRedirect}>
             {projectName || "Project Name"}
           </h1>
 
           {/* Section and Page badges - positioned to the right of project name, slightly higher */}
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-1 mb-1">
             {selectedSectionData && (
               <Badge variant="secondary" className="text-xs h-4 px-2 py-0">
                 {selectedSectionData.name}
