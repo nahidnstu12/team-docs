@@ -12,62 +12,140 @@ import { navigateToSearchResult } from "../utils/searchNavigation";
 import { motion } from "framer-motion";
 
 /**
- * SearchDialog component provides global search functionality
- * Uses Shadcn Command component for search UI with real-time results
+ * SearchDialog Component - Global Search Interface
+ *
+ * This component provides a comprehensive search interface that allows users to search
+ * across projects, sections, and pages within their workspace. It implements:
+ *
+ * FEATURES:
+ * - Real-time search with 300ms debouncing for performance
+ * - Full-text search across projects, sections, and pages
+ * - Minimum 2-character requirement with user feedback
+ * - Search result highlighting with matched text
+ * - Intelligent navigation with Zustand store integration
+ * - Responsive design with mobile-first approach
+ * - Keyboard accessibility and shortcuts
+ * - Loading states and error handling
+ * - Framer Motion animations for smooth UX
+ *
+ * ARCHITECTURE:
+ * - Uses React useTransition for non-blocking search operations
+ * - Integrates with SearchService via server actions
+ * - Manages local state for query, results, loading, and errors
+ * - Utilizes Zustand store for project/section/page navigation state
+ * - Implements proper cleanup and memory management
+ *
+ * SEARCH FLOW:
+ * 1. User types in search input (debounced 300ms)
+ * 2. Validates minimum 2 characters
+ * 3. Calls searchAction server function
+ * 4. SearchService performs PostgreSQL full-text search
+ * 5. Results formatted and displayed with highlighting
+ * 6. User clicks result → navigateToSearchResult handles routing + state
+ *
+ * @param {boolean} open - Controls dialog visibility
+ * @param {function} onOpenChange - Callback for dialog state changes
  */
 export default function SearchDialog({ open, onOpenChange }) {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [isSearching, startTransition] = useTransition();
-  const [error, setError] = useState(null);
+  // ===== STATE MANAGEMENT =====
+  const [query, setQuery] = useState(""); // Current search query
+  const [results, setResults] = useState([]); // Search results array
+  const [isSearching, startTransition] = useTransition(); // Non-blocking search state
+  const [error, setError] = useState(null); // Error message state
 
-  const router = useRouter();
-  const { setSelectedSection, setSelectedPage } = useProjectStore();
+  // ===== HOOKS & DEPENDENCIES =====
+  const router = useRouter(); // Next.js navigation
+  const { setSelectedSection, setSelectedPage } = useProjectStore(); // Zustand store for editor state
 
+  // ===== SEARCH LOGIC =====
   /**
-   * Perform search using server action
+   * Perform search using server action with error handling
+   *
+   * IMPLEMENTATION DETAILS:
+   * - Uses React useTransition for non-blocking UI updates
+   * - Calls searchAction server function with query and options
+   * - Handles both success and error states appropriately
+   * - Limits results to 15 for optimal UI performance
+   * - Clears previous results on new search or error
+   *
+   * FLOW:
+   * 1. Wrap search in startTransition for concurrent features
+   * 2. Call searchAction with query and limit options
+   * 3. Process response and update local state
+   * 4. Handle errors gracefully with user-friendly messages
+   *
+   * @param {string} searchQuery - The search term to query
    */
   const performSearch = useCallback(async (searchQuery) => {
     try {
-      // Start transition for the async operation
+      // Use React 18 concurrent features for non-blocking search
       const response = await new Promise((resolve) => {
         startTransition(async () => {
+          // Call server action with search parameters
           const result = await searchAction(searchQuery, { limit: 15 });
           resolve(result);
         });
       });
 
+      // Process successful response
       if (response.success) {
-        setResults(response.data);
-        setError(null);
+        setResults(response.data); // Update results state
+        setError(null); // Clear any previous errors
       } else {
+        // Handle server-side errors
         setError(response.error || "Search failed");
-        setResults([]);
+        setResults([]); // Clear results on error
       }
     } catch (err) {
+      // Handle client-side errors (network, parsing, etc.)
       setError("Search failed. Please try again.");
       setResults([]);
     }
   }, []);
 
-  // Debounced search effect
+  // ===== DEBOUNCED SEARCH EFFECT =====
+  /**
+   * Debounced search effect with validation and cleanup
+   *
+   * DEBOUNCING STRATEGY:
+   * - 300ms delay to prevent excessive API calls while typing
+   * - Clears previous timeout on each keystroke
+   * - Only triggers search after user stops typing
+   *
+   * VALIDATION LOGIC:
+   * - Empty queries: Clear results and errors
+   * - Short queries (<2 chars): Show helpful error message
+   * - Valid queries: Trigger debounced search
+   *
+   * PERFORMANCE OPTIMIZATIONS:
+   * - Cleanup timeout on component unmount
+   * - Trim whitespace to avoid unnecessary searches
+   * - Early returns to prevent unnecessary processing
+   *
+   * @dependency {string} query - Search input value
+   * @dependency {function} performSearch - Memoized search function
+   */
   useEffect(() => {
+    // Handle empty query - reset state
     if (!query.trim()) {
       setResults([]);
       setError(null);
       return;
     }
 
+    // Validate minimum character requirement
     if (query.trim().length < 2) {
       setResults([]);
       setError("Please enter at least 2 characters to search");
       return;
     }
 
+    // Debounce search to prevent excessive API calls
     const timeoutId = setTimeout(() => {
       performSearch(query.trim());
-    }, 300); // 300ms debounce
+    }, 300); // 300ms debounce delay
 
+    // Cleanup function to prevent memory leaks
     return () => {
       clearTimeout(timeoutId);
     };

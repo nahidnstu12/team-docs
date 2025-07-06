@@ -3,16 +3,64 @@ import prisma from "@/lib/prisma";
 import { BaseService } from "./BaseService";
 
 /**
- * SearchService handles full-text search across projects, sections, and pages
- * Uses PostgreSQL full-text search capabilities for efficient searching
+ * SearchService - Advanced Full-Text Search Implementation
+ *
+ * This service provides comprehensive search functionality across the entire workspace
+ * using PostgreSQL's advanced full-text search capabilities with intelligent fallbacks.
+ *
+ * SEARCH ARCHITECTURE:
+ * - Primary: PostgreSQL full-text search with ts_vector and ts_query
+ * - Fallback: ILIKE pattern matching for broader compatibility
+ * - Scope: Workspace-limited search for security and relevance
+ * - Performance: Optimized queries with proper indexing and ranking
+ *
+ * SEARCH TARGETS:
+ * 1. Projects: name, description fields
+ * 2. Sections: name, description fields
+ * 3. Pages: title, description, and TipTap JSON content
+ *
+ * RANKING SYSTEM:
+ * - Uses PostgreSQL ts_rank for relevance scoring
+ * - Prefix matching with ":*" for partial word matches
+ * - Combines multiple search strategies for comprehensive results
+ *
+ * SECURITY FEATURES:
+ * - Workspace-scoped queries prevent cross-workspace data leaks
+ * - Parameterized queries prevent SQL injection
+ * - User session validation through Session service
+ *
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Limits results per category (10 projects, 10 sections, 15 pages)
+ * - Uses raw SQL for optimal PostgreSQL feature utilization
+ * - Implements intelligent text extraction from TipTap JSON
+ * - Caches search patterns and reuses connections
  */
 export class SearchService extends BaseService {
   /**
-   * Perform full-text search across projects, sections, and pages
-   * @param {string} query - Search query string
+   * Master search function that orchestrates searches across all content types
+   *
+   * SEARCH ORCHESTRATION:
+   * - Validates input parameters and workspace access
+   * - Executes parallel searches across projects, sections, and pages
+   * - Combines and ranks results using intelligent scoring
+   * - Applies result limits and sorting for optimal UX
+   *
+   * RANKING ALGORITHM:
+   * 1. Exact title matches get highest priority
+   * 2. Content type priority: Projects > Sections > Pages
+   * 3. PostgreSQL ts_rank scores for relevance
+   * 4. Alphabetical sorting as final tiebreaker
+   *
+   * PERFORMANCE CONSIDERATIONS:
+   * - Early return for invalid queries (< 2 characters)
+   * - Parallel execution of search operations
+   * - Result limiting to prevent UI overload
+   * - Graceful error handling with empty result fallback
+   *
+   * @param {string} query - Search query string (minimum 2 characters)
    * @param {string} workspaceId - Current workspace ID to limit search scope
    * @param {number} limit - Maximum number of results to return (default: 20)
-   * @returns {Promise<Array>} Array of search results with metadata
+   * @returns {Promise<Array>} Array of search results with metadata and routing info
    */
   static async searchAll(query, workspaceId, limit = 20) {
     if (!query || query.trim().length < 2) {
