@@ -11,29 +11,14 @@ import ConditionalMainHeader from "@/components/layout/ConditionalMainHeader";
  * by ensuring layout conditions are re-evaluated on client-side navigation.
  */
 export default function ConditionalHomeLayout({ children, defaultOpen, workspace }) {
-  try {
-    console.log(`[DEBUG] ConditionalHomeLayout START - props:`, {
-      defaultOpen,
-      workspace: workspace?.name,
-    });
+  const pathname = usePathname();
 
-    const pathname = usePathname();
-    console.log(`[DEBUG] ConditionalHomeLayout render - pathname: ${pathname}`);
+  // Check if current page is an editor page
+  const isEditorPage = pathname?.includes("/projects/") && pathname?.includes("/editor");
 
-    // Check if current page is an editor page
-    const isEditorPage = pathname?.includes("/projects/") && pathname?.includes("/editor");
-    console.log(`[DEBUG] ConditionalHomeLayout - isEditorPage: ${isEditorPage}`);
-
-    // For editor pages, return children without the home layout
-    if (isEditorPage) {
-      console.log(`[DEBUG] ConditionalHomeLayout - Returning editor layout (no header)`);
-      return children;
-    }
-
-    console.log(`[DEBUG] ConditionalHomeLayout - Rendering main layout with header`);
-  } catch (error) {
-    console.error(`[DEBUG] ConditionalHomeLayout ERROR:`, error);
-    return <div>Layout Error: {error.message}</div>;
+  // For editor pages, return children without the home layout
+  if (isEditorPage) {
+    return children;
   }
 
   // For non-editor pages, render the full home layout

@@ -27,38 +27,22 @@ export class SearchService extends BaseService {
         `Searching for: "${searchTerm}" in workspace: ${workspaceId}`,
         "SearchService.searchAll"
       );
-      console.log(`[DEBUG] SearchService.searchAll - Starting search for: "${searchTerm}"`);
 
       // Search in projects
       const projectResults = await this.searchProjects(searchTerm, workspaceId);
-      console.log(
-        `[DEBUG] SearchService.searchAll - Found ${projectResults.length} projects:`,
-        projectResults
-      );
       results.push(...projectResults);
 
       // Search in sections
       const sectionResults = await this.searchSections(searchTerm, workspaceId);
-      console.log(
-        `[DEBUG] SearchService.searchAll - Found ${sectionResults.length} sections:`,
-        sectionResults
-      );
       results.push(...sectionResults);
 
       // Search in pages
       const pageResults = await this.searchPages(searchTerm, workspaceId);
-      console.log(
-        `[DEBUG] SearchService.searchAll - Found ${pageResults.length} pages:`,
-        pageResults
-      );
       results.push(...pageResults);
 
       Logger.info(
         `Search results - Projects: ${projectResults.length}, Sections: ${sectionResults.length}, Pages: ${pageResults.length}`,
         "SearchService.searchAll"
-      );
-      console.log(
-        `[DEBUG] SearchService.searchAll - Total results before sorting: ${results.length}`
       );
 
       // Sort results by relevance (can be enhanced with ranking)
@@ -104,14 +88,6 @@ export class SearchService extends BaseService {
       // Try full-text search first, fallback to simple LIKE search
       let projects;
       try {
-        // Escape special characters and prepare search term for PostgreSQL full-text search
-        const escapedSearchTerm = searchTerm.replace(/[!&|():*]/g, " ");
-        const prefixSearchTerm = escapedSearchTerm.trim() + ":*";
-
-        console.log(
-          `[DEBUG] SearchService.searchProjects - Original: "${searchTerm}", Escaped: "${escapedSearchTerm}", Prefix: "${prefixSearchTerm}"`
-        );
-
         projects = await prisma.$queryRaw`
           SELECT
             id,
@@ -120,14 +96,14 @@ export class SearchService extends BaseService {
             slug,
             ts_rank(
               to_tsvector('english', COALESCE(name, '') || ' ' || COALESCE(description, '')),
-              to_tsquery('english', ${prefixSearchTerm})
+              to_tsquery('english', ${searchTerm + ":*"})
             ) as rank
           FROM "Project"
           WHERE
             "workspaceId" = ${workspaceId}
             AND (
               to_tsvector('english', COALESCE(name, '') || ' ' || COALESCE(description, ''))
-              @@ to_tsquery('english', ${prefixSearchTerm})
+              @@ to_tsquery('english', ${searchTerm + ":*"})
               OR name ILIKE ${`%${searchTerm}%`}
               OR description ILIKE ${`%${searchTerm}%`}
             )
@@ -162,8 +138,7 @@ export class SearchService extends BaseService {
 
       Logger.info(`Found ${projects.length} projects`, "SearchService.searchProjects");
       console.log(
-        `[DEBUG] SearchService.searchProjects - Found ${projects.length} projects for "${searchTerm}":`,
-        projects.map((p) => ({ id: p.id, name: p.name, description: p.description }))
+        `[DEBUG] SearchService.searchProjects - Found ${projects.length} projects for "${searchTerm}"`
       );
 
       return projects.map((project) => ({

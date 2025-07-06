@@ -15,8 +15,6 @@ export default function ConditionalMainHeader({ workspace }) {
   const pathname = usePathname();
   const [isAssignDevRoute, setIsAssignDevRoute] = useState(false);
 
-  console.log(`[DEBUG] ConditionalMainHeader render - pathname: ${pathname}`);
-
   useEffect(() => {
     // Check if current route is an assign-dev route
     const isAssignDev = pathname?.includes("/projects/") && pathname?.includes("/assign-dev");
@@ -33,9 +31,8 @@ export default function ConditionalMainHeader({ workspace }) {
         </div>
       </div>
 
-      {/* Search button - only show in main layout */}
+      {/* Search button - positioned on the right side */}
       <div className="flex items-center">
-        {console.log(`[DEBUG] ConditionalMainHeader - rendering SearchButton`)}
         <SearchButton />
       </div>
     </header>

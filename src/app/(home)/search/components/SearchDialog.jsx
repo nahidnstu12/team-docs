@@ -2,14 +2,6 @@
 
 import { useState, useEffect, useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from "@/components/ui/command";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -29,10 +21,6 @@ export default function SearchDialog({ open, onOpenChange }) {
   const [isSearching, startTransition] = useTransition();
   const [error, setError] = useState(null);
 
-  console.log(
-    `[DEBUG] SearchDialog component render - open: ${open}, query: "${query}", results.length: ${results.length}`
-  );
-
   const router = useRouter();
   const { setSelectedSection, setSelectedPage } = useProjectStore();
 
@@ -40,52 +28,41 @@ export default function SearchDialog({ open, onOpenChange }) {
    * Perform search using server action
    */
   const performSearch = useCallback(async (searchQuery) => {
-    console.log(`[DEBUG] SearchDialog - Starting search for: "${searchQuery}"`);
+    try {
+      // Start transition for the async operation
+      const response = await new Promise((resolve) => {
+        startTransition(async () => {
+          const result = await searchAction(searchQuery, { limit: 15 });
+          resolve(result);
+        });
+      });
 
-    startTransition(async () => {
-      try {
-        const response = await searchAction(searchQuery, { limit: 15 });
-        console.log(`[DEBUG] SearchDialog - Search response:`, response);
-
-        if (response.success) {
-          console.log(
-            `[DEBUG] SearchDialog - Setting ${response.data.length} results:`,
-            response.data
-          );
-          setResults(response.data);
-          setError(null);
-        } else {
-          console.log(`[DEBUG] SearchDialog - Search failed:`, response.error);
-          setError(response.error || "Search failed");
-          setResults([]);
-        }
-      } catch (err) {
-        console.log(`[DEBUG] SearchDialog - Search error:`, err);
-        setError("Search failed. Please try again.");
+      if (response.success) {
+        setResults(response.data);
+        setError(null);
+      } else {
+        setError(response.error || "Search failed");
         setResults([]);
       }
-    });
+    } catch (err) {
+      setError("Search failed. Please try again.");
+      setResults([]);
+    }
   }, []);
 
   // Debounced search effect
   useEffect(() => {
-    console.log(`[DEBUG] SearchDialog useEffect - query: "${query}", length: ${query.length}`);
-
     if (!query.trim() || query.trim().length < 2) {
-      console.log(`[DEBUG] SearchDialog useEffect - Query too short, clearing results`);
       setResults([]);
       setError(null);
       return;
     }
 
-    console.log(`[DEBUG] SearchDialog useEffect - Setting timeout for search: "${query.trim()}"`);
     const timeoutId = setTimeout(() => {
-      console.log(`[DEBUG] SearchDialog useEffect - Timeout triggered, calling performSearch`);
       performSearch(query.trim());
     }, 300); // 300ms debounce
 
     return () => {
-      console.log(`[DEBUG] SearchDialog useEffect - Clearing timeout`);
       clearTimeout(timeoutId);
     };
   }, [query, performSearch]);
@@ -159,19 +136,20 @@ export default function SearchDialog({ open, onOpenChange }) {
         <DialogTitle className="text-lg font-semibold">Search</DialogTitle>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Input
-              placeholder="Search within projects, sections, pages..."
-              value={query}
-              onChange={(e) => {
-                console.log(`[DEBUG] SearchDialog Input onChange - new value: "${e.target.value}"`);
-                setQuery(e.target.value);
-              }}
-              onFocus={() => console.log(`[DEBUG] SearchDialog Input onFocus`)}
-              onBlur={() => console.log(`[DEBUG] SearchDialog Input onBlur`)}
-              onKeyDown={(e) => console.log(`[DEBUG] SearchDialog Input onKeyDown - key: ${e.key}`)}
-              className="text-base"
-              autoFocus
-            />
+            <div className="relative">
+              <Input
+                placeholder="Search for projects, sections, pages..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="text-base pr-16"
+                autoFocus
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-muted-foreground">
+                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </div>
+            </div>
           </div>
 
           <div className="max-h-[400px] overflow-y-auto">
@@ -195,10 +173,12 @@ export default function SearchDialog({ open, onOpenChange }) {
                     <Search className="w-6 h-6 text-red-500" />
                   </div>
                   <span className="text-sm text-red-600 dark:text-red-400 font-medium">
-                    {error}
+                    {error.includes("2 characters") ? "Minimum 2 characters required" : error}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    Please try again or contact support
+                    {error.includes("2 characters")
+                      ? "Type at least 2 characters to start searching"
+                      : "Please try again or contact support"}
                   </span>
                 </div>
               </div>
@@ -246,54 +226,44 @@ export default function SearchDialog({ open, onOpenChange }) {
             )}
 
             {/* Search results */}
-            {(() => {
-              const shouldShowResults = !isSearching && !error && results.length > 0;
-              console.log(
-                `[DEBUG] SearchDialog render - isSearching: ${isSearching}, error: ${error}, results.length: ${results.length}, shouldShowResults: ${shouldShowResults}`
-              );
-              console.log(`[DEBUG] SearchDialog render - results:`, results);
-              return shouldShowResults;
-            })() && (
+            {!isSearching && !error && results.length > 0 && (
               <div className="space-y-2">
                 <div className="text-sm font-medium text-muted-foreground px-2 py-1">
                   {results.length} results found
                 </div>
-                {results.map((result, index) => {
-                  console.log(`[DEBUG] SearchDialog render - mapping result ${index}:`, result);
-                  return (
-                    <motion.div
-                      key={result.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => handleSelect(result)}
-                      className="flex items-start gap-3 p-4 cursor-pointer hover:bg-accent/70 transition-all duration-200 rounded-lg mx-2 my-1 border border-transparent hover:border-accent hover:shadow-sm"
-                    >
-                      <div className="flex-shrink-0 mt-1">{getResultIcon(result.type)}</div>
+                {results.map((result, index) => (
+                  <motion.div
+                    key={result.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => handleSelect(result)}
+                    className="flex items-start gap-3 p-4 cursor-pointer hover:bg-accent/70 transition-all duration-200 rounded-lg mx-2 my-1 border border-transparent hover:border-accent hover:shadow-sm"
+                  >
+                    <div className="flex-shrink-0 mt-1">{getResultIcon(result.type)}</div>
 
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="secondary"
-                            className="text-xs px-2 py-1 font-medium rounded-full"
-                          >
-                            {result.displayType}
-                          </Badge>
-                        </div>
-
-                        <div className="font-semibold text-sm leading-tight">
-                          {highlightText(result.displayTitle, query)}
-                        </div>
-
-                        {result.displaySubtitle && (
-                          <div className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                            {highlightText(result.displaySubtitle, query)}
-                          </div>
-                        )}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="secondary"
+                          className="text-xs px-2 py-1 font-medium rounded-full"
+                        >
+                          {result.displayType}
+                        </Badge>
                       </div>
-                    </motion.div>
-                  );
-                })}
+
+                      <div className="font-semibold text-sm leading-tight">
+                        {highlightText(result.displayTitle, query)}
+                      </div>
+
+                      {result.displaySubtitle && (
+                        <div className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {highlightText(result.displaySubtitle, query)}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             )}
 
@@ -301,17 +271,23 @@ export default function SearchDialog({ open, onOpenChange }) {
             {!query.trim() && (
               <div className="flex items-center justify-center py-16">
                 <div className="text-center max-w-sm">
-                  <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center mb-6">
-                    <Search className="w-10 h-10 text-blue-500" />
+                  <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center mb-4">
+                    <Search className="w-8 h-8 text-blue-500" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Search Everything</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Start searching</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Find projects, sections, and pages instantly. Start typing to see results.
+                    Type at least 2 characters to search for projects, sections, and pages
                   </p>
-                  <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-                    <span className="px-2 py-1 bg-muted rounded-full">Projects</span>
-                    <span className="px-2 py-1 bg-muted rounded-full">Sections</span>
-                    <span className="px-2 py-1 bg-muted rounded-full">Pages</span>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <span className="text-xs px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full">
+                      Projects
+                    </span>
+                    <span className="text-xs px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-full">
+                      Sections
+                    </span>
+                    <span className="text-xs px-3 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-full">
+                      Pages
+                    </span>
                   </div>
                 </div>
               </div>

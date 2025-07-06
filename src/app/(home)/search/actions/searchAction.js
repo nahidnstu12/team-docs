@@ -35,10 +35,8 @@ export async function searchAction(query, options = {}) {
 
     // Get current workspace ID
     const workspaceId = await Session.getWorkspaceIdForUser();
-    console.log(`[DEBUG] searchAction - Query: "${trimmedQuery}", WorkspaceId: ${workspaceId}`);
 
     if (!workspaceId) {
-      console.log(`[DEBUG] searchAction - No workspace found`);
       return {
         success: false,
         data: [],
@@ -49,10 +47,6 @@ export async function searchAction(query, options = {}) {
     // Perform search
     const { limit = 20 } = options;
     const searchResults = await SearchService.searchAll(trimmedQuery, workspaceId, limit);
-    console.log(
-      `[DEBUG] searchAction - SearchService returned ${searchResults.length} results:`,
-      searchResults
-    );
 
     // Format results for UI consumption
     const formattedResults = searchResults.map((result) => ({
@@ -68,11 +62,6 @@ export async function searchAction(query, options = {}) {
       displayTitle: getDisplayTitle(result),
       displaySubtitle: getDisplaySubtitle(result),
     }));
-
-    console.log(
-      `[DEBUG] searchAction - Formatted ${formattedResults.length} results:`,
-      formattedResults
-    );
 
     return {
       success: true,
