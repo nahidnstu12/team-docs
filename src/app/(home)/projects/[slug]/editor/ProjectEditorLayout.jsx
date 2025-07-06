@@ -3,7 +3,7 @@
 import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
 import NoSectionUI from "./components/NoSectionUI";
 import NoPageSelectedUI from "./components/NoPageSelectedUI";
-import { EditorService } from "@/components/editor";
+import { EditorService, useEditorContent } from "@/components/editor";
 import dynamic from "next/dynamic";
 
 // Dynamically import the CompleteEditor to prevent SSR issues
@@ -23,7 +23,6 @@ const CompleteEditor = dynamic(
 );
 import { useProjectStore } from "../../store/useProjectStore";
 import { usePreviewStore } from "./store/usePreviewStore";
-import { fetchPageContent } from "./actions/fetchPageContent";
 import { toast } from "sonner";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { Spinner } from "@/components/ui/spinner";
@@ -32,87 +31,57 @@ import { Spinner } from "@/components/ui/spinner";
  * Enhanced Editor Component with Store Integration
  * Wraps the new TipTap editor with existing store and action integration
  */
-function EnhancedEditor({ pageId }) {
-  const [pageContent, setPageContent] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+function EnhancedEditor({ pageId, onSaveStateChange }) {
   const isPreviewMode = usePreviewStore((state) => state.isPageInPreviewMode(pageId));
 
-  // Handle content saving (manual save - shows toast)
-  const handleSave = useCallback(
-    async (content) => {
-      try {
-        await EditorService.saveContent({
-          pageId,
-          content,
-          showToast: true, // Show toast for manual saves
-        });
-      } catch (error) {
-        console.error("❌ Error saving content:", error);
-        // Error toast is handled by EditorService when showToast=true
-      }
+  // Use the editor content hook for content management and save state tracking
+  const { content, isLoading, isSaving, hasUnsavedChanges, saveContent, updateContent } =
+    useEditorContent({
+      pageId,
+      autoSave: false, // Manual save only
+      onSave: async (content) => {
+        // Handle manual save with toast
+        try {
+          await EditorService.saveContent({
+            pageId,
+            content,
+            showToast: true, // Show toast for manual saves
+          });
+        } catch (error) {
+          console.error("❌ Error saving content:", error);
+          // Error toast is handled by EditorService when showToast=true
+        }
+      },
+    });
+
+  // Handle content changes
+  const handleChange = useCallback(
+    (newContent) => {
+      updateContent(newContent);
     },
-    [pageId]
+    [updateContent]
   );
 
-  // Handle content changes - memoized to prevent infinite loops
-  const handleChange = useCallback((content) => {
-    setPageContent(content);
-  }, []);
+  // Handle manual save
+  const handleSave = useCallback(async () => {
+    if (content) {
+      await saveContent(content);
+    } else {
+      toast.error("No content available to save");
+    }
+  }, [content, saveContent]);
 
-  // Register save handler with project store
+  // Register save handler with project store and notify parent of save state changes
   useEffect(() => {
     if (pageId) {
-      useProjectStore.getState().setSaveHandler(() => {
-        // Save the current content
-        if (pageContent) {
-          handleSave(pageContent);
-        } else {
-          toast.error("No content available to save");
-        }
-      });
-    }
-  }, [pageId, pageContent, handleSave]);
+      useProjectStore.getState().setSaveHandler(handleSave);
 
-  // Load page content
-  useEffect(() => {
-    let isMounted = true;
-
-    async function getPageContent() {
-      if (!pageId) return;
-
-      try {
-        setIsLoading(true);
-        const pageData = await fetchPageContent(pageId);
-
-        if (!isMounted) return;
-
-        if (pageData?.content) {
-          try {
-            // Try to parse content as json
-            const parsedContent = JSON.parse(pageData.content);
-            setPageContent(parsedContent);
-          } catch (error) {
-            // If parsing fails, use the raw content
-            setPageContent(pageData.content);
-          }
-        } else {
-          // No content found
-          setPageContent(null);
-        }
-        setIsLoading(false);
-      } catch (error) {
-        if (!isMounted) return;
-        toast.error("Failed to load page content");
-        setIsLoading(false);
+      // Notify parent component of save state changes
+      if (onSaveStateChange) {
+        onSaveStateChange({ hasUnsavedChanges, isSaving });
       }
     }
-
-    getPageContent();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [pageId]);
+  }, [pageId, handleSave, hasUnsavedChanges, isSaving, onSaveStateChange]);
 
   // Memoize instanceId to prevent recreation
   const instanceId = useMemo(() => `page-editor-${pageId}`, [pageId]);
@@ -149,17 +118,18 @@ function EnhancedEditor({ pageId }) {
   }
 
   return (
-    <div className="mt-6 w-full">
+    <div className="mt-6 w-full pb-[50vh]">
       <CompleteEditor
         instanceId={instanceId}
         pageId={pageId}
-        initialContent={pageContent}
+        initialContent={content}
         onSave={handleSave}
         onChange={handleChange}
         config={editorConfig}
-        className="w-full p-0 min-h-[500px]"
+        className={`w-full p-0 min-h-[500px] ${isPreviewMode ? "preview-mode" : ""}`}
         editable={!isPreviewMode}
-      ></CompleteEditor>
+        showBubbleMenu={!isPreviewMode}
+      />
     </div>
   );
 }
@@ -167,14 +137,37 @@ function EnhancedEditor({ pageId }) {
 export default function ProjectEditorLayout({ hasSection }) {
   const selectedPage = useProjectStore((state) => state.selectedPage);
   const projectName = useProjectStore((state) => state.project?.name);
+  const selectedSection = useProjectStore((state) => state.selectedSection);
+  const sections = useProjectStore((state) => state.sections);
+  const getSelectedPageData = useProjectStore((state) => state.getSelectedPageData);
+
+  // Track save state from the editor
+  const [saveState, setSaveState] = useState({ hasUnsavedChanges: false, isSaving: false });
+
+  // Get section and page data for header badges
+  const selectedSectionData = sections?.find((section) => section.id === selectedSection);
+  const selectedPageData = getSelectedPageData();
+
+  const handleSaveStateChange = useCallback((newSaveState) => {
+    setSaveState(newSaveState);
+  }, []);
 
   return (
     <>
-      <ProjectEditorHeader selectedPage={selectedPage} projectName={projectName} />
+      <ProjectEditorHeader
+        selectedPage={selectedPage}
+        projectName={projectName}
+        selectedSectionData={selectedSectionData}
+        selectedPageData={selectedPageData}
+        hasUnsavedChanges={saveState.hasUnsavedChanges}
+        isSaving={saveState.isSaving}
+      />
 
       {!hasSection && <NoSectionUI />}
       {hasSection && !selectedPage && <NoPageSelectedUI />}
-      {hasSection && selectedPage && <EnhancedEditor pageId={selectedPage} />}
+      {hasSection && selectedPage && (
+        <EnhancedEditor pageId={selectedPage} onSaveStateChange={handleSaveStateChange} />
+      )}
     </>
   );
 }

@@ -72,7 +72,6 @@ export class WorkspaceService extends BaseService {
       const count = await WorkspaceModel.count({
         where: { status: WorkspaceStatus.PENDING },
       });
-      Logger.info(`Found ${count} pending workspaces`, "Get pending workspaces count");
       return count;
     } catch (error) {
       Logger.error(error.message, "Get pending workspaces count failed");

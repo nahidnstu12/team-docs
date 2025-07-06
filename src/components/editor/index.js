@@ -105,6 +105,7 @@ export * from "./ui/commands";
  * @param {Object} config - Custom configuration to override defaults
  * @param {string} className - Additional CSS classes
  * @param {boolean} editable - Whether the editor is editable or read-only
+ * @param {boolean} showBubbleMenu - Whether to show the bubble menu when text is selected
  * @param {ReactNode} children - Additional components to render inside editor
  */
 export const CompleteEditor = ({
@@ -116,6 +117,7 @@ export const CompleteEditor = ({
   config = {},
   className = "",
   editable = true,
+  showBubbleMenu = true,
   children,
   ...props
 }) => {
@@ -128,10 +130,10 @@ export const CompleteEditor = ({
         className={`complete-editor ${className}`}
         {...props}
       >
-        {/* 🎨 BubbleMenu: Shows when text is selected */}
-        <BubbleMenu />
-        {/* ⚡ SlashMenu: Shows when user types "/" */}
-        <SlashMenu />
+        {/* 🎨 BubbleMenu: Shows when text is selected (conditionally rendered) */}
+        {showBubbleMenu && <BubbleMenu />}
+        {/* ⚡ SlashMenu: Shows when user types "/" (only when editable) */}
+        {editable && <SlashMenu />}
         {/* 🔧 Any additional components you want to add */}
         {children}
       </Editor>

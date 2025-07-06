@@ -1,8 +1,9 @@
 import { useProjectStore } from "@/app/(home)/projects/store/useProjectStore";
 import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 import { SidebarTrigger } from "../ui/sidebar";
 import { useRouter } from "next/navigation";
-import { Eye, Upload, MoreVertical, Check } from "lucide-react";
+import { Eye, Upload, MoreVertical, Check, Save, Loader2 } from "lucide-react";
 import { usePreviewStore } from "@/app/(home)/projects/[slug]/editor/store/usePreviewStore";
 import {
   DropdownMenu,
@@ -11,7 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function ProjectEditorHeader({ selectedPage, projectName }) {
+export default function ProjectEditorHeader({
+  selectedPage,
+  projectName,
+  selectedSectionData,
+  selectedPageData,
+  hasUnsavedChanges = false,
+  isSaving = false,
+}) {
   const saveHandler = useProjectStore((state) => state.saveHandler);
   const router = useRouter();
 
@@ -34,30 +42,55 @@ export default function ProjectEditorHeader({ selectedPage, projectName }) {
 
   return (
     <>
-      <div id="project-header" className="flex items-center w-full h-12">
+      <div id="project-header" className="flex items-center w-full min-h-12 py-2">
         <SidebarTrigger />
 
-        <h1 className="pl-3 text-3xl font-semibold cursor-pointer" onClick={handleRedirect}>
-          {projectName || "Project Name"}
-        </h1>
+        <div className="flex items-end gap-2 pl-3">
+          <h1 className="text-3xl font-semibold cursor-pointer" onClick={handleRedirect}>
+            {projectName || "Project Name"}
+          </h1>
 
-        {/* ✅ Save button if a page is selected */}
+          {/* Section and Page badges - positioned to the right of project name, slightly higher */}
+          <div className="flex items-center gap-2 mb-1">
+            {selectedSectionData && (
+              <Badge variant="secondary" className="text-xs h-4 px-2 py-0">
+                {selectedSectionData.name}
+              </Badge>
+            )}
+            {selectedPageData && (
+              <Badge variant="outline" className="text-xs h-4 px-2 py-0">
+                {selectedPageData.title}
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Dynamic Save button if a page is selected */}
         {selectedPage && (
           <div className="flex gap-2 items-center mr-4 ml-auto">
-            <Button
-              onClick={() => {
-                console.log("💾 Save button clicked! SaveHandler exists:", !!saveHandler);
-                if (saveHandler) {
-                  console.log("🚀 Calling saveHandler...");
-                  saveHandler();
-                } else {
-                  console.warn("❌ No saveHandler available");
-                }
-              }}
-              className="px-6 py-2 bg-green-400 cursor-pointer hover:bg-green-500"
-            >
-              Save
-            </Button>
+            {isSaving ? (
+              <Button disabled className="px-6 py-2">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </Button>
+            ) : hasUnsavedChanges ? (
+              <Button
+                onClick={() => {
+                  if (saveHandler) {
+                    saveHandler();
+                  }
+                }}
+                className="px-6 py-2 bg-green-400 cursor-pointer hover:bg-green-500"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save
+              </Button>
+            ) : (
+              <Button disabled variant="secondary" className="px-6 py-2">
+                <Check className="w-4 h-4 mr-2" />
+                Already saved
+              </Button>
+            )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
