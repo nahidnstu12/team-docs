@@ -69,7 +69,6 @@ export async function searchAction(query, options = {}) {
       message: `Found ${formattedResults.length} results`,
     };
   } catch (error) {
-    Logger.error(error.message, "searchAction failed");
     return {
       success: false,
       data: [],
@@ -161,7 +160,6 @@ export async function getSearchSuggestions() {
       message: "No suggestions available",
     };
   } catch (error) {
-    Logger.error(error.message, "getSearchSuggestions failed");
     return {
       success: false,
       data: [],

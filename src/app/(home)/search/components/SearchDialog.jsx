@@ -52,9 +52,15 @@ export default function SearchDialog({ open, onOpenChange }) {
 
   // Debounced search effect
   useEffect(() => {
-    if (!query.trim() || query.trim().length < 2) {
+    if (!query.trim()) {
       setResults([]);
       setError(null);
+      return;
+    }
+
+    if (query.trim().length < 2) {
+      setResults([]);
+      setError("Please enter at least 2 characters to search");
       return;
     }
 
@@ -132,8 +138,8 @@ export default function SearchDialog({ open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogTitle className="text-lg font-semibold">Search</DialogTitle>
+      <DialogContent className="sm:max-w-2xl max-h-[100vh] w-[95vw]">
+        <DialogTitle className="text-xl font-semibold">Search</DialogTitle>
         <div className="space-y-4">
           <div className="space-y-2">
             <div className="relative">
@@ -141,18 +147,13 @@ export default function SearchDialog({ open, onOpenChange }) {
                 placeholder="Search for projects, sections, pages..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="text-base pr-16"
+                className="text-lg h-12 px-4"
                 autoFocus
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-muted-foreground">
-                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
-                  <span className="text-xs">⌘</span>K
-                </kbd>
-              </div>
             </div>
           </div>
 
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="max-h-[500px] overflow-y-auto">
             {/* Loading state */}
             {isSearching && (
               <div className="flex items-center justify-center py-12">

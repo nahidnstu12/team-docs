@@ -23,11 +23,6 @@ export class SearchService extends BaseService {
       const searchTerm = query.trim();
       const results = [];
 
-      Logger.info(
-        `Searching for: "${searchTerm}" in workspace: ${workspaceId}`,
-        "SearchService.searchAll"
-      );
-
       // Search in projects
       const projectResults = await this.searchProjects(searchTerm, workspaceId);
       results.push(...projectResults);
@@ -39,11 +34,6 @@ export class SearchService extends BaseService {
       // Search in pages
       const pageResults = await this.searchPages(searchTerm, workspaceId);
       results.push(...pageResults);
-
-      Logger.info(
-        `Search results - Projects: ${projectResults.length}, Sections: ${sectionResults.length}, Pages: ${pageResults.length}`,
-        "SearchService.searchAll"
-      );
 
       // Sort results by relevance (can be enhanced with ranking)
       const sortedResults = results
@@ -67,7 +57,6 @@ export class SearchService extends BaseService {
 
       return sortedResults;
     } catch (error) {
-      Logger.error(error.message, "SearchService.searchAll failed");
       return [];
     }
   }
@@ -80,11 +69,6 @@ export class SearchService extends BaseService {
    */
   static async searchProjects(searchTerm, workspaceId) {
     try {
-      Logger.info(
-        `Searching projects for: "${searchTerm}" in workspace: ${workspaceId}`,
-        "SearchService.searchProjects"
-      );
-
       // Try full-text search first, fallback to simple LIKE search
       let projects;
       try {
@@ -111,11 +95,6 @@ export class SearchService extends BaseService {
           LIMIT 10
         `;
       } catch (fullTextError) {
-        Logger.warn(
-          `Full-text search failed, falling back to LIKE search: ${fullTextError.message}`,
-          "SearchService.searchProjects"
-        );
-
         // Fallback to simple LIKE search
         projects = await prisma.$queryRaw`
           SELECT
@@ -136,11 +115,6 @@ export class SearchService extends BaseService {
         `;
       }
 
-      Logger.info(`Found ${projects.length} projects`, "SearchService.searchProjects");
-      console.log(
-        `[DEBUG] SearchService.searchProjects - Found ${projects.length} projects for "${searchTerm}"`
-      );
-
       return projects.map((project) => ({
         id: project.id,
         type: "project",
@@ -159,7 +133,6 @@ export class SearchService extends BaseService {
         },
       }));
     } catch (error) {
-      Logger.error(error.message, "SearchService.searchProjects failed");
       return [];
     }
   }
@@ -217,7 +190,6 @@ export class SearchService extends BaseService {
         },
       }));
     } catch (error) {
-      Logger.error(error.message, "SearchService.searchSections failed");
       return [];
     }
   }
@@ -292,7 +264,6 @@ export class SearchService extends BaseService {
         };
       });
     } catch (error) {
-      Logger.error(error.message, "SearchService.searchPages failed");
       return [];
     }
   }
@@ -328,7 +299,6 @@ export class SearchService extends BaseService {
 
       return extractText(contentObj).trim();
     } catch (error) {
-      Logger.error(error.message, "Failed to extract text from TipTap content");
       return "";
     }
   }
