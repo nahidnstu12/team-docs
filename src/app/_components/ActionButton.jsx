@@ -5,23 +5,32 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowRight, Clock, AlertCircle, Plus } from "lucide-react";
 import dynamic from "next/dynamic";
+import Logger from "@/lib/Logger";
 
 // Dynamically import the registration dialog
 const RegistrationDialog = dynamic(() => import("./registration"), {
   ssr: false,
 });
 
-export default function ActionButton({ isAuthenticated, workspaceId, workspaceStatus }) {
+export default function ActionButton({ session, isAuthenticated, workspaceId, workspaceStatus }) {
   const { openDialog } = useRegistrationStore();
   const router = useRouter();
   const [buttonText, setButtonText] = useState("Get Started for Free");
   const [buttonIcon, setButtonIcon] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
 
+  Logger.debug(session, "Session from ActionButton");
+
   // Check user authentication and workspace status
   useEffect(() => {
     const checkUserStatus = async () => {
       if (isAuthenticated) {
+        // if (session && session?.status !== "ACTIVE") {
+        //   setButtonText("Account Inactive");
+        //   setButtonIcon(<AlertCircle className="ml-2 h-4 w-4" />);
+        //   setIsDisabled(true);
+        //   return;
+        // }
         if (workspaceId) {
           if (workspaceStatus === "ACTIVE") {
             setButtonText("Visit your workspace");
@@ -49,10 +58,15 @@ export default function ActionButton({ isAuthenticated, workspaceId, workspaceSt
     };
 
     checkUserStatus();
-  }, [isAuthenticated, workspaceId, workspaceStatus]);
+  }, [isAuthenticated, workspaceId, workspaceStatus, session]);
 
   const handleButtonClick = () => {
-    if (isAuthenticated && workspaceId && workspaceStatus === "ACTIVE") {
+    if (
+      isAuthenticated &&
+      workspaceId &&
+      workspaceStatus === "ACTIVE" &&
+      session?.status === "ACTIVE"
+    ) {
       // Redirect to workspace when button is clicked
       router.push(`/home`);
     } else {

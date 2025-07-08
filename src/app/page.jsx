@@ -20,6 +20,7 @@ export default async function LandingPage() {
     <main className="min-h-screen bg-background">
       <Header session={session} />
       <HeroSection
+        session={session}
         isAuthenticated={isAuthenticated}
         workspaceId={workspaceId}
         workspaceStatus={workspaceStatus}

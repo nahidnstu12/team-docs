@@ -4,7 +4,7 @@ import Image from "next/image";
 import projectEditorUI from "./../../../assets/project-editor.png";
 import ActionButton from "./ActionButton";
 
-export default function HeroSection({ isAuthenticated, workspaceId, workspaceStatus }) {
+export default function HeroSection({ session, isAuthenticated, workspaceId, workspaceStatus }) {
   return (
     <section className="container px-4 py-16 mx-auto md:py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -32,6 +32,7 @@ export default function HeroSection({ isAuthenticated, workspaceId, workspaceSta
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <ActionButton
+            session={session}
             isAuthenticated={isAuthenticated}
             workspaceId={workspaceId}
             workspaceStatus={workspaceStatus}
