@@ -11,8 +11,7 @@ async function main() {
       username: "nishat",
       email: "nishatislam3108@gmail.com",
       password: "$2b$10$NFBfr4vxrvrJ3BI7.Bqdge55rOXWwl6lYCaeUGKzEtfNB9MxaT8BO",
-      isActive: true,
-      status: "active",
+      status: "ACTIVE",
       isSuperAdmin: true,
     },
   });

@@ -12,10 +12,10 @@ Instead of traditional REST APIs, Team-Docs uses Next.js Server Actions:
 
 ```javascript
 // Traditional API approach (not used)
-fetch('/api/projects', { method: 'POST', body: JSON.stringify(data) })
+fetch("/api/projects", { method: "POST", body: JSON.stringify(data) });
 
 // Server Actions approach (used in Team-Docs)
-import { createProject } from './actions/projectActions';
+import { createProject } from "./actions/projectActions";
 const result = await createProject(formData);
 ```
 
@@ -32,6 +32,7 @@ const result = await createProject(formData);
 ### Session Management
 
 #### getCurrentUser()
+
 ```javascript
 // Location: src/system/Services/Session.js
 export class Session {
@@ -43,6 +44,7 @@ export class Session {
 ```
 
 #### isAuthenticated()
+
 ```javascript
 static async isAuthenticated() {
   const session = await auth();
@@ -51,6 +53,7 @@ static async isAuthenticated() {
 ```
 
 #### getWorkspaceIdForUser()
+
 ```javascript
 static async getWorkspaceIdForUser() {
   const session = await auth();
@@ -61,6 +64,7 @@ static async getWorkspaceIdForUser() {
 ### Authentication Actions
 
 #### Sign In Action
+
 ```javascript
 // Location: src/app/(auth)/auth/signin/signinAction.js
 export async function signin(prevState, formData) {
@@ -92,6 +96,7 @@ export async function signin(prevState, formData) {
 ### Search Actions
 
 #### searchAction()
+
 ```javascript
 // Location: src/app/(home)/search/actions/searchAction.js
 export async function searchAction(query, options = {}) {
@@ -148,6 +153,7 @@ export async function searchAction(query, options = {}) {
 ### Search Service Methods
 
 #### SearchService.searchAll()
+
 ```javascript
 // Location: src/system/Services/SearchService.js
 static async searchAll(query, workspaceId, limit = 20) {
@@ -174,10 +180,10 @@ static async searchAll(query, workspaceId, limit = 20) {
         // Exact matches first
         const aExactMatch = a.title?.toLowerCase().includes(searchTerm.toLowerCase());
         const bExactMatch = b.title?.toLowerCase().includes(searchTerm.toLowerCase());
-        
+
         if (aExactMatch && !bExactMatch) return -1;
         if (!aExactMatch && bExactMatch) return 1;
-        
+
         // Type priority
         const typePriority = { project: 1, section: 2, page: 3 };
         return typePriority[a.type] - typePriority[b.type];
@@ -194,6 +200,7 @@ static async searchAll(query, workspaceId, limit = 20) {
 ### Project Service Methods
 
 #### getResource()
+
 ```javascript
 // Location: src/system/Services/ProjectServices.js
 export class ProjectService extends BaseService {
@@ -224,6 +231,7 @@ export class ProjectService extends BaseService {
 ### Project Actions
 
 #### createProject()
+
 ```javascript
 // Example project creation action
 export async function createProject(formData) {
@@ -260,6 +268,7 @@ export async function createProject(formData) {
 ### User Service Methods
 
 #### getUsersNotInProject()
+
 ```javascript
 // Location: src/system/Services/UserServices.js
 export class UserServices extends BaseService {
@@ -280,7 +289,7 @@ export class UserServices extends BaseService {
           id: true,
           username: true,
           email: true,
-          isActive: true,
+          status: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -300,6 +309,7 @@ export class UserServices extends BaseService {
 ### Permission Service Methods
 
 #### getPermissionForProjectScope()
+
 ```javascript
 // Location: src/system/Services/PermissionServices.js
 export class PermissionServices extends BaseService {
@@ -344,7 +354,7 @@ export class BaseService {
   static async getResource({ where, include = {} }) {
     try {
       const resource = await this.model.findUnique({ where, include });
-      
+
       if (this.dto && typeof this.dto.toResponse === "function") {
         return this.dto.toResponse(resource);
       }
@@ -400,7 +410,7 @@ DTOs provide consistent data formatting across the API:
 export class ProjectDTO {
   static toResponse(project) {
     if (!project) return null;
-    
+
     return {
       id: project.id,
       name: project.name,
@@ -422,7 +432,7 @@ export class ProjectDTO {
     // Validate and transform request data
     return {
       name: data.name?.trim(),
-      slug: data.slug?.toLowerCase().replace(/\s+/g, '-'),
+      slug: data.slug?.toLowerCase().replace(/\s+/g, "-"),
       description: data.description?.trim() || null,
       icon: data.icon || null,
       color: data.color || null,
@@ -438,12 +448,16 @@ export class ProjectDTO {
 All API functions use Zod schemas for input validation:
 
 ```javascript
-import { z } from 'zod';
+import { z } from "zod";
 
 const projectSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
-  slug: z.string().min(1).max(50).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .max(50)
+    .regex(/^[a-z0-9-]+$/),
 });
 ```
 
@@ -453,9 +467,9 @@ const projectSchema = z.object({
 // Check user permissions before operations
 const hasPermission = await PermissionService.checkUserPermission({
   userId: session.user.id,
-  resource: 'project',
-  action: 'create',
-  workspaceId: session.user.workspaceId
+  resource: "project",
+  action: "create",
+  workspaceId: session.user.workspaceId,
 });
 
 if (!hasPermission) {
@@ -473,10 +487,10 @@ const projects = await prisma.project.findMany({
   where: {
     workspaceId: session.user.workspaceId, // Always include workspace filter
     // ... other conditions
-  }
+  },
 });
 ```
 
 ---
 
-*This API documentation covers the current server action implementation. For specific usage examples and integration patterns, refer to the component implementations throughout the codebase.*
+_This API documentation covers the current server action implementation. For specific usage examples and integration patterns, refer to the component implementations throughout the codebase._

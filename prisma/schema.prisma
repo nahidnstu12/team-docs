@@ -16,8 +16,7 @@ model User {
   username    String   @unique
   email       String   @unique
   password    String
-  isActive    Boolean  @default(true)
-  status      String   @default("inactive") // New field for registration status
+  status      UserStatus   @default(ACTIVE) 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   workspaceId String?
@@ -43,6 +42,12 @@ model User {
   projectPermissions       ProjectUserPermission[]
 
   @@index([email])
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING
+  INACTIVE
 }
 
 // ==================== RBAC (Role-Based Access Control) ====================
