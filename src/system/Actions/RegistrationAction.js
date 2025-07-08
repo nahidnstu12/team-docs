@@ -52,7 +52,7 @@ class RegistrationAction extends BaseAction {
           username,
           email,
           password: hashedPassword,
-          status: "active",
+          status: "ACTIVE",
         });
         userId = user.id;
       } else if (session) {
@@ -73,7 +73,7 @@ class RegistrationAction extends BaseAction {
         name: workspaceName,
         slug: slugify(workspaceName, { lower: true }),
         description: workspaceDescription || "",
-        status: "inactive",
+        status: "INACTIVE",
         ownerId: userId,
       });
 

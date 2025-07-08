@@ -4,7 +4,6 @@ import FeaturedSection from "./_components/FeaturedSection";
 import Footer from "./_components/Footer";
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
-import Logger from "@/lib/Logger";
 
 export const experimental_ppr = true;
 

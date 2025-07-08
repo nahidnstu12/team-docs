@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowRight, Clock, AlertCircle, Plus } from "lucide-react";
 import dynamic from "next/dynamic";
-import Logger from "@/lib/Logger";
 
 // Dynamically import the registration dialog
 const RegistrationDialog = dynamic(() => import("./registration"), {
@@ -30,11 +29,11 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
           return;
         }
         if (workspaceId) {
-          if (workspaceStatus === "ACTIVE") {
+          if (session && session?.status === "ACTIVE" && workspaceStatus === "ACTIVE") {
             setButtonText("Visit your workspace");
             setButtonIcon(<ArrowRight className="ml-2 h-4 w-4" />);
             setIsDisabled(false);
-          } else if (workspaceStatus === "PENDING") {
+          } else if (session?.status === "PENDING" && workspaceStatus === "PENDING") {
             setButtonText("Request Processing...");
             setButtonIcon(<Clock className="ml-2 h-4 w-4 animate-spin" />);
             setIsDisabled(true);
