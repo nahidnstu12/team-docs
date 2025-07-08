@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -98,28 +98,26 @@ export default function FeaturedSection({ isAuthenticated, workspaceId, workspac
               ))}
             </TabsList>
 
-            <AnimatePresence mode="wait">
-              {featureCategories.map((category) => (
-                <TabsContent key={category.value} value={category.value} className="relative mt-0">
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
-                    className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-                  >
-                    {getFeaturesForCategory(category.value).map((feature, index) => (
-                      <FeatureCard
-                        key={feature.title}
-                        feature={feature}
-                        index={index}
-                        shouldReduceMotion={shouldReduceMotion}
-                      />
-                    ))}
-                  </motion.div>
-                </TabsContent>
-              ))}
-            </AnimatePresence>
+            {featureCategories.map((category) => (
+              <TabsContent key={category.value} value={category.value} className="relative mt-0">
+                <motion.div
+                  key={`${category.value}-content`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
+                  className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+                >
+                  {getFeaturesForCategory(category.value).map((feature, index) => (
+                    <FeatureCard
+                      key={feature.title}
+                      feature={feature}
+                      index={index}
+                      shouldReduceMotion={shouldReduceMotion}
+                    />
+                  ))}
+                </motion.div>
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
 
@@ -139,10 +137,14 @@ export default function FeaturedSection({ isAuthenticated, workspaceId, workspac
               ))}
             </TabsList>
 
-            {/* ⬇ Move AnimatePresence inside Tabs ⬇ */}
-            <AnimatePresence mode="wait">
-              {featureCategories.map((category) => (
-                <TabsContent key={category.value} value={category.value} className="mt-0">
+            {featureCategories.map((category) => (
+              <TabsContent key={category.value} value={category.value} className="mt-0">
+                <motion.div
+                  key={`${category.value}-mobile-content`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
+                >
                   <Carousel
                     opts={{
                       align: "start",
@@ -170,9 +172,9 @@ export default function FeaturedSection({ isAuthenticated, workspaceId, workspac
                       <CarouselNext className="mx-1" />
                     </div>
                   </Carousel>
-                </TabsContent>
-              ))}
-            </AnimatePresence>
+                </motion.div>
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
 
