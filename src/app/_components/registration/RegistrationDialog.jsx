@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import { useRegistrationStore } from "../store/useRegistrationStore";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
 
 export default function RegistrationDialog({ isAuthenticated }) {
-  const { isOpen, closeDialog } = useRegistrationStore();
+  const { isOpen, closeDialog, setRegistrationSuccess } = useRegistrationStore();
+  const router = useRouter();
 
   const defaultValues = useMemo(() => {
     if (isAuthenticated) {
@@ -65,8 +67,10 @@ export default function RegistrationDialog({ isAuthenticated }) {
   );
 
   const handleSuccess = useCallback(() => {
-    // Handle success - no redirect needed as we'll show the confirmation dialog
-  }, []);
+    // Refresh the page to update server-side props
+    // Registration data is handled in the useEffect above
+    router.refresh();
+  }, [router]);
 
   const { register, errors, formAction, isPending, isSubmitDisabled, formState } =
     useServerFormAction({
@@ -77,6 +81,13 @@ export default function RegistrationDialog({ isAuthenticated }) {
       onSuccess: handleSuccess,
       isDialogOpen: isOpen,
     });
+
+  // Handle registration success state
+  useEffect(() => {
+    if (formState?.type === "success" && formState?.data) {
+      setRegistrationSuccess(formState.data);
+    }
+  }, [formState, setRegistrationSuccess]);
 
   // If form was successfully submitted, show the pending confirmation dialog
   if (formState?.type === "success") {
@@ -229,10 +240,15 @@ export default function RegistrationDialog({ isAuthenticated }) {
 }
 
 function PendingConfirmationDialog() {
-  const { isOpen, closeDialog } = useRegistrationStore();
+  const { isOpen, closeDialog, resetRegistrationState } = useRegistrationStore();
+
+  const handleClose = () => {
+    resetRegistrationState();
+    closeDialog();
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeDialog}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md text-center">
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold text-center">Registration Pending</DialogTitle>

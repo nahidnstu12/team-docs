@@ -1,7 +1,19 @@
+import { Session } from "@/lib/Session";
+import { WorkspaceService } from "@/system/Services/WorkspaceService";
+import { redirect } from "next/navigation";
+
 export default async function MainPage() {
-	// await new Promise(() => {}); // infinite pending
+  // await new Promise(() => {}); // infinite pending
+  // const workspaceId = await Session.getWorkspaceIdForUser();
 
-	// const workspaceId = await Session.getWorkspaceIdForUser();
+  const workspaceId = await Session.getWorkspaceIdForUser();
+  const workspaceStatus = workspaceId
+    ? await WorkspaceService.getWorkspaceStatus(workspaceId)
+    : null;
 
-	return <div className="">HomePage</div>;
+  if (workspaceStatus !== "ACTIVE") {
+    return redirect("/");
+  }
+
+  return <div className="">HomePage</div>;
 }

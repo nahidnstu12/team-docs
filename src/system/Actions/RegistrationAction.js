@@ -73,7 +73,7 @@ class RegistrationAction extends BaseAction {
         name: workspaceName,
         slug: slugify(workspaceName, { lower: true }),
         description: workspaceDescription || "",
-        status: "INACTIVE",
+        status: "PENDING",
         ownerId: userId,
       });
 

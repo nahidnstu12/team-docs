@@ -12,7 +12,8 @@ const RegistrationDialog = dynamic(() => import("./registration"), {
 });
 
 export default function ActionButton({ session, isAuthenticated, workspaceId, workspaceStatus }) {
-  const { openDialog } = useRegistrationStore();
+  const { openDialog, registrationSuccess, registrationData, resetRegistrationState } =
+    useRegistrationStore();
   const router = useRouter();
   const [buttonText, setButtonText] = useState("Get Started for Free");
   const [buttonIcon, setButtonIcon] = useState(null);
@@ -21,6 +22,22 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
   // Check user authentication and workspace status
   useEffect(() => {
     const checkUserStatus = async () => {
+      // Handle immediate post-registration state
+      if (registrationSuccess && registrationData) {
+        if (isAuthenticated) {
+          // Authenticated user created workspace - show processing state
+          setButtonText("Request Processing...");
+          setButtonIcon(<Clock className="ml-2 h-4 w-4 animate-spin" />);
+          setIsDisabled(true);
+        } else {
+          // New user registration - show processing state
+          setButtonText("Registration Processing...");
+          setButtonIcon(<Clock className="ml-2 h-4 w-4 animate-spin" />);
+          setIsDisabled(true);
+        }
+        return;
+      }
+
       if (isAuthenticated) {
         if (session && session?.status !== "ACTIVE") {
           setButtonText("Account Inactive");
@@ -33,7 +50,7 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
             setButtonText("Visit your workspace");
             setButtonIcon(<ArrowRight className="ml-2 h-4 w-4" />);
             setIsDisabled(false);
-          } else if (session?.status === "PENDING" && workspaceStatus === "PENDING") {
+          } else if (workspaceStatus === "PENDING") {
             setButtonText("Request Processing...");
             setButtonIcon(<Clock className="ml-2 h-4 w-4 animate-spin" />);
             setIsDisabled(true);
@@ -55,9 +72,33 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
     };
 
     checkUserStatus();
-  }, [isAuthenticated, workspaceId, workspaceStatus, session]);
+  }, [
+    isAuthenticated,
+    workspaceId,
+    workspaceStatus,
+    session,
+    registrationSuccess,
+    registrationData,
+  ]);
+
+  // Reset registration state after server props are updated
+  useEffect(() => {
+    if (registrationSuccess && (workspaceId || session)) {
+      // Server props have been updated, reset the registration state
+      const timer = setTimeout(() => {
+        resetRegistrationState();
+      }, 1000); // Small delay to ensure smooth transition
+
+      return () => clearTimeout(timer);
+    }
+  }, [registrationSuccess, workspaceId, session, resetRegistrationState]);
 
   const handleButtonClick = () => {
+    // Don't allow clicks during registration processing
+    if (registrationSuccess) {
+      return;
+    }
+
     if (
       isAuthenticated &&
       workspaceId &&

@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }) {
   const user = await Session.getCurrentUser();
 
   if (!user?.isSuperAdmin) {
-    redirect("/home");
+    redirect("/");
   }
 
   const cookieStore = await cookies();
