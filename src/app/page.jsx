@@ -26,6 +26,7 @@ export default async function LandingPage() {
         workspaceStatus={workspaceStatus}
       />
       <FeaturedSection
+        session={session}
         isAuthenticated={isAuthenticated}
         workspaceId={workspaceId}
         workspaceStatus={workspaceStatus}

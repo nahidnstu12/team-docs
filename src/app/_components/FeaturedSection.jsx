@@ -22,7 +22,12 @@ const featureCategories = [
   { value: "custom", label: "Customization" },
 ];
 
-export default function FeaturedSection({ isAuthenticated, workspaceId, workspaceStatus }) {
+export default function FeaturedSection({
+  session,
+  isAuthenticated,
+  workspaceId,
+  workspaceStatus,
+}) {
   const [activeCategory, setActiveCategory] = useState("core");
   const [shouldReduceMotion, setShouldReduceMotion] = useState(false);
   const { ref: sectionRef, inView } = useInView({ threshold: 0.1, triggerOnce: false });
@@ -190,6 +195,7 @@ export default function FeaturedSection({ isAuthenticated, workspaceId, workspac
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <ActionButton
+              session={session}
               isAuthenticated={isAuthenticated}
               workspaceId={workspaceId}
               workspaceStatus={workspaceStatus}

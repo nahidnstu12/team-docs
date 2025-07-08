@@ -19,18 +19,16 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
   const [buttonIcon, setButtonIcon] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
 
-  Logger.debug(session, "Session from ActionButton");
-
   // Check user authentication and workspace status
   useEffect(() => {
     const checkUserStatus = async () => {
       if (isAuthenticated) {
-        // if (session && session?.status !== "ACTIVE") {
-        //   setButtonText("Account Inactive");
-        //   setButtonIcon(<AlertCircle className="ml-2 h-4 w-4" />);
-        //   setIsDisabled(true);
-        //   return;
-        // }
+        if (session && session?.status !== "ACTIVE") {
+          setButtonText("Account Inactive");
+          setButtonIcon(<AlertCircle className="ml-2 h-4 w-4" />);
+          setIsDisabled(true);
+          return;
+        }
         if (workspaceId) {
           if (workspaceStatus === "ACTIVE") {
             setButtonText("Visit your workspace");
