@@ -39,6 +39,7 @@
  * - Chainable operations where appropriate
  */
 
+import Logger from "@/lib/Logger";
 import { toast } from "sonner";
 
 /**
@@ -165,6 +166,7 @@ export class EditorService extends BaseService {
    * @returns {Promise<Object>} Load result
    */
   static async loadContent(pageId) {
+    Logger.debug(pageId, "Loading content");
     try {
       this.validateRequired({ pageId }, ["pageId"]);
 

@@ -8,10 +8,10 @@ export class WorkspaceDTO {
       createdAt: workspace.createdAt.toISOString(),
       updatedAt: workspace.updatedAt.toISOString(),
       owner: {
-        id: workspace.owner.id,
-        username: workspace.owner.username,
-        email: workspace.owner.email,
-        createdAt: workspace.owner.createdAt.toISOString(),
+        id: workspace.ownerId,
+        // username: workspace.owner.username,
+        // email: workspace.owner.email,
+        // createdAt: workspace.owner.createdAt.toISOString(),
       },
     };
   }
