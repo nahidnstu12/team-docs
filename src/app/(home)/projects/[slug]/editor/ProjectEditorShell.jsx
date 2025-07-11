@@ -17,6 +17,10 @@ export default function ProjectEditorShell({ hasSection, project, sections }) {
   useEffect(() => {
     setProject(project);
     setSections(sections);
+
+    // Validate selections after setting sections to ensure no stale data
+    const validateSelections = useProjectStore.getState().validateSelections;
+    validateSelections();
   }, [project, setProject, setSections, sections]);
 
   // Handle URL query parameters on initial load (for backward compatibility)

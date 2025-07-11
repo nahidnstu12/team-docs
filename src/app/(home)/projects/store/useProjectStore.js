@@ -40,15 +40,44 @@ export const useProjectStore = create(
 
       /**
        * Updates the current project object.
+       * Clears selected section and page when switching to a different project.
        * @param {Object} project - The project object to set
        */
-      setProject: (project) => set({ project }),
+      setProject: (project) => {
+        const { project: currentProject } = get();
+
+        // If switching to a different project, clear selections
+        if (currentProject && currentProject.id !== project?.id) {
+          set({
+            project,
+            selectedSection: null,
+            selectedPage: null,
+          });
+        } else {
+          set({ project });
+        }
+      },
 
       /**
        * Updates the array of sections for the current project.
+       * Clears selectedPage if it doesn't exist in the new sections.
        * @param {Array<Object>} sections - Array of section objects
        */
-      setSections: (sections) => set({ sections }),
+      setSections: (sections) => {
+        const { selectedPage } = get();
+
+        // Check if the currently selected page exists in the new sections
+        const pageExists = sections?.some((section) =>
+          section.pages?.some((page) => page.id === selectedPage)
+        );
+
+        // If selected page doesn't exist in new sections, clear it
+        if (selectedPage && !pageExists) {
+          set({ sections, selectedPage: null });
+        } else {
+          set({ sections });
+        }
+      },
 
       /**
        * Sets the currently selected section.
@@ -125,6 +154,35 @@ export const useProjectStore = create(
         const { sections, selectedSection, selectedPage } = get();
         const section = sections?.find((section) => section.id === selectedSection);
         return section?.pages?.find((page) => page.id === selectedPage) || null;
+      },
+
+      /**
+       * Validates and clears invalid selections.
+       * Ensures selectedSection and selectedPage exist in current sections.
+       */
+      validateSelections: () => {
+        const { sections, selectedSection, selectedPage } = get();
+
+        if (!sections || sections.length === 0) {
+          set({ selectedSection: null, selectedPage: null });
+          return;
+        }
+
+        // Check if selected section exists
+        const sectionExists = sections.some((section) => section.id === selectedSection);
+        if (selectedSection && !sectionExists) {
+          set({ selectedSection: null, selectedPage: null });
+          return;
+        }
+
+        // Check if selected page exists in the selected section
+        if (selectedPage && selectedSection) {
+          const section = sections.find((s) => s.id === selectedSection);
+          const pageExists = section?.pages?.some((page) => page.id === selectedPage);
+          if (!pageExists) {
+            set({ selectedPage: null });
+          }
+        }
       },
 
       /**

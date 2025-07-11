@@ -164,10 +164,16 @@ export default function ProjectEditorLayout({ hasSection }) {
       />
 
       {!hasSection && <NoSectionUI />}
-      {hasSection && !selectedPage && <NoPageSelectedUI />}
-      {hasSection && selectedPage && (
-        <EnhancedEditor pageId={selectedPage} onSaveStateChange={handleSaveStateChange} />
-      )}
+      {hasSection &&
+        (!selectedPage || typeof selectedPage !== "string" || selectedPage.trim() === "") && (
+          <NoPageSelectedUI />
+        )}
+      {hasSection &&
+        selectedPage &&
+        typeof selectedPage === "string" &&
+        selectedPage.trim() !== "" && (
+          <EnhancedEditor pageId={selectedPage} onSaveStateChange={handleSaveStateChange} />
+        )}
     </>
   );
 }

@@ -62,7 +62,10 @@ export const useEditorContent = ({
    */
   const loadContent = useCallback(
     async (targetPageId = pageId) => {
-      if (!targetPageId) {
+      // Validate pageId before attempting to load
+      if (!targetPageId || typeof targetPageId !== "string" || targetPageId.trim() === "") {
+        setError("Invalid page ID provided");
+        setIsLoading(false);
         return false;
       }
 
@@ -239,11 +242,17 @@ export const useEditorContent = ({
 
   // Load initial content when pageId changes
   useEffect(() => {
-    if (pageId && !initialContent) {
+    // Only load content if pageId is valid (not null, undefined, or empty string)
+    if (pageId && typeof pageId === "string" && pageId.trim() !== "" && !initialContent) {
       loadContent(pageId);
     } else if (initialContent) {
       setContent(initialContent);
       setHasUnsavedChanges(false);
+    } else if (!pageId) {
+      // Clear content when no page is selected
+      setContent(null);
+      setHasUnsavedChanges(false);
+      setError(null);
     }
   }, [pageId, initialContent, loadContent]);
 
