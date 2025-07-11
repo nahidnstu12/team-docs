@@ -5,7 +5,7 @@ import Link from "next/link";
 
 /**
  * Admin Not Found Page
- * 
+ *
  * Custom 404 page for admin routes providing:
  * - Admin-specific styling and branding
  * - Navigation back to admin dashboard
@@ -21,7 +21,8 @@ export default function AdminNotFound() {
           </div>
           <CardTitle className="text-2xl">Admin Page Not Found</CardTitle>
           <CardDescription>
-            The admin page you're looking for doesn't exist or hasn't been implemented yet.
+            The admin page you&apos;re looking for doesn&apos;t exist or hasn&apos;t been
+            implemented yet.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -36,9 +37,7 @@ export default function AdminNotFound() {
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/home">
-                Switch to User Panel
-              </Link>
+              <Link href="/home">Switch to User Panel</Link>
             </Button>
           </div>
         </CardContent>

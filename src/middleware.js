@@ -40,7 +40,6 @@ export default auth(async function middleware(request) {
     if (!session) {
       return NextResponse.redirect(new URL("/auth/signin", request.url));
     }
-
     // TODO: Add admin privilege check here
     // Note: Cannot use Prisma in middleware (edge runtime limitation)
     // Consider using JWT claims or server-side protection in layout

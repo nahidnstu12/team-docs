@@ -3,73 +3,84 @@ import { forbidden } from "next/navigation";
 import { UserModel } from "@/system/Models/UserModel";
 
 export class Session {
-	static async getCurrentUser() {
-		const session = await auth();
-		return session?.user || null;
-	}
+  /**
+   * Get the current user from session
+   * @returns {Promise<UserModel|null>}
+   */
+  static async getCurrentUser() {
+    const session = await auth();
+    return session?.user || null;
+  }
 
-	static async isAuthenticated() {
-		const user = await this.getCurrentUser();
-		return !!user;
-	}
+  /**
+   * Check if the user is authenticated
+   * @returns {Promise<boolean>}
+   */
+  static async isAuthenticated() {
+    const user = await this.getCurrentUser();
+    return !!user;
+  }
 
-	static async isAuthorized(requiredRole) {
-		const user = await this.getCurrentUser();
-		if (!user) return false;
+  /**
+   * Redirect to forbidden page if not authenticated
+   * @returns {Promise<void>}
+   */
+  static async requireAuth() {
+    const isAuth = await this.isAuthenticated();
+    if (!isAuth) {
+      forbidden();
+    }
+  }
 
-		// Placeholder for role check - customize as needed
-		return true; // Replace with actual role check logic
-	}
+  /**
+   * When workspaceId is not available in JWT, get it from database
+   * @param {string} userId
+   * @returns {Promise<string|null>}
+   */
+  static async getWorkspaceId(id) {
+    try {
+      const user = await UserModel.findUnique({
+        where: { id },
+        select: { workspaceId: true },
+      });
 
-	static async requireAuth() {
-		const isAuth = await this.isAuthenticated();
-		if (!isAuth) {
-			// This will trigger the unauthenticated page
-			forbidden();
-			// throw new Error("Unauthenticated");
-		}
-	}
+      return user?.workspaceId;
+    } catch (error) {
+      console.error("[Session.getWorkspaceId] Error:", error);
+      return null;
+    }
+  }
 
-	static async requireRole(role) {
-		await this.requireAuth();
-		const hasRole = await this.isAuthorized(role);
-		if (!hasRole) {
-			// This will trigger the unauthorized page
-			throw new Error("Unauthorized");
-		}
-	}
+  /**
+   * Get the workspaceId for the current user.
+   * Either from JWT or database
+   * @returns {Promise<string|null>} The workspaceId or null if not found
+   */
+  static async getWorkspaceIdForUser() {
+    const session = await this.getCurrentUser();
+    if (!session) return null;
 
-	/**
-	 * Optionally, get the actual workspaceId
-	 * @param {string} userId
-	 * @returns {Promise<string|null>}
-	 */
-	static async getWorkspaceId(id) {
-		try {
-			const user = await UserModel.findUnique({
-				where: { id },
-				select: { workspaceId: true },
-			});
+    // Try JWT first
+    if (session.workspaceId) return session.workspaceId;
 
-			return user?.workspaceId;
-		} catch (error) {
-			console.error("[Session.getWorkspaceId] Error:", error);
-			return null;
-		}
-	}
+    // Fallback to database
+    return this.getWorkspaceId(session.id);
+  }
 
-	/**
-	 * Get the workspaceId for the current user
-	 * @returns {Promise<string|null>} The workspaceId or null if not found
-	 */
-	static async getWorkspaceIdForUser() {
-		const session = await this.getCurrentUser();
-		if (!session) return null;
+  // static async requireRole(role) {
+  // 	await this.requireAuth();
+  // 	const hasRole = await this.isAuthorized(role);
+  // 	if (!hasRole) {
+  // 		// This will trigger the unauthorized page
+  // 		throw new Error("Unauthorized");
+  // 	}
+  // }
 
-		// Try JWT first
-		if (session.workspaceId) return session.workspaceId;
+  // static async isAuthorized(requiredRole) {
+  // 	const user = await this.getCurrentUser();
+  // 	if (!user) return false;
 
-		// Fallback to database
-		return this.getWorkspaceId(session.id);
-	}
+  // 	// Placeholder for role check - customize as needed
+  // 	return true; // Replace with actual role check logic
+  // }
 }

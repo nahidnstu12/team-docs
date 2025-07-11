@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
 import { ProjectSchema } from "@/lib/schemas/ProjectSchema";
 import { updateProjectAction } from "@/system/Actions/ProjectActions";
-import { useDrawerLoadingStore } from "@/lib/stores/useDrawerLoadingStore";
+import { useDrawerLoadingStore } from "@/stores/useDrawerLoadingStore";
 import Logger from "@/lib/Logger";
 
 export default function ProjectEditDrawer({

@@ -1,6 +1,7 @@
 import { Session } from "@/lib/Session";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Building, Settings, Activity } from "lucide-react";
+import { protectAdmin } from "@/authorization/AdminAuthGuard";
 
 /**
  * Admin Dashboard Page
@@ -12,7 +13,6 @@ import { Users, Building, Settings, Activity } from "lucide-react";
  */
 export default async function AdminDashboard() {
   // Ensure user is authenticated (layout handles admin check)
-  await Session.requireAuth();
   const user = await Session.getCurrentUser();
 
   return (

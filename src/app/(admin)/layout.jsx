@@ -3,7 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import ConditionalAdminLayout from "@/components/layout/admin/ConditionalAdminLayout";
 import { cookies } from "next/headers";
 import { Session } from "@/lib/Session";
-import { redirect } from "next/navigation";
+import { protectAdmin } from "@/authorization/AdminAuthGuard";
 
 /**
  * Admin Layout Component
@@ -15,12 +15,10 @@ import { redirect } from "next/navigation";
  * - Server-side admin privilege check
  */
 export default async function AdminLayout({ children }) {
-  // Server-side admin check (since we can't use Prisma in middleware)
+  await Session.requireAuth();
   const user = await Session.getCurrentUser();
 
-  if (!user?.isSuperAdmin) {
-    redirect("/");
-  }
+  await protectAdmin();
 
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("admin_sidebar_state")?.value === "true";
