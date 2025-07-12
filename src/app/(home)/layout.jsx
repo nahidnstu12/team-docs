@@ -6,6 +6,8 @@ import { cookies } from "next/headers";
 import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomeLayout({ children }) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";

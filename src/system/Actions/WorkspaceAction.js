@@ -207,8 +207,6 @@ class WorkspaceAction extends BaseAction {
       // Get the pending workspace count using WorkspaceService
       const count = await WorkspaceService.getPendingWorkspacesCount();
 
-      Logger.info(`Retrieved pending workspace count: ${count}`, "Workspace count fetched");
-
       return {
         success: true,
         type: "success",

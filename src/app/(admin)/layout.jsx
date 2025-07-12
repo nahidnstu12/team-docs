@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import { Session } from "@/lib/Session";
 import { protectAdmin } from "@/authorization/AdminAuthGuard";
 
+export const dynamic = "force-dynamic";
+
 /**
  * Admin Layout Component
  *

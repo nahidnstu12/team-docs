@@ -1,5 +1,5 @@
 import { Session } from "@/lib/Session";
-import { notFound, forbidden } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import Logger from "@/lib/Logger";
 
@@ -56,7 +56,7 @@ export class BaseAuthGuard {
     const session = await this.requireAuth();
     if (!this.isSuperAdmin(session)) {
       Logger.warn(`Non-admin user ${session.id} attempted admin access`);
-      this.redirectUnauthorized();
+      return this.redirectUnauthorized();
     }
     return session;
   }
@@ -258,11 +258,21 @@ export class BaseAuthGuard {
   }
 
   /**
-   * Redirect to unauthorized page
-   * @throws {Error} Forbidden error
+   * Redirect unauthorized users.
+   * Redirects to the home page if the user is authenticated but not authorized,
+   * or to the login page if the user is not authenticated.
    */
-  static redirectUnauthorized() {
-    return forbidden();
+  static async redirectUnauthorized() {
+    return redirect("/");
+    // there is a case, when user should not get redirected to home page
+
+    // const session = await this.getSession();
+    // if (session) {
+    //   // User is logged in but not authorized for this action
+    //   return redirect("/home");
+    // } else {
+    //   // User is not logged in
+    // }
   }
 
   /**

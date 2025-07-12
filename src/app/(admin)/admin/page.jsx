@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Users, Building, Settings, Activity } from "lucide-react";
 import { protectAdmin } from "@/authorization/AdminAuthGuard";
 
+export const dynamic = "force-dynamic";
+
 /**
  * Admin Dashboard Page
  *
@@ -12,7 +14,8 @@ import { protectAdmin } from "@/authorization/AdminAuthGuard";
  * - System health indicators
  */
 export default async function AdminDashboard() {
-  // Ensure user is authenticated (layout handles admin check)
+  // Ensure user is authenticated and has admin privileges
+  await protectAdmin();
   const user = await Session.getCurrentUser();
 
   return (
