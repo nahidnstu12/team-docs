@@ -6,10 +6,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "NODE_ENV=production next build --no-lint",
-    "vercel-build-old": "bunx prisma generate --no-engine && bunx prisma migrate deploy && bunx prisma db seed && bun run build",
+    "vercel-build-with-seed": "bunx prisma generate --no-engine && bunx prisma migrate deploy && bunx prisma db seed && bun run build",
     "vercel-build": "bunx prisma generate --no-engine && bunx prisma migrate deploy && bun run build",
-    "start": "next start",
-    "postinstall": "prisma generate"
+    "start": "next start"
   },
   "prisma": {
     "seed": "bun prisma/seed.js"
