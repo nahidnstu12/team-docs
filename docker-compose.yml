@@ -1,44 +1,80 @@
 services:
-  team-docs:
+  team-docs-local:
     build:
       context: .
+      target: development
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://mazumder:1234@team-docs-postgres:5432/team-docs?schema=public
-      - NEXTAUTH_URL=http://localhost:3000
-      - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
-
+      - NODE_ENV=development
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
     volumes:
-      # - .:/app:cached
       - .:/app
       - /app/.next
     ports:
       - "3000:3000"
-    depends_on:
-      - team-docs-postgres
-    networks:
-      - postgres-network
+    # depends_on:
+    #   - team-docs-postgres
+    # networks:
+    #   - postgres-network
 
-  team-docs-postgres:
-    image: postgres:16
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: mazumder
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: team-docs
+  prisma-studio:
+    image: node:20-alpine
+    working_dir: /app
+    env_file:
+      - .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - postgres-network
+      - .:/app
+    ports:
+      - "5555:5555"
+    command: >
+      sh -c "
+      # echo '[Prisma] Running prisma dev...' && \
+      # npx prisma dev &
 
-networks:
-  postgres-network:
-    driver: bridge
+      echo '[Studio] Running prisma studio...' && \
+      npx prisma studio --port 5555 --hostname 0.0.0.0 --browser none
+      "
 
-volumes:
-  postgres_data:
+  team-docs-prod:
+    build:
+      context: .
+      target: production
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMDFKVlJNUTAzNTAxWEhYSjI4UjhYNU1KNk0iLCJ0ZW5hbnRfaWQiOiIzZGFiODExOTI1MGFhYmMwN2E4Y2M0MDMyYTUzYjYyYjc1NGNjZTY5Zjg0OTQ4MDRhMjBiZGRkN2VhYTU4YmM3IiwiaW50ZXJuYWxfc2VjcmV0IjoiZmU3ZmU5OGMtZjNhNi00NTNhLThlYjctYmQ5NmQwZGIwMmUyIn0.Oxu3Ta_FSPHy2wRpmOnH5omVf-grLp4wD1B5hQAxU3g
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_TRUST_HOST=true
+      - NEXTAUTH_TRUST_HOST=http://localhost:3001
+      - AUTH_TRUST_HOST=http://localhost:3001
+      - AUTH_SECRET=EhWUf2pHNDJ3icR25TyjHMpV/Irdvrbhr3TGBQkLN1o=
+      - NODE_ENV=production
+      - NEXT_PUBLIC_NODE_ENV=production # Required for client-side production detection
+    ports:
+      - "3001:3001"
+    # depends_on:
+    #   - team-docs-postgres
+    # networks:
+    #   - postgres-network
+#   team-docs-postgres:
+#     image: postgres:16
+#     restart: unless-stopped
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_USER: mazumder
+#       POSTGRES_PASSWORD: 1234
+#       POSTGRES_DB: team-docs
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - postgres-network
+
+# networks:
+#   postgres-network:
+#     driver: bridge
+
+# volumes:
+#   postgres_data:

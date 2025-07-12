@@ -27,4 +27,33 @@ export class ProjectService extends BaseService {
 			Logger.error(error.message, `project fetch fail`);
 		}
 	}
+
+	static async updateResource(id, data) {
+		try {
+			Logger.debug(`Updating project with id: ${id}`, data);
+			const updatedProject = await ProjectModel.update({
+				where: { id },
+				data,
+			});
+
+			const projectDTO = ProjectDTO.toResponse(updatedProject);
+			return projectDTO;
+		} catch (error) {
+			Logger.error(error.message, `project update fail`);
+			throw error;
+		}
+	}
+
+	static async deleteResource(id) {
+		try {
+			Logger.debug(`Deleting project with id: ${id}`);
+			await ProjectModel.delete({
+				where: { id },
+			});
+			return true;
+		} catch (error) {
+			Logger.error(error.message, `project delete fail`);
+			throw error;
+		}
+	}
 }

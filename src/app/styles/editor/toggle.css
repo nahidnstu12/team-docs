@@ -1,0 +1,210 @@
+/* Notion-like Toggle Component Styles */
+
+.tiptap .toggle-block {
+  @apply my-2 w-full;
+  position: relative;
+}
+
+/* Toggle Summary (Header) */
+.tiptap .toggle-summary {
+  @apply flex items-center gap-2 p-2 rounded-md;
+  @apply hover:bg-gray-50 dark:hover:bg-gray-800;
+  @apply transition-colors duration-150;
+  position: relative;
+  min-height: 32px;
+}
+
+/* Toggle Arrow - Using bigger SVG icon like Notion */
+.tiptap .toggle-summary::before {
+  content: "";
+  @apply text-gray-500 dark:text-gray-400;
+  @apply transition-transform duration-200 ease-out;
+  @apply flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+/* Open state arrow */
+.tiptap .toggle-block.is-open .toggle-summary::before {
+  transform: rotate(90deg);
+}
+
+/* Dark mode arrow */
+.dark .tiptap .toggle-summary::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+}
+
+/* Toggle Content */
+.tiptap .toggle-block > *:not(.toggle-summary) {
+  @apply ml-6 pl-4 transition-all duration-200 ease-out;
+  overflow: hidden;
+}
+
+/* Closed state - hide content */
+.tiptap .toggle-block.is-closed > *:not(.toggle-summary) {
+  @apply hidden;
+}
+
+/* Open state - show content with animation */
+.tiptap .toggle-block.is-open > *:not(.toggle-summary) {
+  @apply block;
+  animation: toggleSlideDown 0.2s ease-out;
+}
+
+/* Slide down animation */
+@keyframes toggleSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+}
+
+/* Focus states */
+.tiptap .toggle-summary:focus-within {
+  @apply ring-2 ring-blue-500/50 bg-blue-50 dark:bg-blue-900/20;
+}
+
+/* Summary text styling */
+.tiptap .toggle-summary {
+  @apply cursor-text flex-1 relative;
+  min-height: 24px; /* Ensure clickable area */
+  padding-right: 20px; /* Extra space for easier clicking */
+}
+
+/* TipTap placeholder for toggle summary - always visible */
+.tiptap .toggle-summary.is-empty::after {
+  content: attr(data-placeholder);
+  @apply text-gray-400 dark:text-gray-500;
+  pointer-events: none;
+  font-weight: normal;
+  position: absolute;
+  left: 38px; /* Position a bit more right after the icon */
+  top: 8px; /* Position a bit down */
+}
+
+/* When summary has content, make it look normal */
+.tiptap .toggle-summary:not(.is-empty) {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+/* Summary paragraph styling */
+.tiptap .toggle-summary p {
+  @apply m-0 font-normal text-gray-800 dark:text-gray-200;
+  @apply cursor-text;
+}
+
+/* Nested toggle indentation */
+.tiptap .toggle-block .toggle-block {
+  @apply ml-4;
+}
+
+/* Content area styling */
+.tiptap .toggle-block > p,
+.tiptap .toggle-block > ul,
+.tiptap .toggle-block > ol,
+.tiptap .toggle-block > blockquote,
+.tiptap .toggle-block > pre {
+  @apply mt-2;
+}
+
+/* TipTap placeholder for toggle content - only first paragraph */
+.tiptap .toggle-block p.is-empty:first-of-type::before {
+  content: "Empty toggle. Click or press space to add content.";
+  @apply text-gray-400 dark:text-gray-500;
+  pointer-events: none;
+  font-weight: normal;
+  float: left;
+  height: 0;
+}
+
+/* Hide placeholder for subsequent empty paragraphs */
+.tiptap .toggle-block p.is-empty:not(:first-of-type)::before {
+  display: none;
+}
+
+/* When content has text, make it look normal */
+.tiptap .toggle-block > p:not(.is-empty) {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+/* Ensure trailing paragraphs are clickable and visible */
+.tiptap p:last-child {
+  min-height: 1.5rem; /* Ensure empty paragraphs have clickable height */
+}
+
+/* Style for trailing empty paragraphs */
+.tiptap p:last-child.is-empty {
+  min-height: 1.5rem;
+  cursor: text;
+}
+
+/* Last content item margin */
+.tiptap .toggle-block > *:last-child {
+  @apply mb-2;
+}
+
+/* Hover effect for the arrow */
+.tiptap .toggle-summary:hover::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+}
+
+/* Dark mode hover effect for the arrow */
+.dark .tiptap .toggle-summary:hover::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+}
+
+/* Active/pressed state */
+.tiptap .toggle-summary:active {
+  @apply bg-gray-100 dark:bg-gray-700;
+}
+
+/* Selection styling */
+.tiptap .toggle-block.ProseMirror-selectednode {
+  @apply ring-2 ring-blue-500/30 rounded-md;
+}
+
+/* Ensure proper spacing in content */
+.tiptap .toggle-block .toggle-summary + * {
+  @apply mt-1;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .tiptap .toggle-summary::before {
+    color: #9ca3af;
+  }
+
+  .tiptap .toggle-summary:hover::before {
+    color: #d1d5db;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .tiptap .toggle-block > *:not(.toggle-summary) {
+    @apply ml-4;
+  }
+
+  .tiptap .toggle-block .toggle-block {
+    @apply ml-2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .tiptap .toggle-block.is-closed > *:not(.toggle-summary) {
+    display: block !important;
+  }
+
+  .tiptap .toggle-summary::before {
+    content: "";
+  }
+}

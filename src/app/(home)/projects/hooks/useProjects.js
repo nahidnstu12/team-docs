@@ -1,19 +1,17 @@
-import { useStartFetch } from "@/hooks/useStartFetch";
+import { usePaginatedFetch } from "@/hooks/usePaginatedFetch";
 import { getAllProjectsFn } from "../actions/getAllProjects";
 
-export function useProjects(
-	shouldStartFetchProjects,
-	setShouldStartFetchProjects
-) {
-	const { data, fetchError, showSkeleton } = useStartFetch(
+/**
+ * Custom hook for managing projects data, using the reusable usePaginatedFetch hook.
+ * @param {boolean} shouldStartFetch - Trigger for starting the fetch.
+ * @param {Function} setShouldStartFetch - Function to update the fetch trigger.
+ * @returns {Object} An object containing paginated projects data, state, and handlers.
+ */
+export function useProjects(shouldStartFetch, setShouldStartFetch) {
+	return usePaginatedFetch(
 		getAllProjectsFn,
-		shouldStartFetchProjects,
-		setShouldStartFetchProjects
+		shouldStartFetch,
+		setShouldStartFetch
 	);
-
-	return {
-		data,
-		fetchError,
-		showSkeleton,
-	};
 }
+

@@ -1,12 +1,21 @@
+import { Session } from "@/lib/Session";
+import { WorkspaceService } from "@/system/Services/WorkspaceService";
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
+
 export default async function MainPage() {
-	// await new Promise(() => {}); // infinite pending
+  // await new Promise(() => {}); // infinite pending
+  // const workspaceId = await Session.getWorkspaceIdForUser();
 
-	// const session = await Session.getCurrentUser();
+  const workspaceId = await Session.getWorkspaceIdForUser();
+  const workspaceStatus = workspaceId
+    ? await WorkspaceService.getWorkspaceStatus(workspaceId)
+    : null;
 
-	// let workspaceId = session.workspaceId;
+  if (workspaceStatus !== "ACTIVE") {
+    return redirect("/");
+  }
 
-	// if (workspaceId === null)
-	//   workspaceId = await Session.getWorkspaceId(session.id);
-
-	return <div className="">HomePage</div>;
+  return <div className="">HomePage</div>;
 }

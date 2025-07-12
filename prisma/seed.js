@@ -1,218 +1,165 @@
 import { PrismaClient } from "@/generated/client";
-import { faker } from "@faker-js/faker";
 
 const prisma = new PrismaClient();
 
 async function main() {
-	console.log("🌱 Starting seeding process...");
+  console.log("🌱 Starting seeding process...");
 
-	// Drop all existing data
-	console.log("🗑️  Cleaning up existing data...");
-	await prisma.$transaction([
-		prisma.projectUserPermission.deleteMany(),
-		prisma.projectMember.deleteMany(),
-		prisma.workspaceMember.deleteMany(),
-		prisma.pageVersion.deleteMany(),
-		prisma.pageShare.deleteMany(),
-		prisma.annotation.deleteMany(),
-		prisma.notification.deleteMany(),
-		prisma.invitation.deleteMany(),
-		prisma.page.deleteMany(),
-		prisma.section.deleteMany(),
-		prisma.project.deleteMany(),
-		prisma.workspace.deleteMany(),
-		prisma.rolePermissionAssignment.deleteMany(),
-		prisma.permission.deleteMany(),
-		prisma.role.deleteMany(),
-		prisma.user.deleteMany(),
-	]);
-	console.log("✅ Cleaned up existing data");
+  // Create nishat user
+  const nishat = await prisma.user.create({
+    data: {
+      username: "nishat",
+      email: "nishatislam3108@gmail.com",
+      password: "$2b$10$NFBfr4vxrvrJ3BI7.Bqdge55rOXWwl6lYCaeUGKzEtfNB9MxaT8BO",
+      status: "ACTIVE",
+      isSuperAdmin: true,
+    },
+  });
+  console.log("✅ Created nishat user");
 
-	const adminUser = await prisma.user.create({
-		data: {
-			username: "admin",
-			email: "admin@example.com",
-			password: "$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
-			isActive: true,
-			isSuperAdmin: false,
-		},
-	});
+  // Create workspace for Admin
+  const workspace = await prisma.workspace.create({
+    data: {
+      name: "Admin Workspace",
+      slug: "admin-workspace",
+      description: "A demo workspace for testing",
+      ownerId: nishat.id,
+      status: "ACTIVE",
+    },
+  });
+  console.log("✅ Created workspace");
 
-	// 1. Create workspace
-	const workspace = await prisma.workspace.create({
-		data: {
-			name: "Demo Workspace",
-			slug: "demo-workspace",
-			description: "A demo workspace for testing",
-			ownerId: adminUser.id,
-		},
-	});
-	console.log("✅ Created workspace");
+  // assign workspace to admin user
+  await prisma.user.update({
+    where: {
+      id: nishat.id,
+    },
+    data: {
+      workspaceId: workspace.id,
+    },
+  });
 
-	// assign workspace to admin user
-	await prisma.user.update({
-		where: {
-			id: adminUser.id,
-		},
-		data: {
-			workspaceId: workspace.id,
-		},
-	});
+  // Create two projects
+  await Promise.all([
+    prisma.project.create({
+      data: {
+        name: "Admin Project1",
+        slug: "admin-project-1",
+        description: "Admin project 1",
+        workspaceId: workspace.id,
+        ownerId: nishat.id,
+        status: "ACTIVE",
+      },
+    }),
+    prisma.project.create({
+      data: {
+        name: "Admin Project2",
+        slug: "admin-project-2",
+        description: "Admin project 2",
+        workspaceId: workspace.id,
+        ownerId: nishat.id,
+        status: "ACTIVE",
+      },
+    }),
+  ]);
 
-	// console.log("✅ Assigned workspace to admin user");
+  console.log("✅ Created projects");
 
-	// 2. Create two projects
-	await Promise.all([
-		prisma.project.create({
-			data: {
-				name: "School Demo",
-				slug: "school-demo",
-				description: "School demo project",
-				workspaceId: workspace.id,
-				ownerId: adminUser.id,
-			},
-		}),
-		prisma.project.create({
-			data: {
-				name: "Radius Directory",
-				slug: "radius-directory",
-				description: "Radius directory project",
-				workspaceId: workspace.id,
-				ownerId: adminUser.id,
-			},
-		}),
-	]);
+  // Create project-scoped permissions
+  const projectPermissions = [
+    // School Demo Project Permissions
+    {
+      name: "create:page",
+      description: "Create a page",
+      scope: "admin-project-1",
+    },
+    {
+      name: "read:page",
+      description: "Read a page",
+      scope: "admin-project-1",
+    },
+    {
+      name: "update:page",
+      description: "Update a page",
+      scope: "admin-project-1",
+    },
+    {
+      name: "delete:page",
+      description: "Delete a page",
+      scope: "admin-project-1",
+    },
+    // Radius Directory Project Permissions
+    {
+      name: "create:page",
+      description: "Create a page",
+      scope: "admin-project-2",
+    },
+    {
+      name: "read:page",
+      description: "Read a page",
+      scope: "admin-project-2",
+    },
+    {
+      name: "update:page",
+      description: "Update a page",
+      scope: "admin-project-2",
+    },
+    {
+      name: "delete:page",
+      description: "Delete a page",
+      scope: "admin-project-2",
+    },
+  ];
 
-	console.log("✅ Created projects");
+  await prisma.permission.createMany({
+    data: projectPermissions,
+    skipDuplicates: true,
+  });
 
-	// 3. Create specific user with workspace assignment
-	await prisma.user.create({
-		data: {
-			username: "user1",
-			email: "user1@example.com",
-			password: "$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
-			isActive: true,
-			isSuperAdmin: false,
-			workspaceId: workspace.id,
-		},
-	});
+  console.log("✅ Created project-scoped permissions");
 
-	console.log("✅ Created specific user");
+  // Create system roles
+  const systemRoles = [
+    {
+      name: "Admin",
+      description: "Full access to all settings and data",
+      isSystem: true,
+    },
+    {
+      name: "Developer",
+      description: "Can access and modify development resources",
+      isSystem: true,
+    },
+    {
+      name: "Viewer",
+      description: "Can view data but cannot make changes",
+      isSystem: true,
+    },
+    {
+      name: "Project Manager",
+      description: "Manages project timelines and members",
+      isSystem: true,
+    },
+    {
+      name: "Support",
+      description: "Handles user queries and support tickets",
+      isSystem: true,
+    },
+  ];
 
-	// 4. Create 9 more users
-	await Promise.all(
-		Array.from({ length: 9 }).map(() =>
-			prisma.user.create({
-				data: {
-					username: faker.internet.userName(),
-					email: faker.internet.email(),
-					password:
-						"$2b$10$hUcMcpVXVcctBXX9o18BOeWN7dylk6NtDWaXwE6Z4u6Ye8WzAb9jy",
-					isActive: true,
-					isSuperAdmin: false,
-					workspaceId: workspace.id,
-				},
-			})
-		)
-	);
+  await prisma.role.createMany({
+    data: systemRoles,
+    skipDuplicates: true,
+  });
 
-	console.log("✅ Created 9 additional users");
-
-	// 5. Create project-scoped permissions
-	const projectPermissions = [
-		// School Demo Project Permissions
-		{
-			name: "create:page",
-			description: "Create a page",
-			scope: "school-demo",
-		},
-		{
-			name: "read:page",
-			description: "Read a page",
-			scope: "school-demo",
-		},
-		{
-			name: "update:page",
-			description: "Update a page",
-			scope: "school-demo",
-		},
-		{
-			name: "delete:page",
-			description: "Delete a page",
-			scope: "school-demo",
-		},
-		// Radius Directory Project Permissions
-		{
-			name: "create:page",
-			description: "Create a page",
-			scope: "radius-directory",
-		},
-		{
-			name: "read:page",
-			description: "Read a page",
-			scope: "radius-directory",
-		},
-		{
-			name: "update:page",
-			description: "Update a page",
-			scope: "radius-directory",
-		},
-		{
-			name: "delete:page",
-			description: "Delete a page",
-			scope: "radius-directory",
-		},
-	];
-
-	await prisma.permission.createMany({
-		data: projectPermissions,
-		skipDuplicates: true,
-	});
-
-	console.log("✅ Created project-scoped permissions");
-
-	// 6. Create system roles
-	const systemRoles = [
-		{
-			name: "Admin",
-			description: "Full access to all settings and data",
-			isSystem: true,
-		},
-		{
-			name: "Developer",
-			description: "Can access and modify development resources",
-			isSystem: true,
-		},
-		{
-			name: "Viewer",
-			description: "Can view data but cannot make changes",
-			isSystem: true,
-		},
-		{
-			name: "Project Manager",
-			description: "Manages project timelines and members",
-			isSystem: true,
-		},
-		{
-			name: "Support",
-			description: "Handles user queries and support tickets",
-			isSystem: true,
-		},
-	];
-
-	await prisma.role.createMany({
-		data: systemRoles,
-		skipDuplicates: true,
-	});
-
-	console.log("✅ Created system roles");
+  console.log("✅ Created system roles");
 }
 
 main()
-	.catch((err) => {
-		console.error("❌ Seeding failed:", err);
-		process.exit(1);
-	})
-	.finally(async () => {
-		await prisma.$disconnect();
-	});
+  .catch((err) => {
+    console.error("❌ Seeding failed:", err);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

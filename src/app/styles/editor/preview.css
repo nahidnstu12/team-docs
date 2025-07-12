@@ -1,0 +1,52 @@
+/* 👁️ Preview Mode Styles */
+
+/* Main preview mode container */
+.preview-mode {
+  @apply cursor-default;
+}
+
+/* Allow text selection but prevent editing in preview mode */
+.preview-mode .ProseMirror {
+  @apply cursor-default;
+  /* Allow text selection for copying */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Hide cursor in preview mode but allow selection */
+.preview-mode .ProseMirror:focus {
+  @apply outline-none;
+  caret-color: transparent;
+}
+
+/* Subtle visual indication of preview mode */
+.preview-mode .ProseMirror {
+  @apply bg-gray-50/30 rounded-md;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+/* Selection styling in preview mode */
+.preview-mode .ProseMirror::selection {
+  @apply bg-blue-200;
+}
+
+.preview-mode .ProseMirror ::-moz-selection {
+  @apply bg-blue-200;
+}
+
+/* Disable interactive elements but allow text selection */
+.preview-mode .ProseMirror [contenteditable] {
+  -webkit-user-modify: read-only;
+}
+
+/* Prevent drag and drop in preview mode */
+.preview-mode .ProseMirror {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}

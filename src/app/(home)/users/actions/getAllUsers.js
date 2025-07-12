@@ -4,17 +4,53 @@ import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
 import { UserServices } from "@/system/Services/UserServices";
 
-export async function getAllUsersFn() {
-	const session = await Session.getCurrentUser();
+/**
+ * Server action to fetch all users with pagination and sorting support
+ * @param {Object} options - Pagination and sorting options
+ * @param {number} options.page - Current page number (1-indexed)
+ * @param {number} options.pageSize - Number of items per page
+ * @param {string} options.sortBy - Field to sort by (e.g., 'username', 'email')
+ * @param {string} options.sortOrder - Sort direction ('asc' or 'desc')
+ * @returns {Promise<{data: Array, totalItems: number, totalPages: number, currentPage: number, pageSize: number, sortBy: string, sortOrder: string}>}
+ */
+export async function getAllUsersFn(options = {}) {
+	const workspaceId = await Session.getWorkspaceIdForUser();
+	const {
+		page = 1,
+		pageSize = 10,
+		sortBy = 'username',
+		sortOrder = 'asc'
+	} = options;
 
-	let workspaceId = session.workspaceId;
+	const whereClause = { workspaceId };
 
-	if (workspaceId === null)
-		workspaceId = await Session.getWorkspaceId(session.id);
+	// Get total count for pagination
+	const totalItems = await UserServices.countResources({ where: whereClause });
 
-	const users = await UserServices.getAllResources({ where: { workspaceId } });
+	// Calculate pagination parameters
+	const skip = (page - 1) * pageSize;
+	const take = pageSize;
+	const totalPages = Math.ceil(totalItems / pageSize);
 
-	Logger.debug(users);
+	// Prepare sort options
+	const orderBy = { [sortBy]: sortOrder };
 
-	return users;
+	// Get paginated and sorted data
+	const users = await UserServices.getAllResources({
+		where: whereClause,
+		pagination: { skip, take },
+		orderBy
+	});
+
+	Logger.debug({ users }, "Paginated users fetched");
+
+	return {
+		data: users,
+		totalItems,
+		totalPages,
+		currentPage: page,
+		pageSize,
+		sortBy,
+		sortOrder
+	};
 }

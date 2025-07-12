@@ -16,7 +16,7 @@ model User {
   username    String   @unique
   email       String   @unique
   password    String
-  isActive    Boolean  @default(true)
+  status      UserStatus   @default(ACTIVE) 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   workspaceId String?
@@ -35,13 +35,19 @@ model User {
   notifications     Notification[]
 
   // Optional relationships for admin use case
-  isSuperAdmin             Boolean                    @default(false) // For SaaS phase-2
+  isSuperAdmin             Boolean                    @default(false)
   Role                     Role[]
   Permission               Permission[]
   RolePermissionAssignment RolePermissionAssignment[]
   projectPermissions       ProjectUserPermission[]
 
   @@index([email])
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING
+  INACTIVE
 }
 
 // ==================== RBAC (Role-Based Access Control) ====================
@@ -110,6 +116,7 @@ model Workspace {
   slug        String // URL-friendly identifier
   description String?
   logo        String? // URL to logo image
+  status      WorkspaceStatus   @default(PENDING) // New field for registration status
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   ownerId     String   @unique
@@ -124,6 +131,12 @@ model Workspace {
 
   @@unique([ownerId, slug]) // ✅ slug must be unique only within this owner
   @@index([ownerId])
+}
+
+enum WorkspaceStatus {
+  ACTIVE
+  PENDING
+  INACTIVE
 }
 
 model WorkspaceMember {
@@ -158,6 +171,7 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   isArchived  Boolean  @default(false)
+  status      ProjectStatus @default(ACTIVE)
 
   // Relationships
   workspace       Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
@@ -169,6 +183,12 @@ model Project {
   @@unique([slug, name, ownerId])
   @@index([workspaceId])
   @@index([ownerId])
+}
+
+enum ProjectStatus {
+  ACTIVE
+  PENDING
+  INACTIVE
 }
 
 model ProjectMember {
@@ -211,7 +231,7 @@ model ProjectUserPermission {
 
 model Section {
   id          String   @id @default(cuid())
-  name        String   @unique
+  name        String
   description String?
   projectId   String
   ownerId     String
@@ -224,6 +244,7 @@ model Section {
   creator User    @relation("sectionCreator", fields: [ownerId], references: [id])
   pages   Page[]
 
+  @@unique([name, projectId])
   @@index([projectId])
   @@index([ownerId])
 }
@@ -245,7 +266,7 @@ model Page {
   password String? // Optional password for protected pages
 
   // Relationships
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   creator   User    @relation("UserCreatedPages", fields: [ownerId], references: [id]) // ← Match the name
   updatedBy User?   @relation("UserUpdatedPages", fields: [lastUpdatedBy], references: [id]) // ← Match the name
 
@@ -253,6 +274,7 @@ model Page {
   versions    PageVersion[]
   pageShares  PageShare[]
 
+  @@unique([title, sectionId])
   @@index([sectionId])
   @@index([ownerId])
   @@index([lastUpdatedBy])

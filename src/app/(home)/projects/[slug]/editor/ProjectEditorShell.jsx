@@ -1,89 +1,48 @@
 "use client";
 
-import ProjectEditorHeader from "@/components/layout/ProjectEditorHeader";
+import ProjectEditorLayout from "./ProjectEditorLayout";
+import ProjectEditorDialogs from "./ProjectEditorDialogs";
 import { useEffect } from "react";
-import NoSectionUI from "./components/NoSectionUI";
 import { useProjectStore } from "../../store/useProjectStore";
-import { usePageDialogStore } from "../../store/usePageDialogStore";
-import dynamic from "next/dynamic";
-import DialogLoading from "@/components/loading/DialogLoading";
-import RTEeditor from "./components/RTEeditor";
-import { useSectionDialogStore } from "./store/useSectionDialogStore";
-import Logger from "@/lib/Logger";
-
-const CreateSectionDialogLazy = dynamic(
-	() =>
-		import(
-			"@/app/(home)/projects/[slug]/editor/components/CreateSectionDialog"
-		),
-	{
-		ssr: false,
-		loading: () => <DialogLoading />,
-	}
-);
-const CreatePageDialogLazy = dynamic(
-	() =>
-		import("@/app/(home)/projects/[slug]/editor/components/createPageDialog"),
-	{
-		ssr: false,
-		loading: () => <DialogLoading />,
-	}
-);
+import { useSearchParams } from "next/navigation";
 
 export default function ProjectEditorShell({ hasSection, project, sections }) {
-	const isPageDialogOpen = usePageDialogStore(
-		(state) => state.isPageDialogOpen
-	);
-	const closePageDialog = usePageDialogStore((state) => state.closePageDialog);
+  const searchParams = useSearchParams();
+  const setProject = useProjectStore((state) => state.setProject);
+  const setSections = useProjectStore((state) => state.setSections);
+  const setSelectedSection = useProjectStore((state) => state.setSelectedSection);
+  const setSelectedPage = useProjectStore((state) => state.setSelectedPage);
+  const selectedSectionId = useProjectStore((state) => state.selectedSection);
 
-	const selectedSectionId = useProjectStore((state) => state.selectedSection);
-	const setProject = useProjectStore((state) => state.setProject);
-	const setSections = useProjectStore((state) => state.setSections);
-	const selectedPage = useProjectStore((state) => state.selectedPage);
-	const isSectionDialogOpen = useSectionDialogStore(
-		(state) => state.isSectionDialogOpen
-	);
-	const closeSectionDialog = useSectionDialogStore(
-		(state) => state.closeSectionDialog
-	);
-	const openSectionDialog = useSectionDialogStore(
-		(state) => state.openSectionDialog
-	);
-	const projectName = useProjectStore((state) => state.project?.name);
+  useEffect(() => {
+    setProject(project);
+    setSections(sections);
 
-	useEffect(() => {
-		setProject(project);
-		setSections(sections);
-	}, [project, setProject, setSections, sections]);
+    // Validate selections after setting sections to ensure no stale data
+    const validateSelections = useProjectStore.getState().validateSelections;
+    validateSelections();
+  }, [project, setProject, setSections, sections]);
 
-	return (
-		<>
-			<ProjectEditorHeader
-				selectedPage={selectedPage}
-				projectName={projectName}
-			/>
+  // Handle URL query parameters on initial load (for backward compatibility)
+  // This maintains deep linking functionality while using store persistence
+  useEffect(() => {
+    // Only proceed if we have sections
+    if (!sections || sections.length === 0) return;
 
-			{/* section dialog */}
-			{isSectionDialogOpen && (
-				<CreateSectionDialogLazy
-					project={project}
-					isDialogOpen={isSectionDialogOpen}
-					setIsDialogOpen={closeSectionDialog}
-				/>
-			)}
+    const sectionParam = searchParams.get("section");
+    const pageParam = searchParams.get("page");
 
-			{/* page dialog */}
-			{isPageDialogOpen && (
-				<CreatePageDialogLazy
-					sectionId={selectedSectionId}
-					isDialogOpen={isPageDialogOpen}
-					setIsDialogOpen={closePageDialog}
-				/>
-			)}
+    // Only process URL params if they exist (for deep linking)
+    if (sectionParam) {
+      const selectByNames = useProjectStore.getState().selectByNames;
+      selectByNames(sectionParam, pageParam);
+    }
+  }, [searchParams, sections]);
 
-			{!hasSection && <NoSectionUI setIsDialogOpen={openSectionDialog} />}
-
-			{selectedPage && <RTEeditor pageId={selectedPage} />}
-		</>
-	);
+  return (
+    <>
+      <ProjectEditorLayout hasSection={hasSection} />
+      <ProjectEditorDialogs project={project} selectedSectionId={selectedSectionId} />
+    </>
+  );
 }
