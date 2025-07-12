@@ -1,12 +1,12 @@
 {
   "name": "docs-collab-system",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "vercel-build": "bunx prisma generate && bunx prisma db seed && bun run build",
     "build": "NODE_ENV=production next build --no-lint",
+    "vercel-build": "bunx prisma generate && bunx prisma migrate deploy && bunx prisma db seed && bun run build",
     "start": "next start"
   },
   "prisma": {
