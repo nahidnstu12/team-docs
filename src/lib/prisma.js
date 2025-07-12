@@ -14,6 +14,8 @@ const basePrisma = globalForPrisma.prisma || new PrismaClient();
 // Apply extensions conditionally
 if (process.env.DATABASE_URL?.startsWith("prisma+postgres://")) {
   // Use both Accelerate and Optimize when both are configured
+  console.log("🚀 Using Prisma Accelerate Client");
+  console.log("DATABASE_URL at runtime:", process.env.DATABASE_URL);
   prisma = basePrisma.$extends(withAccelerate());
   //   .$extends(
   //   withOptimize({
@@ -35,6 +37,8 @@ if (process.env.DATABASE_URL?.startsWith("prisma+postgres://")) {
 // }
 else {
   // Use regular Prisma client without extensions
+  console.warn("⚠️ DATABASE_URL is not set for Accelerate. Using fallback Prisma Client.");
+  console.warn("DATABASE_URL at runtime:", process.env.DATABASE_URL);
   prisma = basePrisma;
 }
 

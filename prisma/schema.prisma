@@ -8,6 +8,7 @@ generator custom {
   binaryTargets = ["native", "linux-musl", "linux-musl-openssl-3.0.x", "rhel-openssl-3.0.x"]
   output   = "../src/generated/client" 
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
