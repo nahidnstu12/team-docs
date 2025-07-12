@@ -2,6 +2,8 @@ import { Session } from "@/lib/Session";
 import { WorkspaceService } from "@/system/Services/WorkspaceService";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function MainPage() {
   // await new Promise(() => {}); // infinite pending
   // const workspaceId = await Session.getWorkspaceIdForUser();
