@@ -18,6 +18,20 @@ const nextConfig = {
   experimental: {
     authInterrupts: true,
     ppr: "incremental",
+    // Forward browser logs to the terminal for easier debugging
+    browserDebugInfoInTerminal: true,
+
+    // Enable new caching and pre-rendering behavior
+    dynamicIO: true, // will be renamed to cacheComponents in Next.js 16
+
+    // Activate new client-side router improvements
+    clientSegmentCache: true,
+
+    // Explore route composition and segment overrides via DevTools
+    devtoolSegmentExplorer: true,
+
+    // Enable persistent caching for the turbopack dev server and build.
+    turbopackPersistentCaching: true,
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
