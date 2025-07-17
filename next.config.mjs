@@ -17,12 +17,12 @@ const nextConfig = {
   },
   experimental: {
     authInterrupts: true,
-    ppr: "incremental",
+    // ppr: "incremental",
     // Forward browser logs to the terminal for easier debugging
     browserDebugInfoInTerminal: true,
 
     // Enable new caching and pre-rendering behavior
-    dynamicIO: true, // will be renamed to cacheComponents in Next.js 16
+    // dynamicIO: true, // will be renamed to cacheComponents in Next.js 16
 
     // Activate new client-side router improvements
     clientSegmentCache: true,

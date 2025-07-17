@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack -H 192.168.1.111",
+    "dev": "next dev --turbopack",
     "build": "NODE_ENV=production next build --turbopack --no-lint",
     "vercel-build-with-seed": "bunx prisma generate --no-engine && bunx prisma migrate deploy && bunx prisma db seed && bun run build",
     "vercel-build": "bunx prisma generate --no-engine && bunx prisma migrate deploy && bun run build",
-    "start": "next start -H 192.168.1.111",
+    "start": "next start",
     "analyze": "ANALYZE=true next build --turbopack --no-lint"
   },
   "prisma": {
