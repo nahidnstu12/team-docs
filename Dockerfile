@@ -1,5 +1,5 @@
 # ==================== TEAM-DOCS DOCKERFILE ====================
-FROM oven/bun:1.2.14-alpine AS base
+FROM oven/bun:1.2.14 AS base
 WORKDIR /app
 COPY package.json bun.lock ./
 

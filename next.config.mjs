@@ -1,8 +1,13 @@
 import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  devIndicators: false,
+  devIndicators: true,
   poweredByHeader: false,
   reactStrictMode: true,
   compress: true,
@@ -17,12 +22,9 @@ const nextConfig = {
   },
   experimental: {
     authInterrupts: true,
-    // ppr: "incremental",
+    ppr: "incremental",
     // Forward browser logs to the terminal for easier debugging
     browserDebugInfoInTerminal: true,
-
-    // Enable new caching and pre-rendering behavior
-    // dynamicIO: true, // will be renamed to cacheComponents in Next.js 16
 
     // Activate new client-side router improvements
     clientSegmentCache: true,
@@ -69,4 +71,4 @@ const securityHeaders = [
   },
 ];
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
