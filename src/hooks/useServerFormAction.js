@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useMemo, useRef } from "react";
+import { useActionState, useMemo, useRef, startTransition } from "react";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/useToast";
 
@@ -22,7 +22,7 @@ export function useServerFormAction({
   },
 }) {
   const toast = useToast();
-  const [formState, formAction, isPending] = useActionState(actionFn, {
+  const [formState, runAction, isPending] = useActionState(actionFn, {
     errors: null,
     data: null,
   });
@@ -30,6 +30,7 @@ export function useServerFormAction({
   const {
     control,
     register,
+    handleSubmit,
     setError,
     reset,
     watch,
@@ -68,6 +69,8 @@ export function useServerFormAction({
 
     // Mark this state as processed
     lastProcessedState.current = formState;
+
+    console.log("formstate", formState);
 
     if (formState.success === false) {
       // Reset form with submitted values but keep errors
@@ -109,6 +112,12 @@ export function useServerFormAction({
     errorToast,
     toast,
   ]);
+
+  // ✅ This function simulates form action using internal handleSubmit logic
+  const formAction = async (formData) => {
+    const dataObj = Object.fromEntries(formData.entries());
+    handleSubmit(runAction)(dataObj);
+  };
 
   return {
     control,

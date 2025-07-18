@@ -1,145 +1,187 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Controller } from "react-hook-form";
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createPermissions } from "@/system/Actions/PermissionActions";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
+import { getAllProjectsFn } from "./../actions/getAllProjects";
 
 export default function PermissionCreateDialog({
-	isDialogOpen,
-	setIsDialogOpen,
-	setStartFetchPermissions,
+  isDialogOpen,
+  setIsDialogOpen,
+  setStartFetchPermissions,
 }) {
-	const router = useRouter();
+  const router = useRouter();
+  const [permissionScopeStatus, setPermissionScopeStatus] = useState("general");
+  const [projects, setProjects] = useState([]);
 
-	const defaultValues = useMemo(() => {
-		({
-			name: "",
-			description: "",
-			scope: "",
-		});
-	}, []);
+  useEffect(() => {
+    getAllProjectsFn().then((res) => {
+      setProjects(res);
+    });
+  }, []);
 
-	const successToast = useMemo(
-		() => ({
-			title: "Permission created successfully",
-			description: "Your new Permission is ready to use!",
-		}),
-		[]
-	);
+  const defaultValues = useMemo(() => {
+    ({
+      name: "",
+      description: "",
+      scope: "",
+    });
+  }, []);
 
-	const handleSuccess = useCallback(
-		(redirectTo) => {
-			setIsDialogOpen(false);
-			setStartFetchPermissions(true);
-			if (redirectTo) router.push(redirectTo);
-		},
-		[router, setIsDialogOpen, setStartFetchPermissions]
-	);
+  const successToast = useMemo(
+    () => ({
+      title: "Permission created successfully",
+      description: "Your new Permission is ready to use!",
+    }),
+    []
+  );
 
-	const { register, errors, formAction, isPending, isSubmitDisabled } =
-		useServerFormAction({
-			schema: PermissionSchema,
-			actionFn: createPermissions,
-			defaultValues,
-			successToast,
-			onSuccess: handleSuccess,
-			isDialogOpen,
-		});
+  const handleSuccess = useCallback(
+    (redirectTo) => {
+      setIsDialogOpen(false);
+      setStartFetchPermissions(true);
+      if (redirectTo) router.push(redirectTo);
+    },
+    [router, setIsDialogOpen, setStartFetchPermissions]
+  );
 
-	return (
-		<>
-			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-				<DialogTrigger asChild>
-					<div id="create-role-drawer-trigger" />
-				</DialogTrigger>
+  const { register, errors, formAction, isPending, isSubmitDisabled, control } =
+    useServerFormAction({
+      schema: PermissionSchema,
+      actionFn: createPermissions,
+      defaultValues,
+      successToast,
+      onSuccess: handleSuccess,
+      isDialogOpen,
+    });
 
-				<DialogContent className="sm:max-w-[600px]">
-					<DialogHeader>
-						<DialogTitle className="text-2xl font-semibold">
-							Create a New Permission
-						</DialogTitle>
-						<DialogDescription>
-							Provide a name and optional description for the new permission in
-							your system.
-						</DialogDescription>
-					</DialogHeader>
+  return (
+    <>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <div id="create-role-drawer-trigger" />
+        </DialogTrigger>
 
-					<form action={formAction} className="mt-6 space-y-5">
-						<div className="space-y-1.5">
-							<Label htmlFor="name">Permission Name</Label>
-							<Input
-								id="name"
-								placeholder="e.g. create, update, delete, view"
-								className="h-11"
-								{...register("name")}
-							/>
-							{errors.name && (
-								<p className="mt-1 text-sm text-red-500">
-									{errors.name.message}
-								</p>
-							)}
-						</div>
-						<div className="space-y-1.5">
-							<Label htmlFor="scope">Permission Scope</Label>
-							<Input
-								id="scope"
-								placeholder="e.g. workspace, project, page"
-								className="h-11"
-								{...register("scope")}
-							/>
-							{errors.scope && (
-								<p className="mt-1 text-sm text-red-500">
-									{errors.scope.message}
-								</p>
-							)}
-						</div>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-semibold">Create a New Permission</DialogTitle>
+            <DialogDescription>
+              Provide a name and optional description for the new permission in your system.
+            </DialogDescription>
+          </DialogHeader>
 
-						<div className="space-y-1.5">
-							<Label htmlFor="description">
-								Description{" "}
-								<span className="text-muted-foreground">(optional)</span>
-							</Label>
-							<Textarea
-								id="description"
-								placeholder="What is this permission about?"
-								{...register("description")}
-							/>
-							{errors.description && (
-								<p className="mt-1 text-sm text-red-500">
-									{errors.description.message}
-								</p>
-							)}
-						</div>
+          <form action={formAction} className="mt-6 space-y-5">
+            <div className="space-y-1.5">
+              <Label htmlFor="name">Permission Name</Label>
+              <Input
+                id="name"
+                placeholder="e.g. create, update, delete, view"
+                className="h-11"
+                {...register("name")}
+              />
+              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="scope">Permission Scope</Label>
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={permissionScopeStatus === "general" ? "px-6 bg-gray-200" : ""}
+                  onClick={() => setPermissionScopeStatus("general")}
+                >
+                  General
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={permissionScopeStatus === "project" ? "px-6 bg-gray-200" : ""}
+                  onClick={() => setPermissionScopeStatus("project")}
+                >
+                  Project Scope Permission
+                </Button>
+              </div>
+              {permissionScopeStatus === "general" ? (
+                <Input
+                  id="scope"
+                  placeholder="Create your general permission"
+                  className="h-11 mt-2"
+                  {...register("scope")}
+                />
+              ) : (
+                <Controller
+                  control={control}
+                  name="scope"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-1/2 mt-2">
+                        <SelectValue placeholder="Project Permission Scope" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {projects.map((project) => (
+                          <SelectItem key={project.id} value={project.name}>
+                            {project.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
+              {errors.scope && <p className="mt-1 text-sm text-red-500">{errors.scope.message}</p>}
+            </div>
 
-						{errors._form && (
-							<div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
-								<p className="text-red-700">{errors._form.message}</p>
-							</div>
-						)}
+            <div className="space-y-1.5">
+              <Label htmlFor="description">
+                Description <span className="text-muted-foreground">(optional)</span>
+              </Label>
+              <Textarea
+                id="description"
+                placeholder="What is this permission about?"
+                {...register("description")}
+              />
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>
+              )}
+            </div>
 
-						<DialogFooter className="pt-4">
-							<Button type="submit" disabled={isSubmitDisabled}>
-								{isPending ? "Creating..." : "Create Permission"}
-							</Button>
-						</DialogFooter>
-					</form>
-				</DialogContent>
-			</Dialog>
-		</>
-	);
+            {errors._form && (
+              <div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
+                <p className="text-red-700">{errors._form.message}</p>
+              </div>
+            )}
+
+            <DialogFooter className="pt-4">
+              <Button type="submit" disabled={isSubmitDisabled}>
+                {isPending ? "Creating..." : "Create Permission"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
