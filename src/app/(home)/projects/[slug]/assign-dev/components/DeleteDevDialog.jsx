@@ -50,6 +50,7 @@ export default function DeleteDevDialog({ userId, projectId, onRemoveDevSuccess 
       });
     } finally {
       setIsDeleting(false);
+      onRemoveDevSuccess();
     }
   };
 

@@ -32,7 +32,6 @@ export default function DevListings({
       try {
         setIsLoading(true);
         const members = await getMembersPermissionListings(projectId);
-        console.log(members, "members hit--");
         setMembers(members);
       } catch (err) {
         console.error("Error fetching developers:", err);

@@ -18,6 +18,7 @@ export default function AssignDevClient({ project, workspaceId }) {
   return (
     <>
       <AssignDevHeader
+        refetchTrigger={refetchTrigger}
         projectName={project.name}
         workspaceId={workspaceId}
         onAssignSuccess={handleAssignSuccess}

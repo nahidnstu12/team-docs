@@ -14,8 +14,15 @@ import { useState, useEffect } from "react";
 import { getMembers } from "../actions/getMembers";
 import { getProjectPermission } from "../actions/getProjectPermission";
 import { assignDevAction } from "@/system/Actions/ProjectPermissionAction";
+import { toast } from "sonner";
 
-export default function AssignDevHeader({ projectName, workspaceId, onAssignSuccess, projectId }) {
+export default function AssignDevHeader({
+  projectName,
+  workspaceId,
+  onAssignSuccess,
+  projectId,
+  refetchTrigger,
+}) {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
   const [search, setSearch] = useState("");
@@ -38,7 +45,7 @@ export default function AssignDevHeader({ projectName, workspaceId, onAssignSucc
 
   useEffect(() => {
     fetchMembers();
-  }, []);
+  }, [refetchTrigger]);
 
   useEffect(() => {
     const fetchPermissions = async () => {
@@ -96,6 +103,9 @@ export default function AssignDevHeader({ projectName, workspaceId, onAssignSucc
 
       // Notify parent component about successful assignment
       if (onAssignSuccess) {
+        toast.success("Developer & Permission assigned", {
+          description: "Developer & Permission has been successfully assigned.",
+        });
         onAssignSuccess();
       }
 
