@@ -12,8 +12,8 @@ import { getMembersPermissionListings } from "../actions/getMembersPermissionLis
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { removeDevFromProjectAction } from "@/system/Actions/ProjectPermissionAction";
 import ModifyPermissionsDrawer from "./ModifyPermissionsDrawer";
+import DeleteDevDialog from "./DeleteDevDialog";
 
 export default function DevListings({
   projectId,
@@ -21,27 +21,26 @@ export default function DevListings({
   onRemoveDevSuccess,
   projectName,
 }) {
-  const [users, setUsers] = useState([]);
+  const [members, setMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const [selectedDeveloper, setSelectedDeveloper] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchMembers = async () => {
       try {
         setIsLoading(true);
-        setError(null);
-        const users = await getMembersPermissionListings(projectId);
-        setUsers(users);
+        const members = await getMembersPermissionListings(projectId);
+        console.log(members, "members hit--");
+        setMembers(members);
       } catch (err) {
-        setError(err.message || "Failed to fetch developers");
         console.error("Error fetching developers:", err);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchUsers();
+    fetchMembers();
   }, [projectId, refetchTrigger]);
 
   const LoadingSkeleton = () => (
@@ -64,17 +63,6 @@ export default function DevListings({
       ))}
     </>
   );
-
-  const handleRemoveDev = async (userId) => {
-    const result = await removeDevFromProjectAction({
-      selectedUser: userId,
-      projectId: projectId,
-    });
-
-    if (result.success) {
-      onRemoveDevSuccess();
-    }
-  };
 
   const handleModifyClick = (memberAndPermissions) => {
     setSelectedDeveloper(memberAndPermissions);
@@ -106,20 +94,14 @@ export default function DevListings({
           <TableBody>
             {isLoading ? (
               <LoadingSkeleton />
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={4} className="py-10 text-lg text-center text-destructive">
-                  {error}
-                </TableCell>
-              </TableRow>
-            ) : users.length === 0 ? (
+            ) : members.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="py-10 text-lg text-center text-muted-foreground">
                   No Developers found.
                 </TableCell>
               </TableRow>
             ) : (
-              users.map(({ user, permissions }) => (
+              members.map(({ user, permissions }) => (
                 <TableRow key={user.id} className="transition-colors duration-200 hover:bg-muted">
                   <TableCell className="px-6 py-5 text-base font-semibold">
                     {user.username}
@@ -135,9 +117,12 @@ export default function DevListings({
                     >
                       Modify
                     </Button>
-                    <Button variant="destructive" onClick={() => handleRemoveDev(user.id)}>
-                      Remove
-                    </Button>
+
+                    <DeleteDevDialog
+                      userId={user.id}
+                      projectId={projectId}
+                      onRemoveDevSuccess={onRemoveDevSuccess}
+                    />
                   </TableCell>
                 </TableRow>
               ))

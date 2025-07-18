@@ -1,6 +1,8 @@
 "use server";
 import { BaseAction } from "./BaseAction";
 import { ProjectUserPermissionService } from "../Services/ProjectUserPermissionService";
+import { revalidatePath } from "next/cache";
+import Logger from "@/lib/Logger";
 
 class ProjectPermissionAction extends BaseAction {
   static async assignDev(formData) {
@@ -14,12 +16,24 @@ class ProjectPermissionAction extends BaseAction {
   }
 
   static async removeDevFromProject(formData) {
-    const result = await ProjectUserPermissionService.removeDevFromProject(formData);
+    try {
+      await ProjectUserPermissionService.removeDevFromProject(formData);
 
-    return {
-      data: result.data,
-      success: true,
-    };
+      revalidatePath("/projects/[slug]/assign-dev");
+
+      return {
+        success: true,
+        type: "success",
+        message: "Developer & permission successfully deleted",
+      };
+    } catch (error) {
+      Logger.error(error.message, "developer & permission deletion failed:");
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to delete developer & permission"] },
+      };
+    }
   }
 
   static async modifyDevPermissions(formData) {

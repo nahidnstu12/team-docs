@@ -40,6 +40,11 @@ export class ProjectUserPermissionService extends BaseService {
     }
   }
 
+  /**
+   * Remove Dev from assigned permissions table
+   * @param {*} formData
+   * @returns
+   */
   static async removeDevFromProject(formData) {
     const { selectedUser, projectId } = formData;
 
