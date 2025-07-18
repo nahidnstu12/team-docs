@@ -4,7 +4,7 @@ import { useState } from "react";
 import AssignDevHeader from "./AssignDevHeader";
 import DevListings from "./DevListings";
 
-export default function AssignDevClient({ project }) {
+export default function AssignDevClient({ project, workspaceId }) {
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   const handleAssignSuccess = () => {
@@ -19,8 +19,9 @@ export default function AssignDevClient({ project }) {
     <>
       <AssignDevHeader
         projectName={project.name}
-        projectId={project.id}
+        workspaceId={workspaceId}
         onAssignSuccess={handleAssignSuccess}
+        projectId={project.id}
       />
       <DevListings
         projectId={project.id}

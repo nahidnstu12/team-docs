@@ -2,12 +2,11 @@ import Logger from "@/lib/Logger";
 import { ProjectModel } from "../Models/ProjectModel";
 import { ProjectUserPermissionModel } from "../Models/ProjectUserPermission";
 import { BaseService } from "./BaseService";
-import { UserModel } from "../Models/UserModel";
+import { ProjectUserPermissionDTO } from "../DTOs/ProjectUserPermissionDTO";
 
 export class ProjectUserPermissionService extends BaseService {
-  constructor() {
-    super("projectUserPermission");
-  }
+  static modelName = "projectUserPermission";
+  static dto = ProjectUserPermissionDTO;
 
   static async assignDev(formData) {
     const { selectedPermissions, selectedUsers, projectId } = formData;
@@ -108,51 +107,65 @@ export class ProjectUserPermissionService extends BaseService {
     }
   }
 
-  static async getProjectUsersList(projectId) {
+  /**
+   * already assigned members
+   * for assign-dev page (left dropdown)
+   * @param {*} projectId
+   * @returns
+   */
+  static async getProjectAssignedMembers(projectId) {
     if (!projectId) throw new Error("projectId is missing");
 
     try {
-      return await UserModel.findMany({
-        where: {
-          projectPermissions: {
-            some: {
-              projectId: projectId,
-            },
-          },
-        },
-        // include: {
-        // 	projectPermissions: {
-        // 		where: {
-        // 			projectId: projectId,
-        // 		},
-        // 		include: {
-        // 			permission: true,
-        // 		},
-        // 	},
-        // },
+      return await ProjectUserPermissionModel.findMany({
+        where: { projectId },
         select: {
-          id: true,
-          username: true,
-          email: true,
-          status: true,
-          createdAt: true,
-          updatedAt: true,
-          projectPermissions: {
+          user: {
             select: {
-              permission: {
-                select: {
-                  id: true,
-                  name: true,
-                  description: true,
-                  scope: true,
-                },
-              },
+              id: true,
+              username: true,
+              email: true,
             },
           },
         },
       });
     } catch (error) {
       Logger.error(error.message, `Get project users list failed`);
+      throw error;
+    }
+  }
+
+  /**
+   * developer listings with permissions in dev-listings table
+   * @param {*} projectId
+   * @returns
+   */
+  static async getMembersAndPermissions(projectId) {
+    if (!projectId) throw new Error("projectId is missing");
+
+    try {
+      const result = await ProjectUserPermissionModel.findMany({
+        where: { projectId },
+        select: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+          permission: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return this.dto.toCollection(result);
+    } catch (error) {
+      Logger.error(error.message, `Get project users and permissions list failed`);
       throw error;
     }
   }

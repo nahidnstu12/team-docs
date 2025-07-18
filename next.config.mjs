@@ -7,7 +7,6 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  devIndicators: true,
   poweredByHeader: false,
   reactStrictMode: true,
   compress: true,

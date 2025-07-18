@@ -25,6 +25,7 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   workspaceId String?
+  isWorkspaceOwner Boolean @default(false)
   // name       String?
   // avatar     String? // URL to avatar image
 

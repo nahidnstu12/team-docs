@@ -2,24 +2,29 @@
 .PHONY: flush
 
 # Run dev migration with timestamp
+# docker compose exec team-docs-local bunx prisma migrate dev
 migrate:
-	docker compose exec team-docs-local bunx prisma migrate dev
+	bunx prisma migrate dev
 
 # Push schema directly to DB
+# docker compose exec team-docs-local bunx prisma db push
 push:
-	docker compose exec team-docs-local bunx prisma db push
+	bunx prisma db push
 
 # Generate Prisma client
+# docker compose exec team-docs-local bunx prisma generate
 generate:
-	docker compose exec team-docs-local bunx prisma generate
+	bunx prisma generate
 
 # Reset DB (DANGEROUS)
+# docker compose exec team-docs-local bunx prisma migrate reset --force --skip-seed
 reset:
-	docker compose exec team-docs-local bunx prisma migrate reset --force --skip-seed
+	bunx prisma migrate reset --force --skip-seed
 
 # Seed DB
+# docker compose exec team-docs-local bunx prisma db seed
 seed:
-	docker compose exec team-docs-local bunx prisma db seed
+	bunx prisma db seed
 
 # Apply migration in production (safe)
 deploy:

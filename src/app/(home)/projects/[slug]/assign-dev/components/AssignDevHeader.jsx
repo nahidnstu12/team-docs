@@ -11,24 +11,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { getUsersNotInProject } from "../actions/getUsers";
+import { getMembers } from "../actions/getMembers";
 import { getProjectPermission } from "../actions/getProjectPermission";
 import { assignDevAction } from "@/system/Actions/ProjectPermissionAction";
 
-export default function AssignDevHeader({ projectName, projectId, onAssignSuccess }) {
+export default function AssignDevHeader({ projectName, workspaceId, onAssignSuccess, projectId }) {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState([]);
+  const [members, setMembers] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAssigning, setIsAssigning] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchMembers = async () => {
     try {
       setIsLoading(true);
-      const users = await getUsersNotInProject(projectId);
-      setUsers(users);
+      const members = await getMembers(workspaceId, projectId);
+      setMembers(members);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     } finally {
@@ -37,8 +37,8 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [projectId]);
+    fetchMembers();
+  }, []);
 
   useEffect(() => {
     const fetchPermissions = async () => {
@@ -52,11 +52,11 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
     fetchPermissions();
   }, [projectName]);
 
-  // Filter users by name or email
-  const filteredUsers =
-    users?.length > 0
-      ? users?.filter((user) =>
-          `${user.username} ${user.email}`.toLowerCase().includes(search.toLowerCase())
+  // Filter users by name or email (searching)
+  const filteredMembers =
+    members?.length > 0
+      ? members?.filter((member) =>
+          `${member.username} ${member.email}`.toLowerCase().includes(search.toLowerCase())
         )
       : [];
 
@@ -92,7 +92,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
       setSearch("");
 
       // Refetch the developer list
-      await fetchUsers();
+      await fetchMembers();
 
       // Notify parent component about successful assignment
       if (onAssignSuccess) {
@@ -100,9 +100,8 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
       }
 
       // You can add a toast notification here if you want
-      console.log("Developers assigned successfully:", result.data);
     } catch (error) {
-      console.error("Failed to assign developers:", error);
+      console.error("Failed to assign developers:", error.message);
       // You can add error toast notification here
     } finally {
       setIsAssigning(false);
@@ -112,7 +111,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
   // Get selected user names for display
   const getSelectedUserNames = () => {
     if (selectedUsers.length === 0) return "Select Dev's";
-    const selectedUserObjects = users.filter((user) => selectedUsers.includes(user.id));
+    const selectedUserObjects = members.filter((member) => selectedUsers.includes(member.id));
     return `${selectedUserObjects.length} Developer${
       selectedUserObjects.length > 1 ? "s" : ""
     } selected`;
@@ -132,7 +131,7 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
   return (
     <div className="">
       <section className="flex justify-between gap-4 py-6 my-6  bg-gray-100">
-        <div className="flex gap-4 w-[80%] justify-between">
+        <div className="flex gap-4 w-[80%] justify-between px-4">
           {/* left */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -154,20 +153,20 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 
               {isLoading ? (
                 <div className="p-4 text-center text-muted-foreground">Loading developers...</div>
-              ) : filteredUsers.length === 0 ? (
+              ) : filteredMembers.length === 0 ? (
                 <div className="p-4 text-center text-muted-foreground">No developers Found...</div>
               ) : (
-                filteredUsers.map((user) => (
+                filteredMembers.map((member) => (
                   <DropdownMenuCheckboxItem
-                    key={user.id}
-                    checked={selectedUsers.includes(user.id)}
-                    onCheckedChange={() => toggleUser(user.id)}
+                    key={member.id}
+                    checked={selectedUsers.includes(member.id)}
+                    onCheckedChange={() => toggleUser(member.id)}
                     onSelect={(e) => e.preventDefault()}
                     className="py-2"
                   >
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-semibold">{user.username}</span>
-                      <span className="text-xs text-muted-foreground">{user.email}</span>
+                      <span className="text-sm font-semibold">{member.username}</span>
+                      <span className="text-xs text-muted-foreground">{member.email}</span>
                     </div>
                   </DropdownMenuCheckboxItem>
                 ))
