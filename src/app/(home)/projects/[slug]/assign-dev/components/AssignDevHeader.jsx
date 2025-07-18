@@ -43,14 +43,14 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const permissions = await getProjectPermission("school-demo");
+        const permissions = await getProjectPermission(projectName);
         setPermissions(permissions);
       } catch (error) {
         console.error("Failed to fetch permissions:", error);
       }
     };
     fetchPermissions();
-  }, [projectId]);
+  }, [projectName]);
 
   // Filter users by name or email
   const filteredUsers =
@@ -131,10 +131,6 @@ export default function AssignDevHeader({ projectName, projectId, onAssignSucces
 
   return (
     <div className="">
-      {/* <h1 className="mb-2 text-xl ">
-        Project: Name: <span className="text-3xl font-semibold">{projectName}</span>
-      </h1> */}
-
       <section className="flex justify-between gap-4 py-6 my-6  bg-gray-100">
         <div className="flex gap-4 w-[80%] justify-between">
           {/* left */}
