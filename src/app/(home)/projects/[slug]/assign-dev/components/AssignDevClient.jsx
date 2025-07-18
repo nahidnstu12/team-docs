@@ -25,6 +25,7 @@ export default function AssignDevClient({ project, workspaceId }) {
       />
       <DevListings
         projectId={project.id}
+        projectName={project.name}
         refetchTrigger={refetchTrigger}
         onRemoveDevSuccess={handleRemoveDevSuccess}
       />

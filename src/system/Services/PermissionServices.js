@@ -13,6 +13,10 @@ export class PermissionServices extends BaseService {
         where: {
           scope: projectName,
         },
+        select: {
+          id: true,
+          name: true,
+        },
       });
       return permissions;
     } catch (error) {

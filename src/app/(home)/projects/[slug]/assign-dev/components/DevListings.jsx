@@ -15,7 +15,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { removeDevFromProjectAction } from "@/system/Actions/ProjectPermissionAction";
 import ModifyPermissionsDrawer from "./ModifyPermissionsDrawer";
 
-export default function DevListings({ projectId, refetchTrigger, onRemoveDevSuccess }) {
+export default function DevListings({
+  projectId,
+  refetchTrigger,
+  onRemoveDevSuccess,
+  projectName,
+}) {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +33,6 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
         setIsLoading(true);
         setError(null);
         const users = await getMembersPermissionListings(projectId);
-        console.log(users);
         setUsers(users);
       } catch (err) {
         setError(err.message || "Failed to fetch developers");
@@ -72,8 +76,8 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
     }
   };
 
-  const handleModifyClick = (developer) => {
-    setSelectedDeveloper(developer);
+  const handleModifyClick = (memberAndPermissions) => {
+    setSelectedDeveloper(memberAndPermissions);
     setIsDrawerOpen(true);
   };
 
@@ -125,7 +129,10 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
                   </TableCell>
 
                   <TableCell className="flex items-center justify-center gap-3 px-6 py-5">
-                    <Button variant="outline" onClick={() => handleModifyClick(user)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleModifyClick({ user, permissions })}
+                    >
                       Modify
                     </Button>
                     <Button variant="destructive" onClick={() => handleRemoveDev(user.id)}>
@@ -141,7 +148,8 @@ export default function DevListings({ projectId, refetchTrigger, onRemoveDevSucc
       <ModifyPermissionsDrawer
         isOpen={isDrawerOpen}
         onClose={handleDrawerClose}
-        developer={selectedDeveloper}
+        memberAndPermissions={selectedDeveloper}
+        projectName={projectName}
         projectId={projectId}
         onSuccess={onRemoveDevSuccess}
       />
