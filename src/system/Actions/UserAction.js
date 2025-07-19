@@ -68,6 +68,41 @@ class UserActions extends BaseAction {
       };
     }
   }
+
+  static async update(formData) {
+    const result = await this.execute(formData);
+
+    if (!result.success) return result;
+
+    try {
+      await UserModel.update({
+        where: {
+          id: result.data.id,
+        },
+        data: {
+          ...result.data,
+        },
+      });
+
+      return {
+        data: result.data,
+        success: true,
+        type: "success",
+        redirectTo: "/users",
+      };
+    } catch (error) {
+      Logger.error(error.message, `User Update fail`);
+      if (error.code)
+        return PrismaErrorFormatter.handle(error, result.data, ["username", "email", "password"]);
+
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to update User"] },
+        data: result.data,
+      };
+    }
+  }
 }
 
 export async function createUser(prevState, formData) {
@@ -76,4 +111,8 @@ export async function createUser(prevState, formData) {
 
 export async function deleteUser(prevState, userId) {
   return await UserActions.delete(userId);
+}
+
+export async function AdminUpdatingUser(prevState, formData) {
+  return await UserActions.update(formData);
 }

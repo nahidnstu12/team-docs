@@ -18,7 +18,6 @@ import PermissionEditDialog from "./PermissionEditDialog";
 import DeletePermissionDialog from "./DeletePermissionDialog";
 import TablePagination from "@/components/shared/TablePagination";
 import { usePermissions } from "../hooks/usePermissions";
-import Logger from "@/lib/Logger";
 
 export default function PermissionListings({
   hasPermission,
@@ -31,7 +30,6 @@ export default function PermissionListings({
   const [selectedPermission, setSelectedPermission] = useState(null);
 
   const handleEditClick = (permission) => {
-    Logger.debug("Opening edit dialog for permission", { permissionId: permission.id });
     setSelectedPermission(permission);
     setIsEditDialogOpen(true);
   };

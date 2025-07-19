@@ -8,36 +8,35 @@ import { UserServices } from "@/system/Services/UserServices";
  * @param {Object} options - Pagination and sorting options
  * @param {number} options.page - Current page number (1-indexed)
  * @param {number} options.pageSize - Number of items per page
- * @param {string} options.sortBy - Field to sort by (e.g., 'username', 'email')
  * @param {string} options.sortOrder - Sort direction ('asc' or 'desc')
  * @returns {Promise<{data: Array, totalItems: number, totalPages: number, currentPage: number, pageSize: number, sortBy: string, sortOrder: string}>}
  */
 export async function getAllUsersFn(options = {}) {
   const workspaceId = await Session.getWorkspaceIdForUser();
-  const { page = 1, pageSize = 10, sortBy = "username", sortOrder = "asc" } = options;
+  const { page = 1, pageSize = 10, sortOrder = "asc" } = options;
+  const sortBy = "username";
 
-  // Get total count for pagination
   const totalItems = await UserServices.countResources({ where: { workspaceId } });
 
-  // Calculate pagination parameters
   const skip = (page - 1) * pageSize;
   const take = pageSize;
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  // Prepare sort options
   const orderBy = { [sortBy]: sortOrder };
 
-  // Get paginated and sorted data
   const users = await UserServices.getAllResources({
     where: {
       workspaceId,
       isWorkspaceOwner: false,
     },
-    include: {
-      role: true,
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      status: true,
     },
     pagination: { skip, take },
-    // orderBy,
+    orderBy,
   });
 
   return {
@@ -46,7 +45,7 @@ export async function getAllUsersFn(options = {}) {
     totalPages,
     currentPage: page,
     pageSize,
-    sortBy,
+    sortBy: "username",
     sortOrder,
   };
 }

@@ -17,7 +17,7 @@ export function usePaginatedFetch(serverAction, shouldStartFetch, setShouldStart
   // Get current page and sort parameters from URL
   const currentPage = Number(searchParams.get("page") || 1);
   const pageSize = 10; // Items per page
-  const sortBy = searchParams.get("sortBy") || "name";
+  const sortBy = searchParams.get("sortBy") || "name"; // IT IS BUGGY! SOMETIME 'NAME' MAY NOT AVAILABLE FOR SORTING
   const sortOrder = searchParams.get("sortOrder") || "asc";
 
   // Effect to trigger refetch when URL params change

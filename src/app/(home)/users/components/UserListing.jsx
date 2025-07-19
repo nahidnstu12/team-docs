@@ -13,12 +13,15 @@ import { Pencil } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import TableLoading from "@/components/loading/TableLoading";
 import { useUsers } from "../hooks/useUsers";
-import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 import TablePagination from "@/components/shared/TablePagination";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import UserDeleteDialog from "./UserDeleteDialog";
+import { useState } from "react";
+import UserEditDialog from "./UserEditDialog";
 
 export default function UserListings({ setIsDialogOpen, shouldRefetch, setShouldRefetch }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedUserEdit, setSelectedUserEdit] = useState(null);
   const {
     data: users,
     totalItems,
@@ -29,7 +32,13 @@ export default function UserListings({ setIsDialogOpen, shouldRefetch, setShould
     showSkeleton: isLoading,
   } = useUsers(shouldRefetch, setShouldRefetch);
 
+  const handleEditClick = (user) => {
+    setSelectedUserEdit(user);
+    setIsEditDialogOpen(true);
+  };
+
   // Function to render sort indicator icons
+  // extract this into re-usable components
   const renderSortIcon = (column) => {
     if (column === sortBy) {
       return sortOrder === "asc" ? (
@@ -43,6 +52,16 @@ export default function UserListings({ setIsDialogOpen, shouldRefetch, setShould
 
   return (
     <>
+      {/* Edit Permission Dialog */}
+      {isEditDialogOpen && selectedUserEdit && (
+        <UserEditDialog
+          isDialogOpen={isEditDialogOpen}
+          setIsDialogOpen={setIsEditDialogOpen}
+          setShouldRefetch={setShouldRefetch}
+          user={selectedUserEdit}
+        />
+      )}
+
       <section className="flex items-start justify-between w-full mb-8 max-h-14">
         <h1 className="text-3xl font-bold">Users</h1>
         <div className="ml-auto">
@@ -100,16 +119,15 @@ export default function UserListings({ setIsDialogOpen, shouldRefetch, setShould
 
                   <TableCell className="px-6 py-5 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <ComingSoonWrapper enabled>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
-                        >
-                          <Pencil className="w-5 h-5 mr-2 text-yellow-600" />
-                          Edit
-                        </Button>
-                      </ComingSoonWrapper>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleEditClick(user)}
+                        className="text-yellow-700 bg-yellow-50 hover:text-yellow-500 hover:bg-yellow-100 border border-yellow-200 px-5 py-2.5 text-base cursor-pointer"
+                      >
+                        <Pencil className="mr-2 w-5 h-5 text-yellow-600" />
+                        Edit
+                      </Button>
 
                       <UserDeleteDialog user={user} setShouldRefetch={setShouldRefetch} />
                     </div>

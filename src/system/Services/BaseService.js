@@ -16,9 +16,26 @@ export class BaseService {
     }
   }
 
-  static async getResource({ where, include = {} }) {
+  static async getResource({
+    where,
+    include = null,
+    select = null,
+    orderBy = { createdAt: "desc" },
+  }) {
     try {
-      const resource = await this.model.findUnique({ where, include });
+      if (include && select) {
+        throw new Error("You cannot use both 'select' and 'include' in the same Prisma query.");
+      }
+
+      const queryOptions = {
+        ...(where && { where }),
+        orderBy,
+      };
+
+      if (include) queryOptions.include = include;
+      else if (select) queryOptions.select = select;
+
+      const resource = await this.model.findUnique(queryOptions);
 
       if (this.dto && typeof this.dto.toResponse === "function") {
         return this.dto.toResponse(resource);
@@ -38,12 +55,25 @@ export class BaseService {
     }
   }
 
-  static async getAllResources({ where = {}, orderBy = { createdAt: "desc" }, pagination = null }) {
+  static async getAllResources({
+    where = {},
+    orderBy = { createdAt: "desc" },
+    pagination = null,
+    include = null,
+    select = null,
+  }) {
     try {
+      if (include && select) {
+        throw new Error("You cannot use both 'select' and 'include' in the same Prisma query.");
+      }
+
       const queryOptions = {
         ...(where && { where }),
         orderBy,
       };
+
+      if (include) queryOptions.include = include;
+      else if (select) queryOptions.select = select;
 
       // Add pagination if provided
       if (pagination) {
