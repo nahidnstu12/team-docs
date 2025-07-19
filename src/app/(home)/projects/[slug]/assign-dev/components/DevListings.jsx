@@ -11,9 +11,9 @@ import {
 import { getMembersPermissionListings } from "../actions/getMembersPermissionListings";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import ModifyPermissionsDrawer from "./ModifyPermissionsDrawer";
 import DeleteDevDialog from "./DeleteDevDialog";
+import DevListingsSkeleton from "./Skeleton";
 
 export default function DevListings({
   projectId,
@@ -41,27 +41,6 @@ export default function DevListings({
     };
     fetchMembers();
   }, [projectId, refetchTrigger]);
-
-  const LoadingSkeleton = () => (
-    <>
-      {[1, 2, 3].map((i) => (
-        <TableRow key={i}>
-          <TableCell className="px-6 py-5">
-            <Skeleton className="h-6 w-[200px]" />
-          </TableCell>
-          <TableCell className="px-6 py-5">
-            <Skeleton className="h-6 w-[300px]" />
-          </TableCell>
-          <TableCell className="px-6 py-5">
-            <div className="flex items-center justify-center gap-3">
-              <Skeleton className="h-10 w-[100px]" />
-              <Skeleton className="h-10 w-[100px]" />
-            </div>
-          </TableCell>
-        </TableRow>
-      ))}
-    </>
-  );
 
   const handleModifyClick = (memberAndPermissions) => {
     setSelectedDeveloper(memberAndPermissions);
@@ -92,7 +71,7 @@ export default function DevListings({
 
           <TableBody>
             {isLoading ? (
-              <LoadingSkeleton />
+              <DevListingsSkeleton />
             ) : members.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="py-10 text-lg text-center text-muted-foreground">
