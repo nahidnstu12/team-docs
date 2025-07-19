@@ -40,8 +40,6 @@ export async function getAllUsersFn(options = {}) {
     // orderBy,
   });
 
-  console.log(users, "users from getAllUsersFn");
-
   return {
     data: users,
     totalItems,

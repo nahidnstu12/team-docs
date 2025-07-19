@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import CreateButtonShared from "@/components/shared/CreateButtonShared";
 import TableLoading from "@/components/loading/TableLoading";
 import { useUsers } from "../hooks/useUsers";
-import ClientErrorUI from "@/components/abstracts/clientErrorUI";
 import ComingSoonWrapper from "@/components/abstracts/ComingSoonWrapper";
 import TablePagination from "@/components/shared/TablePagination";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
+import UserDeleteDialog from "./UserDeleteDialog";
 
 export default function UserListings({ setIsDialogOpen, shouldRefetch, setShouldRefetch }) {
   const {
@@ -26,7 +26,6 @@ export default function UserListings({ setIsDialogOpen, shouldRefetch, setShould
     sortBy,
     sortOrder,
     handleSort,
-    fetchError,
     showSkeleton: isLoading,
   } = useUsers(shouldRefetch, setShouldRefetch);
 
@@ -41,10 +40,6 @@ export default function UserListings({ setIsDialogOpen, shouldRefetch, setShould
     }
     return <ArrowUpDown className="ml-2 w-4 h-4 opacity-50" />;
   };
-
-  // if (fetchError) {
-  //   return <ClientErrorUI errorMessage={fetchError} retry={() => setShouldRefetch(true)} />;
-  // }
 
   return (
     <>
@@ -115,16 +110,8 @@ export default function UserListings({ setIsDialogOpen, shouldRefetch, setShould
                           Edit
                         </Button>
                       </ComingSoonWrapper>
-                      <ComingSoonWrapper enabled>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          className="cursor-pointer bg-red-600 hover:text-white-500 hover:bg-red-500 text-white px-5 py-2.5 text-base"
-                        >
-                          <Trash2 className="w-5 h-5 mr-2 text-white" />
-                          Delete
-                        </Button>
-                      </ComingSoonWrapper>
+
+                      <UserDeleteDialog user={user} setShouldRefetch={setShouldRefetch} />
                     </div>
                   </TableCell>
                 </TableRow>

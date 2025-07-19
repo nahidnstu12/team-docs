@@ -43,8 +43,37 @@ class UserActions extends BaseAction {
       };
     }
   }
+
+  static async delete(userId) {
+    try {
+      await UserModel.delete({
+        where: {
+          id: userId,
+        },
+      });
+
+      return {
+        success: true,
+        type: "success",
+        redirectTo: "/users",
+      };
+    } catch (error) {
+      Logger.error(error.message, `User Delete fail`);
+      if (error.code) return PrismaErrorFormatter.handle(error, null, ["id"]);
+
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to delete User"] },
+      };
+    }
+  }
 }
 
 export async function createUser(prevState, formData) {
   return await UserActions.create(formData);
+}
+
+export async function deleteUser(prevState, userId) {
+  return await UserActions.delete(userId);
 }
