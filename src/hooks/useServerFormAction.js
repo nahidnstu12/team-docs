@@ -70,8 +70,6 @@ export function useServerFormAction({
     // Mark this state as processed
     lastProcessedState.current = formState;
 
-    console.log("formstate", formState);
-
     if (formState.success === false) {
       // Reset form with submitted values but keep errors
       reset(formState.data, { keepErrors: true });

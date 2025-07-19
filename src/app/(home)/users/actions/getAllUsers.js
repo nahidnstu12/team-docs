@@ -1,6 +1,5 @@
 "use server";
 
-import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
 import { UserServices } from "@/system/Services/UserServices";
 
@@ -14,43 +13,42 @@ import { UserServices } from "@/system/Services/UserServices";
  * @returns {Promise<{data: Array, totalItems: number, totalPages: number, currentPage: number, pageSize: number, sortBy: string, sortOrder: string}>}
  */
 export async function getAllUsersFn(options = {}) {
-	const workspaceId = await Session.getWorkspaceIdForUser();
-	const {
-		page = 1,
-		pageSize = 10,
-		sortBy = 'username',
-		sortOrder = 'asc'
-	} = options;
+  const workspaceId = await Session.getWorkspaceIdForUser();
+  const { page = 1, pageSize = 10, sortBy = "username", sortOrder = "asc" } = options;
 
-	const whereClause = { workspaceId };
+  // Get total count for pagination
+  const totalItems = await UserServices.countResources({ where: { workspaceId } });
 
-	// Get total count for pagination
-	const totalItems = await UserServices.countResources({ where: whereClause });
+  // Calculate pagination parameters
+  const skip = (page - 1) * pageSize;
+  const take = pageSize;
+  const totalPages = Math.ceil(totalItems / pageSize);
 
-	// Calculate pagination parameters
-	const skip = (page - 1) * pageSize;
-	const take = pageSize;
-	const totalPages = Math.ceil(totalItems / pageSize);
+  // Prepare sort options
+  const orderBy = { [sortBy]: sortOrder };
 
-	// Prepare sort options
-	const orderBy = { [sortBy]: sortOrder };
+  // Get paginated and sorted data
+  const users = await UserServices.getAllResources({
+    where: {
+      workspaceId,
+      isWorkspaceOwner: false,
+    },
+    include: {
+      role: true,
+    },
+    pagination: { skip, take },
+    // orderBy,
+  });
 
-	// Get paginated and sorted data
-	const users = await UserServices.getAllResources({
-		where: whereClause,
-		pagination: { skip, take },
-		orderBy
-	});
+  console.log(users, "users from getAllUsersFn");
 
-	Logger.debug({ users }, "Paginated users fetched");
-
-	return {
-		data: users,
-		totalItems,
-		totalPages,
-		currentPage: page,
-		pageSize,
-		sortBy,
-		sortOrder
-	};
+  return {
+    data: users,
+    totalItems,
+    totalPages,
+    currentPage: page,
+    pageSize,
+    sortBy,
+    sortOrder,
+  };
 }

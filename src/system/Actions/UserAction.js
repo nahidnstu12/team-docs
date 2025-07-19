@@ -8,47 +8,43 @@ import { UserSchema } from "@/lib/schemas/UserSchema";
 import { UserModel } from "../Models/UserModel";
 
 class UserActions extends BaseAction {
-	static get schema() {
-		return UserSchema;
-	}
+  static get schema() {
+    return UserSchema;
+  }
 
-	static async create(formData) {
-		const result = await this.execute(formData);
+  static async create(formData) {
+    const result = await this.execute(formData);
 
-		if (!result.success) return result;
+    if (!result.success) return result;
 
-		try {
-			const session = await Session.getCurrentUser();
-			await UserModel.create({
-				...result.data,
-				ownerId: session.id,
-			});
+    try {
+      const session = await Session.getCurrentUser();
+      await UserModel.create({
+        ...result.data,
+        workspaceId: session.workspaceId,
+      });
 
-			return {
-				data: result.data,
-				success: true,
-				type: "success",
-				redirectTo: "/users",
-			};
-		} catch (error) {
-			Logger.error(error.message, `User Create fail`);
-			if (error.code)
-				return PrismaErrorFormatter.handle(error, result.data, [
-					"username",
-					"email",
-					"password",
-				]);
+      return {
+        data: result.data,
+        success: true,
+        type: "success",
+        redirectTo: "/users",
+      };
+    } catch (error) {
+      Logger.error(error.message, `User Create fail`);
+      if (error.code)
+        return PrismaErrorFormatter.handle(error, result.data, ["username", "email", "password"]);
 
-			return {
-				success: false,
-				type: "fail",
-				errors: { _form: ["Failed to create User"] },
-				data: result.data,
-			};
-		}
-	}
+      return {
+        success: false,
+        type: "fail",
+        errors: { _form: ["Failed to create User"] },
+        data: result.data,
+      };
+    }
+  }
 }
 
 export async function createUser(prevState, formData) {
-	return await UserActions.create(formData);
+  return await UserActions.create(formData);
 }

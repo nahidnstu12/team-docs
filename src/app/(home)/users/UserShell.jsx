@@ -3,36 +3,32 @@
 import { useState } from "react";
 import UserLisitngs from "./components/UserListing";
 import dynamic from "next/dynamic";
-import DrawerLoading from "@/components/loading/DrawerLoading";
+import DialogLoading from "@/components/loading/DialogLoading";
 
-const UserCreateDrawerLazy = dynamic(
-	() => import("./components/UserCreateDrawer"),
-	{
-		ssr: false,
-		loading: () => <DrawerLoading />,
-	}
-);
+const UserCreateDialogLazy = dynamic(() => import("./components/UserCreateDialog"), {
+  ssr: false,
+  loading: () => <DialogLoading />,
+});
 
-export default function UserShell({ userId }) {
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [shouldRefetch, setShouldRefetch] = useState(false);
+export default function UserShell() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [shouldRefetch, setShouldRefetch] = useState(false);
 
-	return (
-		<>
-			{isDialogOpen && (
-				<UserCreateDrawerLazy
-					isDialogOpen={isDialogOpen}
-					setIsDialogOpen={setIsDialogOpen}
-					onSuccess={() => setShouldRefetch(true)}
-				/>
-			)}
+  return (
+    <>
+      {isDialogOpen && (
+        <UserCreateDialogLazy
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+          onSuccess={() => setShouldRefetch(true)}
+        />
+      )}
 
-			<UserLisitngs
-				userId={userId}
-				setIsDialogOpen={setIsDialogOpen}
-				shouldRefetch={shouldRefetch}
-				setShouldRefetch={setShouldRefetch}
-			/>
-		</>
-	);
+      <UserLisitngs
+        setIsDialogOpen={setIsDialogOpen}
+        shouldRefetch={shouldRefetch}
+        setShouldRefetch={setShouldRefetch}
+      />
+    </>
+  );
 }
