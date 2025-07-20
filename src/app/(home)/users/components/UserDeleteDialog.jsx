@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 
 import { deleteUser } from "@/system/Actions/UserAction";
 import { toast } from "sonner";
-import Logger from "@/lib/Logger";
 
 export default function UserDeleteDialog({ user, setShouldRefetch }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,9 +24,8 @@ export default function UserDeleteDialog({ user, setShouldRefetch }) {
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
-      Logger.debug("Deleting user", { userId: user.id });
 
-      const result = await deleteUser(null, user.id);
+      const result = await deleteUser(user.id);
 
       if (result.success) {
         toast.success("User deleted", {
@@ -40,8 +38,7 @@ export default function UserDeleteDialog({ user, setShouldRefetch }) {
           description: result.errors?._form?.[0] || "An error occurred while deleting the user.",
         });
       }
-    } catch (error) {
-      Logger.error(error.message, "Failed to delete user:");
+    } catch (_) {
       toast.error("Failed to delete user", {
         description: "An unexpected error occurred.",
       });

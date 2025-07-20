@@ -105,6 +105,6 @@ export async function updateRoleAction({ roleId, formData }) {
   return await RoleActions.update(roleId, formData);
 }
 
-export async function deleteRoleAction(prevState, roleId) {
+export async function deleteRoleAction(roleId) {
   return await RoleActions.delete(roleId);
 }

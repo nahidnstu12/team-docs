@@ -110,7 +110,7 @@ export async function createUser(formData) {
   return await UserActions.create(formData);
 }
 
-export async function deleteUser(prevState, userId) {
+export async function deleteUser(userId) {
   return await UserActions.delete(userId);
 }
 
