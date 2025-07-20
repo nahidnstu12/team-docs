@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,6 @@ import {
 import { AdminUpdatingUser } from "@/system/Actions/UserAction";
 import { AdminUpdatingUserSchema } from "@/lib/schemas/UserSchema";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
-import { Controller } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -23,6 +22,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import GeneralFormErrorDispaly from "@/components/shared/GeneralFormErrorDispaly";
 
 const userStatus = [
   { value: "ACTIVE", label: "Active" },
@@ -38,35 +46,22 @@ export default function UserEditDialog({ isDialogOpen, setIsDialogOpen, setShoul
     [user]
   );
 
-  const successToast = useMemo(
-    () => ({
-      title: "User updated successfully",
-      description: "The user changes have been saved.",
-    }),
-    []
-  );
-
   const handleSuccess = useCallback(() => {
     setIsDialogOpen(false);
     setShouldRefetch(true);
   }, [setIsDialogOpen, setShouldRefetch]);
 
-  const { errors, formAction, isPending, isSubmitDisabled, reset, control } = useServerFormAction({
+  const form = useServerFormAction({
     schema: AdminUpdatingUserSchema,
-    actionFn: AdminUpdatingUser,
     defaultValues,
-    successToast,
+    actionFn: AdminUpdatingUser,
     onSuccess: handleSuccess,
     isDialogOpen,
+    successToast: {
+      title: "User updated successfully",
+      description: "The user changes have been saved.",
+    },
   });
-
-  useEffect(() => {
-    if (isDialogOpen && user) {
-      reset({
-        status: user?.status,
-      });
-    }
-  }, [isDialogOpen, reset, user]);
 
   return (
     <>
@@ -81,43 +76,43 @@ export default function UserEditDialog({ isDialogOpen, setIsDialogOpen, setShoul
             <DialogDescription>Update the information for this user.</DialogDescription>
           </DialogHeader>
 
-          <form action={formAction} className="mt-6 space-y-5">
-            <div className="space-y-1.5">
-              <Controller
-                control={control}
+          <Form {...form}>
+            <form onSubmit={form.onSubmit} className="mt-6 space-y-5">
+              <FormField
+                control={form.control}
                 name="status"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-1/2 mt-2">
-                      <SelectValue placeholder="User Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {userStatus.map((status) => (
-                        <SelectItem key={status.value} value={status.value}>
-                          {status.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <FormLabel>Role Name</FormLabel>
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="w-1/2 mt-2">
+                          <SelectValue placeholder="User Status" />
+                        </SelectTrigger>
+                      </FormControl>
+
+                      <SelectContent>
+                        {userStatus.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                      <FormMessage />
+                    </Select>
+                  </FormItem>
                 )}
               />
-              {errors.status && (
-                <p className="mt-1 text-sm text-red-500">{errors.status.message}</p>
-              )}
-            </div>
 
-            {errors._form && (
-              <div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
-                <p className="text-red-700">{errors._form.message}</p>
-              </div>
-            )}
+              <GeneralFormErrorDispaly form={form} />
 
-            <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isSubmitDisabled}>
-                {isPending ? "Updating..." : "Update User"}
-              </Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter className="pt-4">
+                <Button type="submit" disabled={form.isSubmitDisabled}>
+                  {form.formState.isSubmitting ? "Updating..." : "Update User"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>
