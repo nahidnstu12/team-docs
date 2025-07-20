@@ -42,6 +42,7 @@ export default function UserEditDialog({ isDialogOpen, setIsDialogOpen, setShoul
   const defaultValues = useMemo(
     () => ({
       status: user?.status,
+      id: user?.id,
     }),
     [user]
   );
@@ -103,6 +104,8 @@ export default function UserEditDialog({ isDialogOpen, setIsDialogOpen, setShoul
                   </FormItem>
                 )}
               />
+
+              <input hidden defaultValue={user?.id} {...form.register("id")} />
 
               <GeneralFormErrorDispaly form={form} />
 

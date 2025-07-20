@@ -43,7 +43,8 @@ export function useServerFormAction({
     );
   }, [values]);
 
-  const isSubmitDisabled = !formState.isValid || isFormEmpty || formState.isSubmitting;
+  const isSubmitDisabled =
+    !formState.isValid || isFormEmpty || !form.formState.isDirty || formState.isSubmitting;
 
   const onSubmit = handleSubmit(async (formData) => {
     const result = await actionFn(formData);

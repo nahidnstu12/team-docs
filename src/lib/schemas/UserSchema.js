@@ -10,11 +10,15 @@ export const UserSchema = z.object({
   status: z.string().default("ACTIVE").optional(),
 });
 
+// this is probably from landing page user creation
 export const RegistrationUserSchema = UserSchema.extend({
   password: z.string().min(8, "Password must be at least 8 characters").optional(),
 });
 
 // admin Updating user
-export const AdminUpdatingUserSchema = UserSchema.extend({
-  status: z.string().optional(),
+export const AdminUpdatingUserSchema = z.object({
+  status: z.enum(["ACTIVE", "PENDING", "INACTIVE"], {
+    required_error: "Status is required",
+  }),
+  id: z.string().min(1, "User ID is required"),
 });

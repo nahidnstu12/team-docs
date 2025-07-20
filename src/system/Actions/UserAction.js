@@ -4,7 +4,7 @@ import { BaseAction } from "./BaseAction";
 import { PrismaErrorFormatter } from "@/lib/PrismaErrorFormatter";
 import Logger from "@/lib/Logger";
 import { Session } from "@/lib/Session";
-import { UserSchema } from "@/lib/schemas/UserSchema";
+import { AdminUpdatingUserSchema, UserSchema } from "@/lib/schemas/UserSchema";
 import { UserModel } from "../Models/UserModel";
 
 class UserActions extends BaseAction {
@@ -71,7 +71,7 @@ class UserActions extends BaseAction {
   }
 
   static async update(formData) {
-    const result = await this.execute(formData);
+    const result = await this.execute(formData, AdminUpdatingUserSchema);
 
     if (!result.success) return result;
 
@@ -114,6 +114,6 @@ export async function deleteUser(userId) {
   return await UserActions.delete(userId);
 }
 
-export async function AdminUpdatingUser(prevState, formData) {
+export async function AdminUpdatingUser(formData) {
   return await UserActions.update(formData);
 }

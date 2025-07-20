@@ -1,12 +1,20 @@
+// BaseAction.js
+
 export class BaseAction {
   static get schema() {
     throw new Error("Child class must override `schema` getter");
   }
 
-  static async execute(formData) {
+  /**
+   * @param {FormData|Object} formData - The form data from the client
+   * @param {ZodSchema} schemaOverride - (Optional) pass a schema to override the default
+   */
+  static async execute(formData, schemaOverride = null) {
     try {
       const rawData = BaseAction.#parseFormData(formData);
-      const result = this.schema.safeParse(rawData); // <- will use child's getter
+      const schema = schemaOverride || this.schema; // ← use override if provided
+
+      const result = schema.safeParse(rawData);
 
       if (!result.success) {
         return BaseAction.#formatValidationErrors(result.error, rawData);
