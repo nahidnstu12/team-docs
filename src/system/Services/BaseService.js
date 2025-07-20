@@ -20,7 +20,7 @@ export class BaseService {
     where,
     include = null,
     select = null,
-    orderBy = { createdAt: "desc" },
+    // orderBy = { createdAt: "desc" },
   }) {
     try {
       if (include && select) {
@@ -29,7 +29,7 @@ export class BaseService {
 
       const queryOptions = {
         ...(where && { where }),
-        orderBy,
+        // orderBy,
       };
 
       if (include) queryOptions.include = include;

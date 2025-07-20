@@ -22,8 +22,6 @@ export async function signin(prevState, formData) {
 
     const { email, password } = validatedFields.data;
 
-    Logger.info({ email, password }, "authjs signin data:");
-
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });

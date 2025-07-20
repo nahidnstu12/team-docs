@@ -21,6 +21,7 @@ class UserActions extends BaseAction {
       const session = await Session.getCurrentUser();
       await UserModel.create({
         ...result.data,
+        status: "ACTIVE",
         workspaceId: session.workspaceId,
       });
 

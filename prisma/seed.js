@@ -13,6 +13,7 @@ async function main() {
       password: "$2b$10$NFBfr4vxrvrJ3BI7.Bqdge55rOXWwl6lYCaeUGKzEtfNB9MxaT8BO",
       status: "ACTIVE",
       isSuperAdmin: true,
+      isWorkspaceOwner: true,
     },
   });
   console.log("✅ Created nishat user");
