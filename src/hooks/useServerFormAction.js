@@ -1,6 +1,6 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState, useMemo, useRef } from "react";
+import { useMemo, useState } from "react";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/useToast";
 
@@ -10,123 +10,68 @@ export function useServerFormAction({
   defaultValues,
   onSuccess,
   onError,
-  onSettled,
   isDialogOpen = null,
   successToast = {
     title: "Action successful",
     description: "Your request was completed successfully.",
   },
-  errorToast = {
-    title: "Action failed",
-    description: "There was an error processing your request.",
-  },
 }) {
   const toast = useToast();
-  const [formState, runAction, isPending] = useActionState(actionFn, {
-    errors: null,
-    data: null,
-  });
+  const [errors, setErrors] = useState({});
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    setError,
-    reset,
-    watch,
-    setValue,
-    formState: { errors, isValid, isSubmitting },
-  } = useForm({
+  const form = useForm({
     resolver: zodResolver(schema),
     defaultValues,
     mode: "onChange",
     reValidateMode: "onChange",
   });
 
-  // Track the last processed form state
-  const lastProcessedState = useRef(null);
+  const { control, reset, setError, handleSubmit, formState } = form;
 
-  // Track all form values to check if empty
-  const formValues = watch();
-  const isFormEmpty = useMemo(() => {
-    return Object.values(formValues).every(
-      (value) => value === "" || value === null || value === undefined
-    );
-  }, [formValues]);
+  const values = useWatch({ control });
 
-  // Disable when form is empty OR when submitting
-  const isSubmitDisabled = !isValid || isFormEmpty || isPending || isSubmitting;
-
-  // Handle dialog open/close reset logic inside the hook
+  // Reset when dialog opens
   useEffect(() => {
     if (isDialogOpen !== null && isDialogOpen) {
       reset(defaultValues);
     }
   }, [isDialogOpen, reset, defaultValues]);
 
-  useEffect(() => {
-    if (!formState || formState === lastProcessedState.current) return;
+  const isFormEmpty = useMemo(() => {
+    return Object.values(values || {}).every(
+      (value) => value === "" || value === null || value === undefined
+    );
+  }, [values]);
 
-    // Mark this state as processed
-    lastProcessedState.current = formState;
+  const isSubmitDisabled = !formState.isValid || isFormEmpty || formState.isSubmitting;
 
-    if (formState.success === false) {
-      // Reset form with submitted values but keep errors
-      reset(formState.data, { keepErrors: true });
-      Object.entries(formState.errors || {}).forEach(([field, message]) => {
-        setError(field, {
+  const onSubmit = handleSubmit(async (formData) => {
+    const result = await actionFn(formData);
+
+    if (result?.success === false) {
+      // Set field-level errors
+      Object.entries(result.errors || {}).forEach(([key, msg]) => {
+        setError(key, {
           type: "server",
-          message: Array.isArray(message) ? message[0] : message,
+          message: Array.isArray(msg) ? msg[0] : msg,
         });
       });
-      // Show form-level error toast only if _form exists
-      if (formState.errors?._form) {
-        toast.error("Error", formState.errors._form[0]);
-      } else if (Object.keys(formState.errors || {}).length > 0) {
-        // Only show generic error toast if there are errors but no _form error
-        toast.error(errorToast.title, errorToast.description);
-      }
-      onError?.(formState.errors);
+
+      setErrors(result.errors);
+      onError?.(result.errors);
     }
 
-    if (formState.type === "success") {
-      reset(defaultValues); // optional depending on your need
-      if (successToast) {
-        toast.success(successToast.title, successToast.description);
-      }
-      onSuccess?.(formState.redirectTo);
+    if (result?.type === "success") {
+      toast.success(successToast.title, successToast.description);
+      reset();
+      onSuccess?.(result.redirectTo);
     }
-
-    onSettled?.();
-  }, [
-    formState,
-    defaultValues,
-    setError,
-    reset,
-    onSuccess,
-    onError,
-    onSettled,
-    successToast,
-    errorToast,
-    toast,
-  ]);
-
-  // ✅ This function simulates form action using internal handleSubmit logic
-  const formAction = async (formData) => {
-    const dataObj = Object.fromEntries(formData.entries());
-    handleSubmit(runAction)(dataObj);
-  };
+  });
 
   return {
-    control,
-    register,
-    errors,
-    formAction,
-    isPending,
-    reset,
-    watch,
-    setValue,
-    formState,
+    ...form,
+    onSubmit,
     isSubmitDisabled,
+    errors,
   };
 }

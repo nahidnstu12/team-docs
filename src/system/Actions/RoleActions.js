@@ -22,8 +22,6 @@ class RoleActions extends BaseAction {
     try {
       const session = await Session.getCurrentUser();
 
-      console.log(session.id, "session");
-
       await RoleModel.create({
         ...result.data,
         ownerId: session.id,
@@ -101,7 +99,7 @@ class RoleActions extends BaseAction {
   }
 }
 
-export async function createRole(prevState, formData) {
+export async function createRole(formData) {
   return await RoleActions.create(formData);
 }
 
