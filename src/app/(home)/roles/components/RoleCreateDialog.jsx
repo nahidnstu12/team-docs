@@ -63,16 +63,6 @@ export default function RoleCreateDrawer({
     },
   });
 
-  const {
-    control,
-    onSubmit,
-    errors,
-    isSubmitDisabled,
-    formState: { isSubmitting },
-  } = form;
-
-  console.log("errors in page", errors);
-
   return (
     <>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -89,9 +79,9 @@ export default function RoleCreateDrawer({
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={onSubmit} className="mt-6 space-y-5">
+            <form onSubmit={form.onSubmit} className="mt-6 space-y-5">
               <FormField
-                control={control}
+                control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -109,7 +99,7 @@ export default function RoleCreateDrawer({
               />
 
               <FormField
-                control={control}
+                control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -124,15 +114,15 @@ export default function RoleCreateDrawer({
                 )}
               />
 
-              {errors._form && (
+              {form.errors._form && (
                 <div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
-                  <p className="text-red-700">{errors._form[0]}</p>
+                  <p className="text-red-700">{form.errors._form[0]}</p>
                 </div>
               )}
 
               <DialogFooter className="pt-4">
-                <Button type="submit" disabled={isSubmitDisabled}>
-                  {isSubmitting ? "Creating..." : "Create Role"}
+                <Button type="submit" disabled={form.isSubmitDisabled}>
+                  {form.formState.isSubmitting ? "Creating..." : "Create Role"}
                 </Button>
               </DialogFooter>
             </form>
