@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,14 +24,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import GeneralFormErrorDispaly from "@/components/shared/GeneralFormErrorDispaly";
 
 export default function RoleCreateDrawer({
   isDialogOpen,
   setIsDialogOpen,
   setShouldStartFetchRoles,
 }) {
-  const router = useRouter();
-
   const defaultValues = useMemo(
     () => ({
       name: "",
@@ -42,14 +39,10 @@ export default function RoleCreateDrawer({
     []
   );
 
-  const handleSuccess = useCallback(
-    (redirectTo) => {
-      setIsDialogOpen(false);
-      setShouldStartFetchRoles(true);
-      if (redirectTo) router.push(redirectTo);
-    },
-    [router, setIsDialogOpen, setShouldStartFetchRoles]
-  );
+  const handleSuccess = useCallback(() => {
+    setIsDialogOpen(false);
+    setShouldStartFetchRoles(true);
+  }, [setIsDialogOpen, setShouldStartFetchRoles]);
 
   const form = useServerFormAction({
     schema: RoleSchema,
@@ -114,11 +107,7 @@ export default function RoleCreateDrawer({
                 )}
               />
 
-              {form.errors._form && (
-                <div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
-                  <p className="text-red-700">{form.errors._form[0]}</p>
-                </div>
-              )}
+              <GeneralFormErrorDispaly form={form} />
 
               <DialogFooter className="pt-4">
                 <Button type="submit" disabled={form.isSubmitDisabled}>

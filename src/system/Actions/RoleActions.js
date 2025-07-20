@@ -54,7 +54,6 @@ class RoleActions extends BaseAction {
     if (!result.success) return result;
 
     try {
-      Logger.debug("Updating role", { roleId, data: result.data });
       await RoleService.updateResource(roleId, result.data);
 
       revalidatePath("/roles", "page");
@@ -79,7 +78,6 @@ class RoleActions extends BaseAction {
 
   static async delete(roleId) {
     try {
-      Logger.debug("Deleting role", { roleId });
       await RoleService.deleteResource(roleId);
 
       revalidatePath("/roles", "page");
@@ -103,7 +101,7 @@ export async function createRole(formData) {
   return await RoleActions.create(formData);
 }
 
-export async function updateRoleAction(prevState, { roleId, formData }) {
+export async function updateRoleAction({ roleId, formData }) {
   return await RoleActions.update(roleId, formData);
 }
 
