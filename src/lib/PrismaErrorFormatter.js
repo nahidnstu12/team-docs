@@ -1,3 +1,5 @@
+import Logger from "./Logger";
+
 export class PrismaErrorFormatter {
   static format(error, data, formFields = []) {
     // when error code does not exist, produce general error
@@ -19,7 +21,7 @@ export class PrismaErrorFormatter {
         },
         getField: (meta, fields) => {
           // produce field
-          const field = meta?.target?.[1];
+          const field = meta?.target?.[1] || meta?.target?.[0];
           return field && fields.includes(field) ? field : "_form";
         },
       },

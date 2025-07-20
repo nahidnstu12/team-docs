@@ -106,7 +106,7 @@ class UserActions extends BaseAction {
   }
 }
 
-export async function createUser(prevState, formData) {
+export async function createUser(formData) {
   return await UserActions.create(formData);
 }
 

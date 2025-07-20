@@ -7,7 +7,7 @@ export const UserSchema = z.object({
     .min(3, "Email must be at least 3 characters")
     .email("Please enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters").optional(),
-  status: z.string().default("inactive").optional(),
+  status: z.string().default("ACTIVE").optional(),
 });
 
 export const RegistrationUserSchema = UserSchema.extend({

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,46 +12,44 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createUser } from "@/system/Actions/UserAction";
 import { UserSchema } from "@/lib/schemas/UserSchema";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import GeneralFormErrorDispaly from "@/components/shared/GeneralFormErrorDispaly";
 
 export default function UserCreateDialog({ isDialogOpen, setIsDialogOpen, onSuccess }) {
-  const router = useRouter();
-
-  const defaultValues = useMemo(() => {
-    ({
+  const defaultValues = useMemo(
+    () => ({
       username: "",
       email: "",
       password: "",
-    });
-  }, []);
-
-  const successToast = useMemo(
-    () => ({
-      title: "User created successfully",
-      description: "Your new User is ready to use!",
     }),
     []
   );
 
-  const handleSuccess = useCallback(
-    (redirectTo) => {
-      setIsDialogOpen(false);
-      onSuccess(true);
-      if (redirectTo) router.push(redirectTo);
-    },
-    [router, setIsDialogOpen, onSuccess]
-  );
+  const handleSuccess = useCallback(() => {
+    setIsDialogOpen(false);
+    onSuccess(true);
+  }, [setIsDialogOpen, onSuccess]);
 
-  const { register, errors, formAction, isPending, isSubmitDisabled } = useServerFormAction({
+  const form = useServerFormAction({
     schema: UserSchema,
-    actionFn: createUser,
     defaultValues,
-    successToast,
+    actionFn: createUser,
     onSuccess: handleSuccess,
     isDialogOpen,
+    successToast: {
+      title: "User created successfully",
+      description: "Your new user is ready to use!",
+    },
   });
 
   return (
@@ -70,51 +67,59 @@ export default function UserCreateDialog({ isDialogOpen, setIsDialogOpen, onSucc
             </DialogDescription>
           </DialogHeader>
 
-          <form action={formAction} className="mt-6 space-y-5">
-            <div className="space-y-1.5">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                placeholder="e.g. johndoe"
-                className="h-11"
-                {...register("username")}
+          <Form {...form}>
+            <form onSubmit={form.onSubmit} className="mt-6 space-y-5">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. johndoe" className="h-11" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.username && (
-                <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
-              )}
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                placeholder="e.g. johndoe@example.com"
-                className="h-11"
-                {...register("email")}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. johndoe@example.com" className="h-11" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="e.g. password123" {...register("password")} />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-              )}
-            </div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. password123" className="h-11" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {errors._form && (
-              <div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
-                <p className="text-red-700">{errors._form.message}</p>
-              </div>
-            )}
+              <GeneralFormErrorDispaly form={form} />
 
-            <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isSubmitDisabled}>
-                {isPending ? "Creating..." : "Create User"}
-              </Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter className="pt-4">
+                <Button type="submit" disabled={form.isSubmitDisabled}>
+                  {form.formState.isSubmitting ? "Creating..." : "Create User"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>
