@@ -19,6 +19,17 @@ import { useServerFormAction } from "@/hooks/useServerFormAction";
 import { ProjectSchema } from "@/lib/schemas/ProjectSchema";
 import { createProjectAction } from "@/system/Actions/ProjectActions";
 import { useDrawerLoadingStore } from "@/stores/useDrawerLoadingStore";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import GeneralFormErrorDispaly from "@/components/shared/GeneralFormErrorDispaly";
 
 export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartFetchProjects }) {
   const router = useRouter();
@@ -39,35 +50,62 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartF
     []
   );
 
-  const { register, watch, setValue, reset, errors, formAction, isPending, isSubmitDisabled } =
-    useServerFormAction({
-      schema: ProjectSchema,
-      actionFn: createProjectAction,
-      defaultValues,
-      onSuccess: () => {
-        if (hasShownToastRef.current) return;
-        hasShownToastRef.current = true;
+  const form = useServerFormAction({
+    schema: ProjectSchema,
+    defaultValues,
+    actionFn: createProjectAction,
+    onSuccess: () => {
+      if (hasShownToastRef.current) return;
+      hasShownToastRef.current = true;
 
-        reset();
-        setIsDrawerOpen(false);
-        setStartFetchProjects(true);
-        router.refresh();
+      form.reset();
+      setIsDrawerOpen(false);
+      setStartFetchProjects(true);
+      router.refresh();
 
-        setTimeout(() => {
-          hasShownToastRef.current = false;
-        }, 500);
+      setTimeout(() => {
+        hasShownToastRef.current = false;
+      }, 500);
 
-        // clean up drawer loading spinner state
-        useDrawerLoadingStore.getState().resetDrawerLoading();
-      },
-    });
+      // clean up drawer loading spinner state
+      useDrawerLoadingStore.getState().resetDrawerLoading();
+    },
+    isDrawerOpen,
+    successToast: {
+      title: "Project created successfully",
+      description: "Your new project is ready to use!",
+    },
+  });
 
-  const nameValue = watch("name");
-  const slugValue = watch("slug");
+  // const { register, watch, setValue, reset, errors, formAction, isPending, isSubmitDisabled } =
+  //   useServerFormAction({
+  //     schema: ProjectSchema,
+  //     actionFn: createProjectAction,
+  //     defaultValues,
+  //     onSuccess: () => {
+  //       if (hasShownToastRef.current) return;
+  //       hasShownToastRef.current = true;
+
+  //       reset();
+  //       setIsDrawerOpen(false);
+  //       setStartFetchProjects(true);
+  //       router.refresh();
+
+  //       setTimeout(() => {
+  //         hasShownToastRef.current = false;
+  //       }, 500);
+
+  //       // clean up drawer loading spinner state
+  //       useDrawerLoadingStore.getState().resetDrawerLoading();
+  //     },
+  //   });
+
+  const nameValue = form.watch("name");
+  const slugValue = form.watch("slug");
 
   useEffect(() => {
     if (!isDrawerOpen || !nameValue) return;
-    setValue(
+    form.setValue(
       "slug",
       slugify(nameValue, {
         lower: true,
@@ -75,92 +113,100 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartF
         remove: /[*+~.()'"!:@]/g,
       })
     );
-  }, [nameValue, setValue, isDrawerOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nameValue, form.setValue, isDrawerOpen]);
 
   useEffect(() => {
     if (isDrawerOpen) {
-      reset(defaultValues);
+      form.reset(defaultValues);
       // clean up drawer loading spinner state
       useDrawerLoadingStore.getState().resetDrawerLoading();
     }
-  }, [isDrawerOpen, reset, defaultValues]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDrawerOpen, form.reset, defaultValues]);
 
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerContent
         side="right"
-        className="w-full max-w-md min-h-screen ml-auto border-l shadow-xl"
+        className="w-full max-w-md min-h-screen h-screen ml-auto border-l shadow-xl"
       >
-        <form action={formAction} className="flex flex-col h-full">
-          <DrawerHeader>
-            <DrawerTitle>Create New Project</DrawerTitle>
-            <DrawerDescription>Start a new project to manage pages.</DrawerDescription>
-          </DrawerHeader>
+        <Form {...form}>
+          <form onSubmit={form.onSubmit} className="flex flex-col h-full justify-between">
+            <DrawerHeader className="ml-2">
+              <DrawerTitle className="text-3xl">Create New Project</DrawerTitle>
+              <DrawerDescription className="pl-1">
+                Start a new project to manage pages.
+              </DrawerDescription>
+            </DrawerHeader>
 
-          <div className="flex-1 px-6 py-4 space-y-6 overflow-y-auto">
-            {/* Name Field */}
-            <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Project Name</label>
-              <input
-                {...register("name")}
-                placeholder="E.g. Internal CRM"
-                aria-invalid={!!errors.name}
-                className={`w-full px-4 py-2 rounded-md border ${
-                  errors.name ? "border-red-500" : "border-gray-300"
-                }`}
+            <div className="flex flex-col flex-1 px-6 py-4 space-y-6 overflow-y-auto mt-auto h-full">
+              {/* Name Field */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Internal CRM" className="h-11" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
-            </div>
 
-            {/* Slug Field */}
-            <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Project URL</label>
-              <input
-                {...register("slug")}
-                readOnly
-                className="w-full px-4 py-2 text-gray-500 bg-gray-100 border border-gray-200 rounded-md"
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project URL</FormLabel>
+                    <FormControl>
+                      <Input
+                        readOnly
+                        className="w-full px-4 py-2 text-gray-500 bg-gray-100 border border-gray-200 rounded-md"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <p className="mt-1 text-xs text-gray-500">
-                This will be your project’s URL identifier.
-              </p>
-              {errors.slug && <p className="mt-1 text-sm text-red-500">{errors.slug.message}</p>}
-            </div>
 
-            {/* Description Field */}
-            <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Description</label>
-              <textarea
-                {...register("description")}
-                rows={5}
-                placeholder="Describe your project’s purpose..."
-                className={`w-full px-4 py-2 rounded-md border ${
-                  errors.description ? "border-red-500" : "border-gray-300"
-                }`}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={5}
+                        placeholder="Describe your project’s purpose..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>
-              )}
+
+              <GeneralFormErrorDispaly form={form} />
+
+              <DrawerFooter className="border-t mt-auto">
+                <DrawerClose asChild>
+                  <Button type="button" variant="ghost">
+                    Cancel
+                  </Button>
+                </DrawerClose>
+                <Button type="submit" disabled={!slugValue || form.isSubmitDisabled}>
+                  {form.formState.isSubmitting ? "Creating..." : "Create Project"}
+                </Button>
+              </DrawerFooter>
             </div>
-
-            {/* Global Form Error */}
-            {errors._form && (
-              <div className="p-2 border-l-2 border-red-500 bg-red-50">
-                <p className="text-sm text-red-700">{errors._form.message}</p>
-              </div>
-            )}
-          </div>
-
-          <DrawerFooter className="flex justify-end gap-3 px-6 py-4 border-t">
-            <DrawerClose asChild>
-              <Button type="button" variant="ghost">
-                Cancel
-              </Button>
-            </DrawerClose>
-            <Button type="submit" disabled={!slugValue || isSubmitDisabled}>
-              {isPending ? "Creating..." : "Create Project"}
-            </Button>
-          </DrawerFooter>
-        </form>
+          </form>
+        </Form>
       </DrawerContent>
     </Drawer>
   );

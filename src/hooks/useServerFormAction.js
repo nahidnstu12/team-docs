@@ -22,29 +22,35 @@ export function useServerFormAction({
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues,
-    mode: "onChange",
+    mode: "onChange", // validate on every input change
     reValidateMode: "onChange",
   });
 
   const { control, reset, setError, handleSubmit, formState } = form;
 
+  // Watches all form values reactively
   const values = useWatch({ control });
 
-  // Reset when dialog opens
+  // Reset form whenever dialog opens
   useEffect(() => {
     if (isDialogOpen !== null && isDialogOpen) {
       reset(defaultValues);
     }
   }, [isDialogOpen, reset, defaultValues]);
 
+  // Check if form is entirely empty
   const isFormEmpty = useMemo(() => {
     return Object.values(values || {}).every(
       (value) => value === "" || value === null || value === undefined
     );
   }, [values]);
 
+  // Compute disabled state for submit button
   const isSubmitDisabled =
-    !formState.isValid || isFormEmpty || !form.formState.isDirty || formState.isSubmitting;
+    !formState.isValid || // fails zod validation
+    isFormEmpty ||
+    !form.formState.isDirty || // nothing changed from default
+    formState.isSubmitting;
 
   const onSubmit = handleSubmit(async (formData) => {
     const result = await actionFn(formData);

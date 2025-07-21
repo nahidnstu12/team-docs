@@ -103,7 +103,7 @@ class ProjectAction extends BaseAction {
   }
 }
 
-export async function createProjectAction(prevState, formData) {
+export async function createProjectAction(formData) {
   return await ProjectAction.create(formData);
 }
 
