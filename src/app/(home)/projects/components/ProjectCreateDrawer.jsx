@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import slugify from "slugify";
-import { useRouter } from "next/navigation";
 
 import {
   Drawer,
@@ -18,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
 import { ProjectSchema } from "@/lib/schemas/ProjectSchema";
 import { createProjectAction } from "@/system/Actions/ProjectActions";
-import { useDrawerLoadingStore } from "@/stores/useDrawerLoadingStore";
 import {
   Form,
   FormControl,
@@ -32,13 +30,6 @@ import { Textarea } from "@/components/ui/textarea";
 import GeneralFormErrorDispaly from "@/components/shared/GeneralFormErrorDispaly";
 
 export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartFetchProjects }) {
-  const router = useRouter();
-
-  // animate drawer loading spinner
-  useEffect(() => {
-    useDrawerLoadingStore.getState().markDrawerReady();
-  }, []);
-
   const hasShownToastRef = useRef(false);
 
   const defaultValues = useMemo(
@@ -61,14 +52,10 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartF
       form.reset();
       setIsDrawerOpen(false);
       setStartFetchProjects(true);
-      router.refresh();
 
       setTimeout(() => {
         hasShownToastRef.current = false;
       }, 500);
-
-      // clean up drawer loading spinner state
-      useDrawerLoadingStore.getState().resetDrawerLoading();
     },
     isDrawerOpen,
     successToast: {
@@ -76,29 +63,6 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartF
       description: "Your new project is ready to use!",
     },
   });
-
-  // const { register, watch, setValue, reset, errors, formAction, isPending, isSubmitDisabled } =
-  //   useServerFormAction({
-  //     schema: ProjectSchema,
-  //     actionFn: createProjectAction,
-  //     defaultValues,
-  //     onSuccess: () => {
-  //       if (hasShownToastRef.current) return;
-  //       hasShownToastRef.current = true;
-
-  //       reset();
-  //       setIsDrawerOpen(false);
-  //       setStartFetchProjects(true);
-  //       router.refresh();
-
-  //       setTimeout(() => {
-  //         hasShownToastRef.current = false;
-  //       }, 500);
-
-  //       // clean up drawer loading spinner state
-  //       useDrawerLoadingStore.getState().resetDrawerLoading();
-  //     },
-  //   });
 
   const nameValue = form.watch("name");
   const slugValue = form.watch("slug");
@@ -119,8 +83,6 @@ export default function ProjectDrawer({ isDrawerOpen, setIsDrawerOpen, setStartF
   useEffect(() => {
     if (isDrawerOpen) {
       form.reset(defaultValues);
-      // clean up drawer loading spinner state
-      useDrawerLoadingStore.getState().resetDrawerLoading();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDrawerOpen, form.reset, defaultValues]);
