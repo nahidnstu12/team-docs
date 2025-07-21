@@ -107,7 +107,7 @@ export async function createProjectAction(formData) {
   return await ProjectAction.create(formData);
 }
 
-export async function updateProjectAction(prevState, { projectId, formData }) {
+export async function updateProjectAction(projectId, formData) {
   return await ProjectAction.update(projectId, formData);
 }
 
