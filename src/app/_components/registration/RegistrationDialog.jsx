@@ -74,7 +74,7 @@ export default function RegistrationDialog({ isAuthenticated }) {
 
   return (
     <>
-      <PendingConfirmationDialog />
+      <PendingConfirmationDialog isAuthenticated={isAuthenticated} />
       <Dialog open={isFormDialogOpen} onOpenChange={closeFormDialog}>
         <DialogContent
           className={`w-full ${
@@ -237,39 +237,42 @@ export default function RegistrationDialog({ isAuthenticated }) {
   );
 }
 
-function PendingConfirmationDialog() {
+function PendingConfirmationDialog({ isAuthenticated }) {
   const { isPendingDialogOpen, closePendingDialog, resetRegistrationState } =
     useRegistrationStore();
 
-  // if (!openSecondDialog) return null;
-
   const handleClose = () => {
     resetRegistrationState();
-    closePendingDialog(); // ✅ properly close second dialog
+    closePendingDialog();
   };
 
   return (
     <Dialog open={isPendingDialogOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md text-center">
+      <DialogContent className="!max-w-[60vw] text-center h-[80vh]">
         <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl font-bold text-center">Registration Pending</DialogTitle>
+          <DialogTitle className="text-5xl font-bold text-center">Registration Pending</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col items-center py-6 space-y-4">
+        <div className="flex flex-col items-center py-6 pb-2 pt-12 space-y-4">
           <div className="flex relative justify-center items-center w-24 h-24 rounded-full bg-muted">
             <AlertCircle className="w-12 h-12 animate-pulse text-primary" />
           </div>
 
           <div className="space-y-3">
-            <p className="text-lg font-medium">Thank you for your registration!</p>
-            <p className="text-muted-foreground">
-              We&apos;ll review your information and send a confirmation email once approved. This
-              process typically takes 24-48 hours.
+            <p className="text-4xl font-medium">Thank you for your registration!</p>
+            <p className="text-muted-foreground max-w-lg mx-auto py-2">
+              We&apos;ll review your information and send a confirmation email once approved your
+              workspace. This process typically takes 24-48 hours.
             </p>
+            {!isAuthenticated && (
+              <p className="text-red-500 text-3xl font-semibold">
+                Please sign in to know when your workspace has approved!
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center">
           <Button onClick={handleClose}>I Understand</Button>
         </div>
       </DialogContent>

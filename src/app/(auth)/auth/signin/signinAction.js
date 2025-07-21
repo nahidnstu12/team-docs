@@ -40,8 +40,6 @@ export async function signin(prevState, formData) {
         password,
         redirect: false,
       });
-
-      Logger.info("authjs signin result:", result);
     } catch (authError) {
       console.error("authjs signin error:", authError);
       return {
@@ -70,5 +68,5 @@ export async function signin(prevState, formData) {
       errors: { _form: ["Something went wrong on our side"] },
     };
   }
-  redirect("/home");
+  redirect("/");
 }

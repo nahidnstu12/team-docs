@@ -25,8 +25,6 @@ export const useRegistrationStore = create((set) => ({
 
   resetRegistrationState: () =>
     set({
-      registrationSuccess: false,
-      registrationData: null,
       isPendingDialogOpen: false,
     }),
 }));
