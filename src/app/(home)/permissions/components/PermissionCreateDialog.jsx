@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Controller } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -27,13 +25,21 @@ import { createPermissions } from "@/system/Actions/PermissionActions";
 import { PermissionSchema } from "@/lib/schemas/PermissionSchema";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
 import { getAllProjectsFn } from "./../actions/getAllProjects";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import GeneralFormErrorDispaly from "@/components/shared/GeneralFormErrorDispaly";
 
 export default function PermissionCreateDialog({
   isDialogOpen,
   setIsDialogOpen,
   setStartFetchPermissions,
 }) {
-  const router = useRouter();
   const [permissionScopeStatus, setPermissionScopeStatus] = useState("general");
   const [projects, setProjects] = useState([]);
 
@@ -44,39 +50,29 @@ export default function PermissionCreateDialog({
   }, []);
 
   const defaultValues = useMemo(() => {
-    ({
+    return {
       name: "",
       description: "",
       scope: "",
-    });
+    };
   }, []);
 
-  const successToast = useMemo(
-    () => ({
+  const handleSuccess = useCallback(() => {
+    setIsDialogOpen(false);
+    setStartFetchPermissions(true);
+  }, [setIsDialogOpen, setStartFetchPermissions]);
+
+  const form = useServerFormAction({
+    schema: PermissionSchema,
+    defaultValues,
+    actionFn: createPermissions,
+    onSuccess: handleSuccess,
+    isDialogOpen,
+    successToast: {
       title: "Permission created successfully",
-      description: "Your new Permission is ready to use!",
-    }),
-    []
-  );
-
-  const handleSuccess = useCallback(
-    (redirectTo) => {
-      setIsDialogOpen(false);
-      setStartFetchPermissions(true);
-      if (redirectTo) router.push(redirectTo);
+      description: "Your new permission is ready to use!",
     },
-    [router, setIsDialogOpen, setStartFetchPermissions]
-  );
-
-  const { register, errors, formAction, isPending, isSubmitDisabled, control } =
-    useServerFormAction({
-      schema: PermissionSchema,
-      actionFn: createPermissions,
-      defaultValues,
-      successToast,
-      onSuccess: handleSuccess,
-      isDialogOpen,
-    });
+  });
 
   return (
     <>
@@ -93,93 +89,106 @@ export default function PermissionCreateDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <form action={formAction} className="mt-6 space-y-5">
-            <div className="space-y-1.5">
-              <Label htmlFor="name">Permission Name</Label>
-              <Input
-                id="name"
-                placeholder="e.g. create, update, delete, view"
-                className="h-11"
-                {...register("name")}
+          <Form {...form}>
+            <form onSubmit={form.onSubmit} className="mt-6 space-y-5">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Permission Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g. create, update, delete, view"
+                        className="h-11"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="scope">Permission Scope</Label>
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={permissionScopeStatus === "general" ? "px-6 bg-gray-200" : ""}
-                  onClick={() => setPermissionScopeStatus("general")}
-                >
-                  General
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className={permissionScopeStatus === "project" ? "px-6 bg-gray-200" : ""}
-                  onClick={() => setPermissionScopeStatus("project")}
-                >
-                  Project Scope Permission
-                </Button>
-              </div>
-              {permissionScopeStatus === "general" ? (
-                <Input
-                  id="scope"
-                  placeholder="Create your general permission"
-                  className="h-11 mt-2"
-                  {...register("scope")}
-                />
-              ) : (
-                <Controller
-                  control={control}
-                  name="scope"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-1/2 mt-2">
-                        <SelectValue placeholder="Project Permission Scope" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {projects.map((project) => (
-                          <SelectItem key={project.id} value={project.name}>
-                            {project.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              )}
-              {errors.scope && <p className="mt-1 text-sm text-red-500">{errors.scope.message}</p>}
-            </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="description">
-                Description <span className="text-muted-foreground">(optional)</span>
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="What is this permission about?"
-                {...register("description")}
+              <div className="space-y-1.5">
+                <Label htmlFor="scope">Permission Scope</Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={permissionScopeStatus === "general" ? "px-6 bg-gray-200" : ""}
+                    onClick={() => setPermissionScopeStatus("general")}
+                  >
+                    General
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={permissionScopeStatus === "project" ? "px-6 bg-gray-200" : ""}
+                    onClick={() => setPermissionScopeStatus("project")}
+                  >
+                    Project Scope Permission
+                  </Button>
+                </div>
+                {permissionScopeStatus === "general" ? (
+                  <Input
+                    id="scope"
+                    placeholder="Create your general permission"
+                    className="h-11 mt-2"
+                    {...form.register("scope")}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="scope"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <FormControl>
+                            <SelectTrigger className="w-1/2 mt-2 h-11">
+                              <SelectValue placeholder="User Status" />
+                            </SelectTrigger>
+                          </FormControl>
+
+                          <SelectContent>
+                            {projects.map((project) => (
+                              <SelectItem key={project.id} value={project.name}>
+                                {project.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                          <FormMessage />
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Description <span className="text-muted-foreground">(optional)</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="What is this permission about?" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>
-              )}
-            </div>
 
-            {errors._form && (
-              <div className="p-4 mb-4 border-l-4 border-red-500 bg-red-50">
-                <p className="text-red-700">{errors._form.message}</p>
-              </div>
-            )}
+              <GeneralFormErrorDispaly form={form} />
 
-            <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isSubmitDisabled}>
-                {isPending ? "Creating..." : "Create Permission"}
-              </Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter className="pt-4">
+                <Button type="submit" disabled={form.isSubmitDisabled}>
+                  {form.formState.isSubmitting ? "Creating..." : "Create Permission"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>

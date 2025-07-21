@@ -97,7 +97,7 @@ class PermissionActions extends BaseAction {
   }
 }
 
-export async function createPermissions(prevState, formData) {
+export async function createPermissions(formData) {
   return await PermissionActions.create(formData);
 }
 
