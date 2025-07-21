@@ -22,12 +22,6 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
   // Check user authentication and workspace status
   useEffect(() => {
     const checkUserStatus = async () => {
-      console.log(
-        "registrationSuccess and registrationData",
-        registrationSuccess,
-        registrationData,
-        isAuthenticated
-      );
       // Handle immediate post-registration state
       if (registrationSuccess && registrationData) {
         if (isAuthenticated) {
