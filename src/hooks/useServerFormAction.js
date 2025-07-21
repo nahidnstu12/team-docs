@@ -69,9 +69,9 @@ export function useServerFormAction({
     }
 
     if (result?.type === "success") {
-      toast.success(successToast.title, successToast.description);
+      if (successToast !== null) toast.success(successToast?.title, successToast?.description);
       reset();
-      onSuccess?.(result.redirectTo);
+      onSuccess?.(result.redirectTo, result.data);
     }
   });
 

@@ -12,7 +12,7 @@ const RegistrationDialog = dynamic(() => import("./registration"), {
 });
 
 export default function ActionButton({ session, isAuthenticated, workspaceId, workspaceStatus }) {
-  const { openDialog, registrationSuccess, registrationData, resetRegistrationState } =
+  const { openFormDialog, registrationSuccess, registrationData, resetRegistrationState } =
     useRegistrationStore();
   const router = useRouter();
   const [buttonText, setButtonText] = useState("Get Started for Free");
@@ -24,6 +24,11 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
     const checkUserStatus = async () => {
       // Handle immediate post-registration state
       if (registrationSuccess && registrationData) {
+        console.log(
+          "registrationSuccess and registrationData",
+          registrationSuccess,
+          registrationData
+        );
         if (isAuthenticated) {
           // Authenticated user created workspace - show processing state
           setButtonText("Request Processing...");
@@ -109,7 +114,7 @@ export default function ActionButton({ session, isAuthenticated, workspaceId, wo
       router.push(`/home`);
     } else {
       // Open registration dialog for other cases
-      openDialog();
+      openFormDialog();
     }
   };
 

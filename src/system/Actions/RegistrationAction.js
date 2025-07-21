@@ -44,7 +44,7 @@ class RegistrationAction extends BaseAction {
       let userId;
 
       if (username && email && password) {
-        // Case 1: User is registering (unauthenticated)
+        // Case 1: User is register-ing (unauthenticated)
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -57,13 +57,13 @@ class RegistrationAction extends BaseAction {
         userId = user.id;
       } else if (session) {
         // Case 2: Authenticated user is creating a workspace
-        userId = session.id;
+        userId = session?.id;
       } else {
         return {
           success: false,
           type: "error",
           errors: {
-            _form: ["Missing user information or not authenticated."],
+            _form: ["Missing user information."],
           },
         };
       }
@@ -117,7 +117,7 @@ class RegistrationAction extends BaseAction {
   }
 }
 
-export async function registerNewUser(prevState, formData) {
-  const session = await Session.getCurrentUser();
+export async function registerNewUser(formData) {
+  const session = (await Session.getCurrentUser()) || null;
   return await RegistrationAction.register(formData, session);
 }

@@ -1,6 +1,5 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import { useRegistrationStore } from "../store/useRegistrationStore";
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -12,17 +11,23 @@ import { registerNewUser } from "@/system/Actions/RegistrationAction";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { RegistrationUserSchema } from "@/lib/schemas/UserSchema";
 import { RegistrationWorkspaceSchema } from "@/lib/schemas/workspaceSchema";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useServerFormAction } from "@/hooks/useServerFormAction";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 export default function RegistrationDialog({ isAuthenticated }) {
-  const { isOpen, closeDialog, setRegistrationSuccess } = useRegistrationStore();
-  const router = useRouter();
+  const { isFormDialogOpen, closeFormDialog, setRegistrationSuccess } = useRegistrationStore();
 
   const defaultValues = useMemo(() => {
     if (isAuthenticated) {
@@ -58,197 +63,193 @@ export default function RegistrationDialog({ isAuthenticated }) {
     });
   }, [isAuthenticated]);
 
-  const successToast = useMemo(
-    () => ({
-      title: "Registration submitted",
-      description: "Your registration is pending approval. We'll notify you soon.",
-    }),
-    []
-  );
-
-  const handleSuccess = useCallback(() => {
-    // Refresh the page to update server-side props
-    // Registration data is handled in the useEffect above
-    router.refresh();
-  }, [router]);
-
-  const { register, errors, formAction, isPending, isSubmitDisabled, formState } =
-    useServerFormAction({
-      schema: registrationSchema,
-      actionFn: registerNewUser,
-      defaultValues,
-      successToast,
-      onSuccess: handleSuccess,
-      isDialogOpen: isOpen,
-    });
-
-  // Handle registration success state
-  useEffect(() => {
-    if (formState?.type === "success" && formState?.data) {
-      setRegistrationSuccess(formState.data);
-    }
-  }, [formState, setRegistrationSuccess]);
-
-  // If form was successfully submitted, show the pending confirmation dialog
-  if (formState?.type === "success") {
-    return <PendingConfirmationDialog />;
-  }
+  const form = useServerFormAction({
+    schema: registrationSchema,
+    actionFn: registerNewUser,
+    onSuccess: (redirectTo, data) => setRegistrationSuccess(data),
+    defaultValues,
+    isDialogOpen: isFormDialogOpen,
+    successToast: null,
+  });
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeDialog}>
-      <DialogContent
-        className={`w-full ${
-          isAuthenticated ? "!max-w-[40vw]" : "!max-w-[70vw]"
-        } h-[85vh] max-h-[90vh] overflow-y-auto`}
-      >
-        <DialogHeader className="space-y-1 text-center">
-          <DialogTitle className="text-3xl font-semibold leading-3 text-center">
-            Get Started
-          </DialogTitle>
-          <DialogDescription className="font-light text-center">
-            Create your first workspace to get started.
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <PendingConfirmationDialog />
+      <Dialog open={isFormDialogOpen} onOpenChange={closeFormDialog}>
+        <DialogContent
+          className={`w-full ${
+            isAuthenticated ? "!max-w-[40vw]" : "!max-w-[80vw]"
+          } h-[85vh] max-h-[90vh] overflow-y-auto`}
+        >
+          <DialogHeader className="space-y-1 text-center">
+            <DialogTitle className="text-4xl font-semibold leading-3 text-center">
+              Get Started
+            </DialogTitle>
+            <DialogDescription className="font-light text-center text-lg mt-2">
+              Create your first workspace to get started.
+            </DialogDescription>
+          </DialogHeader>
 
-        {errors._form && (
-          <Alert variant="destructive" className="mt-4">
-            <AlertCircle className="w-4 h-4" />
-            <AlertDescription>{errors._form.message}</AlertDescription>
-          </Alert>
-        )}
-
-        <form action={formAction} className="space-y-6">
-          {isAuthenticated ? (
-            <div className="space-y-4">
-              <h3 className="pb-2 text-xl font-semibold border-b">Workspace Information</h3>
-              <div className="space-y-1.5">
-                <Label htmlFor="workspaceName">Workspace Name</Label>
-                <Input
-                  id="workspaceName"
-                  placeholder="My Team"
-                  className="h-11"
-                  {...register("workspaceName")}
-                />
-                {errors.workspaceName && (
-                  <p className="mt-1 text-sm text-red-500">{errors.workspaceName.message}</p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="workspaceDescription">
-                  Description <span className="text-muted-foreground">(optional)</span>
-                </Label>
-                <Textarea
-                  id="workspaceDescription"
-                  placeholder="A brief description of your team or organization"
-                  className="min-h-[120px]"
-                  {...register("workspaceDescription")}
-                />
-                {errors.workspaceDescription && (
-                  <p className="mt-1 text-sm text-red-500">{errors.workspaceDescription.message}</p>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 w-full md:grid-cols-2">
-              <div className="space-y-4">
-                <h3 className="pb-2 text-xl font-semibold border-b">User Information</h3>
-                <div className="space-y-1.5">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="johndoe"
-                    className="h-11"
-                    {...register("username")}
-                  />
-                  {errors.username && (
-                    <p className="mt-1 text-sm text-red-500">{errors.username.message}</p>
-                  )}
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    className="h-11"
-                    {...register("email")}
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-                  )}
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••••"
-                    className="h-11"
-                    {...register("password")}
-                  />
-                  {errors.password && (
-                    <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h3 className="pb-2 text-xl font-semibold border-b">Workspace Information</h3>
-                <div className="space-y-1.5">
-                  <Label htmlFor="workspaceName">Workspace Name</Label>
-                  <Input
-                    id="workspaceName"
-                    placeholder="My Team"
-                    className="h-11"
-                    {...register("workspaceName")}
-                  />
-                  {errors.workspaceName && (
-                    <p className="mt-1 text-sm text-red-500">{errors.workspaceName.message}</p>
-                  )}
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="workspaceDescription">
-                    Description <span className="text-muted-foreground">(optional)</span>
-                  </Label>
-                  <Textarea
-                    id="workspaceDescription"
-                    placeholder="A brief description of your team or organization"
-                    className="min-h-[120px]"
-                    {...register("workspaceDescription")}
-                  />
-                  {errors.workspaceDescription && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.workspaceDescription.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
+          {form.formState.errors._form && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="w-4 h-4" />
+              <AlertDescription>{form.formState.errors._form[0]}</AlertDescription>
+            </Alert>
           )}
-          <div className="flex justify-center pt-2">
-            <Button type="submit" size="lg" disabled={isSubmitDisabled} className="min-w-[220px]">
-              {isPending
-                ? "Processing..."
-                : isAuthenticated
-                ? "Create Workspace"
-                : "Create Account"}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+
+          <Form {...form}>
+            <form onSubmit={form.onSubmit} className="space-y-12">
+              {isAuthenticated ? (
+                <div className="space-y-4">
+                  <h3 className="pb-2 text-xl font-semibold border-b">Workspace Information</h3>
+                  <FormField
+                    control={form.control}
+                    name="workspaceName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Workspace Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="My Team" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="workspaceDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            rows={5}
+                            placeholder="A brief description of your team or organization"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-10 w-full md:grid-cols-2">
+                  <div className="space-y-4 border-r border-gray-200 pr-8">
+                    <h3 className="pb-2 text-xl font-semibold border-b">User Information</h3>
+                    <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="johndoe" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="john@example.com" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input placeholder="••••••••••" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="pb-2 text-xl font-semibold border-b">Workspace Information</h3>
+                    <FormField
+                      control={form.control}
+                      name="workspaceName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Workspace Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="My Team" className="h-11" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="workspaceDescription"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Description <span className="text-muted-foreground">(optional)</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="A brief description of your team or organization"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-center pt-2">
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={form.isSubmitDisabled}
+                  className="min-w-[220px]"
+                >
+                  {form.formState.isSubmitting
+                    ? "Processing..."
+                    : isAuthenticated
+                    ? "Create Workspace"
+                    : "Create Account"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
 function PendingConfirmationDialog() {
-  const { isOpen, closeDialog, resetRegistrationState } = useRegistrationStore();
+  const { isPendingDialogOpen, closePendingDialog, resetRegistrationState } =
+    useRegistrationStore();
+
+  // if (!openSecondDialog) return null;
 
   const handleClose = () => {
     resetRegistrationState();
-    closeDialog();
+    closePendingDialog(); // ✅ properly close second dialog
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isPendingDialogOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md text-center">
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold text-center">Registration Pending</DialogTitle>
@@ -269,7 +270,7 @@ function PendingConfirmationDialog() {
         </div>
 
         <div className="flex justify-center mt-4">
-          <Button onClick={closeDialog}>I Understand</Button>
+          <Button onClick={handleClose}>I Understand</Button>
         </div>
       </DialogContent>
     </Dialog>

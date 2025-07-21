@@ -3,22 +3,30 @@
 import { create } from "zustand";
 
 export const useRegistrationStore = create((set) => ({
-  isOpen: false,
-  isPending: false,
+  isFormDialogOpen: false, // first dialog
+  isPendingDialogOpen: false, // second dialog
   registrationSuccess: false,
   registrationData: null,
-  openDialog: () => set({ isOpen: true, isPending: false }),
-  closeDialog: () => set({ isOpen: false, isPending: false }),
-  showPending: () => set({ isOpen: true, isPending: true }),
-  setRegistrationSuccess: (data) =>
-    set({
+
+  openFormDialog: () => set({ isFormDialogOpen: true }),
+  closeFormDialog: () => set({ isFormDialogOpen: false }),
+
+  openPendingDialog: () => set({ isPendingDialogOpen: true }),
+  closePendingDialog: () => set({ isPendingDialogOpen: false }),
+
+  setRegistrationSuccess: (data) => {
+    return set({
       registrationSuccess: true,
       registrationData: data,
-      isOpen: false,
-    }),
+      isFormDialogOpen: false,
+      isPendingDialogOpen: true, // ✅ open second dialog separately
+    });
+  },
+
   resetRegistrationState: () =>
     set({
       registrationSuccess: false,
       registrationData: null,
+      isPendingDialogOpen: false,
     }),
 }));
